@@ -1,28 +1,29 @@
-import { useState } from "react";
-import reactLogo from "./assets/logo.svg";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+
 import "./App.css";
+import lightTheme from "./styles/Styles";
+import LoginPage from "./pages/Login/LoginPage";
+import HomePage from "./pages/Home/HomePage";
+import RegisterPage from "./pages/Register/RegisterPage";
+import StartPage from "./pages/Start/StartPage";
+import RequireAuth from "./helpers/RequireAuth";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+function App(): JSX.Element {
   return (
-    <div className="App">
-      <div>
-        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React + TS!</h1>
-      <div className="card">
-        <button type="submit" onClick={() => setCount(c => c + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more`</p>
-    </div>
+    <ThemeProvider theme={lightTheme}>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<StartPage />} />
+          <Route element={<RequireAuth />}>
+            <Route path="home" element={<HomePage />} />
+          </Route>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
