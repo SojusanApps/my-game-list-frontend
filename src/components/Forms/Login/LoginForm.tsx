@@ -2,18 +2,11 @@ import * as React from "react";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import { Link as ReactLink } from "@mui/material";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import googleLogo from "../../../assets/logos/googleLogo.svg";
-import githubLogo from "../../../assets/logos/githubLogo.svg";
-import facebookLogo from "../../../assets/logos/facebookLogo.svg";
-import twitterLogo from "../../../assets/logos/twitterLogo.svg";
+import GoogleLogo from "../../../assets/logos/GoogleLogo.svg";
+import FacebookLogo from "../../../assets/logos/FacebookLogo.svg";
+import XLogo from "../../../assets/logos/XLogo.svg";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
 import StatusCode from "../../../helpers/StatusCode";
@@ -73,85 +66,42 @@ function LoginForm() {
 
   return (
     <FormProvider {...methods}>
-      <Box component="form" onSubmit={methods.handleSubmit(onSubmitHandler)} noValidate sx={{ mt: 1 }}>
+      <form onSubmit={methods.handleSubmit(onSubmitHandler)} noValidate>
         <TextFieldInput
-          helperText="Please enter your username"
-          margin="normal"
+          placeholder="Please enter your username"
           required
-          fullWidth
           id="username"
           label="Username"
           name="username"
-          autoComplete="username"
-          autoFocus
-          variant="filled"
+          type="text"
         />
         <TextFieldInput
-          fullWidth
+          placeholder="Please enter your password"
           required
           id="password"
-          name="password"
           label="Password"
-          variant="filled"
+          name="password"
           type="password"
-          sx={{ mb: 1 }}
         />
-        <FormControlLabel
-          control={<CheckboxInput value="remember" name="remember" id="remember" color="primary" />}
-          label="Remember me"
-        />
-        <Typography component="h1" variant="h6" align="center">
+        <CheckboxInput name="remember" id="remember" label="Remember me" />
+        <h6 className="mt-2">
           Don&apos;t have an account?&nbsp;
-          <ReactLink href="/register" color="secondary">
-            Sign Up
-          </ReactLink>
-        </Typography>
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <a href="/register" className="text-secondary-950">
+            Sign up
+          </a>
+        </h6>
+        <button
+          type="submit"
+          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-none focus:ring-0 active:bg-slate-900"
+        >
           LOGIN
-        </Button>
-      </Box>
-      <Grid container spacing={5} paddingTop={2} justifyContent="center">
-        <Grid item>
-          <Box
-            component="img"
-            sx={{
-              height: 40,
-              width: 40,
-            }}
-            src={googleLogo}
-          />
-        </Grid>
-        <Grid item>
-          <Box
-            component="img"
-            sx={{
-              height: 40,
-              width: 40,
-            }}
-            src={githubLogo}
-          />
-        </Grid>
-        <Grid item>
-          <Box
-            component="img"
-            sx={{
-              height: 40,
-              width: 40,
-            }}
-            src={facebookLogo}
-          />
-        </Grid>
-        <Grid item>
-          <Box
-            component="img"
-            sx={{
-              height: 40,
-              width: 40,
-            }}
-            src={twitterLogo}
-          />
-        </Grid>
-      </Grid>
+        </button>
+      </form>
+      <div className="grid grid-cols-3 justify-items-center mt-4">
+        <img src={GoogleLogo} alt="google logo" className="w-8" />
+        <img src={FacebookLogo} alt="facebook logo" className="w-8" />
+        <img src={XLogo} alt="x logo" className="w-8" />
+      </div>
     </FormProvider>
   );
 }

@@ -1,29 +1,27 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
 
-import "./App.css";
-import lightTheme from "./styles/Styles";
+import "./index.css";
 import LoginPage from "./pages/Login/LoginPage";
 import HomePage from "./pages/Home/HomePage";
 import RegisterPage from "./pages/Register/RegisterPage";
 import StartPage from "./pages/Start/StartPage";
+import NotFound from "./pages/NotFound/NotFound";
 import RequireAuth from "./helpers/RequireAuth";
 
-function App(): JSX.Element {
+function App(): React.JSX.Element {
   return (
-    <ThemeProvider theme={lightTheme}>
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<StartPage />} />
-          <Route element={<RequireAuth />}>
-            <Route path="home" element={<HomePage />} />
-          </Route>
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<StartPage />} />
+        <Route element={<RequireAuth />}>
+          <Route path="home" element={<HomePage />} />
+        </Route>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

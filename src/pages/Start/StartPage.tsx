@@ -1,34 +1,27 @@
 import * as React from "react";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 
-export default function StartPage(): JSX.Element {
+export default function StartPage(): React.JSX.Element {
   return (
-    <Container component="main" maxWidth="sm">
-      <CssBaseline />
-      <Typography component="h1" variant="h6">
-        Welcome to MyGameList Temporary Start Page - Early access!
-      </Typography>
-      <Typography component="h1" variant="h6">
+    <div className="container bg-slate-300 max-w-full">
+      <h6>Welcome to MyGameList Temporary Start Page - Early access!</h6>
+      <h6>
         Log in:&nbsp;
-        <Link href="/login" color="secondary">
+        <a href="/login" className="text-blue-500">
           here
-        </Link>
-      </Typography>
-      <Typography component="h1" variant="h6">
+        </a>
+      </h6>
+      <h6>
         Register:&nbsp;
-        <Link href="/register" color="secondary">
+        <a href="/register" className="text-blue-500">
           here
-        </Link>
-      </Typography>
-      <Typography component="h1" variant="h6">
+        </a>
+      </h6>
+      <h6>
         Home:&nbsp;
-        <Link href="/home" color="secondary">
+        <a href="/home" className="text-blue-500">
           here
-        </Link>
-      </Typography>
-    </Container>
+        </a>
+      </h6>
+    </div>
   );
 }
