@@ -10,7 +10,7 @@ type TextFieldInputProps = {
   placeholder: string;
 };
 
-function TextFieldInput({ id, name, type, required, label, placeholder }: TextFieldInputProps) {
+function TextFieldInput({ id, name, type, required, label, placeholder }: Readonly<TextFieldInputProps>) {
   const {
     control,
     formState: { errors },
