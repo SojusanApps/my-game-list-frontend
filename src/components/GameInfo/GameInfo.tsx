@@ -3,18 +3,20 @@ import * as React from "react";
 import GameInfoPlaceholder from "../../assets/images/GameInfo_Placeholder.svg";
 
 type GameInfoProps = {
-  coverImage: string;
-  title: string;
+  coverImage?: string;
+  className?: string;
   gamePageUrl: string;
+  title: string;
 };
 
 function GameInfo({
+  className,
   coverImage = GameInfoPlaceholder,
   title = "Game Title Placeholder",
   gamePageUrl = "/",
 }: Readonly<GameInfoProps>): React.JSX.Element {
   return (
-    <div className="relative max-w-[160px] max-h-[220px] hover:shadow-lg">
+    <div className={`relative max-w-[160px] max-h-[220px] hover:shadow-lg ${className}`}>
       <a href={gamePageUrl}>
         <img className="w-[160px] h-[220px]" src={coverImage} alt={title} />
         <div className="absolute inset-0 bg-white transition-opacity ease-in duration-150 opacity-0 hover:opacity-30" />
