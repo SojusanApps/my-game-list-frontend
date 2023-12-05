@@ -7,6 +7,7 @@ import HomePage from "./pages/Home/HomePage";
 import RegisterPage from "./pages/Register/RegisterPage";
 import StartPage from "./pages/Start/StartPage";
 import GameDetailPage from "./pages/GameDetail/GameDetailPage";
+import GameListPage from "./pages/GameList/GameListPage";
 import NotFound from "./pages/NotFound/NotFound";
 import RequireAuth from "./helpers/RequireAuth";
 
@@ -21,6 +22,7 @@ function App(): React.JSX.Element {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="game/:id" element={<GameDetailPage />} />
+        <Route path="game-list/:id" element={<GameListPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
