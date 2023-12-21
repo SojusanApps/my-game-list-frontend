@@ -1,5 +1,5 @@
 export type UserType = {
-  username: string;
+  email: string;
   token: string;
   refreshToken: string;
 };
