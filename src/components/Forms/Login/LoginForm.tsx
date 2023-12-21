@@ -14,7 +14,7 @@ import Constants from "../../../helpers/Constants";
 import useFetchPlus from "../../../hooks/useFetchPlus";
 
 const validationSchema = z.object({
-  username: z.string().min(1, { message: "Username is required" }),
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
   password: z
     .string()
     .min(1, "Password is required")
@@ -32,7 +32,7 @@ function LoginForm() {
   const from = location.state?.from?.pathname || "/";
 
   const defaultValues: ValidationSchema = {
-    username: "",
+    email: "",
     password: "",
     remember: false,
   };
@@ -46,7 +46,7 @@ function LoginForm() {
     try {
       const response = await fetchPlus(`${Constants.BASE_URL}/token/`, {
         body: JSON.stringify({
-          username: data.username,
+          email: data.email,
           password: data.password,
         }),
       });
@@ -57,7 +57,7 @@ function LoginForm() {
       const responseData = await response.json();
       const token = responseData?.access;
       const refreshToken = responseData?.refresh;
-      localStorage.setItem("user", JSON.stringify({ username: data.username, token, refreshToken }));
+      localStorage.setItem("user", JSON.stringify({ email: data.email, token, refreshToken }));
       navigate(from, { replace: true });
     } catch (error) {
       alert(error);
@@ -68,11 +68,11 @@ function LoginForm() {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmitHandler)} noValidate>
         <TextFieldInput
-          placeholder="Please enter your username"
+          placeholder="Please enter your email"
           required
-          id="username"
-          label="Username"
-          name="username"
+          id="email"
+          label="Email"
+          name="email"
           type="text"
         />
         <TextFieldInput
