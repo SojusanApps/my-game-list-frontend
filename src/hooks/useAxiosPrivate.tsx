@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { axiosPrivate } from "../api/axios";
 import { UserType } from "../helpers/CustomTypes";
 import useRefreshToken from "./useRefreshToken";
+import StatusCode from "../helpers/StatusCode";
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
@@ -28,7 +29,7 @@ const useAxiosPrivate = () => {
       response => response,
       async error => {
         const prevRequest = error?.config;
-        if (error?.response?.status === 403 && !prevRequest?.sent) {
+        if (error?.response?.status === StatusCode.UNAUTHORIZED && !prevRequest?.sent) {
           prevRequest.sent = true;
           const newAccessToken = await refresh();
           prevRequest.headers.Authorization = `Bearer ${newAccessToken}`;
