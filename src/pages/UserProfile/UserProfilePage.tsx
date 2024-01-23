@@ -7,7 +7,7 @@ export default function UserProfilePage(): React.JSX.Element {
   return (
     <div>
       <TopBar />
-      <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] pt-20 mx-auto">
+      <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] mx-auto">
         <div className="flex flex-col pr-1 gap-2">
           <img
             className="border-[1px] flex-none border-black mx-auto"

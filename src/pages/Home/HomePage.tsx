@@ -46,7 +46,7 @@ export default function HomePage(): React.JSX.Element {
   return (
     <div>
       <TopBar />
-      <div className="grid grid-rows-3 gap-8 max-w-[60%] pt-20 mx-auto">
+      <div className="grid grid-rows-3 gap-8 max-w-[60%] mx-auto">
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Highest Rated Games &gt;</p>
           <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
