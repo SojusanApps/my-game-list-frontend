@@ -7,21 +7,31 @@ import GameReview from "../../components/GameReview/GameReview";
 import TopBar from "../../components/TopBar/TopBar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
+import { GameReviewType } from "../../models/GameReview";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
   const [gameDetails, setGameDetails] = React.useState<GameType | null>(null);
+  const [gameReviewDetails, setGameReviewDetails] = React.useState<GameReviewType[] | null>(null);
   const axiosPrivate = useAxiosPrivate();
 
   React.useEffect(() => {
-    const fetchData = async () => {
+    const fetchGameData = async () => {
       const response = await axiosPrivate.get(`/game/games/${id}`);
       if (response.status === 200) {
         setGameDetails(response.data);
       }
     };
 
-    fetchData();
+    const fetchGameReviewData = async () => {
+      const response = await axiosPrivate.get(`/game/game-reviews/?game=${id}`);
+      if (response.status === 200) {
+        setGameReviewDetails(response.data.results);
+      }
+    };
+
+    fetchGameData();
+    fetchGameReviewData();
   }, []);
 
   return (
@@ -107,7 +117,11 @@ export default function GameDetailPage(): React.JSX.Element {
           <p className="font-bold pt-1">Description</p>
           <p className="pl-2 pt-2">{gameDetails?.description}</p>
           <p className="font-bold pt-1">Reviews</p>
-          <GameReview className="pl-2" />
+          <div className="flex flex-col gap-3 divide-y-2">
+            {gameReviewDetails?.map(gameReview => (
+              <GameReview key={gameReview.id} className="pl-2" gameReview={gameReview} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
