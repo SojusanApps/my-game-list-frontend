@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import fetchPlus from "../../../helpers/fetchPlus";
+import { axiosPrivate } from "../../../api/axios";
 import Constants from "../../../helpers/Constants";
 import StatusCode from "../../../helpers/StatusCode";
 
@@ -43,14 +43,12 @@ function RegisterForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const response = await fetchPlus(`${Constants.BASE_URL}/user/users/`, {
-        body: JSON.stringify({
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        }),
+      const response = await axiosPrivate.post("/user/users/", {
+        username: data.username,
+        email: data.email,
+        password: data.password,
       });
-      const responseData = await response.text();
+      const responseData = response.data;
       if (response.status !== StatusCode.CREATED) {
         throw new Error(responseData);
       }

@@ -10,8 +10,7 @@ import XLogo from "../../../assets/logos/XLogo.svg";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
 import StatusCode from "../../../helpers/StatusCode";
-import Constants from "../../../helpers/Constants";
-import useFetchPlus from "../../../hooks/useFetchPlus";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
@@ -26,7 +25,7 @@ const validationSchema = z.object({
 type ValidationSchema = z.infer<typeof validationSchema>;
 
 function LoginForm() {
-  const fetchPlus = useFetchPlus();
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -44,17 +43,15 @@ function LoginForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const response = await fetchPlus(`${Constants.BASE_URL}/token/`, {
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+      const response = await axiosPrivate.post("/token/", {
+        email: data.email,
+        password: data.password,
       });
       if (response.status !== StatusCode.OK) {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage);
+        alert("Error logging in");
+        return;
       }
-      const responseData = await response.json();
+      const responseData = response.data;
       const token = responseData?.access;
       const refreshToken = responseData?.refresh;
       localStorage.setItem("user", JSON.stringify({ email: data.email, token, refreshToken }));
