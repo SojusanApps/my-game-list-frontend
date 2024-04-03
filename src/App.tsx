@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./index.css";
+import TopBar from "./components/TopBar/TopBar";
 import LoginPage from "./pages/Login/LoginPage";
 import HomePage from "./pages/Home/HomePage";
 import RegisterPage from "./pages/Register/RegisterPage";
@@ -15,6 +16,7 @@ import RequireAuth from "./helpers/RequireAuth";
 function App(): React.JSX.Element {
   return (
     <BrowserRouter>
+      <TopBar />
       <Routes>
         <Route index element={<StartPage />} />
         <Route element={<RequireAuth />}>

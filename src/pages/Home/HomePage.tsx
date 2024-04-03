@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import TopBar from "../../components/TopBar/TopBar";
 import GameCarousel from "../../components/GameCarousel/GameCarousel";
 
 export default function HomePage(): React.JSX.Element {
@@ -45,7 +44,6 @@ export default function HomePage(): React.JSX.Element {
 
   return (
     <div>
-      <TopBar />
       <div className="grid grid-rows-3 gap-8 max-w-[60%] mx-auto">
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Highest Rated Games &gt;</p>

@@ -1,14 +1,14 @@
 import * as React from "react";
 
 import AppLogo from "../../assets/logos/AppLogo.svg";
-import SearchInput from "../Fields/SearchInput/SearchInput";
 import { UserType } from "../../helpers/CustomTypes";
 import AvatarImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
+import Constants from "../../helpers/Constants";
 
 function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.Element {
   return (
     <div className="dropdown">
-      <button tabIndex={0} type="button" className="btn">
+      <button tabIndex={0} type="button" className="btn btn-sm">
         {user?.email}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +21,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
         </svg>
         <div className="avatar">
-          <div className="w-8 rounded-full">
+          <div className="w-6 rounded-full">
             <img src={AvatarImagePlaceholder} alt="User avatar" />
           </div>
         </div>
@@ -130,14 +130,40 @@ function TopBar(): React.JSX.Element {
   }
 
   return (
-    <nav className="relative bg-primary-950 w-full z-20 top-0 left-0 border-b border-gray-200">
-      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-        <a href="/home" className="flex items-center">
-          <img src={AppLogo} className="h-8" alt="app logo" />
-          <h6 className="text-background-200 font-bold">&nbsp;MyGameList</h6>
-        </a>
-        <SearchInput />
-        {isLoggedIn() ? <LoggedInView user={user} /> : <NotLoggedInView />}
+    <nav className="relative bg-primary-950 w-full z-20 top-0 left-0 border-b border-gray-500">
+      <div className="max-w-screen-xl flex p-2 justify-between items-center mx-auto">
+        <div className="flex items-center">
+          <a href="/home" className="flex items-center">
+            <img src={AppLogo} className="w-10 h-10" alt="app logo" />
+            <h2 className="font-bold text-2xl text-background-200">&nbsp;{Constants.APPLICATION_NAME}</h2>
+          </a>
+        </div>
+        <div className="grow px-5 relative items-center inline-flex">
+          <div className="flex grow">
+            <input
+              type="text"
+              placeholder="Search for game..."
+              className="border border-gray-200 rounded-l-md py-1 px-2 pr-8 w-full"
+            />
+            <div className="block border bg-background-200 py-1 rounded-r-md">
+              <svg
+                className="h-6 w-8 text-gray-400 hover:text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className="flex">{isLoggedIn() ? <LoggedInView user={user} /> : <NotLoggedInView />}</div>
       </div>
     </nav>
   );
