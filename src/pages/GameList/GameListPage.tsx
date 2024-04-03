@@ -1,12 +1,10 @@
 import * as React from "react";
 
-import TopBar from "../../components/TopBar/TopBar";
 import GameInfo from "../../components/GameInfo/GameInfo";
 
 export default function GameListPage(): React.JSX.Element {
   return (
     <div>
-      <TopBar />
       <div className="grid grid-cols-5 gap-8 max-w-[60%] mx-auto divide-x-2">
         <div className="flex flex-row flex-wrap gap-1 col-span-4 pr-2">
           <GameInfo className="flex-none" title="Title" gamePageUrl="" />

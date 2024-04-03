@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import GameReview from "../../components/GameReview/GameReview";
-import TopBar from "../../components/TopBar/TopBar";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
 import { GameReviewType } from "../../models/GameReview";
@@ -36,7 +35,6 @@ export default function GameDetailPage(): React.JSX.Element {
 
   return (
     <div>
-      <TopBar />
       <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] mx-auto">
         <div className="flex flex-col pr-1 gap-2">
           <img
