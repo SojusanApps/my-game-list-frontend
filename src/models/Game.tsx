@@ -15,4 +15,9 @@ export type GameType = {
   developer: DeveloperType;
   platforms: PlatformType[];
   genres: GenreType[];
+  average_score: number;
+  scores_count: number;
+  rank_position: number;
+  members_count: number;
+  popularity: number;
 };

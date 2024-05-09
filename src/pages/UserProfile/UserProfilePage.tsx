@@ -28,7 +28,7 @@ export default function UserProfilePage(): React.JSX.Element {
         <div className="flex flex-col pr-1 gap-2">
           <img
             className="border-[1px] flex-none border-black mx-auto"
-            src={userDetails?.avatar ? `data:image/jpg;base64,${userDetails.avatar}` : GameCoverImagePlaceholder}
+            src={userDetails?.avatar ? `${userDetails.avatar}` : GameCoverImagePlaceholder}
             alt="User avatar"
           />
           <button type="button" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
@@ -67,7 +67,7 @@ export default function UserProfilePage(): React.JSX.Element {
               <a key={friend.id} href={`${friend.id}`}>
                 <img
                   className="w-[45px] h-[75px] border-[1px] border-black object-cover"
-                  src={friend.avatar ? `data:image/jpg;base64,${friend.avatar}` : GameCoverImagePlaceholder}
+                  src={friend.avatar ? `${friend.avatar}` : GameCoverImagePlaceholder}
                   alt={`friend avatar ${friend.id}`}
                 />
               </a>
@@ -125,7 +125,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   className="w-[45px] h-[75px] border-[1px] border-black object-cover"
                   src={
                     latestGameListUpdate.game_cover_image
-                      ? `data:image/jpg;base64,${latestGameListUpdate.game_cover_image}`
+                      ? `${latestGameListUpdate.game_cover_image}`
                       : GameCoverImagePlaceholder
                   }
                   alt={`game cover ${latestGameListUpdate.id}`}

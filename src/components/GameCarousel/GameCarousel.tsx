@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 
 import GameInfo from "../GameInfo/GameInfo";
+import { GameType } from "../../models/Game";
 
 type GameCarouselProps = {
-  gamesArray: string[][];
+  gamesArray: GameType[] | null;
 };
 
 function GameCarousel({ gamesArray }: Readonly<GameCarouselProps>): React.JSX.Element {
@@ -90,8 +91,14 @@ function GameCarousel({ gamesArray }: Readonly<GameCarouselProps>): React.JSX.El
           ref={carousel}
           className="carousel-container relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x z-0"
         >
-          {gamesArray.map(game => (
-            <GameInfo key={game[0]} className="carousel-item flex-none" title={game[1]} gamePageUrl={game[2]} />
+          {gamesArray?.map(game => (
+            <GameInfo
+              key={game.id}
+              className="carousel-item flex-none"
+              title={game.title}
+              gamePageUrl={game.id}
+              gameCoverUrl={game.cover_image}
+            />
           ))}
         </div>
       </div>
