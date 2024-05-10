@@ -2,7 +2,7 @@ import * as React from "react";
 
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
-import GameCarousel from "../../components/GameCarousel/GameCarousel";
+import GameInfo from "../../components/GameInfo/GameInfo";
 
 export default function HomePage(): React.JSX.Element {
   const [highestRatedGames, setHighestRatedGames] = React.useState<GameType[] | null>(null);
@@ -18,7 +18,7 @@ export default function HomePage(): React.JSX.Element {
       const params = new URLSearchParams(queryParams);
       const response = await axiosPrivate.get(`/game/games/?${params}`);
       if (response.status === 200) {
-        setHighestRatedGames(response.data.results.slice(0, 10));
+        setHighestRatedGames(response.data.results.slice(0, 7));
       }
     };
 
@@ -29,7 +29,7 @@ export default function HomePage(): React.JSX.Element {
       const params = new URLSearchParams(queryParams);
       const response = await axiosPrivate.get(`/game/games/?${params}`);
       if (response.status === 200) {
-        setMostPopularGames(response.data.results.slice(0, 10));
+        setMostPopularGames(response.data.results.slice(0, 7));
       }
     };
 
@@ -40,7 +40,7 @@ export default function HomePage(): React.JSX.Element {
       const params = new URLSearchParams(queryParams);
       const response = await axiosPrivate.get(`/game/games/?${params}`);
       if (response.status === 200) {
-        setRecentlyAddedGames(response.data.results.slice(0, 10));
+        setRecentlyAddedGames(response.data.results.slice(0, 7));
       }
     };
 
@@ -57,7 +57,17 @@ export default function HomePage(): React.JSX.Element {
           <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <GameCarousel gamesArray={highestRatedGames} />
+            <div className="flex gap-1">
+              {highestRatedGames?.map(game => (
+                <GameInfo
+                  key={game.id}
+                  className="flex-none"
+                  title={game.title}
+                  gamePageUrl={game.id}
+                  gameCoverUrl={game.cover_image}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-2">
@@ -65,7 +75,17 @@ export default function HomePage(): React.JSX.Element {
           <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <GameCarousel gamesArray={mostPopularGames} />
+            <div className="flex gap-1">
+              {mostPopularGames?.map(game => (
+                <GameInfo
+                  key={game.id}
+                  className="flex-none"
+                  title={game.title}
+                  gamePageUrl={game.id}
+                  gameCoverUrl={game.cover_image}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-2">
@@ -73,7 +93,17 @@ export default function HomePage(): React.JSX.Element {
           <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <GameCarousel gamesArray={recentlyAddedGames} />
+            <div className="flex gap-1">
+              {recentlyAddedGames?.map(game => (
+                <GameInfo
+                  key={game.id}
+                  className="flex-none"
+                  title={game.title}
+                  gamePageUrl={game.id}
+                  gameCoverUrl={game.cover_image}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
