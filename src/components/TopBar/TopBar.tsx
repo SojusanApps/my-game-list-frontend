@@ -1,11 +1,16 @@
 import * as React from "react";
 
-import AppLogo from "../../assets/logos/AppLogo.svg";
+import AppLogo from "../AppLogo/AppLogo";
 import { UserType } from "../../helpers/CustomTypes";
 import AvatarImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
-import Constants from "../../helpers/Constants";
+import SearchBar from "../SearchBar/SearchBar";
 
 function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.Element {
+  const handleClick = () => {
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
+
   return (
     <div className="dropdown">
       <button tabIndex={0} type="button" className="btn btn-sm">
@@ -28,7 +33,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
       </button>
       <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
         <li>
-          <a href="/">
+          <a href="/profile/current_user">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -48,7 +53,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
         </li>
         <div className="divider my-0" />
         <li>
-          <a href="/">
+          <a href="/settings">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -68,7 +73,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
           </a>
         </li>
         <li>
-          <a href="/">
+          <button type="button" onClick={handleClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -84,7 +89,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
               />
             </svg>
             Logout
-          </a>
+          </button>
         </li>
       </ul>
     </div>
@@ -133,36 +138,11 @@ function TopBar(): React.JSX.Element {
     <nav className="relative bg-primary-950 w-full z-20 top-0 left-0 border-b border-gray-500">
       <div className="max-w-screen-xl flex p-2 justify-between items-center mx-auto">
         <div className="flex items-center">
-          <a href="/home" className="flex items-center">
-            <img src={AppLogo} className="w-10 h-10" alt="app logo" />
-            <h2 className="font-bold text-2xl text-background-200">&nbsp;{Constants.APPLICATION_NAME}</h2>
+          <a href="/home" className="flex items-center" aria-label="Game List logo">
+            <AppLogo classNameSojusan="text-secondary-950 text-2xl" classNameGameList="text-white text-3xl" />
           </a>
         </div>
-        <div className="grow px-5 relative items-center inline-flex">
-          <div className="flex grow">
-            <input
-              type="text"
-              placeholder="Search for game..."
-              className="border border-gray-200 rounded-l-md py-1 px-2 pr-8 w-full"
-            />
-            <div className="block border bg-background-200 py-1 rounded-r-md">
-              <svg
-                className="h-6 w-8 text-gray-400 hover:text-gray-500"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <SearchBar />
         <div className="flex">{isLoggedIn() ? <LoggedInView user={user} /> : <NotLoggedInView />}</div>
       </div>
     </nav>
