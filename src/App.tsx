@@ -10,6 +10,7 @@ import StartPage from "./pages/Start/StartPage";
 import GameDetailPage from "./pages/GameDetail/GameDetailPage";
 import GameListPage from "./pages/GameList/GameListPage";
 import UserProfilePage from "./pages/UserProfile/UserProfilePage";
+import UserSettingsPage from "./pages/UserSettings/UserSettingsPage";
 import NotFound from "./pages/NotFound/NotFound";
 import RequireAuth from "./helpers/RequireAuth";
 
@@ -27,6 +28,7 @@ function App(): React.JSX.Element {
         <Route path="game/:id" element={<GameDetailPage />} />
         <Route path="game-list/:id" element={<GameListPage />} />
         <Route path="profile/:id" element={<UserProfilePage />} />
+        <Route path="settings" element={<UserSettingsPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
