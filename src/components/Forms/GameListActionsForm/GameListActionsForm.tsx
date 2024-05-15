@@ -2,13 +2,14 @@ import * as React from "react";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { jwtDecode } from "jwt-decode";
 
 import SelectInput from "../../Fields/FormInput/SelectInput";
 import StatusCode from "../../../helpers/StatusCode";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import GameListStatuses from "../../../helpers/GameListStatuses";
 import { GameListType } from "../../../models/GameList";
-import { UserType } from "../../../models/User";
+import { TokenInfoType, LocalStorageUserType } from "../../../helpers/CustomTypes";
 
 const validationSchema = z.object({
   status: z.enum([GameListStatuses.ALL[0], ...GameListStatuses.ALL.slice(1)]),
@@ -24,7 +25,12 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
   const axiosPrivate = useAxiosPrivate();
   const [gameListDetails, setGameListDetails] = React.useState<GameListType | null>(null);
-  const [loggedInUserDetails, setLoggedInUserDetails] = React.useState<UserType | null>(null);
+  let userInfo: TokenInfoType;
+  const localStorageUser = localStorage.getItem("user");
+  if (localStorageUser) {
+    const userInstance: LocalStorageUserType = JSON.parse(localStorageUser);
+    userInfo = jwtDecode<TokenInfoType>(userInstance.token);
+  }
 
   const defaultValues: ValidationSchema = {
     status: "",
@@ -38,21 +44,15 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
 
   React.useEffect(() => {
     const fetchGameListData = async () => {
-      const loggedInUserResponse = await axiosPrivate.get(`/user/users/logged_in_user/`);
-      if (loggedInUserResponse.status === StatusCode.OK) {
-        setLoggedInUserDetails(loggedInUserResponse.data);
-        const response = await axiosPrivate.get(
-          `/game/game-lists/?game=${gameID}&user=${loggedInUserResponse.data.id}`,
-        );
-        if (response.status === StatusCode.OK) {
-          if (response.data.results.length === 0) {
-            return;
-          }
-          const gameListDetailsData = response.data.results[0];
-          setGameListDetails(gameListDetailsData);
-          methods.setValue("status", gameListDetailsData.status_code);
-          methods.setValue("score", gameListDetailsData.score);
+      const response = await axiosPrivate.get(`/game/game-lists/?game=${gameID}&user=${userInfo.user_id}`);
+      if (response.status === StatusCode.OK) {
+        if (response.data.results.length === 0) {
+          return;
         }
+        const gameListDetailsData = response.data.results[0];
+        setGameListDetails(gameListDetailsData);
+        methods.setValue("status", gameListDetailsData.status_code);
+        methods.setValue("score", gameListDetailsData.score);
       }
     };
 
@@ -64,7 +64,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
       status: data.status,
       score: data.score,
       game: gameID,
-      user: loggedInUserDetails?.id,
+      user: userInfo.user_id,
     });
     if (response.status !== StatusCode.CREATED) {
       alert("Error during addition to the list");

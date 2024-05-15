@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
 import { axiosPrivate } from "../api/axios";
-import { UserType } from "../helpers/CustomTypes";
+import { LocalStorageUserType } from "../helpers/CustomTypes";
 import useRefreshToken from "./useRefreshToken";
 import StatusCode from "../helpers/StatusCode";
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
   const localStorageUser = localStorage.getItem("user");
-  let user: UserType | null = null;
+  let user: LocalStorageUserType | null = null;
   if (localStorageUser) {
     user = JSON.parse(localStorageUser);
   }

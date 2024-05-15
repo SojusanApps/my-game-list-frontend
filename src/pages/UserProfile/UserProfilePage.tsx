@@ -13,11 +13,7 @@ export default function UserProfilePage(): React.JSX.Element {
 
   React.useEffect(() => {
     const fetchUserData = async () => {
-      let userParam = id;
-      if (id === "current_user") {
-        userParam = "logged_in_user";
-      }
-      const response = await axiosPrivate.get(`/user/users/${userParam}`);
+      const response = await axiosPrivate.get(`/user/users/${id}`);
       if (response.status === 200) {
         setUserDetails(response.data);
       }
