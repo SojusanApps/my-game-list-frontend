@@ -13,11 +13,7 @@ export default function UserProfilePage(): React.JSX.Element {
 
   React.useEffect(() => {
     const fetchUserData = async () => {
-      let userParam = id;
-      if (id === "current_user") {
-        userParam = "logged_in_user";
-      }
-      const response = await axiosPrivate.get(`/user/users/${userParam}`);
+      const response = await axiosPrivate.get(`/user/users/${id}`);
       if (response.status === 200) {
         setUserDetails(response.data);
       }
@@ -38,9 +34,11 @@ export default function UserProfilePage(): React.JSX.Element {
           <button type="button" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
             Add Friend
           </button>
-          <button type="button" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
-            Game List
-          </button>
+          <a href={`/game-list/${userDetails?.id}`} className="mx-auto">
+            <button type="button" className="bg-primary-950 text-white p-2 rounded-lg">
+              Game List
+            </button>
+          </a>
           <div>
             <p className="font-bold">Information</p>
             <div className="flex flex-col border-[1px] border-black p-2 gap-1">

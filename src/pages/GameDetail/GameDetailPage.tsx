@@ -7,6 +7,8 @@ import GameReview from "../../components/GameReview/GameReview";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
 import { GameReviewType } from "../../models/GameReview";
+import GameListActionsForm from "../../components/Forms/GameListActionsForm/GameListActionsForm";
+import StatusCode from "../../helpers/StatusCode";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -17,14 +19,14 @@ export default function GameDetailPage(): React.JSX.Element {
   React.useEffect(() => {
     const fetchGameData = async () => {
       const response = await axiosPrivate.get(`/game/games/${id}`);
-      if (response.status === 200) {
+      if (response.status === StatusCode.OK) {
         setGameDetails(response.data);
       }
     };
 
     const fetchGameReviewData = async () => {
       const response = await axiosPrivate.get(`/game/game-reviews/?game=${id}`);
-      if (response.status === 200) {
+      if (response.status === StatusCode.OK) {
         setGameReviewDetails(response.data.results);
       }
     };
@@ -41,9 +43,9 @@ export default function GameDetailPage(): React.JSX.Element {
           src={gameDetails?.cover_image ? `${gameDetails.cover_image}` : GameCoverImagePlaceholder}
           alt={gameDetails?.title}
         />
-        <button type="button" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
-          Add to List
-        </button>
+        <div className="border-[1px] border-black p-2">
+          <GameListActionsForm gameID={id} />
+        </div>
         <div>
           <p className="font-bold">Information</p>
           <div className="flex flex-col border-[1px] border-black p-2 gap-1">

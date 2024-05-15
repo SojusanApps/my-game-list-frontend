@@ -1,11 +1,14 @@
 import * as React from "react";
+import { jwtDecode } from "jwt-decode";
 
 import AppLogo from "../AppLogo/AppLogo";
-import { UserType } from "../../helpers/CustomTypes";
+import { TokenInfoType, LocalStorageUserType } from "../../helpers/CustomTypes";
 import AvatarImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import SearchBar from "../SearchBar/SearchBar";
 
-function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.Element {
+function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>): React.JSX.Element {
+  const userInfo = jwtDecode<TokenInfoType>(user!.token);
+
   const handleClick = () => {
     localStorage.removeItem("user");
     window.location.reload();
@@ -33,7 +36,7 @@ function LoggedInView({ user }: Readonly<{ user: UserType | null }>): React.JSX.
       </button>
       <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
         <li>
-          <a href="/profile/current_user">
+          <a href={`/profile/${userInfo?.user_id}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -125,7 +128,7 @@ function NotLoggedInView(): React.JSX.Element {
 
 function TopBar(): React.JSX.Element {
   const localStorageUser = localStorage.getItem("user");
-  let user: UserType | null = null;
+  let user: LocalStorageUserType | null = null;
   if (localStorageUser) {
     user = JSON.parse(localStorageUser);
   }
