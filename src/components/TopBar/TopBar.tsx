@@ -145,6 +145,11 @@ function TopBar(): React.JSX.Element {
             <AppLogo classNameSojusan="text-secondary-950 text-2xl" classNameGameList="text-white text-3xl" />
           </a>
         </div>
+        <ul className="text-white font-bold hover:text-secondary-950 hover:cursor-pointer">
+          <li>
+            <a href="/search">Search Engine</a>
+          </li>
+        </ul>
         <SearchBar />
         <div className="flex">{isLoggedIn() ? <LoggedInView user={user} /> : <NotLoggedInView />}</div>
       </div>

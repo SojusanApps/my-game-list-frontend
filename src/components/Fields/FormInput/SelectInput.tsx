@@ -13,7 +13,8 @@ type SelectInputInputProps = {
   label: string;
   placeholder: string;
   selectOptions: SelectOption[];
-  optionToSelect?: string;
+  optionToSelect?: string | string[];
+  multiple?: boolean;
 };
 
 function SelectInput({
@@ -24,12 +25,14 @@ function SelectInput({
   placeholder,
   selectOptions,
   optionToSelect = undefined,
+  multiple = false,
 }: Readonly<SelectInputInputProps>) {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext();
-  const [selectedValue, setSelectedValue] = React.useState<string | undefined>(optionToSelect);
+  const [selectedValue, setSelectedValue] = React.useState<string | undefined | string[]>(optionToSelect);
 
   return (
     <Controller
@@ -45,12 +48,19 @@ function SelectInput({
           <select
             id={id}
             {...field}
-            value={selectedValue ?? optionToSelect ?? ""}
+            value={selectedValue ?? optionToSelect ?? (multiple ? [] : "")}
             onChange={event => {
               field.onChange(event);
-              setSelectedValue(event.target.value);
+              if (multiple) {
+                const selectedValues = Array.from(event.target.selectedOptions, option => option.value);
+                setSelectedValue(selectedValues);
+                setValue(name, selectedValues);
+              } else {
+                setSelectedValue(event.target.value);
+              }
             }}
             className="form-control select select-sm select-bordered w-full"
+            multiple={multiple}
           >
             <option disabled value="">
               {placeholder}

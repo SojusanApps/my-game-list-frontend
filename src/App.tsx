@@ -12,6 +12,7 @@ import GameListPage from "./pages/GameList/GameListPage";
 import UserProfilePage from "./pages/UserProfile/UserProfilePage";
 import UserSettingsPage from "./pages/UserSettings/UserSettingsPage";
 import NotFound from "./pages/NotFound/NotFound";
+import SearchEnginePage from "./pages/SearchEngine/SearchEnginePage";
 import RequireAuth from "./helpers/RequireAuth";
 
 function App(): React.JSX.Element {
@@ -29,6 +30,7 @@ function App(): React.JSX.Element {
         <Route path="game-list/:id" element={<GameListPage />} />
         <Route path="profile/:id" element={<UserProfilePage />} />
         <Route path="settings" element={<UserSettingsPage />} />
+        <Route path="search" element={<SearchEnginePage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

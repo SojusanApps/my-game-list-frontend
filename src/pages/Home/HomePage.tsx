@@ -2,7 +2,7 @@ import * as React from "react";
 
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
-import GameInfo from "../../components/GameInfo/GameInfo";
+import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
 
 export default function HomePage(): React.JSX.Element {
   const [highestRatedGames, setHighestRatedGames] = React.useState<GameType[] | null>(null);
@@ -54,17 +54,17 @@ export default function HomePage(): React.JSX.Element {
       <div className="grid grid-rows-3 gap-8 max-w-[60%] mx-auto">
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Highest Rated Games &gt;</p>
-          <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
+          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
               {highestRatedGames?.map(game => (
-                <GameInfo
+                <ItemOverlay
                   key={game.id}
                   className="flex-none"
-                  title={game.title}
-                  gamePageUrl={game.id}
-                  gameCoverUrl={game.cover_image}
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={game.cover_image}
                 />
               ))}
             </div>
@@ -72,17 +72,17 @@ export default function HomePage(): React.JSX.Element {
         </div>
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Most Popular Games &gt;</p>
-          <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
+          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
               {mostPopularGames?.map(game => (
-                <GameInfo
+                <ItemOverlay
                   key={game.id}
                   className="flex-none"
-                  title={game.title}
-                  gamePageUrl={game.id}
-                  gameCoverUrl={game.cover_image}
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={game.cover_image}
                 />
               ))}
             </div>
@@ -90,17 +90,17 @@ export default function HomePage(): React.JSX.Element {
         </div>
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Recently Added Games &gt;</p>
-          <p className="font-bold text-secondary-950 text-xl text-right">View More</p>
+          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
               {recentlyAddedGames?.map(game => (
-                <GameInfo
+                <ItemOverlay
                   key={game.id}
                   className="flex-none"
-                  title={game.title}
-                  gamePageUrl={game.id}
-                  gameCoverUrl={game.cover_image}
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={game.cover_image}
                 />
               ))}
             </div>
