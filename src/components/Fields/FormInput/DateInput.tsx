@@ -1,16 +1,15 @@
 import * as React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 
-type TextFieldInputProps = {
+type DateInputProps = {
   id: string;
   name: string;
-  type: string;
   required?: boolean;
   label: string;
   placeholder: string;
 };
 
-function TextFieldInput({ id, name, type, required, label, placeholder }: Readonly<TextFieldInputProps>) {
+function DateInput({ id, name, required, label, placeholder }: Readonly<DateInputProps>) {
   const {
     control,
     formState: { errors },
@@ -29,7 +28,7 @@ function TextFieldInput({ id, name, type, required, label, placeholder }: Readon
           </label>
           <input
             id={id}
-            type={type}
+            type="date"
             placeholder={placeholder}
             {...field}
             className="form-control w-full px-3 py-1.5 text-text-700 rounded-lg border border-solid border-gray-300 focus:border-yellow-600 focus:outline-none"
@@ -41,4 +40,4 @@ function TextFieldInput({ id, name, type, required, label, placeholder }: Readon
   );
 }
 
-export default TextFieldInput;
+export default DateInput;
