@@ -7,8 +7,7 @@ import SelectInput from "../../Fields/FormInput/SelectInput";
 import DateInput from "../../Fields/FormInput/DateInput";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import { DeveloperSimpleType } from "../../../models/Developer";
-import { PublisherSimpleType } from "../../../models/Publisher";
+import { CompanySimpleType } from "../../../models/Company";
 import { GenreType } from "../../../models/Genre";
 import { PlatformType } from "../../../models/Platform";
 import StatusCode from "../../../helpers/StatusCode";
@@ -48,8 +47,7 @@ function GameSearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
   const axiosPrivate = useAxiosPrivate();
-  const [developerList, setDeveloperList] = React.useState<DeveloperSimpleType[]>([]);
-  const [publisherList, setPublisherList] = React.useState<PublisherSimpleType[]>([]);
+  const [companyList, setCompanyList] = React.useState<CompanySimpleType[]>([]);
   const [genreList, setGenreList] = React.useState<GenreType[]>([]);
   const [platformList, setPlatformList] = React.useState<PlatformType[]>([]);
   const methods = useForm<ValidationSchema>({
@@ -57,23 +55,15 @@ function GameSearchFilter({
   });
 
   React.useEffect(() => {
-    const fetchDeveloperListData = async () => {
-      const response = await axiosPrivate.get("/game/developers/all-values");
+    const fetchCompanyListData = async () => {
+      // TODO: There is too much companies to get all of them at once in a single select box.
+      // Maybe a feature with a single text field that will start to fetch data after 3 characters to autocomplete.
+      const response = await axiosPrivate.get("/game/companies");
       if (response.status === StatusCode.OK) {
         if (response.data.length === 0) {
           return;
         }
-        setDeveloperList(response.data);
-      }
-    };
-
-    const fetchPublisherListData = async () => {
-      const response = await axiosPrivate.get("/game/publishers/all-values");
-      if (response.status === StatusCode.OK) {
-        if (response.data.length === 0) {
-          return;
-        }
-        setPublisherList(response.data);
+        setCompanyList(response.data.results);
       }
     };
 
@@ -97,8 +87,7 @@ function GameSearchFilter({
       }
     };
 
-    fetchDeveloperListData();
-    fetchPublisherListData();
+    fetchCompanyListData();
     fetchGenreListData();
     fetchPlatformListData();
   }, []);
@@ -125,9 +114,9 @@ function GameSearchFilter({
             id="developer"
             label="Developer"
             name="developer"
-            selectOptions={developerList.map(developerItem => ({
-              value: developerItem.name,
-              label: developerItem.name,
+            selectOptions={companyList.map(companyItem => ({
+              value: companyItem.name,
+              label: companyItem.name,
             }))}
           />
           <SelectInput
@@ -135,9 +124,9 @@ function GameSearchFilter({
             id="publisher"
             label="Publisher"
             name="publisher"
-            selectOptions={publisherList.map(publisherItem => ({
-              value: publisherItem.name,
-              label: publisherItem.name,
+            selectOptions={companyList.map(companyItem => ({
+              value: companyItem.name,
+              label: companyItem.name,
             }))}
           />
           <SelectInput

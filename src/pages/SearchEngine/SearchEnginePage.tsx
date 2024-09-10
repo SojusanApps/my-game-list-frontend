@@ -6,14 +6,13 @@ import { GameType } from "../../models/Game";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import StatusCode from "../../helpers/StatusCode";
 import { UserType } from "../../models/User";
-import { DeveloperType } from "../../models/Developer";
-import { PublisherType } from "../../models/Publisher";
+import { CompanyType } from "../../models/Company";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "../../components/Filters/GameSearch/GameSearchFilter";
-import DeveloperSearchFilter, { ValidationSchema as DeveloperSearchFilterValidationSchema } from "../../components/Filters/DeveloperSearch/DeveloperSearchFilter";
-import PublisherSearchFilter, { ValidationSchema as PublisherSearchFilterValidationSchema } from "../../components/Filters/PublisherSearch/PublisherSearchFilter";
+import CompanySearchFilter, { ValidationSchema as CompanySearchFilterValidationSchema } from "../../components/Filters/CompanySearch/CompanySearchFilter";
 import UserSearchFilter, { ValidationSchema as UserSearchFilterValidationSchema } from "../../components/Filters/UserSearch/UserSearchFilter";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 
 function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>): React.JSX.Element {
   return (
@@ -24,7 +23,7 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>)
             className="flex-none"
             name={gameItem.title}
             itemPageUrl={`/game/${gameItem.id}`}
-            itemCoverUrl={gameItem.cover_image}
+            itemCoverUrl={getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
           />
         </div>
       ))}
@@ -32,37 +31,18 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>)
   );
 }
 
-function DevelopersItems({
-  developersItems,
-}: Readonly<{ developersItems: DeveloperType[] | null }>): React.JSX.Element {
+function CompanyItems({
+  companyItems,
+}: Readonly<{ companyItems: CompanyType[] | null }>): React.JSX.Element {
   return (
     <div className="grid grid-cols-7 gap-1">
-      {developersItems?.map(developerItem => (
-        <div key={developerItem.id}>
+      {companyItems?.map(companyItem => (
+        <div key={companyItem.id}>
           <ItemOverlay
             className="flex-none"
-            name={developerItem.name}
-            itemPageUrl={`/developer/${developerItem.id}`}
-            itemCoverUrl={developerItem.developer_logo}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function PublishersItems({
-  publishersItems,
-}: Readonly<{ publishersItems: PublisherType[] | null }>): React.JSX.Element {
-  return (
-    <div className="grid grid-cols-7 gap-1">
-      {publishersItems?.map(publisherItem => (
-        <div key={publisherItem.id}>
-          <ItemOverlay
-            className="flex-none"
-            name={publisherItem.name}
-            itemPageUrl={`/publisher/${publisherItem.id}`}
-            itemCoverUrl={publisherItem.publisher_logo}
+            name={companyItem.name}
+            itemPageUrl={`/company/${companyItem.id}`}
+            itemCoverUrl={getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)}
           />
         </div>
       ))}
@@ -89,7 +69,7 @@ function UsersItems({ usersItems }: Readonly<{ usersItems: UserType[] | null }>)
 
 export default function SearchEnginePage(): React.JSX.Element {
   const axiosPrivate = useAxiosPrivate();
-  const [dataItems, setDataItems] = React.useState<GameType[] | UserType[] | DeveloperType[] | PublisherType[]>([]);
+  const [dataItems, setDataItems] = React.useState<GameType[] | UserType[] | CompanyType[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorFetchingData, setErrorFetchingData] = React.useState<Error | null>(null);
   const observerTarget = React.useRef(null);
@@ -97,6 +77,7 @@ export default function SearchEnginePage(): React.JSX.Element {
   const searchSourceRef = React.useRef("");
   const isLoadingRef = React.useRef(false);
   const filterUrlRef = React.useRef<string | undefined>(undefined);
+  type SearchFilterValidatorsType = GameSearchFilterValidationSchema | CompanySearchFilterValidationSchema | UserSearchFilterValidationSchema;
 
   const getRequestUrl = () => {
     let baseUrl;
@@ -104,11 +85,8 @@ export default function SearchEnginePage(): React.JSX.Element {
       case "games":
         baseUrl = "/game/games/";
         break;
-      case "developers":
-        baseUrl = "/game/developers/";
-        break;
-      case "publishers":
-        baseUrl = "/game/publishers/";
+      case "companies":
+        baseUrl = "/game/companies/";
         break;
       case "users":
         baseUrl = "/user/users/";
@@ -190,7 +168,7 @@ export default function SearchEnginePage(): React.JSX.Element {
     fetchData();
   };
 
-  const getFilterUrl = (data: GameSearchFilterValidationSchema | DeveloperSearchFilterValidationSchema| PublisherSearchFilterValidationSchema | UserSearchFilterValidationSchema) => {
+  const getFilterUrl = (data: SearchFilterValidatorsType) => {
     let filterUrl = "";
     for (let [key, value] of Object.entries(data)) {
       if (value === "" || value === undefined) {
@@ -214,8 +192,8 @@ export default function SearchEnginePage(): React.JSX.Element {
     return filterUrl;
   };
 
-  const submitFilterHandler: SubmitHandler<GameSearchFilterValidationSchema | DeveloperSearchFilterValidationSchema | PublisherSearchFilterValidationSchema | UserSearchFilterValidationSchema> = async (
-    data: GameSearchFilterValidationSchema | DeveloperSearchFilterValidationSchema | PublisherSearchFilterValidationSchema | UserSearchFilterValidationSchema,
+  const submitFilterHandler: SubmitHandler<SearchFilterValidatorsType> = async (
+    data: SearchFilterValidatorsType,
   ) => {
     setDataItems([]);
     nextPageUrlRef.current = undefined;
@@ -230,35 +208,24 @@ export default function SearchEnginePage(): React.JSX.Element {
           <input className="join-item btn min-w-32" value="games" type="radio" name="options" aria-label="Games" />
           <input
             className="join-item btn min-w-32"
-            value="developers"
+            value="companies"
             type="radio"
             name="options"
-            aria-label="Developers"
-          />
-          <input
-            className="join-item btn min-w-32"
-            value="publishers"
-            type="radio"
-            name="options"
-            aria-label="Publishers"
+            aria-label="Companies"
           />
           <input className="join-item btn min-w-32" value="users" type="radio" name="options" aria-label="Users" />
         </div>
         <div className="border-[1px] border-background-300 rounded-xl p-2 bg-background-200">
           <p>Filters</p>
           {searchSourceRef.current === "games" && <GameSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
-          {searchSourceRef.current === "developers" && <DeveloperSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
-          {searchSourceRef.current === "publishers" && <PublisherSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
+          {searchSourceRef.current === "companies" && <CompanySearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
           {searchSourceRef.current === "users" && <UserSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
         </div>
         <div>
           {(dataItems.length === 0 && <p>No results</p>) ||
             (searchSourceRef.current === "games" && <GamesItems gamesItems={dataItems as GameType[]} />) ||
-            (searchSourceRef.current === "developers" && (
-              <DevelopersItems developersItems={dataItems as DeveloperType[]} />
-            )) ||
-            (searchSourceRef.current === "publishers" && (
-              <PublishersItems publishersItems={dataItems as PublisherType[]} />
+            (searchSourceRef.current === "companies" && (
+              <CompanyItems companyItems={dataItems as CompanyType[]} />
             )) ||
             (searchSourceRef.current === "users" && <UsersItems usersItems={dataItems as UserType[]} />) || (
               <p>Select items to search for</p>

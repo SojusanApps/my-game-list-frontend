@@ -1,5 +1,4 @@
-import { DeveloperType } from "./Developer";
-import { PublisherType } from "./Publisher";
+import { CompanyType } from "./Company";
 import { GenreType } from "./Genre";
 import { PlatformType } from "./Platform";
 
@@ -9,12 +8,13 @@ export type GameType = {
   created_at: Date;
   last_modified_at: Date;
   release_date: Date;
-  cover_image: string;
-  description: string;
-  publisher: PublisherType;
-  developer: DeveloperType;
+  cover_image_id: string;
+  summary: string;
+  publisher: CompanyType;
+  developer: CompanyType;
   platforms: PlatformType[];
   genres: GenreType[];
+  igdb_id: number;
   average_score: number;
   scores_count: number;
   rank_position: number;

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { UserType } from "../../models/User";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
@@ -127,7 +128,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   className="w-[45px] h-[75px] border-[1px] border-black object-cover"
                   src={
                     latestGameListUpdate.game_cover_image
-                      ? `${latestGameListUpdate.game_cover_image}`
+                      ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
                       : GameCoverImagePlaceholder
                   }
                   alt={`game cover ${latestGameListUpdate.id}`}

@@ -9,6 +9,7 @@ import { GameType } from "../../models/Game";
 import { GameReviewType } from "../../models/GameReview";
 import GameListActionsForm from "../../components/Forms/GameListActionsForm/GameListActionsForm";
 import StatusCode from "../../helpers/StatusCode";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -40,7 +41,7 @@ export default function GameDetailPage(): React.JSX.Element {
       <div className="flex flex-col pr-1 gap-2">
         <img
           className="border-[1px] flex-none border-black mx-auto"
-          src={gameDetails?.cover_image ? `${gameDetails.cover_image}` : GameCoverImagePlaceholder}
+          src={gameDetails?.cover_image_id ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}` : GameCoverImagePlaceholder}
           alt={gameDetails?.title}
         />
         <div className="border-[1px] border-black p-2">
@@ -50,16 +51,20 @@ export default function GameDetailPage(): React.JSX.Element {
           <p className="font-bold">Information</p>
           <div className="flex flex-col border-[1px] border-black p-2 gap-1">
             <div className="flex flex-row">
+              <p className="font-bold">IGDB ID:</p>
+              <p className="ml-2">{gameDetails?.igdb_id}</p>
+            </div>
+            <div className="flex flex-row">
               <p className="font-bold">Release date:</p>
               <p className="ml-2">{gameDetails?.release_date.toString()}</p>
             </div>
             <div className="flex flex-row">
               <p className="font-bold">Publisher:</p>
-              <p className="ml-2">{gameDetails?.publisher.name}</p>
+              <p className="ml-2">{gameDetails?.publisher?.name}</p>
             </div>
             <div className="flex flex-row">
               <p className="font-bold">Developer:</p>
-              <p className="ml-2">{gameDetails?.developer.name}</p>
+              <p className="ml-2">{gameDetails?.developer?.name}</p>
             </div>
             <div className="flex flex-col">
               <p className="font-bold">Genres:</p>
@@ -111,8 +116,8 @@ export default function GameDetailPage(): React.JSX.Element {
             More statistics
           </button>
         </div>
-        <p className="font-bold pt-1">Description</p>
-        <p className="pl-2 pt-2">{gameDetails?.description}</p>
+        <p className="font-bold pt-1">Summary</p>
+        <p className="pl-2 pt-2">{gameDetails?.summary}</p>
         <p className="font-bold pt-1">Reviews</p>
         <div className="flex flex-col gap-3 divide-y-2">
           {gameReviewDetails?.map(gameReview => (

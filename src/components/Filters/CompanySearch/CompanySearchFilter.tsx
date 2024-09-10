@@ -12,7 +12,7 @@ const validationSchema = z
 
 export type ValidationSchema = z.infer<typeof validationSchema>;
 
-function DeveloperSearchFilter({
+function CompanySearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
   const methods = useForm<ValidationSchema>({
@@ -33,4 +33,4 @@ function DeveloperSearchFilter({
   );
 }
 
-export default DeveloperSearchFilter;
+export default CompanySearchFilter;
