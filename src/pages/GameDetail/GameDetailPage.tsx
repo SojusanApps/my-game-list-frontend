@@ -80,9 +80,11 @@ export default function GameDetailPage(): React.JSX.Element {
               <p className="font-bold">Platforms:</p>
               <div className="flex flex-row flex-wrap gap-1">
                 {gameDetails?.platforms.map(platform => (
-                  <p key={platform.id} className="bg-background-300 rounded-xl border-primary-950 border-[1px] p-1">
-                    {platform.name}
-                  </p>
+                  <div key={platform.id} className="tooltip" data-tip={platform.name}>
+                    <p className="bg-background-300 rounded-xl border-primary-950 border-[1px] p-1">
+                      {platform.abbreviation !== "" ? platform.abbreviation : platform.name}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
