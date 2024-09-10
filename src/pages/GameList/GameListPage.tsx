@@ -5,6 +5,7 @@ import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
 import { GameListType } from "../../models/GameList";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import StatusCode from "../../helpers/StatusCode";
+import IGDBImageSize, {getIGDBImageURL} from "../../helpers/IGDBIntegration";
 import { UserType } from "../../models/User";
 
 export default function GameListPage(): React.JSX.Element {
@@ -125,7 +126,7 @@ export default function GameListPage(): React.JSX.Element {
                   className="flex-none"
                   name={gameListItem.title}
                   itemPageUrl={`/game/${gameListItem.game_id}`}
-                  itemCoverUrl={gameListItem.game_cover_image}
+                  itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
                 />
               </div>
             ))}

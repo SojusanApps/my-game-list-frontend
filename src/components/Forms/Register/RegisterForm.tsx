@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import { axiosPrivate } from "../../../api/axios";
+import { simpleAxios } from "../../../api/axios";
 import Constants from "../../../helpers/Constants";
 import StatusCode from "../../../helpers/StatusCode";
 
@@ -43,7 +43,7 @@ function RegisterForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const response = await axiosPrivate.post("/user/users/", {
+      const response = await simpleAxios.post("/user/users/", {
         username: data.username,
         email: data.email,
         password: data.password,

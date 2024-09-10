@@ -3,6 +3,7 @@ import * as React from "react";
 import PlaceholderImage from "../../assets/images/Image_Placeholder.svg";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
@@ -87,7 +88,7 @@ export default function SearchBar(): React.JSX.Element {
                   <a href={`/game/${game.id}`} className="group">
                     <img
                       className="w-[40px] h-[50px] group-hover:w-[70px] group-hover:h-[80px]"
-                      src={game.cover_image ?? PlaceholderImage}
+                      src={game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90) : PlaceholderImage}
                       alt={game.title}
                     />
                     <p>{game.title}</p>

@@ -3,6 +3,7 @@ import * as React from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { GameType } from "../../models/Game";
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 
 export default function HomePage(): React.JSX.Element {
   const [highestRatedGames, setHighestRatedGames] = React.useState<GameType[] | null>(null);
@@ -64,7 +65,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image}
+                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
                 />
               ))}
             </div>
@@ -82,7 +83,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image}
+                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
                 />
               ))}
             </div>
@@ -100,7 +101,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image}
+                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
                 />
               ))}
             </div>
