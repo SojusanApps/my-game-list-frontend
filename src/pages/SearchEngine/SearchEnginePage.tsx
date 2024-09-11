@@ -59,7 +59,7 @@ function UsersItems({ usersItems }: Readonly<{ usersItems: UserType[] | null }>)
             className="flex-none"
             name={userItem.username}
             itemPageUrl={`/profile/${userItem.id}`}
-            itemCoverUrl={userItem.avatar}
+            itemCoverUrl={userItem.gravatar_url}
           />
         </div>
       ))}

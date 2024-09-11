@@ -12,7 +12,7 @@ type GameListStatistics = {
 
 type SimpleFriend = {
   id: number;
-  avatar: string;
+  gravatar_url: string;
 };
 
 export type UserType = {
@@ -21,7 +21,7 @@ export type UserType = {
   gender: string;
   last_login: Date;
   date_joined: Date;
-  avatar: string;
+  gravatar_url: string;
   game_list_statistics: GameListStatistics;
   friends: SimpleFriend[];
   latest_game_list_updates: GameListType[];

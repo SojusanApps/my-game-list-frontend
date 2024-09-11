@@ -17,7 +17,7 @@ function GameReview({ className, gameReview }: Readonly<GameReviewProps>): React
         <div className="flex flex-row">
           <img
             className="w-[45px] h-[75px]"
-            src={gameReview?.user.avatar ? `${gameReview?.user.avatar}` : UserAvatarPlaceholder}
+            src={gameReview?.user.gravatar_url ? `${gameReview?.user.gravatar_url}` : UserAvatarPlaceholder}
             alt={gameReview?.user.username}
           />
           <div className="flex flex-col pl-1 pt-2">
