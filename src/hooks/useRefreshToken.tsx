@@ -1,5 +1,6 @@
-import Constants from "../helpers/Constants";
-import fetchPlus from "../helpers/fetchPlus";
+import axiosPrivate from "../api/axios";
+
+import StatusCode from "../helpers/StatusCode";
 
 const useRefreshToken = () => {
   const refresh = async () => {
@@ -7,14 +8,13 @@ const useRefreshToken = () => {
     let user = null;
     if (localStorageUser) {
       user = JSON.parse(localStorageUser);
-      const responseData = await fetchPlus(`${Constants.BASE_URL}/token/refresh/`, {
-        body: JSON.stringify({
-          token: user.token,
-          refreshToken: user.refreshToken,
-        }),
+      const response = await axiosPrivate.post("/token/refresh/", {
+        refresh: user.refreshToken,
       });
-      user.token = responseData.access;
-      localStorage.setItem("user", JSON.stringify(user));
+      if (response.status === StatusCode.OK) {
+        user.token = response.data.access;
+        localStorage.setItem("user", JSON.stringify(user));
+      }
     }
     return user?.token;
   };

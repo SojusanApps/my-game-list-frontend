@@ -36,6 +36,7 @@ module.exports = {
       },
     ],
     "no-use-before-define": "off",
+    "global-require": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "react/jsx-filename-extension": ["warn", { extensions: [".tsx"] }],
     "import/extensions": [

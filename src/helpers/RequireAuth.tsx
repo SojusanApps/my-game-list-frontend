@@ -1,10 +1,10 @@
 import React from "react";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { UserType } from "./CustomTypes";
+import { LocalStorageUserType } from "./CustomTypes";
 
 function RequireAuth() {
   const localStorageUser = localStorage.getItem("user");
-  let user: UserType | null = null;
+  let user: LocalStorageUserType | null = null;
   if (localStorageUser) {
     user = JSON.parse(localStorageUser);
   }
