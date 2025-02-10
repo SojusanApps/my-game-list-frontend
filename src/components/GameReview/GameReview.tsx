@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import UserAvatarPlaceholder from "../../assets/images/Image_Placeholder.svg";
-import { GameReviewType } from "../../models/GameReview";
+import { GameReview as GameReviewType } from "../../client";
 
 type GameReviewProps = {
   className?: string;

@@ -6,11 +6,8 @@ import { z } from "zod";
 import SelectInput from "../../Fields/FormInput/SelectInput";
 import DateInput from "../../Fields/FormInput/DateInput";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import { CompanySimpleType } from "../../../models/Company";
-import { GenreType } from "../../../models/Genre";
-import { PlatformType } from "../../../models/Platform";
 import StatusCode from "../../../helpers/StatusCode";
+import { GameService, CompanySimpleName, Genre, Platform } from "../../../client";
 
 const validationSchema = z
   .object({
@@ -46,10 +43,9 @@ export type ValidationSchema = z.infer<typeof validationSchema>;
 function GameSearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
-  const axiosPrivate = useAxiosPrivate();
-  const [companyList, setCompanyList] = React.useState<CompanySimpleType[]>([]);
-  const [genreList, setGenreList] = React.useState<GenreType[]>([]);
-  const [platformList, setPlatformList] = React.useState<PlatformType[]>([]);
+  const [companyList, setCompanyList] = React.useState<CompanySimpleName[]>([]);
+  const [genreList, setGenreList] = React.useState<Genre[]>([]);
+  const [platformList, setPlatformList] = React.useState<Platform[]>([]);
   const methods = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
@@ -58,32 +54,32 @@ function GameSearchFilter({
     const fetchCompanyListData = async () => {
       // TODO: There is too much companies to get all of them at once in a single select box.
       // Maybe a feature with a single text field that will start to fetch data after 3 characters to autocomplete.
-      const response = await axiosPrivate.get("/game/companies");
-      if (response.status === StatusCode.OK) {
-        if (response.data.length === 0) {
+      const { data, response } = await GameService.gameCompaniesList();
+      if (response.status === StatusCode.OK && data) {
+        if (data.results.length === 0) {
           return;
         }
-        setCompanyList(response.data.results);
+        setCompanyList(data.results);
       }
     };
 
     const fetchGenreListData = async () => {
-      const response = await axiosPrivate.get("/game/genres/all-values");
-      if (response.status === StatusCode.OK) {
-        if (response.data.length === 0) {
+      const { data, response } = await GameService.gameGenresAllValuesList();
+      if (response.status === StatusCode.OK && data) {
+        if (data.length === 0) {
           return;
         }
-        setGenreList(response.data);
+        setGenreList(data);
       }
     };
 
     const fetchPlatformListData = async () => {
-      const response = await axiosPrivate.get("/game/platforms/all-values");
-      if (response.status === StatusCode.OK) {
-        if (response.data.length === 0) {
+      const { data, response } = await GameService.gamePlatformsAllValuesList();
+      if (response.status === StatusCode.OK && data) {
+        if (data.length === 0) {
           return;
         }
-        setPlatformList(response.data);
+        setPlatformList(data);
       }
     };
 

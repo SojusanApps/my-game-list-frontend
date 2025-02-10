@@ -1,47 +1,48 @@
 import * as React from "react";
 
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { GameType } from "../../models/Game";
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import { GameService, Game } from "../../client";
 
 export default function HomePage(): React.JSX.Element {
-  const [highestRatedGames, setHighestRatedGames] = React.useState<GameType[] | null>(null);
-  const [mostPopularGames, setMostPopularGames] = React.useState<GameType[] | null>(null);
-  const [recentlyAddedGames, setRecentlyAddedGames] = React.useState<GameType[] | null>(null);
-  const axiosPrivate = useAxiosPrivate();
+  const [highestRatedGames, setHighestRatedGames] = React.useState<Game[] | null>(null);
+  const [mostPopularGames, setMostPopularGames] = React.useState<Game[] | null>(null);
+  const [recentlyAddedGames, setRecentlyAddedGames] = React.useState<Game[] | null>(null);
 
   React.useEffect(() => {
     const fetchHighestRatedGames = async () => {
-      const queryParams = {
-        ordering: "rank_position",
-      };
-      const params = new URLSearchParams(queryParams);
-      const response = await axiosPrivate.get(`/game/games/?${params}`);
-      if (response.status === 200) {
-        setHighestRatedGames(response.data.results.slice(0, 7));
+      const {data, response} = await GameService.gameGamesList(
+        {
+          query: {
+            ordering: ["rank_position"],
+          }
+        });
+      if (response.status === 200 && data) {
+        setHighestRatedGames(data.results.slice(0, 7));
       }
     };
 
     const fetchMostPopularGames = async () => {
-      const queryParams = {
-        ordering: "popularity",
-      };
-      const params = new URLSearchParams(queryParams);
-      const response = await axiosPrivate.get(`/game/games/?${params}`);
-      if (response.status === 200) {
-        setMostPopularGames(response.data.results.slice(0, 7));
+      const {data, response} = await GameService.gameGamesList(
+        {
+          query: {
+            ordering: ["popularity"],
+          }
+        });
+      if (response.status === 200 && data) {
+        setMostPopularGames(data.results.slice(0, 7));
       }
     };
 
     const fetchRecentlyAddedGames = async () => {
-      const queryParams = {
-        ordering: "-created_at",
-      };
-      const params = new URLSearchParams(queryParams);
-      const response = await axiosPrivate.get(`/game/games/?${params}`);
-      if (response.status === 200) {
-        setRecentlyAddedGames(response.data.results.slice(0, 7));
+      const {data, response} = await GameService.gameGamesList(
+        {
+          query: {
+            ordering: ["-created_at"],
+          }
+        });
+      if (response.status === 200 && data) {
+        setRecentlyAddedGames(data.results.slice(0, 7));
       }
     };
 
@@ -65,7 +66,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
+                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
                 />
               ))}
             </div>
@@ -83,7 +84,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
+                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
                 />
               ))}
             </div>
@@ -101,7 +102,7 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
+                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
                 />
               ))}
             </div>

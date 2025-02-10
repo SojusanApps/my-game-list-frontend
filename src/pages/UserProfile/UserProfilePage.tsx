@@ -3,20 +3,20 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { UserType } from "../../models/User";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import { UserService, UserDetail } from "../../client";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
-  const [userDetails, setUserDetails] = React.useState<UserType | null>(null);
-  const axiosPrivate = useAxiosPrivate();
+  const [userDetails, setUserDetails] = React.useState<UserDetail | undefined>(undefined);
 
   React.useEffect(() => {
     const fetchUserData = async () => {
-      const response = await axiosPrivate.get(`/user/users/${id}`);
-      if (response.status === 200) {
-        setUserDetails(response.data);
+      if (id !== undefined) {
+        const {data, response} = await UserService.userUsersRetrieve({path: {id: +id}});
+        if (response.status === 200) {
+          setUserDetails(data);
+        }
       }
     };
 

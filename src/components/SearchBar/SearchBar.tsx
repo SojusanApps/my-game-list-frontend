@@ -1,14 +1,12 @@
 import * as React from "react";
 
 import PlaceholderImage from "../../assets/images/Image_Placeholder.svg";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { GameType } from "../../models/Game";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import { GameService, Game } from "../../client";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
-  const [gamesDetails, setGamesDetails] = React.useState<GameType[]>([]);
-  const axiosPrivate = useAxiosPrivate();
+  const [gamesDetails, setGamesDetails] = React.useState<Game[]>([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -22,9 +20,13 @@ export default function SearchBar(): React.JSX.Element {
   React.useEffect(() => {
     const fetchGamesData = async () => {
       if (search !== "") {
-        const response = await axiosPrivate.get(`/game/games/?title=${search}`);
-        if (response.status === 200) {
-          setGamesDetails(response.data.results.slice(0, 8));
+        const {data, response} = await GameService.gameGamesList({
+          query: {
+            title: search,
+          }
+        });
+        if (response.status === 200 && data) {
+          setGamesDetails(data.results.slice(0, 8));
         }
       }
       if (search === "") {
