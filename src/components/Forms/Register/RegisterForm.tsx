@@ -5,9 +5,10 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import { simpleAxios } from "../../../api/axios";
 import Constants from "../../../helpers/Constants";
 import StatusCode from "../../../helpers/StatusCode";
+import { UserService } from "../../../client";
+
 
 const validationSchema = z
   .object({
@@ -43,16 +44,17 @@ function RegisterForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const response = await simpleAxios.post("/user/users/", {
-        username: data.username,
-        email: data.email,
-        password: data.password,
+      const {data: createData, response} = await UserService.userUsersCreate({
+        body: {
+          username: data.username,
+          email: data.email,
+          password: data.password,
+        },
       });
-      const responseData = response.data;
-      if (response.status !== StatusCode.CREATED) {
-        throw new Error(responseData);
+      if (response.status !== StatusCode.CREATED || !createData) {
+        throw new Error("Error creating user");
       }
-      alert(responseData);
+      alert(createData);
       navigate("/login", { replace: true });
     } catch (error) {
       alert(error);

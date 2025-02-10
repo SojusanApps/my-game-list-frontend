@@ -2,19 +2,16 @@ import * as React from "react";
 
 import { SubmitHandler } from "react-hook-form";
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
-import { GameType } from "../../models/Game";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import StatusCode from "../../helpers/StatusCode";
-import { UserType } from "../../models/User";
-import { CompanyType } from "../../models/Company";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "../../components/Filters/GameSearch/GameSearchFilter";
 import CompanySearchFilter, { ValidationSchema as CompanySearchFilterValidationSchema } from "../../components/Filters/CompanySearch/CompanySearchFilter";
 import UserSearchFilter, { ValidationSchema as UserSearchFilterValidationSchema } from "../../components/Filters/UserSearch/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import { GameService, UserService, Game, Company, User } from "../../client";
 
-function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>): React.JSX.Element {
+function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): React.JSX.Element {
   return (
     <div className="grid grid-cols-7 gap-1">
       {gamesItems?.map(gameItem => (
@@ -23,7 +20,7 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>)
             className="flex-none"
             name={gameItem.title}
             itemPageUrl={`/game/${gameItem.id}`}
-            itemCoverUrl={getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}
+            itemCoverUrl={gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
           />
         </div>
       ))}
@@ -33,7 +30,7 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: GameType[] | null }>)
 
 function CompanyItems({
   companyItems,
-}: Readonly<{ companyItems: CompanyType[] | null }>): React.JSX.Element {
+}: Readonly<{ companyItems: Company[] | null }>): React.JSX.Element {
   return (
     <div className="grid grid-cols-7 gap-1">
       {companyItems?.map(companyItem => (
@@ -42,7 +39,7 @@ function CompanyItems({
             className="flex-none"
             name={companyItem.name}
             itemPageUrl={`/company/${companyItem.id}`}
-            itemCoverUrl={getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)}
+            itemCoverUrl={companyItem.company_logo_id ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374) : null}
           />
         </div>
       ))}
@@ -50,7 +47,7 @@ function CompanyItems({
   );
 }
 
-function UsersItems({ usersItems }: Readonly<{ usersItems: UserType[] | null }>): React.JSX.Element {
+function UsersItems({ usersItems }: Readonly<{ usersItems: User[] | null }>): React.JSX.Element {
   return (
     <div className="grid grid-cols-7 gap-1">
       {usersItems?.map(userItem => (
@@ -68,38 +65,40 @@ function UsersItems({ usersItems }: Readonly<{ usersItems: UserType[] | null }>)
 }
 
 export default function SearchEnginePage(): React.JSX.Element {
-  const axiosPrivate = useAxiosPrivate();
-  const [dataItems, setDataItems] = React.useState<GameType[] | UserType[] | CompanyType[]>([]);
+  const [dataItems, setDataItems] = React.useState<Game[] | User[] | Company[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorFetchingData, setErrorFetchingData] = React.useState<Error | null>(null);
   const observerTarget = React.useRef(null);
-  const nextPageUrlRef = React.useRef(undefined);
+  const nextPageNumberRef = React.useRef<number | null>(1);
   const searchSourceRef = React.useRef("");
   const isLoadingRef = React.useRef(false);
-  const filterUrlRef = React.useRef<string | undefined>(undefined);
+  const filterBodyRef = React.useRef<{} | undefined>(undefined);
   type SearchFilterValidatorsType = GameSearchFilterValidationSchema | CompanySearchFilterValidationSchema | UserSearchFilterValidationSchema;
 
-  const getRequestUrl = () => {
-    let baseUrl;
+  const getRequestWithParams = () => {
+    let request;
     switch (searchSourceRef.current) {
       case "games":
-        baseUrl = "/game/games/";
+        request = GameService.gameGamesList;
         break;
       case "companies":
-        baseUrl = "/game/companies/";
+        request = GameService.gameCompaniesList;
         break;
       case "users":
-        baseUrl = "/user/users/";
+        request = UserService.userUsersList;
         break;
       default:
-        baseUrl = "";
+        request = null;
     }
 
-    if (filterUrlRef.current !== undefined) {
-      baseUrl += filterUrlRef.current;
+    let params = {
+      query: {page: nextPageNumberRef.current ?? undefined}
+    };
+    if (filterBodyRef.current !== undefined) {
+      params = {query: {...params.query, ...filterBodyRef.current}};
     }
 
-    return baseUrl;
+    return {requestFunction: request, params};
   };
 
   const fetchData = async () => {
@@ -108,21 +107,24 @@ export default function SearchEnginePage(): React.JSX.Element {
     setErrorFetchingData(null);
 
     try {
-      let requestUrl;
-      const nextPageUrl = nextPageUrlRef.current;
-      if (nextPageUrl === undefined) {
-        requestUrl = getRequestUrl();
-      } else if (nextPageUrl === null) {
+      if (nextPageNumberRef.current === null) {
         return;
-      } else {
-        requestUrl = nextPageUrl;
       }
 
-      const response = await axiosPrivate.get(requestUrl);
-      if (response.status === StatusCode.OK) {
-        const data = response.data.results;
-        setDataItems(prevItems => [...prevItems, ...data]);
-        nextPageUrlRef.current = response.data.next;
+      const {requestFunction, params} = getRequestWithParams();
+      if (!requestFunction) {
+        return;
+      }
+
+      const {data: responseData, response} = await requestFunction(params);
+      if (response.status === StatusCode.OK && responseData) {
+        const data = responseData.results;
+        setDataItems(prevItems => [...prevItems, ...data] as typeof prevItems);
+        if (responseData.next !== null && responseData.next !== undefined) {
+          nextPageNumberRef.current = Number(new URL(responseData.next).searchParams.get("page")) || null;
+        } else {
+          nextPageNumberRef.current = null;
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -162,32 +164,20 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   const handleSearchSourceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     searchSourceRef.current = event.target.value;
-    filterUrlRef.current = undefined;
-    nextPageUrlRef.current = undefined;
+    filterBodyRef.current = undefined;
+    nextPageNumberRef.current = 1;
     setDataItems([]);
     fetchData();
   };
 
-  const getFilterUrl = (data: SearchFilterValidatorsType) => {
-    let filterUrl = "";
+  const getFilterBody = (data: SearchFilterValidatorsType) => {
+    let filterUrl = {};
     for (let [key, value] of Object.entries(data)) {
       if (value === "" || value === undefined) {
         continue;
       }
-      if (Array.isArray(value) && value.length > 0) {
-        for (let arrayValue of value) {
-          filterUrl += `&${key}=${arrayValue}`;
-        }
-        continue;
-      }
-      if (typeof value === 'object' && value instanceof Date) {
-        filterUrl += `&${key}=${value.getFullYear()}-${value.getMonth() + 1}-${value.getDate()}`;
-        continue;
-      }
-      filterUrl += `&${key}=${value}`;
+      filterUrl = {...filterUrl, [key]: value};
     }
-    filterUrl = new URLSearchParams(filterUrl).toString();
-    filterUrl = `?${filterUrl}`;
 
     return filterUrl;
   };
@@ -196,8 +186,8 @@ export default function SearchEnginePage(): React.JSX.Element {
     data: SearchFilterValidatorsType,
   ) => {
     setDataItems([]);
-    nextPageUrlRef.current = undefined;
-    filterUrlRef.current = getFilterUrl(data);
+    nextPageNumberRef.current = 1;
+    filterBodyRef.current = getFilterBody(data);
     fetchData();
   };
 
@@ -223,11 +213,11 @@ export default function SearchEnginePage(): React.JSX.Element {
         </div>
         <div>
           {(dataItems.length === 0 && <p>No results</p>) ||
-            (searchSourceRef.current === "games" && <GamesItems gamesItems={dataItems as GameType[]} />) ||
+            (searchSourceRef.current === "games" && <GamesItems gamesItems={dataItems as Game[]} />) ||
             (searchSourceRef.current === "companies" && (
-              <CompanyItems companyItems={dataItems as CompanyType[]} />
+              <CompanyItems companyItems={dataItems as Company[]} />
             )) ||
-            (searchSourceRef.current === "users" && <UsersItems usersItems={dataItems as UserType[]} />) || (
+            (searchSourceRef.current === "users" && <UsersItems usersItems={dataItems as User[]} />) || (
               <p>Select items to search for</p>
             )}
           {isLoading && <p>Loading ...</p>}

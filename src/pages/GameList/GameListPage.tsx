@@ -2,31 +2,20 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
-import { GameListType } from "../../models/GameList";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import StatusCode from "../../helpers/StatusCode";
 import IGDBImageSize, {getIGDBImageURL} from "../../helpers/IGDBIntegration";
-import { UserType } from "../../models/User";
+import { GameService, GameList, UserDetail, StatusEnum, UserService } from "../../client";
 
 export default function GameListPage(): React.JSX.Element {
-  const axiosPrivate = useAxiosPrivate();
   const { id } = useParams();
-  const [userDetails, setUserDetails] = React.useState<UserType | null>(null);
-  const [gameListItems, setGameListItems] = React.useState<GameListType[]>([]);
+  const [userDetails, setUserDetails] = React.useState<UserDetail | null>(null);
+  const [gameListItems, setGameListItems] = React.useState<GameList[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [errorFetchingData, setErrorFetchingData] = React.useState<Error | null>(null);
   const observerTarget = React.useRef(null);
-  const nextPageUrlRef = React.useRef(undefined);
-  const gamesStatusRef = React.useRef("all");
+  const nextPageNumberRef = React.useRef<number | null>(1);
+  const gamesStatusRef = React.useRef<StatusEnum | null>(null);
   const isLoadingRef = React.useRef(false);
-
-  const getGameListUrl = () => {
-    let baseUrl = `/game/game-lists/?user=${id}`;
-    if (gamesStatusRef.current !== "all") {
-      baseUrl += `&status=${gamesStatusRef.current}`;
-    }
-    return baseUrl;
-  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -34,21 +23,25 @@ export default function GameListPage(): React.JSX.Element {
     setErrorFetchingData(null);
 
     try {
-      let gameListUrl;
-      const nextPageUrl = nextPageUrlRef.current;
-      if (nextPageUrl === undefined) {
-        gameListUrl = getGameListUrl();
-      } else if (nextPageUrl === null) {
+      if (!id || nextPageNumberRef.current === null) {
         return;
-      } else {
-        gameListUrl = nextPageUrl;
       }
 
-      const response = await axiosPrivate.get(gameListUrl);
-      if (response.status === StatusCode.OK) {
-        const data = response.data.results;
+      const {data: responseData, response} = await GameService.gameGameListsList({
+        query: {
+          user: +id,
+          status: gamesStatusRef.current !== null ? [gamesStatusRef.current] : undefined,
+          page: nextPageNumberRef.current ?? 1,
+        }
+      });
+      if (response.status === StatusCode.OK && responseData) {
+        const data = responseData.results;
         setGameListItems(prevItems => [...prevItems, ...data]);
-        nextPageUrlRef.current = response.data.next;
+        if (responseData.next !== null && responseData.next !== undefined) {
+          nextPageNumberRef.current = Number(new URL(responseData.next).searchParams.get("page")) || null;
+        } else {
+          nextPageNumberRef.current = null;
+        }
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -62,9 +55,12 @@ export default function GameListPage(): React.JSX.Element {
 
   React.useEffect(() => {
     const fetchUserData = async () => {
-      const response = await axiosPrivate.get(`/user/users/${id}`);
-      if (response.status === 200) {
-        setUserDetails(response.data);
+      if (!id) {
+        return;
+      }
+      const {data: userData, response} = await UserService.userUsersRetrieve({path: {id: +id}});
+      if (response.status === 200 && userData) {
+        setUserDetails(userData);
       }
     };
 
@@ -98,9 +94,13 @@ export default function GameListPage(): React.JSX.Element {
   }, [observerTarget]);
 
   const handleGamesStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    gamesStatusRef.current = event.target.value;
+    if (event.target.value === "all") {
+      gamesStatusRef.current = null;
+    } else {
+      gamesStatusRef.current = event.target.value as StatusEnum;
+    }
     setGameListItems([]);
-    nextPageUrlRef.current = undefined;
+    nextPageNumberRef.current = 1;
     fetchData();
   };
 
@@ -112,11 +112,11 @@ export default function GameListPage(): React.JSX.Element {
         </p>
         <div className="join mx-auto" onChange={handleGamesStatusChange}>
           <input className="join-item btn min-w-32" value="all" type="radio" name="options" aria-label="ALL" />
-          <input className="join-item btn min-w-32" value="C" type="radio" name="options" aria-label="Completed" />
-          <input className="join-item btn min-w-32" value="PTP" type="radio" name="options" aria-label="Plan to Play" />
-          <input className="join-item btn min-w-32" value="P" type="radio" name="options" aria-label="Playing" />
-          <input className="join-item btn min-w-32" value="D" type="radio" name="options" aria-label="Dropped" />
-          <input className="join-item btn min-w-32" value="OH" type="radio" name="options" aria-label="On Hold" />
+          <input className="join-item btn min-w-32" value={StatusEnum.C} type="radio" name="options" aria-label="Completed" />
+          <input className="join-item btn min-w-32" value={StatusEnum.PTP} type="radio" name="options" aria-label="Plan to Play" />
+          <input className="join-item btn min-w-32" value={StatusEnum.P} type="radio" name="options" aria-label="Playing" />
+          <input className="join-item btn min-w-32" value={StatusEnum.D} type="radio" name="options" aria-label="Dropped" />
+          <input className="join-item btn min-w-32" value={StatusEnum.OH} type="radio" name="options" aria-label="On Hold" />
         </div>
         <div>
           <div className="grid grid-cols-7 gap-1">

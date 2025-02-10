@@ -4,31 +4,35 @@ import { useParams } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import GameReview from "../../components/GameReview/GameReview";
-import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { GameType } from "../../models/Game";
-import { GameReviewType } from "../../models/GameReview";
 import GameListActionsForm from "../../components/Forms/GameListActionsForm/GameListActionsForm";
 import StatusCode from "../../helpers/StatusCode";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import { GameService, Game, GameReview as GameReviewType } from "../../client";
+
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
-  const [gameDetails, setGameDetails] = React.useState<GameType | null>(null);
+  const [gameDetails, setGameDetails] = React.useState<Game | null>(null);
   const [gameReviewDetails, setGameReviewDetails] = React.useState<GameReviewType[] | null>(null);
-  const axiosPrivate = useAxiosPrivate();
 
   React.useEffect(() => {
     const fetchGameData = async () => {
-      const response = await axiosPrivate.get(`/game/games/${id}`);
-      if (response.status === StatusCode.OK) {
-        setGameDetails(response.data);
+      if (!id) {
+        return;
+      }
+      const {data, response} = await GameService.gameGamesRetrieve({path: {id: +id}})
+      if (response.status === StatusCode.OK && data) {
+        setGameDetails(data);
       }
     };
 
     const fetchGameReviewData = async () => {
-      const response = await axiosPrivate.get(`/game/game-reviews/?game=${id}`);
-      if (response.status === StatusCode.OK) {
-        setGameReviewDetails(response.data.results);
+      if (!id) {
+        return;
+      }
+      const {data, response} = await GameService.gameGameReviewsList({query: {game: +id}});
+      if (response.status === StatusCode.OK && data) {
+        setGameReviewDetails(data.results);
       }
     };
 
@@ -56,7 +60,7 @@ export default function GameDetailPage(): React.JSX.Element {
             </div>
             <div className="flex flex-row">
               <p className="font-bold">Release date:</p>
-              <p className="ml-2">{gameDetails?.release_date.toString()}</p>
+              <p className="ml-2">{gameDetails?.release_date ? gameDetails?.release_date.toString() : "---"}</p>
             </div>
             <div className="flex flex-row">
               <p className="font-bold">Publisher:</p>

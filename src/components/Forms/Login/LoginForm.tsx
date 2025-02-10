@@ -2,7 +2,7 @@ import * as React from "react";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import GoogleLogo from "../../../assets/logos/GoogleLogo.svg";
 import FacebookLogo from "../../../assets/logos/FacebookLogo.svg";
@@ -10,7 +10,8 @@ import XLogo from "../../../assets/logos/XLogo.svg";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
 import StatusCode from "../../../helpers/StatusCode";
-import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import { TokenService } from "../../../client";
+
 
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
@@ -25,7 +26,6 @@ const validationSchema = z.object({
 type ValidationSchema = z.infer<typeof validationSchema>;
 
 function LoginForm() {
-  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -43,17 +43,15 @@ function LoginForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const response = await axiosPrivate.post("/token/", {
-        email: data.email,
-        password: data.password,
+      const {data: tokenInfo, response} = await TokenService.tokenCreate({
+        body: {email: data.email, password: data.password, access: "", refresh: ""}
       });
       if (response.status !== StatusCode.OK) {
         alert("Error logging in");
         return;
       }
-      const responseData = response.data;
-      const token = responseData?.access;
-      const refreshToken = responseData?.refresh;
+      const token = tokenInfo?.access;
+      const refreshToken = tokenInfo?.refresh;
       localStorage.setItem("user", JSON.stringify({ email: data.email, token, refreshToken }));
       navigate(from, { replace: true });
     } catch (error) {
@@ -83,9 +81,9 @@ function LoginForm() {
         <CheckboxInput name="remember" id="remember" label="Remember me" />
         <h6 className="mt-2">
           Don&apos;t have an account?&nbsp;
-          <a href="/register" className="text-secondary-950">
+          <Link to="/register" className="text-secondary-950">
             Sign up
-          </a>
+          </Link>
         </h6>
         <button
           type="submit"
