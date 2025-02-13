@@ -9,7 +9,6 @@ import Constants from "../../../helpers/Constants";
 import StatusCode from "../../../helpers/StatusCode";
 import { UserService } from "../../../client";
 
-
 const validationSchema = z
   .object({
     username: z.string().min(1, { message: "Username is required" }),
@@ -44,7 +43,7 @@ function RegisterForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const {data: createData, response} = await UserService.userUsersCreate({
+      const { data: createData, response } = await UserService.userUsersCreate({
         body: {
           username: data.username,
           email: data.email,

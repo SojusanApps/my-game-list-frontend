@@ -9,7 +9,6 @@ import StatusCode from "../../helpers/StatusCode";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 import { GameService, Game, GameReview as GameReviewType } from "../../client";
 
-
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
   const [gameDetails, setGameDetails] = React.useState<Game | null>(null);
@@ -20,7 +19,7 @@ export default function GameDetailPage(): React.JSX.Element {
       if (!id) {
         return;
       }
-      const {data, response} = await GameService.gameGamesRetrieve({path: {id: +id}})
+      const { data, response } = await GameService.gameGamesRetrieve({ path: { id: +id } });
       if (response.status === StatusCode.OK && data) {
         setGameDetails(data);
       }
@@ -30,7 +29,7 @@ export default function GameDetailPage(): React.JSX.Element {
       if (!id) {
         return;
       }
-      const {data, response} = await GameService.gameGameReviewsList({query: {game: +id}});
+      const { data, response } = await GameService.gameGameReviewsList({ query: { game: +id } });
       if (response.status === StatusCode.OK && data) {
         setGameReviewDetails(data.results);
       }
@@ -45,7 +44,11 @@ export default function GameDetailPage(): React.JSX.Element {
       <div className="flex flex-col pr-1 gap-2">
         <img
           className="border-[1px] flex-none border-black mx-auto"
-          src={gameDetails?.cover_image_id ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}` : GameCoverImagePlaceholder}
+          src={
+            gameDetails?.cover_image_id
+              ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}`
+              : GameCoverImagePlaceholder
+          }
           alt={gameDetails?.title}
         />
         <div className="border-[1px] border-black p-2">

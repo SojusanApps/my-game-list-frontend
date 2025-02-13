@@ -12,7 +12,6 @@ import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
 import StatusCode from "../../../helpers/StatusCode";
 import { TokenService } from "../../../client";
 
-
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
   password: z
@@ -43,8 +42,8 @@ function LoginForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const {data: tokenInfo, response} = await TokenService.tokenCreate({
-        body: {email: data.email, password: data.password, access: "", refresh: ""}
+      const { data: tokenInfo, response } = await TokenService.tokenCreate({
+        body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
       if (response.status !== StatusCode.OK) {
         alert("Error logging in");

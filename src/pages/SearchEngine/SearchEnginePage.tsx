@@ -6,8 +6,12 @@ import StatusCode from "../../helpers/StatusCode";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "../../components/Filters/GameSearch/GameSearchFilter";
-import CompanySearchFilter, { ValidationSchema as CompanySearchFilterValidationSchema } from "../../components/Filters/CompanySearch/CompanySearchFilter";
-import UserSearchFilter, { ValidationSchema as UserSearchFilterValidationSchema } from "../../components/Filters/UserSearch/UserSearchFilter";
+import CompanySearchFilter, {
+  ValidationSchema as CompanySearchFilterValidationSchema,
+} from "../../components/Filters/CompanySearch/CompanySearchFilter";
+import UserSearchFilter, {
+  ValidationSchema as UserSearchFilterValidationSchema,
+} from "../../components/Filters/UserSearch/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 import { GameService, UserService, Game, Company, User } from "../../client";
 
@@ -20,7 +24,9 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): Re
             className="flex-none"
             name={gameItem.title}
             itemPageUrl={`/game/${gameItem.id}`}
-            itemCoverUrl={gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
+            itemCoverUrl={
+              gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
+            }
           />
         </div>
       ))}
@@ -28,9 +34,7 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): Re
   );
 }
 
-function CompanyItems({
-  companyItems,
-}: Readonly<{ companyItems: Company[] | null }>): React.JSX.Element {
+function CompanyItems({ companyItems }: Readonly<{ companyItems: Company[] | null }>): React.JSX.Element {
   return (
     <div className="grid grid-cols-7 gap-1">
       {companyItems?.map(companyItem => (
@@ -39,7 +43,11 @@ function CompanyItems({
             className="flex-none"
             name={companyItem.name}
             itemPageUrl={`/company/${companyItem.id}`}
-            itemCoverUrl={companyItem.company_logo_id ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374) : null}
+            itemCoverUrl={
+              companyItem.company_logo_id
+                ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)
+                : null
+            }
           />
         </div>
       ))}
@@ -72,14 +80,19 @@ export default function SearchEnginePage(): React.JSX.Element {
   const nextPageNumberRef = React.useRef<number | null>(1);
   const searchSourceRef = React.useRef("");
   const isLoadingRef = React.useRef(false);
-  const filterBodyRef = React.useRef<{} | undefined>(undefined);
-  type SearchFilterValidatorsType = GameSearchFilterValidationSchema | CompanySearchFilterValidationSchema | UserSearchFilterValidationSchema;
+  const filterBodyRef = React.useRef<object | undefined>(undefined);
+  type SearchFilterValidatorsType =
+    | GameSearchFilterValidationSchema
+    | CompanySearchFilterValidationSchema
+    | UserSearchFilterValidationSchema;
 
   const getRequestWithParams = () => {
     let request;
+    let explodeSerializer = undefined;
     switch (searchSourceRef.current) {
       case "games":
         request = GameService.gameGamesList;
+        explodeSerializer = true;
         break;
       case "companies":
         request = GameService.gameCompaniesList;
@@ -91,14 +104,24 @@ export default function SearchEnginePage(): React.JSX.Element {
         request = null;
     }
 
-    let params = {
-      query: {page: nextPageNumberRef.current ?? undefined}
+    const requestParams: { query: { page: number | undefined }; querySerializer?: object } = {
+      query: { page: nextPageNumberRef.current ?? undefined },
     };
-    if (filterBodyRef.current !== undefined) {
-      params = {query: {...params.query, ...filterBodyRef.current}};
+    if (filterBodyRef.current) {
+      requestParams.query = { ...requestParams.query, ...filterBodyRef.current };
+    }
+    if (explodeSerializer) {
+      // There is a problem with querySerializer, for some it is set to not explode the arguments
+      // in such cases it needs to be set manually
+      requestParams.querySerializer = {
+        array: {
+          explode: true,
+          style: "form",
+        },
+      };
     }
 
-    return {requestFunction: request, params};
+    return { requestFunction: request, requestParams };
   };
 
   const fetchData = async () => {
@@ -111,12 +134,12 @@ export default function SearchEnginePage(): React.JSX.Element {
         return;
       }
 
-      const {requestFunction, params} = getRequestWithParams();
+      const { requestFunction, requestParams } = getRequestWithParams();
       if (!requestFunction) {
         return;
       }
 
-      const {data: responseData, response} = await requestFunction(params);
+      const { data: responseData, response } = await requestFunction(requestParams);
       if (response.status === StatusCode.OK && responseData) {
         const data = responseData.results;
         setDataItems(prevItems => [...prevItems, ...data] as typeof prevItems);
@@ -172,19 +195,18 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   const getFilterBody = (data: SearchFilterValidatorsType) => {
     let filterUrl = {};
-    for (let [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(data)) {
       if (value === "" || value === undefined) {
         continue;
       }
-      filterUrl = {...filterUrl, [key]: value};
+      console.log(key, value);
+      filterUrl = { ...filterUrl, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
     }
 
     return filterUrl;
   };
 
-  const submitFilterHandler: SubmitHandler<SearchFilterValidatorsType> = async (
-    data: SearchFilterValidatorsType,
-  ) => {
+  const submitFilterHandler: SubmitHandler<SearchFilterValidatorsType> = async (data: SearchFilterValidatorsType) => {
     setDataItems([]);
     nextPageNumberRef.current = 1;
     filterBodyRef.current = getFilterBody(data);
@@ -208,15 +230,15 @@ export default function SearchEnginePage(): React.JSX.Element {
         <div className="border-[1px] border-background-300 rounded-xl p-2 bg-background-200">
           <p>Filters</p>
           {searchSourceRef.current === "games" && <GameSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
-          {searchSourceRef.current === "companies" && <CompanySearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
+          {searchSourceRef.current === "companies" && (
+            <CompanySearchFilter onSubmitHandlerCallback={submitFilterHandler} />
+          )}
           {searchSourceRef.current === "users" && <UserSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
         </div>
         <div>
           {(dataItems.length === 0 && <p>No results</p>) ||
             (searchSourceRef.current === "games" && <GamesItems gamesItems={dataItems as Game[]} />) ||
-            (searchSourceRef.current === "companies" && (
-              <CompanyItems companyItems={dataItems as Company[]} />
-            )) ||
+            (searchSourceRef.current === "companies" && <CompanyItems companyItems={dataItems as Company[]} />) ||
             (searchSourceRef.current === "users" && <UsersItems usersItems={dataItems as User[]} />) || (
               <p>Select items to search for</p>
             )}

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
 import StatusCode from "../../helpers/StatusCode";
-import IGDBImageSize, {getIGDBImageURL} from "../../helpers/IGDBIntegration";
+import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 import { GameService, GameList, UserDetail, StatusEnum, UserService } from "../../client";
 
 export default function GameListPage(): React.JSX.Element {
@@ -27,12 +27,12 @@ export default function GameListPage(): React.JSX.Element {
         return;
       }
 
-      const {data: responseData, response} = await GameService.gameGameListsList({
+      const { data: responseData, response } = await GameService.gameGameListsList({
         query: {
           user: +id,
           status: gamesStatusRef.current !== null ? [gamesStatusRef.current] : undefined,
           page: nextPageNumberRef.current ?? 1,
-        }
+        },
       });
       if (response.status === StatusCode.OK && responseData) {
         const data = responseData.results;
@@ -58,7 +58,7 @@ export default function GameListPage(): React.JSX.Element {
       if (!id) {
         return;
       }
-      const {data: userData, response} = await UserService.userUsersRetrieve({path: {id: +id}});
+      const { data: userData, response } = await UserService.userUsersRetrieve({ path: { id: +id } });
       if (response.status === 200 && userData) {
         setUserDetails(userData);
       }
@@ -112,11 +112,41 @@ export default function GameListPage(): React.JSX.Element {
         </p>
         <div className="join mx-auto" onChange={handleGamesStatusChange}>
           <input className="join-item btn min-w-32" value="all" type="radio" name="options" aria-label="ALL" />
-          <input className="join-item btn min-w-32" value={StatusEnum.C} type="radio" name="options" aria-label="Completed" />
-          <input className="join-item btn min-w-32" value={StatusEnum.PTP} type="radio" name="options" aria-label="Plan to Play" />
-          <input className="join-item btn min-w-32" value={StatusEnum.P} type="radio" name="options" aria-label="Playing" />
-          <input className="join-item btn min-w-32" value={StatusEnum.D} type="radio" name="options" aria-label="Dropped" />
-          <input className="join-item btn min-w-32" value={StatusEnum.OH} type="radio" name="options" aria-label="On Hold" />
+          <input
+            className="join-item btn min-w-32"
+            value={StatusEnum.C}
+            type="radio"
+            name="options"
+            aria-label="Completed"
+          />
+          <input
+            className="join-item btn min-w-32"
+            value={StatusEnum.PTP}
+            type="radio"
+            name="options"
+            aria-label="Plan to Play"
+          />
+          <input
+            className="join-item btn min-w-32"
+            value={StatusEnum.P}
+            type="radio"
+            name="options"
+            aria-label="Playing"
+          />
+          <input
+            className="join-item btn min-w-32"
+            value={StatusEnum.D}
+            type="radio"
+            name="options"
+            aria-label="Dropped"
+          />
+          <input
+            className="join-item btn min-w-32"
+            value={StatusEnum.OH}
+            type="radio"
+            name="options"
+            aria-label="On Hold"
+          />
         </div>
         <div>
           <div className="grid grid-cols-7 gap-1">

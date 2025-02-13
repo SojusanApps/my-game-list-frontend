@@ -10,6 +10,11 @@ import { TokenInfoType, LocalStorageUserType } from "../../../helpers/CustomType
 import { GameList, GameService, StatusEnum } from "../../../client";
 import code_to_value_mapping from "../../../helpers/GameListStatuses";
 
+const GameMediaSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
 const validationSchema = z.object({
   status: z.enum([StatusEnum.C, ...Object.values(StatusEnum).slice(1)]),
   score: z.coerce
@@ -18,6 +23,7 @@ const validationSchema = z.object({
     .max(10, { message: "The maximum score is 10" })
     .nullable()
     .optional(),
+  owned_on: z.array(GameMediaSchema).optional(),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -34,6 +40,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   const defaultValues: ValidationSchema = {
     status: StatusEnum.PTP,
     score: undefined,
+    owned_on: [],
   };
 
   const methods = useForm<ValidationSchema>({
@@ -50,7 +57,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         query: {
           game: +gameID,
           user: userInfo.user_id,
-        }
+        },
       });
       if (response.status === StatusCode.OK && data) {
         if (data.results.length === 0) {
@@ -60,6 +67,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         setGameListDetails(gameListDetailsData);
         methods.setValue("status", gameListDetailsData.status_code as StatusEnum);
         methods.setValue("score", gameListDetailsData.score);
+        methods.setValue("owned_on", gameListDetailsData.owned_on);
       }
     };
 
@@ -67,33 +75,33 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   }, []);
 
   const getGameListItem = async (gameListId: number) => {
-    const {data: gameListData, response: getResponse} = await GameService.gameGameListsRetrieve({
-      path: {id: gameListId}
+    const { data: gameListData, response: getResponse } = await GameService.gameGameListsRetrieve({
+      path: { id: gameListId },
     });
     if (getResponse.status !== StatusCode.OK || !gameListData) {
       alert("Error during fetching the game list");
       return;
     }
     return gameListData;
-  }
+  };
 
   const addGameListItem = async (data: ValidationSchema) => {
     if (!gameID) {
       return;
     }
-    const {data: gameListCreateData, response: createResponse} = await GameService.gameGameListsCreate({
+    const { data: gameListCreateData, response: createResponse } = await GameService.gameGameListsCreate({
       body: {
         status: data.status as StatusEnum,
         score: data.score,
         game: +gameID,
         user: userInfo.user_id,
-        owned_on: [],
-        // dummy data for the readonly fields to make typescript happy
+        owned_on: data.owned_on ? data.owned_on.map(media => media.id) : [],
+        // The following fields are required for typescript linting, they are not used in the request
         id: 0,
         created_at: "",
-        last_modified_at: ""
-      }
-    })
+        last_modified_at: "",
+      },
+    });
     if (createResponse.status !== StatusCode.CREATED || !gameListCreateData) {
       alert("Error during addition to the list");
       return;
@@ -108,12 +116,13 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   };
 
   const updateGameListItem = async (data: ValidationSchema) => {
-    const {data: updateData, response: updateResponse} = await GameService.gameGameListsPartialUpdate({
-      path: {id: gameListDetails!.id},
+    const { data: updateData, response: updateResponse } = await GameService.gameGameListsPartialUpdate({
+      path: { id: gameListDetails!.id },
       body: {
         status: data.status as StatusEnum,
-        score: data.score
-      }
+        score: data.score,
+        owned_on: data.owned_on ? data.owned_on.map(media => media.id) : [],
+      },
     });
     if (updateResponse.status !== StatusCode.OK || !updateData) {
       alert("Error during updating the game list");
@@ -141,7 +150,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   const handleRemove = () => {
     if (gameListDetails) {
       const removeGameListItem = async () => {
-        const {response} = await GameService.gameGameListsDestroy({path: {id: gameListDetails.id}});
+        const { response } = await GameService.gameGameListsDestroy({ path: { id: gameListDetails.id } });
         if (response.status !== StatusCode.NO_CONTENT) {
           alert("Error during removal from the list");
           return;

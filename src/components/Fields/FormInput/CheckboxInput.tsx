@@ -7,7 +7,7 @@ type CheckboxInputProps = {
   label: string;
 };
 
-function CheckboxInput({ id, name, label }: CheckboxInputProps) {
+function CheckboxInput({ id, name, label }: Readonly<CheckboxInputProps>) {
   const { control } = useFormContext();
 
   return (

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { jwtDecode } from "jwt-decode";
 
+import { Link } from "react-router-dom";
 import AppLogo from "../AppLogo/AppLogo";
 import { TokenInfoType, LocalStorageUserType } from "../../helpers/CustomTypes";
 import AvatarImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
@@ -36,7 +37,7 @@ function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>)
       </button>
       <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
         <li>
-          <a href={`/profile/${userInfo?.user_id}`}>
+          <Link to={`/profile/${userInfo?.user_id}`}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -52,11 +53,11 @@ function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>)
               />
             </svg>
             Profile
-          </a>
+          </Link>
         </li>
         <div className="divider my-0" />
         <li>
-          <a href="/settings">
+          <Link to="/settings">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -73,7 +74,7 @@ function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>)
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
             Account settings
-          </a>
+          </Link>
         </li>
         <li>
           <button type="button" onClick={handleClick}>
@@ -103,24 +104,24 @@ function NotLoggedInView(): React.JSX.Element {
   return (
     <>
       <div>
-        <a href="/register">
+        <Link to="/register">
           <button
             type="button"
             className="w-full px-5 py-1.5 bg-secondary-950 text-white font-medium capitalize rounded-xl shadow-md hover:bg-secondary-500 hover:shadow-lg focus:bg-secondary-400 focus:outline-hidden focus:ring-0 active:bg-secondary-700"
           >
             Register
           </button>
-        </a>
+        </Link>
       </div>
       <div>
-        <a href="/login">
+        <Link to="/login">
           <button
             type="button"
             className="w-full px-5 py-1.5 bg-primary-600 text-white font-medium capitalize rounded-xl shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-hidden focus:ring-0 active:bg-primary-700"
           >
             Login
           </button>
-        </a>
+        </Link>
       </div>
     </>
   );
@@ -141,13 +142,13 @@ function TopBar(): React.JSX.Element {
     <nav className="relative bg-primary-950 w-full z-20 top-0 left-0 border-b border-gray-500">
       <div className="max-w-screen-xl flex p-2 justify-between items-center mx-auto">
         <div className="flex items-center">
-          <a href="/home" className="flex items-center" aria-label="Game List logo">
+          <Link to="/home" className="flex items-center" aria-label="Game List logo">
             <AppLogo classNameSojusan="text-secondary-950 text-2xl" classNameGameList="text-white text-3xl" />
-          </a>
+          </Link>
         </div>
         <ul className="text-white font-bold hover:text-secondary-950 hover:cursor-pointer">
           <li>
-            <a href="/search">Search Engine</a>
+            <Link to="/search">Search Engine</Link>
           </li>
         </ul>
         <SearchBar />

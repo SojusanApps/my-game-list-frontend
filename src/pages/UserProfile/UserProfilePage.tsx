@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
@@ -13,7 +13,7 @@ export default function UserProfilePage(): React.JSX.Element {
   React.useEffect(() => {
     const fetchUserData = async () => {
       if (id !== undefined) {
-        const {data, response} = await UserService.userUsersRetrieve({path: {id: +id}});
+        const { data, response } = await UserService.userUsersRetrieve({ path: { id: +id } });
         if (response.status === 200) {
           setUserDetails(data);
         }
@@ -35,11 +35,11 @@ export default function UserProfilePage(): React.JSX.Element {
           <button type="button" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
             Add Friend
           </button>
-          <a href={`/game-list/${userDetails?.id}`} className="mx-auto">
+          <Link to={`/game-list/${userDetails?.id}`} className="mx-auto">
             <button type="button" className="bg-primary-950 text-white p-2 rounded-lg">
               Game List
             </button>
-          </a>
+          </Link>
           <div>
             <p className="font-bold">Information</p>
             <div className="flex flex-col border-[1px] border-black p-2 gap-1">
@@ -67,13 +67,13 @@ export default function UserProfilePage(): React.JSX.Element {
           </div>
           <div className="flex flex-row flex-wrap gap-1 pl-2">
             {userDetails?.friends.map(friend => (
-              <a key={friend.id} href={`${friend.id}`}>
+              <Link key={friend.id} to={`${friend.id}`}>
                 <img
                   className="w-[45px] h-[75px] border-[1px] border-black object-cover"
                   src={friend.gravatar_url ? `${friend.gravatar_url}` : GameCoverImagePlaceholder}
                   alt={`friend avatar ${friend.id}`}
                 />
-              </a>
+              </Link>
             ))}
           </div>
         </div>

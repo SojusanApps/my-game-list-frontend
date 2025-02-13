@@ -3,6 +3,7 @@ import * as React from "react";
 import PlaceholderImage from "../../assets/images/Image_Placeholder.svg";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 import { GameService, Game } from "../../client";
+import { Link } from "react-router-dom";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
@@ -20,10 +21,10 @@ export default function SearchBar(): React.JSX.Element {
   React.useEffect(() => {
     const fetchGamesData = async () => {
       if (search !== "") {
-        const {data, response} = await GameService.gameGamesList({
+        const { data, response } = await GameService.gameGamesList({
           query: {
             title: search,
-          }
+          },
         });
         if (response.status === 200 && data) {
           setGamesDetails(data.results.slice(0, 8));
@@ -87,14 +88,18 @@ export default function SearchBar(): React.JSX.Element {
             {gamesDetails?.length > 0 ? (
               gamesDetails?.map(game => (
                 <li key={game.id}>
-                  <a href={`/game/${game.id}`} className="group">
+                  <Link to={`/game/${game.id}`} className="group">
                     <img
                       className="w-[40px] h-[50px] group-hover:w-[70px] group-hover:h-[80px]"
-                      src={game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90) : PlaceholderImage}
+                      src={
+                        game.cover_image_id
+                          ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90)
+                          : PlaceholderImage
+                      }
                       alt={game.title}
                     />
                     <p>{game.title}</p>
-                  </a>
+                  </Link>
                 </li>
               ))
             ) : (

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage(): React.JSX.Element {
   return (
@@ -12,12 +13,12 @@ export default function HomePage(): React.JSX.Element {
           <br />
           Click the link below to return to familiar territory and continue your quest. Safe travels!
         </p>
-        <a
-          href="/home"
+        <Link
+          to="/home"
           className="inline-block bg-primary-900 text-white font-semibold px-6 py-3 rounded-md hover:bg-primary-950 transition-colors duration-300"
         >
           Go Back Home
-        </a>
+        </Link>
       </div>
     </div>
   );

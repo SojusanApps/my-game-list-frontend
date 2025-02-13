@@ -3,6 +3,7 @@ import * as React from "react";
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
 import { GameService, Game } from "../../client";
+import { Link } from "react-router-dom";
 
 export default function HomePage(): React.JSX.Element {
   const [highestRatedGames, setHighestRatedGames] = React.useState<Game[] | null>(null);
@@ -11,36 +12,33 @@ export default function HomePage(): React.JSX.Element {
 
   React.useEffect(() => {
     const fetchHighestRatedGames = async () => {
-      const {data, response} = await GameService.gameGamesList(
-        {
-          query: {
-            ordering: ["rank_position"],
-          }
-        });
+      const { data, response } = await GameService.gameGamesList({
+        query: {
+          ordering: ["rank_position"],
+        },
+      });
       if (response.status === 200 && data) {
         setHighestRatedGames(data.results.slice(0, 7));
       }
     };
 
     const fetchMostPopularGames = async () => {
-      const {data, response} = await GameService.gameGamesList(
-        {
-          query: {
-            ordering: ["popularity"],
-          }
-        });
+      const { data, response } = await GameService.gameGamesList({
+        query: {
+          ordering: ["popularity"],
+        },
+      });
       if (response.status === 200 && data) {
         setMostPopularGames(data.results.slice(0, 7));
       }
     };
 
     const fetchRecentlyAddedGames = async () => {
-      const {data, response} = await GameService.gameGamesList(
-        {
-          query: {
-            ordering: ["-created_at"],
-          }
-        });
+      const { data, response } = await GameService.gameGamesList({
+        query: {
+          ordering: ["-created_at"],
+        },
+      });
       if (response.status === 200 && data) {
         setRecentlyAddedGames(data.results.slice(0, 7));
       }
@@ -56,7 +54,9 @@ export default function HomePage(): React.JSX.Element {
       <div className="grid grid-rows-3 gap-8 max-w-[60%] mx-auto">
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Highest Rated Games &gt;</p>
-          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
+          <Link to="/search" className="font-bold text-secondary-950 text-xl text-right">
+            View More
+          </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
@@ -66,7 +66,11 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
                 />
               ))}
             </div>
@@ -74,7 +78,9 @@ export default function HomePage(): React.JSX.Element {
         </div>
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Most Popular Games &gt;</p>
-          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
+          <Link to="/search" className="font-bold text-secondary-950 text-xl text-right">
+            View More
+          </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
@@ -84,7 +90,11 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
                 />
               ))}
             </div>
@@ -92,7 +102,9 @@ export default function HomePage(): React.JSX.Element {
         </div>
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Recently Added Games &gt;</p>
-          <a href="/search" className="font-bold text-secondary-950 text-xl text-right">View More</a>
+          <Link to="/search" className="font-bold text-secondary-950 text-xl text-right">
+            View More
+          </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
@@ -102,7 +114,11 @@ export default function HomePage(): React.JSX.Element {
                   className="flex-none"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
-                  itemCoverUrl={game.cover_image_id !== undefined ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
                 />
               ))}
             </div>
