@@ -102,14 +102,14 @@ function RegisterForm() {
         />
         <button
           type="submit"
-          className="w-full mt-4 px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-none focus:ring-0 active:bg-slate-900"
+          className="w-full mt-4 px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-sm shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-hidden focus:ring-0 active:bg-slate-900"
         >
           REGISTER
         </button>
         <button
           type="button"
           onClick={onCancelHandler}
-          className="w-full mt-2 px-6 py-3 bg-primary-600 text-white font-medium uppercase rounded shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-none focus:ring-0 active:bg-primary-700"
+          className="w-full mt-2 px-6 py-3 bg-primary-600 text-white font-medium uppercase rounded-sm shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-hidden focus:ring-0 active:bg-primary-700"
         >
           CANCEL
         </button>

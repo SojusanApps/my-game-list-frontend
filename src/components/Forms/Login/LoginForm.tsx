@@ -87,7 +87,7 @@ function LoginForm() {
         </h6>
         <button
           type="submit"
-          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-none focus:ring-0 active:bg-slate-900"
+          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-hidden focus:ring-0 active:bg-slate-900"
         >
           LOGIN
         </button>

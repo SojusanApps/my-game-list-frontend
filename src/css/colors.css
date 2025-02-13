@@ -1,0 +1,67 @@
+@theme {
+    --color-primary-100: #93FAF5;
+    --color-primary-200: #84F2F5;
+    --color-primary-300: #75DAF5;
+    --color-primary-400: #66C2F6;
+    --color-primary-500: #57AAD7;
+    --color-primary-600: #4892C8;
+    --color-primary-700: #397AA9;
+    --color-primary-800: #2A628A;
+    --color-primary-900: #1B4A6B;
+    --color-primary-950: #0D324D;
+
+    --color-secondary-100: #FFFDFE;
+    --color-secondary-200: #FFF0F9;
+    --color-secondary-300: #FFE3DA;
+    --color-secondary-400: #FDD7BB;
+    --color-secondary-500: #FBCB9C;
+    --color-secondary-600: #F9BF7D;
+    --color-secondary-700: #F7B35E;
+    --color-secondary-800: #F5A73F;
+    --color-secondary-900: #F39B20;
+    --color-secondary-950: #F18F01;
+
+    --color-background-100: #FFFFFF;
+    --color-background-200: #F2F2F2;
+    --color-background-300: #E5E5E5;
+    --color-background-400: #D9D9D9;
+    --color-background-500: #CCCCCC;
+    --color-background-600: #BFBFBF;
+    --color-background-700: #B2B2B2;
+    --color-background-800: #A6A6A6;
+    --color-background-900: #999999;
+    --color-background-950: #8C8C8C;
+
+    --color-error-100: #FEFCFD;
+    --color-error-200: #FDF8FA;
+    --color-error-300: #FDF3F6;
+    --color-error-400: #FAEBF0;
+    --color-error-500: #F8C8CD;
+    --color-error-600: #F6A6AA;
+    --color-error-700: #F48387;
+    --color-error-800: #F26064;
+    --color-error-900: #F03E41;
+    --color-error-950: #ED1C24;
+
+    --color-success-100: #DAFFFF;
+    --color-success-200: #C6FFF6;
+    --color-success-300: #B2FFF0;
+    --color-success-400: #9EFFE9;
+    --color-success-500: #8AFFE3;
+    --color-success-600: #76FFDD;
+    --color-success-700: #62F1C7;
+    --color-success-800: #4EE2B1;
+    --color-success-900: #3AD39B;
+    --color-success-950: #26C485;
+
+    --color-text-100: #757575;
+    --color-text-200: #686868;
+    --color-text-300: #5B5B5B;
+    --color-text-400: #4E4E4E;
+    --color-text-500: #414141;
+    --color-text-600: #343434;
+    --color-text-700: #272727;
+    --color-text-800: #1A1A1A;
+    --color-text-900: #0D0D0D;
+    --color-text-950: #000000;
+}

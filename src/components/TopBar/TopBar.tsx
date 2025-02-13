@@ -106,7 +106,7 @@ function NotLoggedInView(): React.JSX.Element {
         <a href="/register">
           <button
             type="button"
-            className="w-full px-5 py-1.5 bg-secondary-950 text-white font-medium capitalize rounded-xl shadow-md hover:bg-secondary-500 hover:shadow-lg focus:bg-secondary-400 focus:outline-none focus:ring-0 active:bg-secondary-700"
+            className="w-full px-5 py-1.5 bg-secondary-950 text-white font-medium capitalize rounded-xl shadow-md hover:bg-secondary-500 hover:shadow-lg focus:bg-secondary-400 focus:outline-hidden focus:ring-0 active:bg-secondary-700"
           >
             Register
           </button>
@@ -116,7 +116,7 @@ function NotLoggedInView(): React.JSX.Element {
         <a href="/login">
           <button
             type="button"
-            className="w-full px-5 py-1.5 bg-primary-600 text-white font-medium capitalize rounded-xl shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-none focus:ring-0 active:bg-primary-700"
+            className="w-full px-5 py-1.5 bg-primary-600 text-white font-medium capitalize rounded-xl shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-hidden focus:ring-0 active:bg-primary-700"
           >
             Login
           </button>

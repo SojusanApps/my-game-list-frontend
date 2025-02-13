@@ -45,7 +45,7 @@ export default function SearchBar(): React.JSX.Element {
             <input
               type="text"
               placeholder="Search for the game..."
-              className="border border-gray-200 rounded-l-md py-1 px-2 pr-8 w-full"
+              className="border border-gray-200 bg-background-100 rounded-l-md py-1 px-2 pr-8 w-full"
               autoComplete="off"
               onChange={handleChange}
               value={search}
