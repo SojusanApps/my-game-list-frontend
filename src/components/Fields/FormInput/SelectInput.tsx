@@ -34,6 +34,10 @@ function SelectInput({
   } = useFormContext();
   const [selectedValue, setSelectedValue] = React.useState<string | undefined | string[]>(optionToSelect);
 
+  React.useEffect(() => {
+    setSelectedValue(optionToSelect);
+  }, [optionToSelect]);
+
   return (
     <Controller
       control={control}
@@ -71,7 +75,11 @@ function SelectInput({
               </option>
             ))}
           </select>
-          {!!errors[name] && <p className="text-red-500 text-xs italic">{`${errors[name]?.message}`}.</p>}
+          {!!errors[name] && (
+            <p className="text-red-500 text-xs italic">
+              {`${Array.isArray(errors[name]) ? errors[name][0]?.message : errors[name]?.message}`}.
+            </p>
+          )}
         </div>
       )}
     />

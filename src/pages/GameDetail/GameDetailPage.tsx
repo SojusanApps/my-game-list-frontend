@@ -5,39 +5,13 @@ import { useParams } from "react-router-dom";
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import GameReview from "../../components/GameReview/GameReview";
 import GameListActionsForm from "../../components/Forms/GameListActionsForm/GameListActionsForm";
-import StatusCode from "../../helpers/StatusCode";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { GameService, Game, GameReview as GameReviewType } from "../../client";
+import { useGetGameReviewsList, useGetGamesDetails } from "../../hooks/gameQueries";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
-  const [gameDetails, setGameDetails] = React.useState<Game | null>(null);
-  const [gameReviewDetails, setGameReviewDetails] = React.useState<GameReviewType[] | null>(null);
-
-  React.useEffect(() => {
-    const fetchGameData = async () => {
-      if (!id) {
-        return;
-      }
-      const { data, response } = await GameService.gameGamesRetrieve({ path: { id: +id } });
-      if (response.status === StatusCode.OK && data) {
-        setGameDetails(data);
-      }
-    };
-
-    const fetchGameReviewData = async () => {
-      if (!id) {
-        return;
-      }
-      const { data, response } = await GameService.gameGameReviewsList({ query: { game: +id } });
-      if (response.status === StatusCode.OK && data) {
-        setGameReviewDetails(data.results);
-      }
-    };
-
-    fetchGameData();
-    fetchGameReviewData();
-  }, []);
+  const { data: gameDetails } = useGetGamesDetails(+id!);
+  const { data: gameReviewItems } = useGetGameReviewsList({ game: +id! });
 
   return (
     <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] mx-auto">
@@ -129,7 +103,7 @@ export default function GameDetailPage(): React.JSX.Element {
         <p className="pl-2 pt-2">{gameDetails?.summary}</p>
         <p className="font-bold pt-1">Reviews</p>
         <div className="flex flex-col gap-3 divide-y-2">
-          {gameReviewDetails?.map(gameReview => (
+          {gameReviewItems?.results?.map(gameReview => (
             <GameReview key={gameReview.id} className="pl-2" gameReview={gameReview} />
           ))}
         </div>

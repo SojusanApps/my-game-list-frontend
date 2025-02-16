@@ -14,6 +14,12 @@ const customFetch = async (request: Request) => {
 
   let response = await fetch(request);
   if (response.status === StatusCode.UNAUTHORIZED) {
+    if (response.url.includes("token/refresh")) {
+      // If we are not authorized to refresh the token, we need to redirect to the login page
+      // to get a new pair of tokens, because the refresh token is invalid or expired.
+      window.location.href = "/login";
+    }
+
     const newAccessToken = await refresh();
     client.setConfig({ auth: () => newAccessToken });
     request.headers.set("Authorization", `Bearer ${newAccessToken}`);

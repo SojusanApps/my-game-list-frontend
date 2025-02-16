@@ -4,24 +4,11 @@ import { useParams, Link } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { UserService, UserDetail } from "../../client";
+import { useGetUserDetails } from "../../hooks/userQueries";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
-  const [userDetails, setUserDetails] = React.useState<UserDetail | undefined>(undefined);
-
-  React.useEffect(() => {
-    const fetchUserData = async () => {
-      if (id !== undefined) {
-        const { data, response } = await UserService.userUsersRetrieve({ path: { id: +id } });
-        if (response.status === 200) {
-          setUserDetails(data);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const { data: userDetails } = useGetUserDetails(+id!);
 
   return (
     <div>

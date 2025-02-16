@@ -6,8 +6,7 @@ import { z } from "zod";
 import SelectInput from "../../Fields/FormInput/SelectInput";
 import DateInput from "../../Fields/FormInput/DateInput";
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import StatusCode from "../../../helpers/StatusCode";
-import { GameService, CompanySimpleName, Genre, Platform } from "../../../client";
+import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "../../../hooks/gameQueries";
 
 const validationSchema = z
   .object({
@@ -43,50 +42,14 @@ export type ValidationSchema = z.infer<typeof validationSchema>;
 function GameSearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
-  const [companyList, setCompanyList] = React.useState<CompanySimpleName[]>([]);
-  const [genreList, setGenreList] = React.useState<Genre[]>([]);
-  const [platformList, setPlatformList] = React.useState<Platform[]>([]);
+  // TODO: There is too much companies to get all of them at once in a single select box.
+  // Maybe a feature with a single text field that will start to fetch data after 3 characters to autocomplete.
+  const { data: companyList, isLoading: isCompanyListLoading } = useGetCompaniesList();
+  const { data: genreList, isLoading: isGenreListLoading } = useGetGenresAllValues();
+  const { data: platformList, isLoading: isPlatformListLoading } = useGetPlatformsAllValues();
   const methods = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
-
-  React.useEffect(() => {
-    const fetchCompanyListData = async () => {
-      // TODO: There is too much companies to get all of them at once in a single select box.
-      // Maybe a feature with a single text field that will start to fetch data after 3 characters to autocomplete.
-      const { data, response } = await GameService.gameCompaniesList();
-      if (response.status === StatusCode.OK && data) {
-        if (data.results.length === 0) {
-          return;
-        }
-        setCompanyList(data.results);
-      }
-    };
-
-    const fetchGenreListData = async () => {
-      const { data, response } = await GameService.gameGenresAllValuesList();
-      if (response.status === StatusCode.OK && data) {
-        if (data.length === 0) {
-          return;
-        }
-        setGenreList(data);
-      }
-    };
-
-    const fetchPlatformListData = async () => {
-      const { data, response } = await GameService.gamePlatformsAllValuesList();
-      if (response.status === StatusCode.OK && data) {
-        if (data.length === 0) {
-          return;
-        }
-        setPlatformList(data);
-      }
-    };
-
-    fetchCompanyListData();
-    fetchGenreListData();
-    fetchPlatformListData();
-  }, []);
 
   return (
     <FormProvider {...methods}>
@@ -105,47 +68,63 @@ function GameSearchFilter({
             label="Release date before"
             placeholder="Select date ..."
           />
-          <SelectInput
-            placeholder="Select Developer ..."
-            id="developer"
-            label="Developer"
-            name="developer"
-            selectOptions={companyList.map(companyItem => ({
-              value: companyItem.name,
-              label: companyItem.name,
-            }))}
-          />
-          <SelectInput
-            placeholder="Select Publisher ..."
-            id="publisher"
-            label="Publisher"
-            name="publisher"
-            selectOptions={companyList.map(companyItem => ({
-              value: companyItem.name,
-              label: companyItem.name,
-            }))}
-          />
-          <SelectInput
-            placeholder="Select Platform ..."
-            id="platform"
-            label="Platform"
-            name="platform"
-            selectOptions={platformList.map(platformItem => ({
-              value: platformItem.name,
-              label: platformItem.name,
-            }))}
-          />
-          <SelectInput
-            placeholder="Select Genres ..."
-            id="genres"
-            label="Genres"
-            name="genres"
-            multiple
-            selectOptions={genreList.map(genreItem => ({
-              value: genreItem.name,
-              label: genreItem.name,
-            }))}
-          />
+          {isCompanyListLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <SelectInput
+              placeholder="Select Developer ..."
+              id="developer"
+              label="Developer"
+              name="developer"
+              selectOptions={companyList!.results.map(companyItem => ({
+                value: companyItem.name,
+                label: companyItem.name,
+              }))}
+            />
+          )}
+          {isCompanyListLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <SelectInput
+              placeholder="Select Publisher ..."
+              id="publisher"
+              label="Publisher"
+              name="publisher"
+              selectOptions={companyList!.results.map(companyItem => ({
+                value: companyItem.name,
+                label: companyItem.name,
+              }))}
+            />
+          )}
+          {isPlatformListLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <SelectInput
+              placeholder="Select Platform ..."
+              id="platform"
+              label="Platform"
+              name="platform"
+              selectOptions={platformList!.map(platformItem => ({
+                value: platformItem.name,
+                label: platformItem.name,
+              }))}
+            />
+          )}
+          {isGenreListLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <SelectInput
+              placeholder="Select Genres ..."
+              id="genres"
+              label="Genres"
+              name="genres"
+              multiple
+              selectOptions={genreList!.map(genreItem => ({
+                value: genreItem.name,
+                label: genreItem.name,
+              }))}
+            />
+          )}
           <SelectInput
             placeholder="Select ordering ..."
             id="ordering"

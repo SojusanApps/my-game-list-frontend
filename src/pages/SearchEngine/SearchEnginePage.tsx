@@ -1,8 +1,6 @@
 import * as React from "react";
 
-import { SubmitHandler } from "react-hook-form";
 import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
-import StatusCode from "../../helpers/StatusCode";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "../../components/Filters/GameSearch/GameSearchFilter";
@@ -13,7 +11,13 @@ import UserSearchFilter, {
   ValidationSchema as UserSearchFilterValidationSchema,
 } from "../../components/Filters/UserSearch/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { GameService, UserService, Game, Company, User } from "../../client";
+import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "../../client";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { getGamesList, getCompaniesList } from "../../services/api/game";
+import { getUserLists } from "../../services/api/user";
+import { useInView } from "react-intersection-observer";
+
+type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
 function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): React.JSX.Element {
   return (
@@ -72,179 +76,150 @@ function UsersItems({ usersItems }: Readonly<{ usersItems: User[] | null }>): Re
   );
 }
 
+function DisplaySearchResults({
+  selectedCategory,
+  searchResults,
+}: Readonly<{ selectedCategory: string | null; searchResults: InfiniteData<searchResultsType> }>): React.JSX.Element {
+  if (searchResults === undefined || searchResults.pages.length === 0) {
+    return <p>No results</p>;
+  }
+  switch (selectedCategory) {
+    case "games":
+      return <GamesItems gamesItems={searchResults.pages.map(page => page?.results).flat() as Game[]} />;
+    case "companies":
+      return <CompanyItems companyItems={searchResults.pages.map(page => page?.results).flat() as Company[]} />;
+    case "users":
+      return <UsersItems usersItems={searchResults.pages.map(page => page?.results).flat() as User[]} />;
+    default:
+      return <p>Select items to search for</p>;
+  }
+}
+
+type FetchItemsQueryKey = ["search-results", string, object];
+
+const fetchItems = async ({
+  pageParam = 1,
+  queryKey,
+}: {
+  pageParam?: number;
+  queryKey: (string | object | null)[];
+}) => {
+  const [, category, filters] = queryKey as FetchItemsQueryKey;
+  const query = { page: pageParam, ...filters };
+  let data;
+  switch (category) {
+    case "games":
+      data = await getGamesList(query);
+      break;
+    case "companies":
+      data = await getCompaniesList(query);
+      break;
+    case "users":
+      data = await getUserLists(query);
+      break;
+    default:
+      throw new Error("Invalid category");
+  }
+  return data;
+};
+
 export default function SearchEnginePage(): React.JSX.Element {
-  const [dataItems, setDataItems] = React.useState<Game[] | User[] | Company[]>([]);
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [errorFetchingData, setErrorFetchingData] = React.useState<Error | null>(null);
-  const observerTarget = React.useRef(null);
-  const nextPageNumberRef = React.useRef<number | null>(1);
-  const searchSourceRef = React.useRef("");
-  const isLoadingRef = React.useRef(false);
-  const filterBodyRef = React.useRef<object | undefined>(undefined);
+  const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+  const [filters, setFilters] = React.useState<object>({});
   type SearchFilterValidatorsType =
     | GameSearchFilterValidationSchema
     | CompanySearchFilterValidationSchema
     | UserSearchFilterValidationSchema;
 
-  const getRequestWithParams = () => {
-    let request;
-    let explodeSerializer = undefined;
-    switch (searchSourceRef.current) {
-      case "games":
-        request = GameService.gameGamesList;
-        explodeSerializer = true;
-        break;
-      case "companies":
-        request = GameService.gameCompaniesList;
-        break;
-      case "users":
-        request = UserService.userUsersList;
-        break;
-      default:
-        request = null;
-    }
-
-    const requestParams: { query: { page: number | undefined }; querySerializer?: object } = {
-      query: { page: nextPageNumberRef.current ?? undefined },
-    };
-    if (filterBodyRef.current) {
-      requestParams.query = { ...requestParams.query, ...filterBodyRef.current };
-    }
-    if (explodeSerializer) {
-      // There is a problem with querySerializer, for some it is set to not explode the arguments
-      // in such cases it needs to be set manually
-      requestParams.querySerializer = {
-        array: {
-          explode: true,
-          style: "form",
-        },
-      };
-    }
-
-    return { requestFunction: request, requestParams };
-  };
-
-  const fetchData = async () => {
-    setIsLoading(true);
-    isLoadingRef.current = true;
-    setErrorFetchingData(null);
-
-    try {
-      if (nextPageNumberRef.current === null) {
-        return;
+  const {
+    data: searchResults,
+    error: errorFetchingData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["search-results", selectedCategory, filters],
+    queryFn: fetchItems,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.next !== null && lastPage.next !== undefined) {
+        return lastPageParam + 1;
       }
-
-      const { requestFunction, requestParams } = getRequestWithParams();
-      if (!requestFunction) {
-        return;
-      }
-
-      const { data: responseData, response } = await requestFunction(requestParams);
-      if (response.status === StatusCode.OK && responseData) {
-        const data = responseData.results;
-        setDataItems(prevItems => [...prevItems, ...data] as typeof prevItems);
-        if (responseData.next !== null && responseData.next !== undefined) {
-          nextPageNumberRef.current = Number(new URL(responseData.next).searchParams.get("page")) || null;
-        } else {
-          nextPageNumberRef.current = null;
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorFetchingData(error);
-      }
-    } finally {
-      isLoadingRef.current = false;
-      setIsLoading(false);
-    }
-  };
+      return null;
+    },
+    enabled: !!selectedCategory,
+  });
 
   React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          // fetchData only when it is not already running
-          if (!isLoadingRef.current) {
-            fetchData();
-          }
-        }
-      },
-      {
-        threshold: 1,
-      },
-    );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    if (selectedCategory === null) {
+      return;
     }
+    if (hasNextPage && !isFetchingNextPage && !isLoading) {
+      fetchNextPage();
+    }
+  }, [inView, filters]);
 
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
-      }
-    };
-  }, [observerTarget]);
-
-  const handleSearchSourceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    searchSourceRef.current = event.target.value;
-    filterBodyRef.current = undefined;
-    nextPageNumberRef.current = 1;
-    setDataItems([]);
-    fetchData();
-  };
-
-  const getFilterBody = (data: SearchFilterValidatorsType) => {
-    let filterUrl = {};
+  const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
+    let filterData = {};
     for (const [key, value] of Object.entries(data)) {
       if (value === "" || value === undefined) {
         continue;
       }
-      console.log(key, value);
-      filterUrl = { ...filterUrl, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
+      filterData = { ...filterData, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
     }
 
-    return filterUrl;
-  };
-
-  const submitFilterHandler: SubmitHandler<SearchFilterValidatorsType> = async (data: SearchFilterValidatorsType) => {
-    setDataItems([]);
-    nextPageNumberRef.current = 1;
-    filterBodyRef.current = getFilterBody(data);
-    fetchData();
+    return filterData;
   };
 
   return (
     <div>
       <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
-        <div className="join mx-auto" onChange={handleSearchSourceChange}>
-          <input className="join-item btn min-w-32" value="games" type="radio" name="options" aria-label="Games" />
+        {/* <div className="join mx-auto" onChange={handleSearchSourceChange}> */}
+        <div className="join mx-auto">
+          <input
+            className="join-item btn min-w-32"
+            value="games"
+            type="radio"
+            name="options"
+            aria-label="Games"
+            onChange={() => setSelectedCategory("games")}
+          />
           <input
             className="join-item btn min-w-32"
             value="companies"
             type="radio"
             name="options"
             aria-label="Companies"
+            onChange={() => setSelectedCategory("companies")}
           />
-          <input className="join-item btn min-w-32" value="users" type="radio" name="options" aria-label="Users" />
+          <input
+            className="join-item btn min-w-32"
+            value="users"
+            type="radio"
+            name="options"
+            aria-label="Users"
+            onChange={() => setSelectedCategory("users")}
+          />
         </div>
         <div className="border-[1px] border-background-300 rounded-xl p-2 bg-background-200">
           <p>Filters</p>
-          {searchSourceRef.current === "games" && <GameSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
-          {searchSourceRef.current === "companies" && (
-            <CompanySearchFilter onSubmitHandlerCallback={submitFilterHandler} />
+          {selectedCategory === "games" && (
+            <GameSearchFilter onSubmitHandlerCallback={data => setFilters(prepareFiltersForRequest(data))} />
           )}
-          {searchSourceRef.current === "users" && <UserSearchFilter onSubmitHandlerCallback={submitFilterHandler} />}
+          {selectedCategory === "companies" && (
+            <CompanySearchFilter onSubmitHandlerCallback={data => setFilters(prepareFiltersForRequest(data))} />
+          )}
+          {selectedCategory === "users" && (
+            <UserSearchFilter onSubmitHandlerCallback={data => setFilters(prepareFiltersForRequest(data))} />
+          )}
         </div>
         <div>
-          {(dataItems.length === 0 && <p>No results</p>) ||
-            (searchSourceRef.current === "games" && <GamesItems gamesItems={dataItems as Game[]} />) ||
-            (searchSourceRef.current === "companies" && <CompanyItems companyItems={dataItems as Company[]} />) ||
-            (searchSourceRef.current === "users" && <UsersItems usersItems={dataItems as User[]} />) || (
-              <p>Select items to search for</p>
-            )}
-          {isLoading && <p>Loading ...</p>}
+          {searchResults && DisplaySearchResults({ selectedCategory, searchResults })}
+          {(isFetchingNextPage || isLoading) && <p>Loading ...</p>}
           {errorFetchingData && <p>Error: {errorFetchingData.message}</p>}
-          <div ref={observerTarget} />
+          {hasNextPage && <div ref={observerTargetRef} />}
         </div>
       </div>
     </div>

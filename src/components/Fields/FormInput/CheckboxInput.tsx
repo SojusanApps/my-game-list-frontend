@@ -17,8 +17,8 @@ function CheckboxInput({ id, name, label }: Readonly<CheckboxInputProps>) {
       defaultValue=""
       render={({ field }) => (
         <div className="flex mt-2 w-auto">
-          <input id={id} type="checkbox" {...field} className="form-control flex-none w-5 cursor-pointer" />
-          <label htmlFor={id} className="block text-text-800 text-sm font-bold ml-2 cursor-pointer">
+          <input id={id} type="checkbox" {...field} className="form-control flex-none w-5" />
+          <label htmlFor={id} className="block text-text-800 text-sm font-bold ml-2">
             {label}
           </label>
         </div>

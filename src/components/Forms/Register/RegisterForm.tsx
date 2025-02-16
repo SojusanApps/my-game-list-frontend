@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 import Constants from "../../../helpers/Constants";
-import StatusCode from "../../../helpers/StatusCode";
-import { UserService } from "../../../client";
+import { useCreateUser } from "../../../hooks/userQueries";
 
 const validationSchema = z
   .object({
@@ -35,6 +34,7 @@ function RegisterForm() {
     password: "",
     confirmPassword: "",
   };
+  const { mutate: createUser } = useCreateUser();
 
   const methods = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
@@ -42,22 +42,13 @@ function RegisterForm() {
   });
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
-    try {
-      const { data: createData, response } = await UserService.userUsersCreate({
-        body: {
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        },
-      });
-      if (response.status !== StatusCode.CREATED || !createData) {
-        throw new Error("Error creating user");
-      }
-      alert(createData);
-      navigate("/login", { replace: true });
-    } catch (error) {
-      alert(error);
-    }
+    createUser({
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    });
+    alert("User created successfully");
+    navigate("/login", { replace: true });
   };
 
   const onCancelHandler: React.MouseEventHandler = () => {

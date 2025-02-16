@@ -5,15 +5,16 @@ import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
 
 import SelectInput from "../../Fields/FormInput/SelectInput";
-import StatusCode from "../../../helpers/StatusCode";
 import { TokenInfoType, LocalStorageUserType } from "../../../helpers/CustomTypes";
-import { GameList, GameService, StatusEnum } from "../../../client";
+import { StatusEnum } from "../../../client";
 import code_to_value_mapping from "../../../helpers/GameListStatuses";
-
-const GameMediaSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-});
+import {
+  useCreateGameList,
+  useDeleteGameList,
+  useGetGameListByFilters,
+  useGetGameMediasAllValues,
+  usePartialUpdateGameList,
+} from "../../../hooks/gameQueries";
 
 const validationSchema = z.object({
   status: z.enum([StatusEnum.C, ...Object.values(StatusEnum).slice(1)]),
@@ -23,19 +24,25 @@ const validationSchema = z.object({
     .max(10, { message: "The maximum score is 10" })
     .nullable()
     .optional(),
-  owned_on: z.array(GameMediaSchema).optional(),
+  owned_on: z.array(z.string()).optional(),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
-  const [gameListDetails, setGameListDetails] = React.useState<GameList | null>(null);
-  let userInfo: TokenInfoType;
+  let userInfo: TokenInfoType | undefined = undefined;
   const localStorageUser = localStorage.getItem("user");
   if (localStorageUser) {
     const userInstance: LocalStorageUserType = JSON.parse(localStorageUser);
     userInfo = jwtDecode<TokenInfoType>(userInstance.token);
   }
+
+  const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();
+  const { data: gameListDetails } = useGetGameListByFilters({ game: +gameID!, user: userInfo?.user_id });
+
+  const { mutate: deleteGameListItem } = useDeleteGameList();
+  const { mutate: createGameListItem } = useCreateGameList();
+  const { mutate: partialUpdateGameListItem } = usePartialUpdateGameList();
 
   const defaultValues: ValidationSchema = {
     status: StatusEnum.PTP,
@@ -48,96 +55,43 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
     defaultValues,
   });
 
-  React.useEffect(() => {
-    const fetchGameListData = async () => {
-      if (!gameID) {
-        return;
-      }
-      const { data, response } = await GameService.gameGameListsList({
-        query: {
-          game: +gameID,
-          user: userInfo.user_id,
-        },
-      });
-      if (response.status === StatusCode.OK && data) {
-        if (data.results.length === 0) {
-          return;
-        }
-        const gameListDetailsData = data.results[0];
-        setGameListDetails(gameListDetailsData);
-        methods.setValue("status", gameListDetailsData.status_code as StatusEnum);
-        methods.setValue("score", gameListDetailsData.score);
-        methods.setValue("owned_on", gameListDetailsData.owned_on);
-      }
-    };
-
-    fetchGameListData();
-  }, []);
-
-  const getGameListItem = async (gameListId: number) => {
-    const { data: gameListData, response: getResponse } = await GameService.gameGameListsRetrieve({
-      path: { id: gameListId },
-    });
-    if (getResponse.status !== StatusCode.OK || !gameListData) {
-      alert("Error during fetching the game list");
-      return;
-    }
-    return gameListData;
-  };
-
   const addGameListItem = async (data: ValidationSchema) => {
-    if (!gameID) {
+    if (!gameID || !userInfo) {
+      alert("Error during creating the game list");
       return;
     }
-    const { data: gameListCreateData, response: createResponse } = await GameService.gameGameListsCreate({
-      body: {
-        status: data.status as StatusEnum,
-        score: data.score,
-        game: +gameID,
-        user: userInfo.user_id,
-        owned_on: data.owned_on ? data.owned_on.map(media => media.id) : [],
-        // The following fields are required for typescript linting, they are not used in the request
-        id: 0,
-        created_at: "",
-        last_modified_at: "",
-      },
+    createGameListItem({
+      status: data.status as StatusEnum,
+      score: data.score,
+      game: +gameID,
+      user: userInfo.user_id,
+      owned_on: data.owned_on ? data.owned_on.map(Number) : [],
+      // The following fields are required for typescript linting, they are not used in the request
+      id: 0,
+      created_at: "",
+      last_modified_at: "",
     });
-    if (createResponse.status !== StatusCode.CREATED || !gameListCreateData) {
-      alert("Error during addition to the list");
-      return;
-    }
-
-    const gameListData = await getGameListItem(gameListCreateData.id);
-    if (!gameListData) {
-      return;
-    }
-
-    setGameListDetails(gameListData);
   };
 
   const updateGameListItem = async (data: ValidationSchema) => {
-    const { data: updateData, response: updateResponse } = await GameService.gameGameListsPartialUpdate({
-      path: { id: gameListDetails!.id },
-      body: {
-        status: data.status as StatusEnum,
-        score: data.score,
-        owned_on: data.owned_on ? data.owned_on.map(media => media.id) : [],
-      },
-    });
-    if (updateResponse.status !== StatusCode.OK || !updateData) {
+    if (gameListDetails === undefined) {
       alert("Error during updating the game list");
       return;
     }
-    const gameListData = await getGameListItem(updateData.id);
-    if (!gameListData) {
-      return;
-    }
-    setGameListDetails(gameListData);
+
+    partialUpdateGameListItem({
+      id: gameListDetails.id,
+      body: {
+        status: data.status as StatusEnum,
+        score: data.score,
+        owned_on: data.owned_on ? data.owned_on.map(Number) : [],
+      },
+    });
   };
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      if (gameListDetails) {
+      if (gameListDetails?.id) {
         await updateGameListItem(data);
       } else {
         await addGameListItem(data);
@@ -148,17 +102,8 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   };
 
   const handleRemove = () => {
-    if (gameListDetails) {
-      const removeGameListItem = async () => {
-        const { response } = await GameService.gameGameListsDestroy({ path: { id: gameListDetails.id } });
-        if (response.status !== StatusCode.NO_CONTENT) {
-          alert("Error during removal from the list");
-          return;
-        }
-        setGameListDetails(null);
-      };
-
-      removeGameListItem();
+    if (gameListDetails?.id) {
+      deleteGameListItem(gameListDetails.id);
     }
   };
 
@@ -175,7 +120,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
             value: codeToValue.code,
             label: codeToValue.value,
           }))}
-          optionToSelect={gameListDetails?.status_code}
+          optionToSelect={gameListDetails?.id ? gameListDetails.status_code : undefined}
         />
         <SelectInput
           placeholder="Score ..."
@@ -186,9 +131,27 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
             value: score,
             label: score.toString(),
           }))}
-          optionToSelect={gameListDetails?.score?.toString()}
+          optionToSelect={gameListDetails?.id ? gameListDetails.score?.toString() : undefined}
         />
-        {gameListDetails ? (
+        {isGameMediaLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <SelectInput
+            placeholder="Owned on ..."
+            id="owned_on"
+            label="Owned on"
+            name="owned_on"
+            selectOptions={gameMediaList!.map(media => ({
+              value: media.id,
+              label: media.name,
+            }))}
+            optionToSelect={
+              gameListDetails?.id ? gameListDetails.owned_on.map(media => media.id.toString()).flat() : undefined
+            }
+            multiple
+          />
+        )}
+        {gameListDetails?.id ? (
           <div className="flex flex-row">
             <button type="submit" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
               Update
