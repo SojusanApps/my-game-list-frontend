@@ -5,14 +5,14 @@ import StatusCode from "../helpers/StatusCode";
 const useRefreshToken = () => {
   const refresh = async () => {
     const localStorageUser = localStorage.getItem("user");
-    let user : LocalStorageUserType | null = null;
+    let user: LocalStorageUserType | null = null;
     if (localStorageUser) {
       user = JSON.parse(localStorageUser);
       if (!user) {
         return;
       }
-      const {data, error, response} = await TokenService.tokenRefreshCreate({
-        body: {access: user.token, refresh: user.refreshToken}
+      const { data, error, response } = await TokenService.tokenRefreshCreate({
+        body: { access: user.token, refresh: user.refreshToken },
       });
       if (error || !data) {
         alert("Error refreshing token");

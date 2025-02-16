@@ -31,7 +31,7 @@ function DateInput({ id, name, required, label, placeholder }: Readonly<DateInpu
             type="date"
             placeholder={placeholder}
             {...field}
-            className="form-control w-full px-3 py-1.5 text-text-700 rounded-lg border border-solid border-gray-300 focus:border-yellow-600 focus:outline-none"
+            className="form-control w-full px-3 py-1.5 text-text-700 rounded-lg border border-solid border-gray-300 focus:border-yellow-600 focus:outline-hidden"
           />
           {!!errors[name] && <p className="text-red-500 text-xs italic">{`${errors[name]?.message}`}.</p>}
         </div>

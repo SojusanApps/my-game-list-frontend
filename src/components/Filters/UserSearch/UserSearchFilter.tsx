@@ -5,10 +5,9 @@ import { z } from "zod";
 
 import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
 
-const validationSchema = z
-  .object({
-    username: z.string().optional(),
-  });
+const validationSchema = z.object({
+  username: z.string().optional(),
+});
 
 export type ValidationSchema = z.infer<typeof validationSchema>;
 

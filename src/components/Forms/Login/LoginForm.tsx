@@ -12,7 +12,6 @@ import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
 import StatusCode from "../../../helpers/StatusCode";
 import { TokenService } from "../../../client";
 
-
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
   password: z
@@ -43,8 +42,8 @@ function LoginForm() {
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
     try {
-      const {data: tokenInfo, response} = await TokenService.tokenCreate({
-        body: {email: data.email, password: data.password, access: "", refresh: ""}
+      const { data: tokenInfo, response } = await TokenService.tokenCreate({
+        body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
       if (response.status !== StatusCode.OK) {
         alert("Error logging in");
@@ -87,7 +86,7 @@ function LoginForm() {
         </h6>
         <button
           type="submit"
-          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-none focus:ring-0 active:bg-slate-900"
+          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-hidden focus:ring-0 active:bg-slate-900"
         >
           LOGIN
         </button>
