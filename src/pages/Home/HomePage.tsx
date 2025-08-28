@@ -21,21 +21,19 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
-              {highestRatedGames?.results
-                .slice(0, 7)
-                .map(game => (
-                  <ItemOverlay
-                    key={game.id}
-                    className="flex-none"
-                    name={game.title}
-                    itemPageUrl={`/game/${game.id}`}
-                    itemCoverUrl={
-                      game.cover_image_id !== undefined
-                        ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-                        : null
-                    }
-                  />
-                ))}
+              {highestRatedGames?.results?.slice(0, 7).map(game => (
+                <ItemOverlay
+                  key={game.id}
+                  className="flex-none"
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -47,21 +45,19 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
-              {mostPopularGames?.results
-                .slice(0, 7)
-                .map(game => (
-                  <ItemOverlay
-                    key={game.id}
-                    className="flex-none"
-                    name={game.title}
-                    itemPageUrl={`/game/${game.id}`}
-                    itemCoverUrl={
-                      game.cover_image_id !== undefined
-                        ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-                        : null
-                    }
-                  />
-                ))}
+              {mostPopularGames?.results.slice(0, 7).map(game => (
+                <ItemOverlay
+                  key={game.id}
+                  className="flex-none"
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -73,21 +69,19 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="flex gap-1">
-              {recentlyAddedGames?.results
-                .slice(0, 7)
-                .map(game => (
-                  <ItemOverlay
-                    key={game.id}
-                    className="flex-none"
-                    name={game.title}
-                    itemPageUrl={`/game/${game.id}`}
-                    itemCoverUrl={
-                      game.cover_image_id !== undefined
-                        ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-                        : null
-                    }
-                  />
-                ))}
+              {recentlyAddedGames?.results.slice(0, 7).map(game => (
+                <ItemOverlay
+                  key={game.id}
+                  className="flex-none"
+                  name={game.title}
+                  itemPageUrl={`/game/${game.id}`}
+                  itemCoverUrl={
+                    game.cover_image_id !== undefined
+                      ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                      : null
+                  }
+                />
+              ))}
             </div>
           </div>
         </div>
