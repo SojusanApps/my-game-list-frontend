@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [
     {
       name: "@hey-api/sdk",
+      classStructure: "off",
+      classNameBuilder(name) {
+        return `${name}Service`;
+      },
       asClass: true,
     },
     {
