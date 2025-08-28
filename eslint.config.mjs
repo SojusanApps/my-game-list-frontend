@@ -53,18 +53,12 @@ export default [
       },
     },
     rules: {
-      indent: ["error", 2],
       "no-use-before-define": "off",
       "no-unused-vars": "off",
       "no-param-reassign": ["error", { props: false }],
       "no-undef": "off",
       "no-shadow": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          endOfLine: "auto",
-        },
-      ],
+      "prettier/prettier": "error",
       "global-require": "off",
       "@typescript-eslint/no-use-before-define": ["error"],
       "import/extensions": [
