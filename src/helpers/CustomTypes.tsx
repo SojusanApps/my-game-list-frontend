@@ -11,3 +11,14 @@ export type TokenInfoType = {
   token_type: string;
   user_id: number;
 };
+
+// TODO: Shouldn't it be a type on backend?
+export interface NotificationActor {
+  id: number;
+  str: string;
+  type: string;
+}
+
+export interface NotificationUnreadCount {
+  unread_count: number;
+}
