@@ -4,13 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
-import GoogleLogo from "../../../assets/logos/GoogleLogo.svg";
-import FacebookLogo from "../../../assets/logos/FacebookLogo.svg";
-import XLogo from "../../../assets/logos/XLogo.svg";
-import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import CheckboxInput from "../../Fields/FormInput/CheckboxInput";
-import StatusCode from "../../../helpers/StatusCode";
-import { TokenService } from "../../../client";
+import GoogleLogo from "@/assets/logos/GoogleLogo.svg";
+import FacebookLogo from "@/assets/logos/FacebookLogo.svg";
+import XLogo from "@/assets/logos/XLogo.svg";
+import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
+import CheckboxInput from "@/components/Fields/FormInput/CheckboxInput";
+import StatusCode from "@/helpers/StatusCode";
+import { TokenService } from "@/client";
 
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),

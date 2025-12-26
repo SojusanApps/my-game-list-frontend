@@ -1,6 +1,6 @@
-import { LocalStorageUserType } from "../helpers/CustomTypes";
-import { TokenService } from "../client";
-import StatusCode from "../helpers/StatusCode";
+import { LocalStorageUserType } from "@/helpers/CustomTypes";
+import { TokenService } from "@/client";
+import StatusCode from "@/helpers/StatusCode";
 
 const useRefreshToken = () => {
   const refresh = async () => {

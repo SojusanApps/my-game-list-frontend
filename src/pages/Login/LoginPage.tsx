@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import AppLogo from "../../components/AppLogo/AppLogo";
-import LoginForm from "../../components/Forms/Login/LoginForm";
+import AppLogo from "@/components/AppLogo/AppLogo";
+import LoginForm from "@/components/Forms/Login/LoginForm";
 
 export default function LoginPage(): React.JSX.Element {
   return (

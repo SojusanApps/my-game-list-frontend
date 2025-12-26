@@ -3,13 +3,15 @@ import { LocalStorageUserType } from "./helpers/CustomTypes";
 import StatusCode from "./helpers/StatusCode";
 import useRefreshToken from "./hooks/useRefreshToken";
 
-const customFetch = async (request: Request) => {
+const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const refresh = useRefreshToken();
   const localStorageUser = localStorage.getItem("user");
   let user: LocalStorageUserType | null = null;
   if (localStorageUser) {
     user = JSON.parse(localStorageUser);
   }
+
+  const request = new Request(input, init);
   request.headers.set("Authorization", `Bearer ${user?.token}`);
 
   let response = await fetch(request);

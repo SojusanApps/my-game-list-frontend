@@ -1,4 +1,4 @@
-import { createUser, getUserDetails, UserUsersCreateDataBody } from "../services/api/user";
+import { createUser, getUserDetails, UserUsersCreateDataBody } from "@/services/api/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetUserDetails = (id: number) => {

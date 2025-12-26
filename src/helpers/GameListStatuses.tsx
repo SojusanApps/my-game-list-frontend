@@ -1,4 +1,4 @@
-import { StatusEnum } from "../client";
+import { StatusEnum } from "@/client";
 
 export default function code_to_value_mapping() {
   return [

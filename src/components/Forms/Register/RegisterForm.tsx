@@ -4,9 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
-import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import Constants from "../../../helpers/Constants";
-import { useCreateUser } from "../../../hooks/userQueries";
+import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
+import Constants from "@/helpers/Constants";
+import { useCreateUser } from "@/hooks/userQueries";
 
 const validationSchema = z
   .object({

@@ -3,10 +3,10 @@ import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import SelectInput from "../../Fields/FormInput/SelectInput";
-import DateInput from "../../Fields/FormInput/DateInput";
-import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
-import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "../../../hooks/gameQueries";
+import SelectInput from "@/components/Fields/FormInput/SelectInput";
+import DateInput from "@/components/Fields/FormInput/DateInput";
+import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
+import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "@/hooks/gameQueries";
 
 const validationSchema = z
   .object({
@@ -37,7 +37,8 @@ const validationSchema = z
     },
   );
 
-export type ValidationSchema = z.infer<typeof validationSchema>;
+export type ValidationSchema = z.output<typeof validationSchema>;
+export type ValidationInput = z.input<typeof validationSchema>;
 
 function GameSearchFilter({
   onSubmitHandlerCallback,
@@ -47,7 +48,7 @@ function GameSearchFilter({
   const { data: companyList, isLoading: isCompanyListLoading } = useGetCompaniesList();
   const { data: genreList, isLoading: isGenreListLoading } = useGetGenresAllValues();
   const { data: platformList, isLoading: isPlatformListLoading } = useGetPlatformsAllValues();
-  const methods = useForm<ValidationSchema>({
+  const methods = useForm<ValidationInput, object, ValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
 

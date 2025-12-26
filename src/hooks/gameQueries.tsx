@@ -18,9 +18,9 @@ import {
   getCompaniesList,
   GameCompaniesListDataQuery,
   getPlatformsAllValues,
-} from "../services/api/game";
+} from "@/services/api/game";
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
-import { GameList, PaginatedGameList, PaginatedGameListList } from "../client";
+import { GameList, PaginatedGameList, PaginatedGameListList } from "@/client";
 
 export const useGetGenresAllValues = () => {
   return useQuery({
@@ -91,7 +91,7 @@ export const useGetGameListsList = (
 
 export const useGetGameListByFilters = (
   query?: GameGameListsListDataQuery,
-  options?: Omit<UseQueryOptions<unknown, Error, GameList>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<GameList | undefined, Error, GameList>, "queryKey" | "queryFn">,
 ) => {
   return useQuery({
     queryKey: ["game-lists", "by-filters", query],

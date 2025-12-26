@@ -1,5 +1,5 @@
-import { UserService, UserUsersCreateData, UserUsersListData } from "../../client";
-import StatusCode from "../../helpers/StatusCode";
+import { UserService, UserUsersCreateData, UserUsersListData } from "@/client";
+import StatusCode from "@/helpers/StatusCode";
 
 export type UserUsersListDataQuery = UserUsersListData["query"];
 

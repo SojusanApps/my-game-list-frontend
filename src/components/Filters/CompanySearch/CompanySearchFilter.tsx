@@ -3,7 +3,7 @@ import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import TextFieldInput from "../../Fields/FormInput/TextFieldInput";
+import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
 
 const validationSchema = z.object({
   name: z.string().optional(),

@@ -12,7 +12,7 @@ function AppLogo({
   return (
     <div className="flex-row text-center">
       <p className={`font-bold italic leading-none ${classNameSojusan}`}>Sojusan</p>
-      <p className={`mt-[-2px] font-bold leading-none ${classNameGameList}`}>GameList</p>
+      <p className={`-mt-0.5 font-bold leading-none ${classNameGameList}`}>GameList</p>
     </div>
   );
 }
