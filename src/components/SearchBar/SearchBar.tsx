@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import PlaceholderImage from "../../assets/images/Image_Placeholder.svg";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import PlaceholderImage from "@/assets/images/Image_Placeholder.svg";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
 import { Link } from "react-router-dom";
-import { useGetGamesList } from "../../hooks/gameQueries";
+import { useGetGamesList } from "@/hooks/gameQueries";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
@@ -59,13 +59,13 @@ export default function SearchBar(): React.JSX.Element {
           </div>
         </div>
         <div className="">
-          <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box min-w-64">
+          <ul className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box min-w-64">
             {gamesDetails?.results && gamesDetails?.results?.length > 0 ? (
               gamesDetails?.results.map(game => (
                 <li key={game.id}>
                   <Link to={`/game/${game.id}`} className="group">
                     <img
-                      className="w-[40px] h-[50px] group-hover:w-[70px] group-hover:h-[80px]"
+                      className="w-10 h-12.5 group-hover:w-17.5 group-hover:h-20"
                       src={
                         game.cover_image_id
                           ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90)

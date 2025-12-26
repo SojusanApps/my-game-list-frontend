@@ -2,10 +2,10 @@ import * as React from "react";
 import { jwtDecode } from "jwt-decode";
 
 import { Link } from "react-router-dom";
-import AppLogo from "../AppLogo/AppLogo";
-import { TokenInfoType, LocalStorageUserType } from "../../helpers/CustomTypes";
-import AvatarImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
-import SearchBar from "../SearchBar/SearchBar";
+import AppLogo from "@/components/AppLogo/AppLogo";
+import { TokenInfoType, LocalStorageUserType } from "@/helpers/CustomTypes";
+import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import SearchBar from "@/components/SearchBar/SearchBar";
 
 function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>): React.JSX.Element {
   const userInfo = jwtDecode<TokenInfoType>(user!.token);
@@ -35,7 +35,7 @@ function LoggedInView({ user }: Readonly<{ user: LocalStorageUserType | null }>)
           </div>
         </div>
       </button>
-      <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+      <ul className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52">
         <li>
           <Link to={`/profile/${userInfo?.user_id}`}>
             <svg
@@ -140,7 +140,7 @@ function TopBar(): React.JSX.Element {
 
   return (
     <nav className="relative bg-primary-950 w-full z-20 top-0 left-0 border-b border-gray-500">
-      <div className="max-w-screen-xl flex p-2 justify-between items-center mx-auto">
+      <div className="max-w-7xl flex p-2 justify-between items-center mx-auto">
         <div className="flex items-center">
           <Link to="/home" className="flex items-center" aria-label="Game List logo">
             <AppLogo classNameSojusan="text-secondary-950 text-2xl" classNameGameList="text-white text-3xl" />

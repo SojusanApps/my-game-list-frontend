@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useParams } from "react-router-dom";
 
-import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { StatusEnum } from "../../client";
-import { useGetUserDetails } from "../../hooks/userQueries";
+import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+import { StatusEnum } from "@/client";
+import { useGetUserDetails } from "@/hooks/userQueries";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getGameListsList } from "../../services/api/game";
+import { getGameListsList } from "@/services/api/game";
 import { useInView } from "react-intersection-observer";
 
 type FetchItemsQueryKey = ["game-list-results", string, StatusEnum];

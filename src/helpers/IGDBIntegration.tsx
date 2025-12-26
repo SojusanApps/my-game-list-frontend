@@ -1,4 +1,4 @@
-import ImagePlaceholder from "../assets/images/Image_Placeholder.svg";
+import ImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 
 export default abstract class IGDBImageSize {
   static readonly COVER_SMALL_90_128 = "cover_small";

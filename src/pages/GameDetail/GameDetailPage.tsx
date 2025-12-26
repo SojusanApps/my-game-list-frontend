@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { useParams } from "react-router-dom";
 
-import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
-import GameReview from "../../components/GameReview/GameReview";
-import GameListActionsForm from "../../components/Forms/GameListActionsForm/GameListActionsForm";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { useGetGameReviewsList, useGetGamesDetails } from "../../hooks/gameQueries";
+import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import GameReview from "@/components/GameReview/GameReview";
+import GameListActionsForm from "@/components/Forms/GameListActionsForm/GameListActionsForm";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+import { useGetGameReviewsList, useGetGamesDetails } from "@/hooks/gameQueries";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -17,7 +17,7 @@ export default function GameDetailPage(): React.JSX.Element {
     <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] mx-auto">
       <div className="flex flex-col pr-1 gap-2">
         <img
-          className="border-[1px] flex-none border-black mx-auto"
+          className="border flex-none border-black mx-auto"
           src={
             gameDetails?.cover_image_id
               ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}`
@@ -25,12 +25,12 @@ export default function GameDetailPage(): React.JSX.Element {
           }
           alt={gameDetails?.title}
         />
-        <div className="border-[1px] border-black p-2">
+        <div className="border border-black p-2">
           <GameListActionsForm gameID={id} />
         </div>
         <div>
           <p className="font-bold">Information</p>
-          <div className="flex flex-col border-[1px] border-black p-2 gap-1">
+          <div className="flex flex-col border border-black p-2 gap-1">
             <div className="flex flex-row">
               <p className="font-bold">IGDB ID:</p>
               <p className="ml-2">{gameDetails?.igdb_id}</p>
@@ -51,7 +51,7 @@ export default function GameDetailPage(): React.JSX.Element {
               <p className="font-bold">Genres:</p>
               <div className="flex flex-row flex-wrap gap-1">
                 {gameDetails?.genres.map(genre => (
-                  <p key={genre.id} className="bg-background-300 rounded-xl border-primary-950 border-[1px] p-1">
+                  <p key={genre.id} className="bg-background-300 rounded-xl border-primary-950 border p-1">
                     {genre.name}
                   </p>
                 ))}
@@ -62,7 +62,7 @@ export default function GameDetailPage(): React.JSX.Element {
               <div className="flex flex-row flex-wrap gap-1">
                 {gameDetails?.platforms.map(platform => (
                   <div key={platform.id} className="tooltip" data-tip={platform.name}>
-                    <p className="bg-background-300 rounded-xl border-primary-950 border-[1px] p-1">
+                    <p className="bg-background-300 rounded-xl border-primary-950 border p-1">
                       {platform.abbreviation !== "" ? platform.abbreviation : platform.name}
                     </p>
                   </div>

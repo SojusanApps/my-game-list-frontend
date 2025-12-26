@@ -1,20 +1,20 @@
 import * as React from "react";
 
-import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
+import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
-} from "../../components/Filters/GameSearch/GameSearchFilter";
+} from "@/components/Filters/GameSearch/GameSearchFilter";
 import CompanySearchFilter, {
   ValidationSchema as CompanySearchFilterValidationSchema,
-} from "../../components/Filters/CompanySearch/CompanySearchFilter";
+} from "@/components/Filters/CompanySearch/CompanySearchFilter";
 import UserSearchFilter, {
   ValidationSchema as UserSearchFilterValidationSchema,
-} from "../../components/Filters/UserSearch/UserSearchFilter";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "../../client";
+} from "@/components/Filters/UserSearch/UserSearchFilter";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "@/client";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { getGamesList, getCompaniesList } from "../../services/api/game";
-import { getUserLists } from "../../services/api/user";
+import { getGamesList, getCompaniesList } from "@/services/api/game";
+import { getUserLists } from "@/services/api/user";
 import { useInView } from "react-intersection-observer";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
@@ -203,7 +203,7 @@ export default function SearchEnginePage(): React.JSX.Element {
             onChange={() => setSelectedCategory("users")}
           />
         </div>
-        <div className="border-[1px] border-background-300 rounded-xl p-2 bg-background-200">
+        <div className="border border-background-300 rounded-xl p-2 bg-background-200">
           <p>Filters</p>
           {selectedCategory === "games" && (
             <GameSearchFilter onSubmitHandlerCallback={data => setFilters(prepareFiltersForRequest(data))} />

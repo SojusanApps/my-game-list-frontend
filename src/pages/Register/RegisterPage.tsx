@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import AppLogo from "../../components/AppLogo/AppLogo";
-import RegisterForm from "../../components/Forms/Register/RegisterForm";
+import AppLogo from "@/components/AppLogo/AppLogo";
+import RegisterForm from "@/components/Forms/Register/RegisterForm";
 
 export default function RegisterPage(): React.JSX.Element {
   return (

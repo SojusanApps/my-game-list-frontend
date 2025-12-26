@@ -4,20 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
 
-import SelectInput from "../../Fields/FormInput/SelectInput";
-import { TokenInfoType, LocalStorageUserType } from "../../../helpers/CustomTypes";
-import { StatusEnum } from "../../../client";
-import code_to_value_mapping from "../../../helpers/GameListStatuses";
+import SelectInput from "@/components/Fields/FormInput/SelectInput";
+import { TokenInfoType, LocalStorageUserType } from "@/helpers/CustomTypes";
+import { StatusEnum } from "@/client";
+import code_to_value_mapping from "@/helpers/GameListStatuses";
 import {
   useCreateGameList,
   useDeleteGameList,
   useGetGameListByFilters,
   useGetGameMediasAllValues,
   usePartialUpdateGameList,
-} from "../../../hooks/gameQueries";
+} from "@/hooks/gameQueries";
 
 const validationSchema = z.object({
-  status: z.enum([StatusEnum.C, ...Object.values(StatusEnum).slice(1)]),
+  status: z.enum(StatusEnum),
   score: z.coerce
     .number()
     .min(1, { message: "The minimum score is 1" })
@@ -27,7 +27,8 @@ const validationSchema = z.object({
   owned_on: z.array(z.string()).optional(),
 });
 
-type ValidationSchema = z.infer<typeof validationSchema>;
+type ValidationSchema = z.output<typeof validationSchema>;
+type ValidationInput = z.input<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
   let userInfo: TokenInfoType | undefined = undefined;
@@ -38,22 +39,36 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   }
 
   const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();
-  const { data: gameListDetails } = useGetGameListByFilters({ game: +gameID!, user: userInfo?.user_id });
+  const { data: gameListDetails } = useGetGameListByFilters(
+    gameID ? { game: +gameID, user: userInfo?.user_id } : undefined,
+  );
 
   const { mutate: deleteGameListItem } = useDeleteGameList();
   const { mutate: createGameListItem } = useCreateGameList();
   const { mutate: partialUpdateGameListItem } = usePartialUpdateGameList();
 
-  const defaultValues: ValidationSchema = {
+  const defaultValues: ValidationInput = {
     status: StatusEnum.PTP,
     score: undefined,
     owned_on: [],
   };
 
-  const methods = useForm<ValidationSchema>({
+  const methods = useForm<ValidationInput, object, ValidationSchema>({
     resolver: zodResolver(validationSchema),
     defaultValues,
   });
+
+  const { reset } = methods;
+
+  React.useEffect(() => {
+    if (gameListDetails?.id) {
+      reset({
+        status: gameListDetails.status_code as StatusEnum,
+        score: gameListDetails.score ?? undefined,
+        owned_on: gameListDetails.owned_on.map(media => media.id.toString()),
+      });
+    }
+  }, [gameListDetails, reset]);
 
   const addGameListItem = async (data: ValidationSchema) => {
     if (!gameID || !userInfo) {
@@ -61,20 +76,16 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
       return;
     }
     createGameListItem({
-      status: data.status as StatusEnum,
+      status: data.status,
       score: data.score,
       game: +gameID,
       user: userInfo.user_id,
-      owned_on: data.owned_on ? data.owned_on.map(Number) : [],
-      // The following fields are required for typescript linting, they are not used in the request
-      id: 0,
-      created_at: "",
-      last_modified_at: "",
+      owned_on: data.owned_on?.map(Number) ?? [],
     });
   };
 
   const updateGameListItem = async (data: ValidationSchema) => {
-    if (gameListDetails === undefined) {
+    if (!gameListDetails?.id) {
       alert("Error during updating the game list");
       return;
     }
@@ -82,9 +93,9 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
     partialUpdateGameListItem({
       id: gameListDetails.id,
       body: {
-        status: data.status as StatusEnum,
+        status: data.status,
         score: data.score,
-        owned_on: data.owned_on ? data.owned_on.map(Number) : [],
+        owned_on: data.owned_on?.map(Number) ?? [],
       },
     });
   };
@@ -141,12 +152,14 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
             id="owned_on"
             label="Owned on"
             name="owned_on"
-            selectOptions={gameMediaList!.map(media => ({
-              value: media.id,
-              label: media.name,
-            }))}
+            selectOptions={
+              gameMediaList?.map(media => ({
+                value: media.id,
+                label: media.name,
+              })) ?? []
+            }
             optionToSelect={
-              gameListDetails?.id ? gameListDetails.owned_on.map(media => media.id.toString()).flat() : undefined
+              gameListDetails?.id ? gameListDetails.owned_on.map(media => media.id.toString()) : undefined
             }
             multiple
           />

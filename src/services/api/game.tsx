@@ -1,4 +1,4 @@
-import StatusCode from "../../helpers/StatusCode";
+import StatusCode from "@/helpers/StatusCode";
 import {
   GameService,
   GameGamesListData,
@@ -7,7 +7,7 @@ import {
   GameGameReviewsListData,
   GameGameListsCreateData,
   GameGameListsPartialUpdateData,
-} from "../../client";
+} from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
 export type GameGamesListDataQuery = GameGamesListData["query"];
@@ -70,7 +70,7 @@ export const getGameListByFilters = async (query?: GameGameListsListDataQuery) =
   if (data.count > 1) {
     throw new Error("Error fetching game list by filters");
   }
-  return data.count === 0 ? {} : data.results[0];
+  return data.count === 0 ? undefined : data.results[0];
 };
 
 export const deleteGameList = async (id: number) => {

@@ -1,9 +1,9 @@
 import * as React from "react";
 
-import ItemOverlay from "../../components/ItemOverlay/ItemOverlay";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
+import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
 import { Link } from "react-router-dom";
-import { useGetGamesList } from "../../hooks/gameQueries";
+import { useGetGamesList } from "@/hooks/gameQueries";
 
 export default function HomePage(): React.JSX.Element {
   const { data: highestRatedGames } = useGetGamesList({ ordering: ["rank_position"] });

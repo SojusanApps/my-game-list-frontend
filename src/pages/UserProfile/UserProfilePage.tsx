@@ -2,9 +2,9 @@ import * as React from "react";
 
 import { useParams, Link } from "react-router-dom";
 
-import GameCoverImagePlaceholder from "../../assets/images/Image_Placeholder.svg";
-import IGDBImageSize, { getIGDBImageURL } from "../../helpers/IGDBIntegration";
-import { useGetUserDetails } from "../../hooks/userQueries";
+import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+import { useGetUserDetails } from "@/hooks/userQueries";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
@@ -15,7 +15,7 @@ export default function UserProfilePage(): React.JSX.Element {
       <div className="grid grid-cols-4 divide-x-2 divide-gray-300 max-w-[60%] mx-auto">
         <div className="flex flex-col pr-1 gap-2">
           <img
-            className="border-[1px] flex-none border-black mx-auto"
+            className="border flex-none border-black mx-auto"
             src={userDetails?.gravatar_url ? `${userDetails.gravatar_url}` : GameCoverImagePlaceholder}
             alt="User avatar"
           />
@@ -29,7 +29,7 @@ export default function UserProfilePage(): React.JSX.Element {
           </Link>
           <div>
             <p className="font-bold">Information</p>
-            <div className="flex flex-col border-[1px] border-black p-2 gap-1">
+            <div className="flex flex-col border border-black p-2 gap-1">
               <div className="flex flex-row">
                 <p className="font-bold">Joined:</p>
                 <p className="ml-2">
@@ -56,7 +56,7 @@ export default function UserProfilePage(): React.JSX.Element {
             {userDetails?.friends.map(friend => (
               <Link key={friend.id} to={`${friend.id}`}>
                 <img
-                  className="w-[45px] h-[75px] border-[1px] border-black object-cover"
+                  className="w-11.25 h-18.75 border border-black object-cover"
                   src={friend.gravatar_url ? `${friend.gravatar_url}` : GameCoverImagePlaceholder}
                   alt={`friend avatar ${friend.id}`}
                 />
@@ -112,7 +112,7 @@ export default function UserProfilePage(): React.JSX.Element {
             {userDetails?.latest_game_list_updates.map(latestGameListUpdate => (
               <div key={latestGameListUpdate.id} className="flex flex-row">
                 <img
-                  className="w-[45px] h-[75px] border-[1px] border-black object-cover"
+                  className="w-11.25 h-18.75 border border-black object-cover"
                   src={
                     latestGameListUpdate.game_cover_image
                       ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
