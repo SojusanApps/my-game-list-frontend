@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
 
-import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
+import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
@@ -127,7 +127,7 @@ export default function GameListPage(): React.JSX.Element {
               .map(gameListItem => (
                 <div key={gameListItem.id}>
                   <ItemOverlay
-                    className="flex-none"
+                    className="w-full"
                     name={gameListItem.title}
                     itemPageUrl={`/game/${gameListItem.game_id}`}
                     itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}

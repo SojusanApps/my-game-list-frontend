@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
-import { Button } from "@/components/Button/Button";
-import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
+import { Button } from "@/components/ui/Button";
+import TextFieldInput from "@/components/ui/Form/TextFieldInput";
 import Constants from "@/utils/Constants";
 import { useCreateUser } from "@/features/users/hooks/userQueries";
 

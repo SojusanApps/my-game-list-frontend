@@ -3,9 +3,9 @@ import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import SelectInput from "@/components/Fields/FormInput/SelectInput";
-import DateInput from "@/components/Fields/FormInput/DateInput";
-import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
+import SelectInput from "@/components/ui/Form/SelectInput";
+import DateInput from "@/components/ui/Form/DateInput";
+import TextFieldInput from "@/components/ui/Form/TextFieldInput";
 import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "../hooks/gameQueries";
 
 const validationSchema = z

@@ -6,12 +6,12 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
-import { Button } from "@/components/Button/Button";
+import { Button } from "@/components/ui/Button";
 import GoogleLogo from "@/assets/logos/GoogleLogo.svg";
 import FacebookLogo from "@/assets/logos/FacebookLogo.svg";
 import XLogo from "@/assets/logos/XLogo.svg";
-import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
-import CheckboxInput from "@/components/Fields/FormInput/CheckboxInput";
+import TextFieldInput from "@/components/ui/Form/TextFieldInput";
+import CheckboxInput from "@/components/ui/Form/CheckboxInput";
 import StatusCode from "@/utils/StatusCode";
 import { TokenService } from "@/client";
 import { useAuth } from "@/features/auth/context/AuthProvider";

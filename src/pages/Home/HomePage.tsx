@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
+import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { Link } from "react-router-dom";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
@@ -20,11 +20,11 @@ export default function HomePage(): React.JSX.Element {
           </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <div className="flex gap-1">
+            <div className="grid grid-cols-7 gap-1">
               {highestRatedGames?.results?.slice(0, 7).map(game => (
                 <ItemOverlay
                   key={game.id}
-                  className="flex-none"
+                  className="w-full"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
                   itemCoverUrl={
@@ -44,11 +44,11 @@ export default function HomePage(): React.JSX.Element {
           </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <div className="flex gap-1">
+            <div className="grid grid-cols-7 gap-1">
               {mostPopularGames?.results.slice(0, 7).map(game => (
                 <ItemOverlay
                   key={game.id}
-                  className="flex-none"
+                  className="w-full"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
                   itemCoverUrl={
@@ -68,11 +68,11 @@ export default function HomePage(): React.JSX.Element {
           </Link>
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
-            <div className="flex gap-1">
+            <div className="grid grid-cols-7 gap-1">
               {recentlyAddedGames?.results.slice(0, 7).map(game => (
                 <ItemOverlay
                   key={game.id}
-                  className="flex-none"
+                  className="w-full"
                   name={game.title}
                   itemPageUrl={`/game/${game.id}`}
                   itemCoverUrl={

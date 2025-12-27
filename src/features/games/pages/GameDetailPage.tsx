@@ -9,7 +9,7 @@ import GameInformation from "../components/GameInformation";
 import GameStatistics from "../components/GameStatistics";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGameReviewsList, useGetGamesDetails } from "../hooks/gameQueries";
-import { Skeleton } from "@/components/Skeleton/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { idSchema } from "@/lib/validation";
 
 export default function GameDetailPage(): React.JSX.Element {

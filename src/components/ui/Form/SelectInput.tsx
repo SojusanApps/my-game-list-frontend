@@ -1,6 +1,8 @@
 import * as React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { cn } from "@/utils/cn";
+import { Label } from "./Label";
+import { FormError } from "./FormError";
 
 type SelectOption = {
   value: string | number;
@@ -41,6 +43,9 @@ function SelectInput({
     setSelectedValue(optionToSelect);
   }, [optionToSelect]);
 
+  const error = errors[name];
+  const errorMessage = (Array.isArray(error) ? error[0]?.message : error?.message) as string | undefined;
+
   return (
     <Controller
       control={control}
@@ -48,10 +53,9 @@ function SelectInput({
       defaultValue={optionToSelect}
       render={({ field }) => (
         <div className={className}>
-          <label htmlFor={id} className="block text-text-700 text-sm font-bold mb-2">
+          <Label htmlFor={id} required={required}>
             {label}
-            {required === true ? "*" : ""}
-          </label>
+          </Label>
           <select
             id={id}
             {...field}
@@ -66,7 +70,10 @@ function SelectInput({
                 setSelectedValue(event.target.value);
               }
             }}
-            className={cn("form-control select select-sm select-bordered w-full", errors[name] && "select-error")}
+            className={cn(
+              "form-control select select-sm select-bordered w-full",
+              errorMessage && "select-error border-red-500",
+            )}
             multiple={multiple}
           >
             <option disabled value="">
@@ -78,11 +85,7 @@ function SelectInput({
               </option>
             ))}
           </select>
-          {!!errors[name] && (
-            <p className="text-red-500 text-xs italic">
-              {`${Array.isArray(errors[name]) ? errors[name][0]?.message : errors[name]?.message}`}.
-            </p>
-          )}
+          <FormError message={errorMessage} />
         </div>
       )}
     />

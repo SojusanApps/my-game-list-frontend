@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
+import ItemOverlay from "@/components/ui/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "@/features/games/components/GameSearchFilter";
@@ -25,7 +25,7 @@ function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): Re
       {gamesItems?.map(gameItem => (
         <div key={gameItem.id}>
           <ItemOverlay
-            className="flex-none"
+            className="w-full"
             name={gameItem.title}
             itemPageUrl={`/game/${gameItem.id}`}
             itemCoverUrl={
@@ -44,7 +44,7 @@ function CompanyItems({ companyItems }: Readonly<{ companyItems: Company[] | nul
       {companyItems?.map(companyItem => (
         <div key={companyItem.id}>
           <ItemOverlay
-            className="flex-none"
+            className="w-full"
             name={companyItem.name}
             itemPageUrl={`/company/${companyItem.id}`}
             itemCoverUrl={
@@ -65,7 +65,7 @@ function UsersItems({ usersItems }: Readonly<{ usersItems: User[] | null }>): Re
       {usersItems?.map(userItem => (
         <div key={userItem.id}>
           <ItemOverlay
-            className="flex-none"
+            className="w-full"
             name={userItem.username}
             itemPageUrl={`/profile/${userItem.id}`}
             itemCoverUrl={userItem.gravatar_url}

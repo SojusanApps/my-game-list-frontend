@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 
 import toast from "react-hot-toast";
 
-import SelectInput from "@/components/Fields/FormInput/SelectInput";
+import SelectInput from "@/components/ui/Form/SelectInput";
 import { TokenInfoType } from "@/types";
 import { StatusEnum } from "@/client";
 import code_to_value_mapping from "../utils/GameListStatuses";

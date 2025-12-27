@@ -11,7 +11,7 @@ import UserProfileInformation from "../components/UserProfileInformation";
 import UserFriendsList from "../components/UserFriendsList";
 import UserStatistics from "../components/UserStatistics";
 import GameListUpdate from "../components/GameListUpdate";
-import { Skeleton } from "@/components/Skeleton/Skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { idSchema } from "@/lib/validation";
 
 export default function UserProfilePage(): React.JSX.Element {

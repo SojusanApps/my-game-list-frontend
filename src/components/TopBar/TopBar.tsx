@@ -2,7 +2,7 @@ import * as React from "react";
 import { jwtDecode } from "jwt-decode";
 
 import { Link } from "react-router-dom";
-import AppLogo from "@/components/AppLogo/AppLogo";
+import AppLogo from "@/components/ui/AppLogo";
 import { TokenInfoType, LocalStorageUserType } from "@/types";
 import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import SearchBar from "@/components/SearchBar/SearchBar";
