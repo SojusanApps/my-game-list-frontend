@@ -8,7 +8,16 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 clientSetup();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1_000 * 60 * 5, // 5 minutes
+      gcTime: 1_000 * 60 * 10, // 10 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 const rootElement = document.getElementById("root") as HTMLElement;
 if (!rootElement) {
   throw new Error("Failed to find root element");
