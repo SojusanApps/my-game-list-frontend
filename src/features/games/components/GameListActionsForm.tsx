@@ -10,6 +10,7 @@ import SelectInput from "@/components/ui/Form/SelectInput";
 import { TokenInfoType } from "@/types";
 import { StatusEnum } from "@/client";
 import code_to_value_mapping from "../utils/GameListStatuses";
+import { idSchema } from "@/lib/validation";
 import {
   useCreateGameList,
   useDeleteGameList,
@@ -35,6 +36,9 @@ type ValidationInput = z.input<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
   const { user } = useAuth();
+
+  const parsedGameId = idSchema.safeParse(gameID);
+
   let userInfo: TokenInfoType | undefined = undefined;
   if (user) {
     userInfo = jwtDecode<TokenInfoType>(user.token);
@@ -42,8 +46,8 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
 
   const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();
   const { data: gameListDetails } = useGetGameListByFilters(
-    gameID && userInfo ? { game: +gameID, user: userInfo.user_id } : undefined,
-    { enabled: !!gameID && !!userInfo },
+    parsedGameId.success && userInfo ? { game: parsedGameId.data, user: userInfo.user_id } : undefined,
+    { enabled: parsedGameId.success && !!userInfo },
   );
 
   const { mutate: deleteGameListItem } = useDeleteGameList();
@@ -74,7 +78,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   }, [gameListDetails, reset]);
 
   const addGameListItem = async (data: ValidationSchema) => {
-    if (!gameID || !userInfo) {
+    if (!parsedGameId.success || !userInfo) {
       toast.error("Error during creating the game list");
       return;
     }
@@ -82,7 +86,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
       {
         status: data.status,
         score: data.score,
-        game: +gameID,
+        game: parsedGameId.data,
         user: userInfo.user_id,
         owned_on: data.owned_on?.map(Number) ?? [],
       },

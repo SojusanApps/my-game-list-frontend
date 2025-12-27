@@ -14,7 +14,7 @@ import { useCreateUser } from "@/features/users/hooks/userQueries";
 const validationSchema = z
   .object({
     username: z.string().min(1, { message: "Username is required" }),
-    email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
+    email: z.email({ message: "Please enter a valid email address" }).min(1, { message: "Email is required" }),
     password: z
       .string()
       .min(1, "Password is required")

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -11,6 +11,7 @@ import {
   NotificationDestroyDataPath,
 } from "../api/notification";
 import { notificationKeys } from "@/lib/queryKeys";
+import { useAppMutation } from "@/hooks/useAppMutation";
 
 export const useGetNotifications = (query?: NotificationListDataQuery) => {
   return useQuery({
@@ -30,7 +31,7 @@ export const useGetUnreadNotificationCount = () => {
 export const useMarkNotificationAsRead = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (path: NotificationMarkAsReadCreateDataPath) => markNotificationAsRead(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -43,7 +44,7 @@ export const useMarkNotificationAsRead = () => {
 export const useMarkAllNotificationsAsRead = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: markAllNotificationsAsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -56,7 +57,7 @@ export const useMarkAllNotificationsAsRead = () => {
 export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (path: NotificationDestroyDataPath) => deleteNotification(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -69,7 +70,7 @@ export const useDeleteNotification = () => {
 export const useDeleteAllReadNotifications = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: deleteAllReadNotifications,
     onSuccess: () => {
       queryClient.invalidateQueries({

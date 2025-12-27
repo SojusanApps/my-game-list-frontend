@@ -17,7 +17,7 @@ import { TokenService } from "@/client";
 import { useAuth } from "@/features/auth/context/AuthProvider";
 
 const validationSchema = z.object({
-  email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
+  email: z.email({ message: "Please enter a valid email address" }).min(1, { message: "Email is required" }),
   password: z
     .string()
     .min(1, "Password is required")

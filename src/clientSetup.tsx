@@ -1,6 +1,7 @@
 import { client } from "./client/client.gen";
 import StatusCode from "./utils/StatusCode";
 import { getStoredUser, refreshToken, clearStoredUser } from "./features/auth/utils/authUtils";
+import { env } from "./config/env";
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const user = getStoredUser();
@@ -36,7 +37,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
 
 export default function clientSetup() {
   client.setConfig({
-    baseUrl: import.meta.env.VITE_API_URL,
+    baseUrl: env.VITE_API_URL,
     fetch: customFetch,
     auth: () => {
       const user = getStoredUser();

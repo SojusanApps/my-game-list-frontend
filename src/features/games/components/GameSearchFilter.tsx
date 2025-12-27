@@ -8,6 +8,15 @@ import DateInput from "@/components/ui/Form/DateInput";
 import TextFieldInput from "@/components/ui/Form/TextFieldInput";
 import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "../hooks/gameQueries";
 
+const ORDERING_OPTIONS = [
+  "-created_at",
+  "created_at",
+  "-rank_position",
+  "rank_position",
+  "-popularity",
+  "popularity",
+] as const;
+
 const validationSchema = z
   .object({
     title: z.string().optional(),
@@ -17,9 +26,7 @@ const validationSchema = z
     developer: z.string().optional(),
     platform: z.string().optional(),
     genres: z.string().array().optional(),
-    ordering: z
-      .enum(["-created_at", "created_at", "-rank_position", "rank_position", "-popularity", "popularity"])
-      .optional(),
+    ordering: z.enum(ORDERING_OPTIONS).optional(),
   })
   .refine(
     data => {

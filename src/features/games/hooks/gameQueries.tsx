@@ -19,9 +19,10 @@ import {
   GameCompaniesListDataQuery,
   getPlatformsAllValues,
 } from "../api/game";
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { GameList, PaginatedGameList, PaginatedGameListList } from "@/client";
 import { gameKeys, gameListKeys, gameReviewKeys } from "@/lib/queryKeys";
+import { useAppMutation } from "@/hooks/useAppMutation";
 
 export const useGetGenresAllValues = () => {
   return useQuery({
@@ -107,7 +108,7 @@ export const useGetGameListByFilters = (
 export const useCreateGameList = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (body: GameListCreateDataBody) => createGameList(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -120,7 +121,7 @@ export const useCreateGameList = () => {
 export const usePartialUpdateGameList = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: ({ id, body }: { id: number; body: GameListPartialUpdateDataBody }) => partialUpdateGameList(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -133,7 +134,7 @@ export const usePartialUpdateGameList = () => {
 export const useDeleteGameList = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (id: number) => deleteGameList(id),
     onSuccess: () => {
       queryClient.invalidateQueries({

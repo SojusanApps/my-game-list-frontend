@@ -12,11 +12,11 @@ import UserSearchFilter, {
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "@/client";
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
-import { useInView } from "react-intersection-observer";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { GridList } from "@/components/ui/GridList";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
@@ -115,7 +115,6 @@ function DisplaySearchResults({
 }
 
 export default function SearchEnginePage(): React.JSX.Element {
-  const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
   const [selectedCategory, setSelectedCategory] = React.useState<SearchCategory | null>(null);
   const [filters, setFilters] = React.useState<object>({});
   type SearchFilterValidatorsType =
@@ -132,14 +131,11 @@ export default function SearchEnginePage(): React.JSX.Element {
     isFetchingNextPage,
   } = useSearchInfiniteQuery(selectedCategory, filters);
 
-  React.useEffect(() => {
-    if (selectedCategory === null) {
-      return;
-    }
-    if (hasNextPage && !isFetchingNextPage && !isLoading) {
-      fetchNextPage();
-    }
-  }, [inView, filters]);
+  const { ref: observerTargetRef } = useInfiniteScroll(fetchNextPage, {
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  });
 
   const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
     let filterData = {};

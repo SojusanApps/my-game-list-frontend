@@ -5,11 +5,11 @@ import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { StatusEnum, PaginatedGameListList } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
-import { useInView } from "react-intersection-observer";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -20,7 +20,6 @@ export default function GameListPage(): React.JSX.Element {
   }
 
   const userId = parsedId.data;
-  const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
 
@@ -35,11 +34,11 @@ export default function GameListPage(): React.JSX.Element {
     isFetchingNextPage,
   } = useGameListInfiniteQuery(userId, selectedGameStatus);
 
-  React.useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage && !isLoading) {
-      fetchNextPage();
-    }
-  }, [inView, selectedGameStatus]);
+  const { ref: observerTargetRef } = useInfiniteScroll(fetchNextPage, {
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  });
 
   return (
     <div className="py-8">

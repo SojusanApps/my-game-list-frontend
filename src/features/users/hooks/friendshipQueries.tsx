@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getFriendshipRequests,
   sendFriendRequest,
@@ -14,6 +14,7 @@ import {
   FriendshipFriendshipsDestroyDataPath,
 } from "../api/friendship";
 import { friendshipKeys } from "@/lib/queryKeys";
+import { useAppMutation } from "@/hooks/useAppMutation";
 
 export const useGetFriendshipRequests = (query?: FriendshipFriendshipRequestsListDataQuery) => {
   return useQuery({
@@ -25,7 +26,7 @@ export const useGetFriendshipRequests = (query?: FriendshipFriendshipRequestsLis
 export const useSendFriendRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (body: FriendshipFriendshipRequestsCreateDataBody) => sendFriendRequest(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -38,7 +39,7 @@ export const useSendFriendRequest = () => {
 export const useAcceptFriendRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (path: FriendshipFriendshipRequestsAcceptCreateDataPath) => acceptFriendRequest(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -54,7 +55,7 @@ export const useAcceptFriendRequest = () => {
 export const useRejectFriendRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (path: FriendshipFriendshipRequestsRejectCreateDataPath) => rejectFriendRequest(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -74,7 +75,7 @@ export const useGetFriendships = (query?: FriendshipFriendshipsListDataQuery) =>
 export const useDeleteFriendship = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAppMutation({
     mutationFn: (path: FriendshipFriendshipsDestroyDataPath) => deleteFriendship(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
