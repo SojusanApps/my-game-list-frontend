@@ -3,18 +3,18 @@ import * as React from "react";
 import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
-} from "@/components/Filters/GameSearch/GameSearchFilter";
+} from "@/features/games/components/GameSearchFilter";
 import CompanySearchFilter, {
   ValidationSchema as CompanySearchFilterValidationSchema,
-} from "@/components/Filters/CompanySearch/CompanySearchFilter";
+} from "@/features/games/components/CompanySearchFilter";
 import UserSearchFilter, {
   ValidationSchema as UserSearchFilterValidationSchema,
-} from "@/components/Filters/UserSearch/UserSearchFilter";
-import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+} from "@/features/users/components/UserSearchFilter";
+import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "@/client";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { getGamesList, getCompaniesList } from "@/services/api/game";
-import { getUserLists } from "@/services/api/user";
+import { getGamesList, getCompaniesList } from "@/features/games/api/game";
+import { getUserLists } from "@/features/users/api/user";
 import { useInView } from "react-intersection-observer";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;

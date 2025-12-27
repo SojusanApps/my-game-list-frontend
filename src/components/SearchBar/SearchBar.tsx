@@ -1,9 +1,9 @@
 import * as React from "react";
 
 import PlaceholderImage from "@/assets/images/Image_Placeholder.svg";
-import IGDBImageSize, { getIGDBImageURL } from "@/helpers/IGDBIntegration";
+import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { Link } from "react-router-dom";
-import { useGetGamesList } from "@/hooks/gameQueries";
+import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import SearchIcon from "../Icons/Search";
 import XMarkIcon from "../Icons/XMark";
 

@@ -3,12 +3,12 @@ import { jwtDecode } from "jwt-decode";
 
 import { Link } from "react-router-dom";
 import AppLogo from "@/components/AppLogo/AppLogo";
-import { TokenInfoType, LocalStorageUserType } from "@/helpers/CustomTypes";
+import { TokenInfoType, LocalStorageUserType } from "@/types";
 import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import SearchBar from "@/components/SearchBar/SearchBar";
 
-import NotificationBell from "@/components/NotificationBell/NotificationBell";
-import { useAuth } from "@/context/AuthProvider";
+import NotificationBell from "@/features/notifications/components/NotificationBell";
+import { useAuth } from "@/features/auth/context/AuthProvider";
 import ChevronDownIcon from "../Icons/ChevronDown";
 import ProfileIcon from "../Icons/Profile";
 import SettingsIcon from "../Icons/Settings";

@@ -1,7 +1,7 @@
 import { client } from "./client/client.gen";
-import { LocalStorageUserType } from "./helpers/CustomTypes";
-import StatusCode from "./helpers/StatusCode";
-import useRefreshToken from "./hooks/useRefreshToken";
+import { LocalStorageUserType } from "./types";
+import StatusCode from "./utils/StatusCode";
+import useRefreshToken from "./features/auth/hooks/useRefreshToken";
 
 const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const refresh = useRefreshToken();
