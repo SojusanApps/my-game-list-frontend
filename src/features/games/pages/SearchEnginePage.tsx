@@ -16,102 +16,89 @@ import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { GridList } from "@/components/ui/GridList";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { VirtualGridList } from "@/components/ui/VirtualGridList";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
-
-function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): React.JSX.Element {
-  return (
-    <GridList>
-      {gamesItems?.map(gameItem => (
-        <ItemOverlay
-          key={gameItem.id}
-          className="w-full"
-          name={gameItem.title}
-          itemPageUrl={`/game/${gameItem.id}`}
-          itemCoverUrl={
-            gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
-          }
-        />
-      ))}
-    </GridList>
-  );
-}
-
-function CompanyItems({ companyItems }: Readonly<{ companyItems: Company[] | null }>): React.JSX.Element {
-  return (
-    <GridList>
-      {companyItems?.map(companyItem => (
-        <ItemOverlay
-          key={companyItem.id}
-          className="w-full"
-          name={companyItem.name}
-          itemPageUrl={`/company/${companyItem.id}`}
-          itemCoverUrl={
-            companyItem.company_logo_id
-              ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)
-              : null
-          }
-        />
-      ))}
-    </GridList>
-  );
-}
-
-function UsersItems({ usersItems }: Readonly<{ usersItems: User[] | null }>): React.JSX.Element {
-  return (
-    <GridList>
-      {usersItems?.map(userItem => (
-        <ItemOverlay
-          key={userItem.id}
-          className="w-full"
-          name={userItem.username}
-          itemPageUrl={`/profile/${userItem.id}`}
-          itemCoverUrl={userItem.gravatar_url}
-        />
-      ))}
-    </GridList>
-  );
-}
 
 function DisplaySearchResults({
   selectedCategory,
   searchResults,
-}: Readonly<{ selectedCategory: string | null; searchResults: InfiniteData<searchResultsType> }>): React.JSX.Element {
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+}: Readonly<{
+  selectedCategory: string | null;
+  searchResults: InfiniteData<searchResultsType>;
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+}>): React.JSX.Element {
   if (searchResults === undefined || searchResults.pages.length === 0) {
     return <p>No results</p>;
   }
-  switch (selectedCategory) {
-    case "games":
-      return (
-        <GamesItems
-          gamesItems={searchResults.pages
-            .map(page => (page as PaginatedGameList)?.results)
-            .filter(Boolean)
-            .flat()}
-        />
-      );
-    case "companies":
-      return (
-        <CompanyItems
-          companyItems={searchResults.pages
-            .map(page => (page as PaginatedCompanyList)?.results)
-            .filter(Boolean)
-            .flat()}
-        />
-      );
-    case "users":
-      return (
-        <UsersItems
-          usersItems={searchResults.pages
-            .map(page => (page as PaginatedUserList)?.results)
-            .filter(Boolean)
-            .flat()}
-        />
-      );
-    default:
-      return <p>Select items to search for</p>;
-  }
+
+  const allItems = searchResults.pages
+    .map(page => page?.results)
+    .filter(Boolean)
+    .flat();
+
+  const renderItem = (item: unknown) => {
+    switch (selectedCategory) {
+      case "games": {
+        const game = item as Game;
+        return (
+          <ItemOverlay
+            key={game.id}
+            className="w-full"
+            name={game.title}
+            itemPageUrl={`/game/${game.id}`}
+            itemCoverUrl={
+              game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
+            }
+          />
+        );
+      }
+      case "companies": {
+        const company = item as Company;
+        return (
+          <ItemOverlay
+            key={company.id}
+            className="w-full"
+            name={company.name}
+            itemPageUrl={`/company/${company.id}`}
+            itemCoverUrl={
+              company.company_logo_id ? getIGDBImageURL(company.company_logo_id, IGDBImageSize.COVER_BIG_264_374) : null
+            }
+          />
+        );
+      }
+      case "users": {
+        const user = item as User;
+        return (
+          <ItemOverlay
+            key={user.id}
+            className="w-full"
+            name={user.username}
+            itemPageUrl={`/profile/${user.id}`}
+            itemCoverUrl={user.gravatar_url}
+          />
+        );
+      }
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <VirtualGridList
+      items={allItems}
+      renderItem={renderItem}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      fetchNextPage={fetchNextPage}
+      className="h-[calc(100vh-400px)]"
+    />
+  );
 }
 
 export default function SearchEnginePage(): React.JSX.Element {
@@ -130,12 +117,6 @@ export default function SearchEnginePage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
   } = useSearchInfiniteQuery(selectedCategory, filters);
-
-  const { ref: observerTargetRef } = useInfiniteScroll(fetchNextPage, {
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  });
 
   const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
     let filterData = {};
@@ -199,17 +180,17 @@ export default function SearchEnginePage(): React.JSX.Element {
               ))}
             </GridList>
           ) : (
-            searchResults && DisplaySearchResults({ selectedCategory, searchResults })
-          )}
-          {isFetchingNextPage && (
-            <GridList className="mt-4">
-              {Array.from({ length: 7 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-264/374 w-full" />
-              ))}
-            </GridList>
+            searchResults && (
+              <DisplaySearchResults
+                selectedCategory={selectedCategory}
+                searchResults={searchResults}
+                fetchNextPage={fetchNextPage}
+                hasNextPage={!!hasNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+              />
+            )
           )}
           {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
-          {hasNextPage && <div ref={observerTargetRef} className="h-10" />}
         </div>
       </div>
     </div>

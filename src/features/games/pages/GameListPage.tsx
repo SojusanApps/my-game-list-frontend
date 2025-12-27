@@ -2,14 +2,14 @@ import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import { StatusEnum, PaginatedGameListList } from "@/client";
+import { GameList, StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import { VirtualGridList } from "@/components/ui/VirtualGridList";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -34,11 +34,7 @@ export default function GameListPage(): React.JSX.Element {
     isFetchingNextPage,
   } = useGameListInfiniteQuery(userId, selectedGameStatus);
 
-  const { ref: observerTargetRef } = useInfiniteScroll(fetchNextPage, {
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-  });
+  const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
   return (
     <div className="py-8">
@@ -105,30 +101,24 @@ export default function GameListPage(): React.JSX.Element {
               ))}
             </GridList>
           ) : (
-            <GridList>
-              {gameListResults?.pages
-                .map((page: PaginatedGameListList) => page?.results)
-                .flat()
-                .map(gameListItem => (
-                  <ItemOverlay
-                    key={gameListItem.id}
-                    className="w-full"
-                    name={gameListItem.title}
-                    itemPageUrl={`/game/${gameListItem.game_id}`}
-                    itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
-                  />
-                ))}
-            </GridList>
-          )}
-          {isFetchingNextPage && (
-            <GridList className="mt-4">
-              {Array.from({ length: 7 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-264/374 w-full" />
-              ))}
-            </GridList>
+            <VirtualGridList
+              items={allItems}
+              hasNextPage={!!hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchNextPage={fetchNextPage}
+              className="h-[calc(100vh-300px)]"
+              renderItem={(gameListItem: GameList) => (
+                <ItemOverlay
+                  key={gameListItem.id}
+                  className="w-full"
+                  name={gameListItem.title}
+                  itemPageUrl={`/game/${gameListItem.game_id}`}
+                  itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
+                />
+              )}
+            />
           )}
           {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
-          {hasNextPage && <div ref={observerTargetRef} className="h-10" />}
         </div>
       </div>
     </div>
