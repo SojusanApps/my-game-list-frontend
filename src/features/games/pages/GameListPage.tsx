@@ -8,6 +8,7 @@ import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
 import { useInView } from "react-intersection-observer";
 import { idSchema } from "@/lib/validation";
+import { PageMeta } from "@/components/ui/PageMeta";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -19,8 +20,10 @@ export default function GameListPage(): React.JSX.Element {
 
   const userId = parsedId.data;
   const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
-  const { data: userDetails } = useGetUserDetails(userId);
+  const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
+
+  const pageTitle = isUserLoading ? "Loading Game List..." : `${userDetails?.username}'s Game List`;
 
   const {
     data: gameListResults,
@@ -39,6 +42,7 @@ export default function GameListPage(): React.JSX.Element {
 
   return (
     <div>
+      <PageMeta title={pageTitle} />
       <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
         <p className="text-3xl mx-auto">
           <strong className="text-secondary-950">{userDetails?.username}</strong>&apos;s Game List

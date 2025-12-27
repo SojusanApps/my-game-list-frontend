@@ -1,9 +1,11 @@
 import * as React from "react";
 
 import ItemOverlay from "@/components/ui/ItemOverlay";
-import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
+import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { Link } from "react-router-dom";
-import { useGetGamesList } from "@/features/games/hooks/gameQueries";
+import { useGetGamesList } from "../hooks/gameQueries";
+import { PageMeta } from "@/components/ui/PageMeta";
+import { Game } from "@/client";
 
 export default function HomePage(): React.JSX.Element {
   const { data: highestRatedGames } = useGetGamesList({ ordering: ["rank_position"] });
@@ -12,6 +14,7 @@ export default function HomePage(): React.JSX.Element {
 
   return (
     <div>
+      <PageMeta title="Home" />
       <div className="grid grid-rows-3 gap-8 max-w-[60%] mx-auto">
         <div className="grid grid-cols-2">
           <p className="font-bold text-xl">Highest Rated Games &gt;</p>
@@ -21,7 +24,7 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="grid grid-cols-7 gap-1">
-              {highestRatedGames?.results?.slice(0, 7).map(game => (
+              {highestRatedGames?.results?.slice(0, 7).map((game: Game) => (
                 <ItemOverlay
                   key={game.id}
                   className="w-full"
@@ -45,7 +48,7 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="grid grid-cols-7 gap-1">
-              {mostPopularGames?.results.slice(0, 7).map(game => (
+              {mostPopularGames?.results.slice(0, 7).map((game: Game) => (
                 <ItemOverlay
                   key={game.id}
                   className="w-full"
@@ -69,7 +72,7 @@ export default function HomePage(): React.JSX.Element {
           <hr className="col-span-2 h-px my-1 bg-gray-400 border-0" />
           <div className="col-span-2">
             <div className="grid grid-cols-7 gap-1">
-              {recentlyAddedGames?.results.slice(0, 7).map(game => (
+              {recentlyAddedGames?.results.slice(0, 7).map((game: Game) => (
                 <ItemOverlay
                   key={game.id}
                   className="w-full"

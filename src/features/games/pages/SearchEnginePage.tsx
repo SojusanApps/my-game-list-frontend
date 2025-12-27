@@ -15,6 +15,7 @@ import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, Paginated
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { useInView } from "react-intersection-observer";
 import { InfiniteData } from "@tanstack/react-query";
+import { PageMeta } from "@/components/ui/PageMeta";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
@@ -156,6 +157,7 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   return (
     <div>
+      <PageMeta title="Search Engine" />
       <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
         <div className="join mx-auto">
           <input

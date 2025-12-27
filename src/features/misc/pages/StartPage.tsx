@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { PageMeta } from "@/components/ui/PageMeta";
 
 export default function StartPage(): React.JSX.Element {
   return (
     <div className="container bg-slate-300 max-w-full">
+      <PageMeta title="Welcome" />
       <h6>Welcome to MyGameList Temporary Start Page - Early access!</h6>
       <h6>
         Log in:{" "}

@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { PageMeta } from "@/components/ui/PageMeta";
 
-export default function HomePage(): React.JSX.Element {
+export default function NotFound(): React.JSX.Element {
   return (
     <div className="bg-[url('/src/assets/images/Background404.jpg')] bg-fixed bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-screen">
+      <PageMeta title="404 - Not Found" />
       <div className="max-w-md mx-auto text-center bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
         <div className="text-9xl font-bold text-secondary-950 mb-4">404</div>
         <h1 className="text-4xl font-bold text-text-800 mb-6">Oops! Page Not Found</h1>
