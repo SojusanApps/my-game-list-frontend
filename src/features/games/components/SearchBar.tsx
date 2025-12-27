@@ -49,15 +49,15 @@ export default function SearchBar(): React.JSX.Element {
 
         {search.length > 1 && (
           <div className="dropdown-content z-50 mt-2 w-full bg-base-100 rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
-            <ul className="menu p-0 max-h-[60vh] overflow-y-auto">
+            <ul className="menu p-0 max-h-[60vh] overflow-y-auto flex-col flex-nowrap">
               {isLoading ? (
                 <li className="p-4 text-center text-gray-500 italic">Searching...</li>
               ) : gamesDetails?.results && gamesDetails.results.length > 0 ? (
                 gamesDetails.results.map(game => (
-                  <li key={game.id} className="border-b border-gray-50 last:border-0">
+                  <li key={game.id} className="w-full border-b border-gray-50 last:border-0 block">
                     <Link
                       to={`/game/${game.id}`}
-                      className="flex items-center gap-3 p-3 hover:bg-secondary-50 active:bg-secondary-100 transition-colors rounded-none"
+                      className="flex items-center gap-3 p-3 hover:bg-secondary-50 active:bg-secondary-100 transition-colors rounded-none w-full"
                       onClick={handleClose}
                     >
                       <SafeImage
