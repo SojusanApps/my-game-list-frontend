@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
@@ -17,63 +16,61 @@ import { useInView } from "react-intersection-observer";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { GridList } from "@/components/ui/GridList";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
 function GamesItems({ gamesItems }: Readonly<{ gamesItems: Game[] | null }>): React.JSX.Element {
   return (
-    <div className="grid grid-cols-7 gap-1">
+    <GridList>
       {gamesItems?.map(gameItem => (
-        <div key={gameItem.id}>
-          <ItemOverlay
-            className="w-full"
-            name={gameItem.title}
-            itemPageUrl={`/game/${gameItem.id}`}
-            itemCoverUrl={
-              gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
-            }
-          />
-        </div>
+        <ItemOverlay
+          key={gameItem.id}
+          className="w-full"
+          name={gameItem.title}
+          itemPageUrl={`/game/${gameItem.id}`}
+          itemCoverUrl={
+            gameItem.cover_image_id ? getIGDBImageURL(gameItem.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
+          }
+        />
       ))}
-    </div>
+    </GridList>
   );
 }
 
 function CompanyItems({ companyItems }: Readonly<{ companyItems: Company[] | null }>): React.JSX.Element {
   return (
-    <div className="grid grid-cols-7 gap-1">
+    <GridList>
       {companyItems?.map(companyItem => (
-        <div key={companyItem.id}>
-          <ItemOverlay
-            className="w-full"
-            name={companyItem.name}
-            itemPageUrl={`/company/${companyItem.id}`}
-            itemCoverUrl={
-              companyItem.company_logo_id
-                ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)
-                : null
-            }
-          />
-        </div>
+        <ItemOverlay
+          key={companyItem.id}
+          className="w-full"
+          name={companyItem.name}
+          itemPageUrl={`/company/${companyItem.id}`}
+          itemCoverUrl={
+            companyItem.company_logo_id
+              ? getIGDBImageURL(companyItem.company_logo_id, IGDBImageSize.COVER_BIG_264_374)
+              : null
+          }
+        />
       ))}
-    </div>
+    </GridList>
   );
 }
 
 function UsersItems({ usersItems }: Readonly<{ usersItems: User[] | null }>): React.JSX.Element {
   return (
-    <div className="grid grid-cols-7 gap-1">
+    <GridList>
       {usersItems?.map(userItem => (
-        <div key={userItem.id}>
-          <ItemOverlay
-            className="w-full"
-            name={userItem.username}
-            itemPageUrl={`/profile/${userItem.id}`}
-            itemCoverUrl={userItem.gravatar_url}
-          />
-        </div>
+        <ItemOverlay
+          key={userItem.id}
+          className="w-full"
+          name={userItem.username}
+          itemPageUrl={`/profile/${userItem.id}`}
+          itemCoverUrl={userItem.gravatar_url}
+        />
       ))}
-    </div>
+    </GridList>
   );
 }
 
@@ -157,9 +154,9 @@ export default function SearchEnginePage(): React.JSX.Element {
   };
 
   return (
-    <div>
+    <div className="py-8">
       <PageMeta title="Search Engine" />
-      <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
+      <div className="flex flex-col gap-8 max-w-[70%] mt-2 mx-auto">
         <div className="join mx-auto">
           <input
             className="join-item btn min-w-32"
@@ -186,8 +183,8 @@ export default function SearchEnginePage(): React.JSX.Element {
             onChange={() => setSelectedCategory("users")}
           />
         </div>
-        <div className="border border-background-300 rounded-xl p-2 bg-background-200">
-          <p>Filters</p>
+        <div className="border border-background-300 rounded-xl p-6 bg-background-200 shadow-sm">
+          <h2 className="font-bold text-lg mb-4 text-text-900">Filters</h2>
           {selectedCategory === "games" && (
             <GameSearchFilter onSubmitHandlerCallback={data => setFilters(prepareFiltersForRequest(data))} />
           )}
@@ -200,20 +197,20 @@ export default function SearchEnginePage(): React.JSX.Element {
         </div>
         <div>
           {isLoading && !isFetchingNextPage ? (
-            <div className="grid grid-cols-7 gap-1">
+            <GridList>
               {Array.from({ length: 14 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-264/374 w-full" />
               ))}
-            </div>
+            </GridList>
           ) : (
             searchResults && DisplaySearchResults({ selectedCategory, searchResults })
           )}
           {isFetchingNextPage && (
-            <div className="grid grid-cols-7 gap-1 mt-1">
+            <GridList className="mt-4">
               {Array.from({ length: 7 }).map((_, i) => (
                 <Skeleton key={i} className="aspect-264/374 w-full" />
               ))}
-            </div>
+            </GridList>
           )}
           {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
           {hasNextPage && <div ref={observerTargetRef} className="h-10" />}

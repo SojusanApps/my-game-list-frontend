@@ -108,7 +108,9 @@ function TopBar(): React.JSX.Element {
           </li>
         </ul>
         <SearchBar />
-        <div className="flex">{user ? <LoggedInView user={user} logout={logout} /> : <NotLoggedInView />}</div>
+        <div className="flex items-center gap-4">
+          {user ? <LoggedInView user={user} logout={logout} /> : <NotLoggedInView />}
+        </div>
       </div>
     </nav>
   );

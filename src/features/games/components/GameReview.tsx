@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { GameReview as GameReviewType } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
+import ReactMarkdown from "react-markdown";
 
 type GameReviewProps = {
   className?: string;
@@ -31,7 +32,9 @@ function GameReview({ className, gameReview }: Readonly<GameReviewProps>): React
             <p className="pl-1">{gameReview?.score}</p>
           </div>
         </div>
-        <p className="pl-2">{gameReview?.review}</p>
+        <div className="pl-2 pt-2 prose prose-sm max-w-none">
+          <ReactMarkdown>{gameReview?.review || ""}</ReactMarkdown>
+        </div>
       </div>
     </article>
   );

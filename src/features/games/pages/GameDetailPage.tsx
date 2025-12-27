@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
+import ReactMarkdown from "react-markdown";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -64,7 +65,9 @@ export default function GameDetailPage(): React.JSX.Element {
             <p className="font-bold pt-1">Statistics</p>
             <GameStatistics gameDetails={gameDetails} />
             <p className="font-bold pt-1">Summary</p>
-            <p className="pl-2 pt-2">{gameDetails?.summary}</p>
+            <div className="pl-2 pt-2 prose prose-sm max-w-none">
+              <ReactMarkdown>{gameDetails?.summary || ""}</ReactMarkdown>
+            </div>
             <p className="font-bold pt-1">Reviews</p>
             <div className="flex flex-col gap-3 divide-y-2">
               {isGameReviewsLoading && <Skeleton className="w-full h-24" />}

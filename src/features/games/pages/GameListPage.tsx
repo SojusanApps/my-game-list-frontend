@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
-
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { StatusEnum, PaginatedGameListList } from "@/client";
@@ -9,6 +8,8 @@ import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
 import { useInView } from "react-intersection-observer";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { GridList } from "@/components/ui/GridList";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -41,13 +42,13 @@ export default function GameListPage(): React.JSX.Element {
   }, [inView, selectedGameStatus]);
 
   return (
-    <div>
+    <div className="py-8">
       <PageMeta title={pageTitle} />
-      <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
-        <p className="text-3xl mx-auto">
+      <div className="flex flex-col gap-8 max-w-[70%] mt-2 mx-auto">
+        <p className="text-3xl mx-auto text-text-900">
           <strong className="text-secondary-950">{userDetails?.username}</strong>&apos;s Game List
         </p>
-        <div className="join mx-auto">
+        <div className="join mx-auto shadow-sm">
           <input
             className="join-item btn min-w-32"
             value="all"
@@ -98,24 +99,37 @@ export default function GameListPage(): React.JSX.Element {
           />
         </div>
         <div>
-          <div className="grid grid-cols-7 gap-1">
-            {gameListResults?.pages
-              .map((page: PaginatedGameListList) => page?.results)
-              .flat()
-              .map(gameListItem => (
-                <div key={gameListItem.id}>
+          {isLoading && !isFetchingNextPage ? (
+            <GridList>
+              {Array.from({ length: 14 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-264/374 w-full" />
+              ))}
+            </GridList>
+          ) : (
+            <GridList>
+              {gameListResults?.pages
+                .map((page: PaginatedGameListList) => page?.results)
+                .flat()
+                .map(gameListItem => (
                   <ItemOverlay
+                    key={gameListItem.id}
                     className="w-full"
                     name={gameListItem.title}
                     itemPageUrl={`/game/${gameListItem.game_id}`}
                     itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
                   />
-                </div>
+                ))}
+            </GridList>
+          )}
+          {isFetchingNextPage && (
+            <GridList className="mt-4">
+              {Array.from({ length: 7 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-264/374 w-full" />
               ))}
-          </div>
-          {isLoading && <p>Loading ...</p>}
-          {errorFetchingData && <p>Error: {errorFetchingData.message}</p>}
-          {hasNextPage && <div ref={observerTargetRef} />}
+            </GridList>
+          )}
+          {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
+          {hasNextPage && <div ref={observerTargetRef} className="h-10" />}
         </div>
       </div>
     </div>
