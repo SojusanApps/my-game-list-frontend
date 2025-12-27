@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import GameReview from "../components/GameReview";
@@ -10,11 +10,19 @@ import GameStatistics from "../components/GameStatistics";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGameReviewsList, useGetGamesDetails } from "../hooks/gameQueries";
 import { Skeleton } from "@/components/Skeleton/Skeleton";
+import { idSchema } from "@/lib/validation";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
-  const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(+id!);
-  const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList({ game: +id! });
+  const parsedId = idSchema.safeParse(id);
+
+  if (!parsedId.success) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const gameId = parsedId.data;
+  const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(gameId);
+  const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList({ game: gameId });
 
   if (isGameDetailsLoading) {
     return (

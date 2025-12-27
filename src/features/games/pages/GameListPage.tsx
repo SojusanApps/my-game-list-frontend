@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 
 import ItemOverlay from "@/components/ItemOverlay/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
@@ -8,26 +8,34 @@ import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getGameListsList } from "../api/game";
 import { useInView } from "react-intersection-observer";
+import { idSchema } from "@/lib/validation";
 
-type FetchItemsQueryKey = ["game-list-results", string, StatusEnum];
+type FetchItemsQueryKey = ["game-list-results", number, StatusEnum];
 
 const fetchItems = async ({
   pageParam = 1,
   queryKey,
 }: {
   pageParam?: number;
-  queryKey: (string | undefined | null)[];
+  queryKey: (string | number | undefined | null)[];
 }) => {
   const [, id, selectedGameStatus] = queryKey as FetchItemsQueryKey;
-  const query = { page: pageParam, user: +id, status: selectedGameStatus ? [selectedGameStatus] : undefined };
+  const query = { page: pageParam, user: id, status: selectedGameStatus ? [selectedGameStatus] : undefined };
   const data = await getGameListsList(query);
   return data;
 };
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
+  const parsedId = idSchema.safeParse(id);
+
+  if (!parsedId.success) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const userId = parsedId.data;
   const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
-  const { data: userDetails } = useGetUserDetails(+id!);
+  const { data: userDetails } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
 
   const {
@@ -38,7 +46,7 @@ export default function GameListPage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["game-list-results", id, selectedGameStatus],
+    queryKey: ["game-list-results", userId, selectedGameStatus],
     queryFn: fetchItems,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {

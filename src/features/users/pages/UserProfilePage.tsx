@@ -1,6 +1,6 @@
 import * as React from "react";
 import { jwtDecode } from "jwt-decode";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 
 import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import { useGetUserDetails } from "../hooks/userQueries";
@@ -12,10 +12,17 @@ import UserFriendsList from "../components/UserFriendsList";
 import UserStatistics from "../components/UserStatistics";
 import GameListUpdate from "../components/GameListUpdate";
 import { Skeleton } from "@/components/Skeleton/Skeleton";
+import { idSchema } from "@/lib/validation";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
-  const userId = +id!;
+  const parsedId = idSchema.safeParse(id);
+
+  if (!parsedId.success) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const userId = parsedId.data;
   const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(userId);
 
   const { user } = useAuth();

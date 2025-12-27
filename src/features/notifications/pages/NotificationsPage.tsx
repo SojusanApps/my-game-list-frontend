@@ -10,7 +10,7 @@ import {
 } from "../hooks/notificationQueries";
 import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { NotificationActor } from "@/types";
+import { notificationActorSchema } from "@/lib/validation";
 
 export default function NotificationsPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
@@ -100,7 +100,8 @@ export default function NotificationsPage(): React.JSX.Element {
               </tr>
             ) : (
               notifications.map((notification: Notification) => {
-                const actor = notification.actor as unknown as NotificationActor;
+                const actorResult = notificationActorSchema.safeParse(notification.actor);
+                const actor = actorResult.success ? actorResult.data : null;
                 return (
                   <tr key={notification.id} className={notification.unread ? "bg-blue-50" : ""}>
                     <td>

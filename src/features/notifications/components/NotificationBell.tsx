@@ -8,7 +8,8 @@ import {
   useMarkNotificationAsRead,
 } from "../hooks/notificationQueries";
 import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
-import { NotificationActor, NotificationUnreadCount } from "@/types";
+import { NotificationUnreadCount } from "@/types";
+import { notificationActorSchema } from "@/lib/validation";
 
 export default function NotificationBell(): React.JSX.Element {
   const { data: unreadData } = useGetUnreadNotificationCount();
@@ -45,7 +46,8 @@ export default function NotificationBell(): React.JSX.Element {
               <li className="text-center py-4 text-gray-500">No unread notifications</li>
             ) : (
               unreadNotifications.map((notification: Notification) => {
-                const actor = notification.actor as unknown as NotificationActor;
+                const actorResult = notificationActorSchema.safeParse(notification.actor);
+                const actor = actorResult.success ? actorResult.data : null;
                 return (
                   <li key={notification.id} className="bg-blue-50 w-full">
                     <Link
