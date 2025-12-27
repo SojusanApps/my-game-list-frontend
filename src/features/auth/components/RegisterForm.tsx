@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
+import { Button } from "@/components/Button/Button";
 import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
 import Constants from "@/utils/Constants";
 import { useCreateUser } from "@/features/users/hooks/userQueries";
@@ -101,19 +102,19 @@ function RegisterForm() {
           type="password"
           placeholder="Confirm the password"
         />
-        <button
-          type="submit"
-          className="w-full mt-4 px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-sm shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-hidden focus:ring-0 active:bg-slate-900"
-        >
+        <Button type="submit" fullWidth uppercase className="mt-4 shadow-md hover:shadow-lg">
           REGISTER
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onCancelHandler}
-          className="w-full mt-2 px-6 py-3 bg-primary-600 text-white font-medium uppercase rounded-sm shadow-md hover:bg-primary-500 hover:shadow-lg focus:bg-primary-400 focus:outline-hidden focus:ring-0 active:bg-primary-700"
+          variant="secondary"
+          fullWidth
+          uppercase
+          className="mt-2 shadow-md hover:shadow-lg"
         >
           CANCEL
-        </button>
+        </Button>
       </form>
     </FormProvider>
   );

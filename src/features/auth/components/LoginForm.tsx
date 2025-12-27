@@ -6,6 +6,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
+import { Button } from "@/components/Button/Button";
 import GoogleLogo from "@/assets/logos/GoogleLogo.svg";
 import FacebookLogo from "@/assets/logos/FacebookLogo.svg";
 import XLogo from "@/assets/logos/XLogo.svg";
@@ -91,12 +92,9 @@ function LoginForm() {
             Sign up
           </Link>
         </h6>
-        <button
-          type="submit"
-          className="mt-4 w-full px-6 py-3 bg-primary-950 text-white font-medium uppercase rounded-lg shadow-md hover:bg-primary-900 hover:shadow-lg focus:bg-primary-800 focus:outline-hidden focus:ring-0 active:bg-slate-900"
-        >
+        <Button type="submit" fullWidth uppercase className="mt-4 shadow-md hover:shadow-lg">
           LOGIN
-        </button>
+        </Button>
       </form>
       <div className="grid grid-cols-3 justify-items-center mt-4">
         <img src={GoogleLogo} alt="google logo" className="w-8" />

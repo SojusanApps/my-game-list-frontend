@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useFormContext, Controller } from "react-hook-form";
+import { cn } from "@/utils/cn";
 
 type SelectOption = {
   value: string | number;
@@ -15,6 +16,7 @@ type SelectInputInputProps = {
   selectOptions: SelectOption[];
   optionToSelect?: string | string[];
   multiple?: boolean;
+  className?: string;
 };
 
 function SelectInput({
@@ -26,6 +28,7 @@ function SelectInput({
   selectOptions,
   optionToSelect = undefined,
   multiple = false,
+  className,
 }: Readonly<SelectInputInputProps>) {
   const {
     control,
@@ -44,7 +47,7 @@ function SelectInput({
       name={name}
       defaultValue={optionToSelect}
       render={({ field }) => (
-        <div>
+        <div className={className}>
           <label htmlFor={id} className="block text-text-700 text-sm font-bold mb-2">
             {label}
             {required === true ? "*" : ""}
@@ -63,7 +66,7 @@ function SelectInput({
                 setSelectedValue(event.target.value);
               }
             }}
-            className="form-control select select-sm select-bordered w-full"
+            className={cn("form-control select select-sm select-bordered w-full", errors[name] && "select-error")}
             multiple={multiple}
           >
             <option disabled value="">
