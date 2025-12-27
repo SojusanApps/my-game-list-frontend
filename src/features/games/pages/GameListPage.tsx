@@ -3,27 +3,11 @@ import { useParams, Navigate } from "react-router-dom";
 
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import { StatusEnum } from "@/client";
+import { StatusEnum, PaginatedGameListList } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getGameListsList } from "../api/game";
+import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
 import { useInView } from "react-intersection-observer";
 import { idSchema } from "@/lib/validation";
-
-type FetchItemsQueryKey = ["game-list-results", number, StatusEnum];
-
-const fetchItems = async ({
-  pageParam = 1,
-  queryKey,
-}: {
-  pageParam?: number;
-  queryKey: (string | number | undefined | null)[];
-}) => {
-  const [, id, selectedGameStatus] = queryKey as FetchItemsQueryKey;
-  const query = { page: pageParam, user: id, status: selectedGameStatus ? [selectedGameStatus] : undefined };
-  const data = await getGameListsList(query);
-  return data;
-};
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -45,17 +29,7 @@ export default function GameListPage(): React.JSX.Element {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["game-list-results", userId, selectedGameStatus],
-    queryFn: fetchItems,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.next !== null && lastPage.next !== undefined) {
-        return lastPageParam + 1;
-      }
-      return null;
-    },
-  });
+  } = useGameListInfiniteQuery(userId, selectedGameStatus);
 
   React.useEffect(() => {
     if (hasNextPage && !isFetchingNextPage && !isLoading) {
@@ -122,7 +96,7 @@ export default function GameListPage(): React.JSX.Element {
         <div>
           <div className="grid grid-cols-7 gap-1">
             {gameListResults?.pages
-              .map(page => page?.results)
+              .map((page: PaginatedGameListList) => page?.results)
               .flat()
               .map(gameListItem => (
                 <div key={gameListItem.id}>

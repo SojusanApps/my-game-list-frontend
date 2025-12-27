@@ -1,12 +1,13 @@
 import { UserService, UserUsersCreateData, UserUsersListData } from "@/client";
 import StatusCode from "@/utils/StatusCode";
+import { handleApiError } from "@/utils/apiUtils";
 
 export type UserUsersListDataQuery = UserUsersListData["query"];
 
 export const getUserLists = async (query?: UserUsersListDataQuery) => {
   const { data, response } = await UserService.userUsersList({ query });
   if (response.status !== StatusCode.OK || !data) {
-    throw new Error("Error fetching users");
+    return await handleApiError(response, "Error fetching users");
   }
   return data;
 };
@@ -14,7 +15,7 @@ export const getUserLists = async (query?: UserUsersListDataQuery) => {
 export const getUserDetails = async (id: number) => {
   const { data, response } = await UserService.userUsersRetrieve({ path: { id } });
   if (response.status !== StatusCode.OK || !data) {
-    throw new Error("Error fetching user");
+    return await handleApiError(response, "Error fetching user details");
   }
   return data;
 };
@@ -23,7 +24,7 @@ export type UserUsersCreateDataBody = UserUsersCreateData["body"];
 export const createUser = async (body: UserUsersCreateDataBody) => {
   const { data, response } = await UserService.userUsersCreate({ body });
   if (response.status !== StatusCode.CREATED || !data) {
-    throw new Error("Error creating user");
+    return await handleApiError(response, "Error creating user");
   }
   return data;
 };

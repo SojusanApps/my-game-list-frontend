@@ -24,6 +24,7 @@ export const gameListKeys = {
   lists: () => [...gameListKeys.all, "list"] as const,
   list: (query: object | undefined) => [...gameListKeys.lists(), query] as const,
   byFilters: (query: object | undefined) => [...gameListKeys.all, "by-filters", query] as const,
+  infinite: (userId: number, status: string | null) => [...gameListKeys.all, "infinite", userId, status] as const,
 };
 
 export const userKeys = {
@@ -43,4 +44,9 @@ export const notificationKeys = {
   all: ["notifications"] as const,
   list: (query: object | undefined) => [...notificationKeys.all, query] as const,
   unreadCount: ["notifications", "unread-count"] as const,
+};
+
+export const searchKeys = {
+  all: ["search-results"] as const,
+  results: (category: string | null, filters: object) => [...searchKeys.all, category, filters] as const,
 };

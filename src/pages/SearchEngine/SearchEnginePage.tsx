@@ -12,10 +12,9 @@ import UserSearchFilter, {
 } from "@/features/users/components/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "@/client";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { getGamesList, getCompaniesList } from "@/features/games/api/game";
-import { getUserLists } from "@/features/users/api/user";
+import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { useInView } from "react-intersection-observer";
+import { InfiniteData } from "@tanstack/react-query";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
@@ -85,47 +84,40 @@ function DisplaySearchResults({
   }
   switch (selectedCategory) {
     case "games":
-      return <GamesItems gamesItems={searchResults.pages.map(page => page?.results).flat() as Game[]} />;
+      return (
+        <GamesItems
+          gamesItems={searchResults.pages
+            .map(page => (page as PaginatedGameList)?.results)
+            .filter(Boolean)
+            .flat()}
+        />
+      );
     case "companies":
-      return <CompanyItems companyItems={searchResults.pages.map(page => page?.results).flat() as Company[]} />;
+      return (
+        <CompanyItems
+          companyItems={searchResults.pages
+            .map(page => (page as PaginatedCompanyList)?.results)
+            .filter(Boolean)
+            .flat()}
+        />
+      );
     case "users":
-      return <UsersItems usersItems={searchResults.pages.map(page => page?.results).flat() as User[]} />;
+      return (
+        <UsersItems
+          usersItems={searchResults.pages
+            .map(page => (page as PaginatedUserList)?.results)
+            .filter(Boolean)
+            .flat()}
+        />
+      );
     default:
       return <p>Select items to search for</p>;
   }
 }
 
-type FetchItemsQueryKey = ["search-results", string, object];
-
-const fetchItems = async ({
-  pageParam = 1,
-  queryKey,
-}: {
-  pageParam?: number;
-  queryKey: (string | object | null)[];
-}) => {
-  const [, category, filters] = queryKey as FetchItemsQueryKey;
-  const query = { page: pageParam, ...filters };
-  let data;
-  switch (category) {
-    case "games":
-      data = await getGamesList(query);
-      break;
-    case "companies":
-      data = await getCompaniesList(query);
-      break;
-    case "users":
-      data = await getUserLists(query);
-      break;
-    default:
-      throw new Error("Invalid category");
-  }
-  return data;
-};
-
 export default function SearchEnginePage(): React.JSX.Element {
   const { ref: observerTargetRef, inView } = useInView({ threshold: 1 });
-  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = React.useState<SearchCategory | null>(null);
   const [filters, setFilters] = React.useState<object>({});
   type SearchFilterValidatorsType =
     | GameSearchFilterValidationSchema
@@ -139,18 +131,7 @@ export default function SearchEnginePage(): React.JSX.Element {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["search-results", selectedCategory, filters],
-    queryFn: fetchItems,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.next !== null && lastPage.next !== undefined) {
-        return lastPageParam + 1;
-      }
-      return null;
-    },
-    enabled: !!selectedCategory,
-  });
+  } = useSearchInfiniteQuery(selectedCategory, filters);
 
   React.useEffect(() => {
     if (selectedCategory === null) {
