@@ -1,8 +1,5 @@
 import * as React from "react";
-
 import { useParams, Navigate } from "react-router-dom";
-
-import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import GameReview from "../components/GameReview";
 import GameListActionsForm from "../components/GameListActionsForm";
 import GameInformation from "../components/GameInformation";
@@ -12,6 +9,7 @@ import { useGetGameReviewsList, useGetGamesDetails } from "../hooks/gameQueries"
 import { Skeleton } from "@/components/ui/Skeleton";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -47,12 +45,12 @@ export default function GameDetailPage(): React.JSX.Element {
       ) : (
         <>
           <div className="flex flex-col pr-1 gap-2">
-            <img
-              className="border flex-none border-black mx-auto"
+            <SafeImage
+              className="border flex-none border-black mx-auto aspect-264/374 w-full"
               src={
                 gameDetails?.cover_image_id
                   ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}`
-                  : GameCoverImagePlaceholder
+                  : undefined
               }
               alt={gameDetails?.title}
             />

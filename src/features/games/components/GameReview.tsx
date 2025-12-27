@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import UserAvatarPlaceholder from "@/assets/images/Image_Placeholder.svg";
 import { GameReview as GameReviewType } from "@/client";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 type GameReviewProps = {
   className?: string;
@@ -15,9 +15,9 @@ function GameReview({ className, gameReview }: Readonly<GameReviewProps>): React
     <article className={className}>
       <div className="flex flex-col">
         <div className="flex flex-row">
-          <img
-            className="w-11.25 h-18.75"
-            src={gameReview?.user.gravatar_url ? `${gameReview?.user.gravatar_url}` : UserAvatarPlaceholder}
+          <SafeImage
+            className="w-11.25 h-18.75 shrink-0"
+            src={gameReview?.user.gravatar_url || undefined}
             alt={gameReview?.user.username}
           />
           <div className="flex flex-col pl-1 pt-2">

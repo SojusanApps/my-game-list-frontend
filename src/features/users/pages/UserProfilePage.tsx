@@ -14,6 +14,7 @@ import GameListUpdate from "../components/GameListUpdate";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
@@ -55,9 +56,9 @@ export default function UserProfilePage(): React.JSX.Element {
       ) : (
         <>
           <div className="flex flex-col pr-1 gap-2">
-            <img
-              className="border flex-none border-black mx-auto"
-              src={userDetails?.gravatar_url ? `${userDetails.gravatar_url}` : GameCoverImagePlaceholder}
+            <SafeImage
+              className="border flex-none border-black mx-auto w-full aspect-square"
+              src={userDetails?.gravatar_url || undefined}
               alt="User avatar"
             />
             <FriendshipButtons currentUser={currentUser} userId={userId} />

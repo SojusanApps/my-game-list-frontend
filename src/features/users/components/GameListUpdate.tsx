@@ -1,7 +1,7 @@
 import * as React from "react";
 import { GameList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 interface GameListUpdateProps {
   latestGameListUpdate: GameList;
@@ -10,12 +10,12 @@ interface GameListUpdateProps {
 export default function GameListUpdate({ latestGameListUpdate }: GameListUpdateProps) {
   return (
     <div className="flex flex-row">
-      <img
-        className="w-11.25 h-18.75 border border-black object-cover"
+      <SafeImage
+        className="w-11.25 h-18.75 border border-black shrink-0"
         src={
           latestGameListUpdate.game_cover_image
             ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
-            : GameCoverImagePlaceholder
+            : undefined
         }
         alt={`game cover ${latestGameListUpdate.id}`}
       />

@@ -16,6 +16,7 @@ import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/u
 import { useInView } from "react-intersection-observer";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
 
@@ -198,10 +199,24 @@ export default function SearchEnginePage(): React.JSX.Element {
           )}
         </div>
         <div>
-          {searchResults && DisplaySearchResults({ selectedCategory, searchResults })}
-          {(isFetchingNextPage || isLoading) && <p>Loading ...</p>}
-          {errorFetchingData && <p>Error: {errorFetchingData.message}</p>}
-          {hasNextPage && <div ref={observerTargetRef} />}
+          {isLoading && !isFetchingNextPage ? (
+            <div className="grid grid-cols-7 gap-1">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-264/374 w-full" />
+              ))}
+            </div>
+          ) : (
+            searchResults && DisplaySearchResults({ selectedCategory, searchResults })
+          )}
+          {isFetchingNextPage && (
+            <div className="grid grid-cols-7 gap-1 mt-1">
+              {Array.from({ length: 7 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-264/374 w-full" />
+              ))}
+            </div>
+          )}
+          {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
+          {hasNextPage && <div ref={observerTargetRef} className="h-10" />}
         </div>
       </div>
     </div>

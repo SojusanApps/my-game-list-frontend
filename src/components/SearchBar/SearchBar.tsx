@@ -6,10 +6,13 @@ import PlaceholderImage from "@/assets/images/Image_Placeholder.svg";
 import SearchIcon from "../Icons/Search";
 import XMarkIcon from "../Icons/XMark";
 import { cn } from "@/utils/cn";
+import { useDebounce } from "@/utils/hooks";
+import { SafeImage } from "../ui/SafeImage";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
-  const { data: gamesDetails, isLoading } = useGetGamesList({ title: search }, { enabled: search.length > 1 });
+  const debouncedSearch = useDebounce(search, 300);
+  const { data: gamesDetails, isLoading } = useGetGamesList({ title: debouncedSearch }, { enabled: debouncedSearch.length > 1 });
 
   const handleClose = () => {
     setSearch("");
@@ -55,12 +58,12 @@ export default function SearchBar(): React.JSX.Element {
                       className="flex items-center gap-3 p-3 hover:bg-secondary-50 active:bg-secondary-100 transition-colors rounded-none"
                       onClick={handleClose}
                     >
-                      <img
-                        className="w-12 h-16 object-cover rounded shadow-sm"
+                      <SafeImage
+                        className="w-12 h-16 rounded shadow-sm shrink-0"
                         src={
                           game.cover_image_id
                             ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90)
-                            : PlaceholderImage
+                            : undefined
                         }
                         alt={game.title}
                       />

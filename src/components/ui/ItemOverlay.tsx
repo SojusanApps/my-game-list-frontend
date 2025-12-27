@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/utils/cn";
-import ImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import { SafeImage } from "./SafeImage";
 
 type ItemOverlayProps = {
   className?: string;
@@ -24,9 +24,9 @@ function ItemOverlay({
       )}
     >
       <Link to={itemPageUrl} className="block w-full h-full">
-        <img
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          src={itemCoverUrl ?? ImagePlaceholder}
+        <SafeImage
+          className="w-full h-full transition-transform duration-500 group-hover:scale-110"
+          src={itemCoverUrl || undefined}
           alt={name}
           loading="lazy"
         />
