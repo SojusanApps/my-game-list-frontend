@@ -29,7 +29,7 @@ export default abstract class IGDBImageSize {
  * @param {string} size - The size of the image.
  * @returns {string} The URL of the image.
  */
-export function getIGDBImageURL(imageHash: string, size: string) {
+export function getIGDBImageURL(imageHash: string, size: string): string {
   if (imageHash === null || imageHash === undefined || imageHash === "") {
     return ImagePlaceholder;
   }

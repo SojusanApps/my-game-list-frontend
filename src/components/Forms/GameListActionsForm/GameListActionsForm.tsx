@@ -5,7 +5,7 @@ import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
 
 import SelectInput from "@/components/Fields/FormInput/SelectInput";
-import { TokenInfoType, LocalStorageUserType } from "@/helpers/CustomTypes";
+import { TokenInfoType } from "@/helpers/CustomTypes";
 import { StatusEnum } from "@/client";
 import code_to_value_mapping from "@/helpers/GameListStatuses";
 import {
@@ -15,6 +15,7 @@ import {
   useGetGameMediasAllValues,
   usePartialUpdateGameList,
 } from "@/hooks/gameQueries";
+import { useAuth } from "@/context/AuthProvider";
 
 const validationSchema = z.object({
   status: z.enum(StatusEnum),
@@ -31,11 +32,10 @@ type ValidationSchema = z.output<typeof validationSchema>;
 type ValidationInput = z.input<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
+  const { user } = useAuth();
   let userInfo: TokenInfoType | undefined = undefined;
-  const localStorageUser = localStorage.getItem("user");
-  if (localStorageUser) {
-    const userInstance: LocalStorageUserType = JSON.parse(localStorageUser);
-    userInfo = jwtDecode<TokenInfoType>(userInstance.token);
+  if (user) {
+    userInfo = jwtDecode<TokenInfoType>(user.token);
   }
 
   const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();

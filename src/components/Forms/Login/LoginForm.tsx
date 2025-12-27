@@ -11,6 +11,7 @@ import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
 import CheckboxInput from "@/components/Fields/FormInput/CheckboxInput";
 import StatusCode from "@/helpers/StatusCode";
 import { TokenService } from "@/client";
+import { useAuth } from "@/context/AuthProvider";
 
 const validationSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email({ message: "Please enter a valid email address" }),
@@ -28,6 +29,7 @@ function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
+  const { login } = useAuth();
 
   const defaultValues: ValidationSchema = {
     email: "",
@@ -51,7 +53,9 @@ function LoginForm() {
       }
       const token = tokenInfo?.access;
       const refreshToken = tokenInfo?.refresh;
-      localStorage.setItem("user", JSON.stringify({ email: data.email, token, refreshToken }));
+      if (token && refreshToken) {
+        login({ email: data.email, token, refreshToken });
+      }
       navigate(from, { replace: true });
     } catch (error) {
       alert(error);

@@ -176,7 +176,6 @@ export default function SearchEnginePage(): React.JSX.Element {
   return (
     <div>
       <div className="flex flex-col gap-8 max-w-[60%] mt-2 mx-auto">
-        {/* <div className="join mx-auto" onChange={handleSearchSourceChange}> */}
         <div className="join mx-auto">
           <input
             className="join-item btn min-w-32"

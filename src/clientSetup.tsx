@@ -34,6 +34,6 @@ export default function clientSetup() {
   client.setConfig({
     baseUrl: import.meta.env.VITE_API_URL,
     fetch: customFetch,
-    auth: () => "123",
+    auth: () => "123", // Initial dummy token, will be replaced on first request if needed
   });
 }
