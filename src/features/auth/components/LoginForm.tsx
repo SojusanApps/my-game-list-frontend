@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
 import GoogleLogo from "@/assets/logos/GoogleLogo.svg";
 import FacebookLogo from "@/assets/logos/FacebookLogo.svg";
 import XLogo from "@/assets/logos/XLogo.svg";
@@ -48,17 +50,18 @@ function LoginForm() {
         body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
       if (response.status !== StatusCode.OK) {
-        alert("Error logging in");
+        toast.error("Error logging in");
         return;
       }
       const token = tokenInfo?.access;
       const refreshToken = tokenInfo?.refresh;
       if (token && refreshToken) {
         login({ email: data.email, token, refreshToken });
+        toast.success("Logged in successfully");
       }
       navigate(from, { replace: true });
     } catch (error) {
-      alert(error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     }
   };
 

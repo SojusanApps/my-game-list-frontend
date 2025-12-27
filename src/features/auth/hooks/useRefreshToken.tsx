@@ -1,6 +1,7 @@
 import { LocalStorageUserType } from "@/types";
 import { TokenService } from "@/client";
 import StatusCode from "@/utils/StatusCode";
+import toast from "react-hot-toast";
 
 const useRefreshToken = () => {
   const refresh = async () => {
@@ -15,7 +16,7 @@ const useRefreshToken = () => {
         body: { access: user.token, refresh: user.refreshToken },
       });
       if (error || !data) {
-        alert("Error refreshing token");
+        toast.error("Error refreshing token");
         return;
       }
       if (response.status === StatusCode.OK) {

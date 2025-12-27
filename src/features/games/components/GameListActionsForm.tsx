@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
 
+import toast from "react-hot-toast";
+
 import SelectInput from "@/components/Fields/FormInput/SelectInput";
 import { TokenInfoType } from "@/types";
 import { StatusEnum } from "@/client";
@@ -72,32 +74,44 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
 
   const addGameListItem = async (data: ValidationSchema) => {
     if (!gameID || !userInfo) {
-      alert("Error during creating the game list");
+      toast.error("Error during creating the game list");
       return;
     }
-    createGameListItem({
-      status: data.status,
-      score: data.score,
-      game: +gameID,
-      user: userInfo.user_id,
-      owned_on: data.owned_on?.map(Number) ?? [],
-    });
+    createGameListItem(
+      {
+        status: data.status,
+        score: data.score,
+        game: +gameID,
+        user: userInfo.user_id,
+        owned_on: data.owned_on?.map(Number) ?? [],
+      },
+      {
+        onSuccess: () => toast.success("Added to list successfully"),
+        onError: error => toast.error(error.message || "Failed to add to list"),
+      },
+    );
   };
 
   const updateGameListItem = async (data: ValidationSchema) => {
     if (!gameListDetails?.id) {
-      alert("Error during updating the game list");
+      toast.error("Error during updating the game list");
       return;
     }
 
-    partialUpdateGameListItem({
-      id: gameListDetails.id,
-      body: {
-        status: data.status,
-        score: data.score,
-        owned_on: data.owned_on?.map(Number) ?? [],
+    partialUpdateGameListItem(
+      {
+        id: gameListDetails.id,
+        body: {
+          status: data.status,
+          score: data.score,
+          owned_on: data.owned_on?.map(Number) ?? [],
+        },
       },
-    });
+      {
+        onSuccess: () => toast.success("Updated list successfully"),
+        onError: error => toast.error(error.message || "Failed to update list"),
+      },
+    );
   };
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
@@ -108,13 +122,16 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         await addGameListItem(data);
       }
     } catch (error) {
-      alert(error);
+      toast.error(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
   const handleRemove = () => {
     if (gameListDetails?.id) {
-      deleteGameListItem(gameListDetails.id);
+      deleteGameListItem(gameListDetails.id, {
+        onSuccess: () => toast.success("Removed from list successfully"),
+        onError: error => toast.error(error.message || "Failed to remove from list"),
+      });
     }
   };
 

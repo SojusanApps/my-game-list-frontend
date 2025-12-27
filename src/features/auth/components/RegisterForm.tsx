@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
 import TextFieldInput from "@/components/Fields/FormInput/TextFieldInput";
 import Constants from "@/utils/Constants";
 import { useCreateUser } from "@/features/users/hooks/userQueries";
@@ -42,13 +44,22 @@ function RegisterForm() {
   });
 
   const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
-    createUser({
-      username: data.username,
-      email: data.email,
-      password: data.password,
-    });
-    alert("User created successfully");
-    navigate("/login", { replace: true });
+    createUser(
+      {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: () => {
+          toast.success("User created successfully");
+          navigate("/login", { replace: true });
+        },
+        onError: error => {
+          toast.error(error.message || "Failed to create user");
+        },
+      },
+    );
   };
 
   const onCancelHandler: React.MouseEventHandler = () => {

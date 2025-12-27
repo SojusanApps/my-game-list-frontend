@@ -17,6 +17,8 @@ import SearchEnginePage from "./pages/SearchEngine/SearchEnginePage";
 import RequireAuth from "./features/auth/components/RequireAuth";
 import { AuthProvider } from "./features/auth/context/AuthProvider";
 
+import { Toaster } from "react-hot-toast";
+
 function App(): React.JSX.Element {
   return (
     <AuthProvider>
@@ -39,6 +41,7 @@ function App(): React.JSX.Element {
           </Route>
         </Routes>
       </BrowserRouter>
+      <Toaster position="bottom-right" reverseOrder={false} />
     </AuthProvider>
   );
 }
