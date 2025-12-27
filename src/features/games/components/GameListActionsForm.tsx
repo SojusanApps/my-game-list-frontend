@@ -42,7 +42,8 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
 
   const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();
   const { data: gameListDetails } = useGetGameListByFilters(
-    gameID ? { game: +gameID, user: userInfo?.user_id } : undefined,
+    gameID && userInfo ? { game: +gameID, user: userInfo.user_id } : undefined,
+    { enabled: !!gameID && !!userInfo },
   );
 
   const { mutate: deleteGameListItem } = useDeleteGameList();

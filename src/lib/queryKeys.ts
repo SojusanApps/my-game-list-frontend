@@ -1,0 +1,46 @@
+export const gameKeys = {
+  all: ["games"] as const,
+  lists: () => [...gameKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...gameKeys.lists(), query] as const,
+  details: () => [...gameKeys.all, "detail"] as const,
+  detail: (id: number) => [...gameKeys.details(), id] as const,
+  genres: ["genres", "all-values"] as const,
+  medias: ["game-medias", "all-values"] as const,
+  platforms: ["platforms", "all-values"] as const,
+  companies: ["companies", "list"] as const,
+  companyList: (query: object | undefined) => [...gameKeys.companies, query] as const,
+};
+
+export const gameReviewKeys = {
+  all: ["game-reviews"] as const,
+  lists: () => [...gameReviewKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...gameReviewKeys.lists(), query] as const,
+  details: () => [...gameReviewKeys.all, "detail"] as const,
+  detail: (id: number) => [...gameReviewKeys.details(), id] as const,
+};
+
+export const gameListKeys = {
+  all: ["game-lists"] as const,
+  lists: () => [...gameListKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...gameListKeys.lists(), query] as const,
+  byFilters: (query: object | undefined) => [...gameListKeys.all, "by-filters", query] as const,
+};
+
+export const userKeys = {
+  all: ["users"] as const,
+  details: () => [...userKeys.all, "detail"] as const,
+  detail: (id: number) => [...userKeys.details(), id] as const,
+};
+
+export const friendshipKeys = {
+  all: ["friendships"] as const,
+  requests: ["friendship-requests"] as const,
+  requestList: (query: object | undefined) => [...friendshipKeys.requests, query] as const,
+  list: (query: object | undefined) => [...friendshipKeys.all, query] as const,
+};
+
+export const notificationKeys = {
+  all: ["notifications"] as const,
+  list: (query: object | undefined) => [...notificationKeys.all, query] as const,
+  unreadCount: ["notifications", "unread-count"] as const,
+};

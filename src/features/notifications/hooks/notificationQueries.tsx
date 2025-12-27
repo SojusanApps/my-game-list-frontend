@@ -10,17 +10,18 @@ import {
   NotificationMarkAsReadCreateDataPath,
   NotificationDestroyDataPath,
 } from "../api/notification";
+import { notificationKeys } from "@/lib/queryKeys";
 
 export const useGetNotifications = (query?: NotificationListDataQuery) => {
   return useQuery({
-    queryKey: ["notifications", query],
+    queryKey: notificationKeys.list(query),
     queryFn: () => getNotifications(query),
   });
 };
 
 export const useGetUnreadNotificationCount = () => {
   return useQuery({
-    queryKey: ["notifications", "unread-count"],
+    queryKey: notificationKeys.unreadCount,
     queryFn: getUnreadNotificationCount,
     refetchInterval: 30_000, // Refetch every 30 seconds
   });
@@ -33,7 +34,7 @@ export const useMarkNotificationAsRead = () => {
     mutationFn: (path: NotificationMarkAsReadCreateDataPath) => markNotificationAsRead(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notifications"],
+        queryKey: notificationKeys.all,
       });
     },
   });
@@ -46,7 +47,7 @@ export const useMarkAllNotificationsAsRead = () => {
     mutationFn: markAllNotificationsAsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notifications"],
+        queryKey: notificationKeys.all,
       });
     },
   });
@@ -59,7 +60,7 @@ export const useDeleteNotification = () => {
     mutationFn: (path: NotificationDestroyDataPath) => deleteNotification(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notifications"],
+        queryKey: notificationKeys.all,
       });
     },
   });
@@ -72,7 +73,7 @@ export const useDeleteAllReadNotifications = () => {
     mutationFn: deleteAllReadNotifications,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notifications"],
+        queryKey: notificationKeys.all,
       });
     },
   });

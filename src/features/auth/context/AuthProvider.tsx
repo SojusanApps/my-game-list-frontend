@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { LocalStorageUserType } from "@/types";
+import { getStoredUser, setStoredUser, clearStoredUser } from "../utils/authUtils";
 
 interface AuthContextType {
   user: LocalStorageUserType | null;
@@ -10,19 +11,31 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<LocalStorageUserType | null>(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [user, setUser] = useState<LocalStorageUserType | null>(() => getStoredUser());
+
+  useEffect(() => {
+    const handleAuthUpdate = () => {
+      setUser(getStoredUser());
+    };
+    const handleLogout = () => {
+      setUser(null);
+    };
+
+    window.addEventListener("auth:updated", handleAuthUpdate);
+    window.addEventListener("auth:logout", handleLogout);
+
+    return () => {
+      window.removeEventListener("auth:updated", handleAuthUpdate);
+      window.removeEventListener("auth:logout", handleLogout);
+    };
+  }, []);
 
   const login = (userData: LocalStorageUserType) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+    setStoredUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+    clearStoredUser();
   };
 
   return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;

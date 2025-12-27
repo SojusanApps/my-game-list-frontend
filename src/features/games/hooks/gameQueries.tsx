@@ -21,25 +21,29 @@ import {
 } from "../api/game";
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { GameList, PaginatedGameList, PaginatedGameListList } from "@/client";
+import { gameKeys, gameListKeys, gameReviewKeys } from "@/lib/queryKeys";
 
 export const useGetGenresAllValues = () => {
   return useQuery({
-    queryKey: ["genres", "all-values"],
+    queryKey: gameKeys.genres,
     queryFn: getGenresAllValues,
+    staleTime: Infinity,
   });
 };
 
 export const useGetGameMediasAllValues = () => {
   return useQuery({
-    queryKey: ["game-medias", "all-values"],
+    queryKey: gameKeys.medias,
     queryFn: getGameMediaAllValues,
+    staleTime: Infinity,
   });
 };
 
 export const useGetPlatformsAllValues = () => {
   return useQuery({
-    queryKey: ["platforms", "all-values"],
+    queryKey: gameKeys.platforms,
     queryFn: getPlatformsAllValues,
+    staleTime: Infinity,
   });
 };
 
@@ -48,7 +52,7 @@ export const useGetGamesList = (
   options?: Omit<UseQueryOptions<unknown, Error, PaginatedGameList>, "queryKey" | "queryFn">,
 ) => {
   return useQuery({
-    queryKey: ["games", "list", query],
+    queryKey: gameKeys.list(query),
     queryFn: async () => {
       const data = await getGamesList(query);
       return data;
@@ -59,21 +63,21 @@ export const useGetGamesList = (
 
 export const useGetGamesDetails = (id: number) => {
   return useQuery({
-    queryKey: ["games", "detail", id],
+    queryKey: gameKeys.detail(id),
     queryFn: () => getGamesDetail(id),
   });
 };
 
 export const useGetGameReviewsList = (query?: GameGameReviewsListDataQuery) => {
   return useQuery({
-    queryKey: ["game-reviews", "list", query],
+    queryKey: gameReviewKeys.list(query),
     queryFn: () => getGameReviewsList(query),
   });
 };
 
 export const useGetGameReviewsDetail = (id: number) => {
   return useQuery({
-    queryKey: ["game-reviews", "detail", id],
+    queryKey: gameReviewKeys.detail(id),
     queryFn: () => getGameReviewsDetail(id),
   });
 };
@@ -83,7 +87,7 @@ export const useGetGameListsList = (
   options?: Omit<UseQueryOptions<unknown, Error, PaginatedGameListList>, "queryKey" | "queryFn">,
 ) => {
   return useQuery({
-    queryKey: ["game-lists", "list", query],
+    queryKey: gameListKeys.list(query),
     queryFn: () => getGameListsList(query),
     ...options,
   });
@@ -91,10 +95,10 @@ export const useGetGameListsList = (
 
 export const useGetGameListByFilters = (
   query?: GameGameListsListDataQuery,
-  options?: Omit<UseQueryOptions<GameList | undefined, Error, GameList>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<GameList | null, Error, GameList | null>, "queryKey" | "queryFn">,
 ) => {
   return useQuery({
-    queryKey: ["game-lists", "by-filters", query],
+    queryKey: gameListKeys.byFilters(query),
     queryFn: () => getGameListByFilters(query),
     ...options,
   });
@@ -107,7 +111,7 @@ export const useCreateGameList = () => {
     mutationFn: (body: GameListCreateDataBody) => createGameList(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["game-lists"],
+        queryKey: gameListKeys.all,
       });
     },
   });
@@ -120,7 +124,7 @@ export const usePartialUpdateGameList = () => {
     mutationFn: ({ id, body }: { id: number; body: GameListPartialUpdateDataBody }) => partialUpdateGameList(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["game-lists"],
+        queryKey: gameListKeys.all,
       });
     },
   });
@@ -133,7 +137,7 @@ export const useDeleteGameList = () => {
     mutationFn: (id: number) => deleteGameList(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["game-lists"],
+        queryKey: gameListKeys.all,
       });
     },
   });
@@ -141,7 +145,7 @@ export const useDeleteGameList = () => {
 
 export const useGetCompaniesList = (query?: GameCompaniesListDataQuery) => {
   return useQuery({
-    queryKey: ["companies", "list", query],
+    queryKey: gameKeys.companyList(query),
     queryFn: () => getCompaniesList(query),
   });
 };

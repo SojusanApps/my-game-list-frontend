@@ -13,10 +13,11 @@ import {
   FriendshipFriendshipsListDataQuery,
   FriendshipFriendshipsDestroyDataPath,
 } from "../api/friendship";
+import { friendshipKeys } from "@/lib/queryKeys";
 
 export const useGetFriendshipRequests = (query?: FriendshipFriendshipRequestsListDataQuery) => {
   return useQuery({
-    queryKey: ["friendship-requests", query],
+    queryKey: friendshipKeys.requestList(query),
     queryFn: () => getFriendshipRequests(query),
   });
 };
@@ -28,7 +29,7 @@ export const useSendFriendRequest = () => {
     mutationFn: (body: FriendshipFriendshipRequestsCreateDataBody) => sendFriendRequest(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["friendship-requests"],
+        queryKey: friendshipKeys.requests,
       });
     },
   });
@@ -41,10 +42,10 @@ export const useAcceptFriendRequest = () => {
     mutationFn: (path: FriendshipFriendshipRequestsAcceptCreateDataPath) => acceptFriendRequest(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["friendship-requests"],
+        queryKey: friendshipKeys.requests,
       });
       queryClient.invalidateQueries({
-        queryKey: ["friendships"],
+        queryKey: friendshipKeys.all,
       });
     },
   });
@@ -57,7 +58,7 @@ export const useRejectFriendRequest = () => {
     mutationFn: (path: FriendshipFriendshipRequestsRejectCreateDataPath) => rejectFriendRequest(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["friendship-requests"],
+        queryKey: friendshipKeys.requests,
       });
     },
   });
@@ -65,7 +66,7 @@ export const useRejectFriendRequest = () => {
 
 export const useGetFriendships = (query?: FriendshipFriendshipsListDataQuery) => {
   return useQuery({
-    queryKey: ["friendships", query],
+    queryKey: friendshipKeys.list(query),
     queryFn: () => getFriendships(query),
   });
 };
@@ -77,10 +78,10 @@ export const useDeleteFriendship = () => {
     mutationFn: (path: FriendshipFriendshipsDestroyDataPath) => deleteFriendship(path),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["friendships"],
+        queryKey: friendshipKeys.all,
       });
       queryClient.invalidateQueries({
-        queryKey: ["friendship-requests"], // In case they want to re-add immediately, state should be clear
+        queryKey: friendshipKeys.requests,
       });
     },
   });

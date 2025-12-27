@@ -70,7 +70,7 @@ export const getGameListByFilters = async (query?: GameGameListsListDataQuery) =
   if (data.count > 1) {
     throw new Error("Error fetching game list by filters");
   }
-  return data.count === 0 ? undefined : data.results[0];
+  return data.count === 0 ? null : data.results[0];
 };
 
 export const deleteGameList = async (id: number) => {
