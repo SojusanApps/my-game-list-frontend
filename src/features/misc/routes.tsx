@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-import StartPage from "./pages/StartPage";
-import NotFound from "./pages/NotFound";
+import { StartPage, NotFound } from "./index";
 
 export const MiscRoutes = (
   <>

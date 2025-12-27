@@ -4,8 +4,8 @@ import { HelmetProvider } from "@dr.pogodin/react-helmet";
 import { Toaster } from "react-hot-toast";
 
 import "./index.css";
-import Layout from "./components/Layout/Layout";
-import { AuthProvider } from "./features/auth/context/AuthProvider";
+import Layout from "./components/layout/Layout";
+import { AuthProvider } from "./features/auth";
 import { PageMeta } from "./components/ui/PageMeta";
 
 // Feature Routes

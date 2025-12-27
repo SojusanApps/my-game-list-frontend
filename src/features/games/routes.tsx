@@ -1,8 +1,5 @@
 import { Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import GameDetailPage from "./pages/GameDetailPage";
-import GameListPage from "./pages/GameListPage";
-import SearchEnginePage from "./pages/SearchEnginePage";
+import { HomePage, GameDetailPage, GameListPage, SearchEnginePage } from "./index";
 import RequireAuth from "@/features/auth/components/RequireAuth";
 
 export const GamesRoutes = (

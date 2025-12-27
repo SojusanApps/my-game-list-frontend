@@ -2,17 +2,19 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import PlaceholderImage from "@/assets/images/Image_Placeholder.svg";
-import SearchIcon from "../Icons/Search";
-import XMarkIcon from "../Icons/XMark";
+import SearchIcon from "@/components/ui/Icons/Search";
+import XMarkIcon from "@/components/ui/Icons/XMark";
 import { cn } from "@/utils/cn";
 import { useDebounce } from "@/utils/hooks";
-import { SafeImage } from "../ui/SafeImage";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
   const debouncedSearch = useDebounce(search, 300);
-  const { data: gamesDetails, isLoading } = useGetGamesList({ title: debouncedSearch }, { enabled: debouncedSearch.length > 1 });
+  const { data: gamesDetails, isLoading } = useGetGamesList(
+    { title: debouncedSearch },
+    { enabled: debouncedSearch.length > 1 },
+  );
 
   const handleClose = () => {
     setSearch("");

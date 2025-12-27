@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import TopBar from "@/components/TopBar/TopBar";
+import TopBar from "@/components/layout/TopBar";
 
 const Layout = (): React.JSX.Element => {
   return (

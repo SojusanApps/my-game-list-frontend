@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
-import UserProfilePage from "./pages/UserProfilePage";
-import UserSettingsPage from "./pages/UserSettingsPage";
+import { UserProfilePage, UserSettingsPage } from "./index";
 
 export const UserRoutes = (
   <>

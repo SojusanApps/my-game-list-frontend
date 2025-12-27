@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import AppLogo from "@/components/ui/AppLogo";
 import { TokenInfoType, LocalStorageUserType } from "@/types";
 import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
-import SearchBar from "@/components/SearchBar/SearchBar";
+import SearchBar from "@/features/games/components/SearchBar";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
 import { useAuth } from "@/features/auth/context/AuthProvider";
-import ChevronDownIcon from "../Icons/ChevronDown";
-import ProfileIcon from "../Icons/Profile";
-import SettingsIcon from "../Icons/Settings";
-import LogoutIcon from "../Icons/Logout";
+import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
+import ProfileIcon from "@/components/ui/Icons/Profile";
+import SettingsIcon from "@/components/ui/Icons/Settings";
+import LogoutIcon from "@/components/ui/Icons/Logout";
 
 function LoggedInView({
   user,
