@@ -8,7 +8,13 @@ interface FormErrorProps extends React.HTMLAttributes<HTMLParagraphElement> {
 export function FormError({ message, className, ...props }: FormErrorProps) {
   if (!message) return null;
   return (
-    <p className={cn("text-red-500 text-xs italic mt-1", className)} {...props}>
+    <p
+      className={cn(
+        "text-error-600 text-xs font-medium mt-1 animate-in fade-in slide-in-from-top-1 duration-200",
+        className,
+      )}
+      {...props}
+    >
       {message}.
     </p>
   );

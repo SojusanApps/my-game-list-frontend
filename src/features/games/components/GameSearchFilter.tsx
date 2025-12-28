@@ -3,11 +3,18 @@ import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import SelectInput from "@/components/ui/Form/SelectInput";
-import DateInput from "@/components/ui/Form/DateInput";
+import CustomSelect from "@/components/ui/Form/CustomSelect";
+import YearSelect from "@/components/ui/Form/YearSelect";
 import TextFieldInput from "@/components/ui/Form/TextFieldInput";
-import { useGetCompaniesList, useGetGenresAllValues, useGetPlatformsAllValues } from "../hooks/gameQueries";
-
+import { Button } from "@/components/ui/Button";
+import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
+import AsyncAutocomplete from "@/components/ui/Form/AsyncAutocomplete";
+import {
+  useGetGenresInfiniteQuery,
+  useGetPlatformsInfiniteQuery,
+  useGetCompaniesInfiniteQuery,
+} from "../hooks/gameQueries";
+import { Company, Platform, Genre } from "@/client";
 const ORDERING_OPTIONS = [
   "-created_at",
   "created_at",
@@ -26,7 +33,7 @@ const validationSchema = z
     developer: z.string().optional(),
     platform: z.string().optional(),
     genres: z.string().array().optional(),
-    ordering: z.enum(ORDERING_OPTIONS).optional(),
+    ordering: z.enum(ORDERING_OPTIONS).optional().or(z.literal("")),
   })
   .refine(
     data => {
@@ -50,107 +57,104 @@ export type ValidationInput = z.input<typeof validationSchema>;
 function GameSearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
-  // TODO: There is too much companies to get all of them at once in a single select box.
-  // Maybe a feature with a single text field that will start to fetch data after 3 characters to autocomplete.
-  const { data: companyList, isLoading: isCompanyListLoading } = useGetCompaniesList();
-  const { data: genreList, isLoading: isGenreListLoading } = useGetGenresAllValues();
-  const { data: platformList, isLoading: isPlatformListLoading } = useGetPlatformsAllValues();
   const methods = useForm<ValidationInput, object, ValidationSchema>({
     resolver: zodResolver(validationSchema),
   });
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate>
-        <div className="flex flex-row flex-wrap gap-2">
-          <TextFieldInput id="title" name="title" type="text" label="Title" placeholder="Enter title ..." />
-          <DateInput
-            id="release_date_after"
-            name="release_date_after"
-            label="Release date after"
-            placeholder="Select date ..."
-          />
-          <DateInput
-            id="release_date_before"
-            name="release_date_before"
-            label="Release date before"
-            placeholder="Select date ..."
-          />
-          {isCompanyListLoading ? (
-            <p>Loading...</p>
-          ) : (
-            <SelectInput
-              placeholder="Select Developer ..."
+      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate className="flex flex-col gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+          {/* Group 1: Core Search */}
+          <div className="flex flex-col gap-4">
+            <TextFieldInput id="title" name="title" type="text" label="Game Title" placeholder="Search by name..." />
+            <CustomSelect
+              placeholder="Select ordering ..."
+              id="ordering"
+              label="Sort Results By"
+              name="ordering"
+              options={[
+                { value: "created_at", label: "Created at" },
+                { value: "-created_at", label: "Created at (Descending)" },
+                { value: "rank_position", label: "Rank position" },
+                { value: "-rank_position", label: "Rank position (Descending)" },
+                { value: "popularity", label: "Popularity" },
+                { value: "-popularity", label: "Popularity (Descending)" },
+              ]}
+            />
+          </div>
+
+          {/* Group 2: Entity & Platform */}
+          <div className="flex flex-col gap-4">
+            <AsyncAutocomplete
               id="developer"
-              label="Developer"
               name="developer"
-              selectOptions={companyList!.results.map(companyItem => ({
-                value: companyItem.name,
-                label: companyItem.name,
-              }))}
+              label="Developer (Single)"
+              placeholder="Search developer..."
+              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+              getOptionLabel={(company: Company) => company.name}
+              getOptionValue={(company: Company) => company.name}
             />
-          )}
-          {isCompanyListLoading ? (
-            <p>Loading...</p>
-          ) : (
-            <SelectInput
-              placeholder="Select Publisher ..."
+
+            <AsyncAutocomplete
               id="publisher"
-              label="Publisher"
               name="publisher"
-              selectOptions={companyList!.results.map(companyItem => ({
-                value: companyItem.name,
-                label: companyItem.name,
-              }))}
+              label="Publisher (Single)"
+              placeholder="Search publisher..."
+              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+              getOptionLabel={(company: Company) => company.name}
+              getOptionValue={(company: Company) => company.name}
             />
-          )}
-          {isPlatformListLoading ? (
-            <p>Loading...</p>
-          ) : (
-            <SelectInput
-              placeholder="Select Platform ..."
+
+            <AsyncAutocomplete
               id="platform"
-              label="Platform"
               name="platform"
-              selectOptions={platformList!.map(platformItem => ({
-                value: platformItem.name,
-                label: platformItem.name,
-              }))}
+              label="Platform (Single)"
+              placeholder="Search platform..."
+              useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
+              getOptionLabel={(platform: Platform) => platform.name}
+              getOptionValue={(platform: Platform) => platform.name}
             />
-          )}
-          {isGenreListLoading ? (
-            <p>Loading...</p>
-          ) : (
-            <SelectInput
-              placeholder="Select Genres ..."
+          </div>
+
+          {/* Group 3: Dates & Genres */}
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <YearSelect
+                id="release_date_after"
+                name="release_date_after"
+                label="Release After"
+                placeholder="Year..."
+              />
+              <YearSelect
+                id="release_date_before"
+                name="release_date_before"
+                label="Release Before"
+                placeholder="Year..."
+              />
+            </div>
+
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search genres..."
               id="genres"
-              label="Genres"
+              label="Genres (Multiple)"
               name="genres"
-              multiple
-              selectOptions={genreList!.map(genreItem => ({
-                value: genreItem.name,
-                label: genreItem.name,
-              }))}
+              useInfiniteQueryHook={useGetGenresInfiniteQuery}
+              getOptionLabel={(genre: Genre) => genre.name}
+              getOptionValue={(genre: Genre) => genre.name}
             />
-          )}
-          <SelectInput
-            placeholder="Select ordering ..."
-            id="ordering"
-            label="Ordering"
-            name="ordering"
-            selectOptions={[
-              { value: "created_at", label: "Created at" },
-              { value: "-created_at", label: "Created at (Descending)" },
-              { value: "rank_position", label: "Rank position" },
-              { value: "-rank_position", label: "Rank position (Descending)" },
-              { value: "popularity", label: "Popularity" },
-              { value: "-popularity", label: "Popularity (Descending)" },
-            ]}
-          />
+          </div>
         </div>
-        <button type="submit" className="bg-primary-950 text-white p-2 rounded-lg mx-auto">
-          Filter
-        </button>
+
+        <div className="flex justify-center pt-4 border-t border-background-100">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full md:w-64 shadow-md hover:shadow-lg transition-all active:scale-95"
+          >
+            Apply Filters
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

@@ -3,16 +3,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 shadow-md hover:shadow-lg",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95",
   {
     variants: {
       variant: {
-        default: "bg-primary-950 text-white hover:bg-primary-900 focus:bg-primary-800 active:bg-slate-900",
-        secondary: "bg-secondary-950 text-white hover:bg-secondary-500 focus:bg-secondary-400 active:bg-secondary-700",
-        destructive: "bg-error-950 text-white hover:bg-red-900",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        ghost: "hover:bg-accent hover:text-accent-foreground shadow-none hover:shadow-none",
-        link: "text-primary underline-offset-4 hover:underline shadow-none hover:shadow-none",
+        default: "bg-primary-600 text-white shadow-sm hover:bg-primary-700 hover:shadow-md",
+        secondary: "bg-secondary-500 text-white shadow-sm hover:bg-secondary-600 hover:shadow-md",
+        destructive: "bg-error-600 text-white shadow-sm hover:bg-error-700 hover:shadow-md",
+        outline:
+          "border border-background-300 bg-transparent text-text-700 hover:bg-background-100 hover:text-text-900",
+        ghost: "text-text-600 hover:bg-background-200 hover:text-text-900",
+        link: "text-primary-600 underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -25,7 +26,7 @@ const buttonVariants = cva(
         true: "w-full",
       },
       uppercase: {
-        true: "uppercase",
+        true: "uppercase tracking-wide",
       },
     },
     defaultVariants: {

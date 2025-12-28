@@ -86,20 +86,39 @@ function LoginForm() {
           type="password"
         />
         <CheckboxInput name="remember" id="remember" label="Remember me" />
-        <h6 className="mt-2">
+        <p className="mt-4 text-center text-sm text-text-600">
           Don&apos;t have an account?&nbsp;
-          <Link to="/register" className="text-secondary-950">
+          <Link
+            to="/register"
+            className="font-semibold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
+          >
             Sign up
           </Link>
-        </h6>
-        <Button type="submit" fullWidth uppercase className="mt-4 shadow-md hover:shadow-lg">
+        </p>
+        <Button type="submit" fullWidth uppercase className="mt-6">
           LOGIN
         </Button>
       </form>
-      <div className="grid grid-cols-3 justify-items-center mt-4">
-        <img src={GoogleLogo} alt="google logo" className="w-8" />
-        <img src={FacebookLogo} alt="facebook logo" className="w-8" />
-        <img src={XLogo} alt="x logo" className="w-8" />
+
+      <div className="relative mt-8">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <div className="w-full border-t border-background-200"></div>
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white/0 px-2 text-text-400">Or continue with</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mt-6">
+        <Button variant="outline" size="sm" className="w-full">
+          <img src={GoogleLogo} alt="google logo" className="w-5" />
+        </Button>
+        <Button variant="outline" size="sm" className="w-full">
+          <img src={FacebookLogo} alt="facebook logo" className="w-5" />
+        </Button>
+        <Button variant="outline" size="sm" className="w-full">
+          <img src={XLogo} alt="x logo" className="w-5" />
+        </Button>
       </div>
     </FormProvider>
   );

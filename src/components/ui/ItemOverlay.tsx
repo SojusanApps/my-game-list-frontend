@@ -8,6 +8,7 @@ type ItemOverlayProps = {
   itemPageUrl: string;
   itemCoverUrl?: string | null;
   name: string;
+  variant?: "cover" | "logo";
 };
 
 function ItemOverlay({
@@ -15,11 +16,15 @@ function ItemOverlay({
   name = "Name Placeholder",
   itemPageUrl,
   itemCoverUrl,
+  variant = "cover",
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
+  const isLogo = variant === "logo";
+
   return (
     <div
       className={cn(
-        "relative group overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-all duration-300 bg-background-200 aspect-264/374 w-40",
+        "relative group overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 w-full bg-background-200",
+        isLogo ? "aspect-3/2" : "aspect-264/374",
         className,
       )}
     >
@@ -29,11 +34,12 @@ function ItemOverlay({
           src={itemCoverUrl || undefined}
           alt={name}
           loading="lazy"
+          objectFit={isLogo ? "contain" : "cover"}
         />
         {/* Overlay Gradients */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-        <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/60 to-transparent pt-8 pb-2 px-2 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-          <h2 className="text-white text-xs font-bold leading-tight line-clamp-2 text-center group-hover:text-secondary-400 transition-colors">
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-primary-950/20 transition-colors duration-300" />
+        <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent pt-12 pb-3 px-3 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+          <h2 className="text-white text-[10px] font-bold leading-tight line-clamp-2 text-center group-hover:text-primary-300 transition-colors tracking-tight uppercase">
             {name}
           </h2>
         </div>

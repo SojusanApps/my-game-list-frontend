@@ -4,9 +4,12 @@ import { userKeys } from "@/lib/queryKeys";
 import { useAppMutation } from "@/hooks/useAppMutation";
 
 export const useGetUserDetails = (id: number) => {
+  // To ensure id is a number
+  const idParsed = Number(id);
+
   return useQuery({
-    queryKey: userKeys.detail(id),
-    queryFn: () => getUserDetails(id),
+    queryKey: userKeys.detail(idParsed),
+    queryFn: () => getUserDetails(idParsed),
   });
 };
 

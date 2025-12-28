@@ -10,6 +10,7 @@ import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
+import { cn } from "@/utils/cn";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -36,68 +37,75 @@ export default function GameListPage(): React.JSX.Element {
 
   const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
+  const statuses = [
+    {
+      id: null,
+      label: "ALL",
+      styles: "hover:bg-text-100 text-text-600 border-background-300",
+      activeStyles: "bg-text-800 text-white border-text-800",
+    },
+    {
+      id: StatusEnum.P,
+      label: "Playing",
+      styles: "hover:bg-success-50 text-success-700 border-success-200",
+      activeStyles: "bg-success-100 text-success-900 border-success-300",
+    },
+    {
+      id: StatusEnum.C,
+      label: "Completed",
+      styles: "hover:bg-primary-50 text-primary-700 border-primary-200",
+      activeStyles: "bg-primary-100 text-primary-900 border-primary-300",
+    },
+    {
+      id: StatusEnum.PTP,
+      label: "Plan to Play",
+      styles: "hover:bg-background-300 text-text-500 border-background-300",
+      activeStyles: "bg-background-400 text-text-900 border-background-500",
+    },
+    {
+      id: StatusEnum.OH,
+      label: "On Hold",
+      styles: "hover:bg-secondary-50 text-secondary-700 border-secondary-200",
+      activeStyles: "bg-secondary-100 text-secondary-900 border-secondary-300",
+    },
+    {
+      id: StatusEnum.D,
+      label: "Dropped",
+      styles: "hover:bg-error-50 text-error-700 border-error-200",
+      activeStyles: "bg-error-100 text-error-900 border-error-300",
+    },
+  ];
+
   return (
-    <div className="py-8">
+    <div className="py-12 bg-background-200 min-h-screen">
       <PageMeta title={pageTitle} />
-      <div className="flex flex-col gap-8 max-w-[70%] mt-2 mx-auto">
-        <p className="text-3xl mx-auto text-text-900">
-          <strong className="text-secondary-950">{userDetails?.username}</strong>&apos;s Game List
-        </p>
-        <div className="join mx-auto shadow-sm">
-          <input
-            className="join-item btn min-w-32"
-            value="all"
-            type="radio"
-            name="options"
-            aria-label="ALL"
-            onChange={() => setSelectedGameStatus(null)}
-          />
-          <input
-            className="join-item btn min-w-32"
-            value={StatusEnum.C}
-            type="radio"
-            name="options"
-            aria-label="Completed"
-            onChange={() => setSelectedGameStatus(StatusEnum.C)}
-          />
-          <input
-            className="join-item btn min-w-32"
-            value={StatusEnum.PTP}
-            type="radio"
-            name="options"
-            aria-label="Plan to Play"
-            onChange={() => setSelectedGameStatus(StatusEnum.PTP)}
-          />
-          <input
-            className="join-item btn min-w-32"
-            value={StatusEnum.P}
-            type="radio"
-            name="options"
-            aria-label="Playing"
-            onChange={() => setSelectedGameStatus(StatusEnum.P)}
-          />
-          <input
-            className="join-item btn min-w-32"
-            value={StatusEnum.D}
-            type="radio"
-            name="options"
-            aria-label="Dropped"
-            onChange={() => setSelectedGameStatus(StatusEnum.D)}
-          />
-          <input
-            className="join-item btn min-w-32"
-            value={StatusEnum.OH}
-            type="radio"
-            name="options"
-            aria-label="On Hold"
-            onChange={() => setSelectedGameStatus(StatusEnum.OH)}
-          />
+      <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
+        <div className="flex flex-col items-center gap-6">
+          <h1 className="text-3xl md:text-4xl font-bold text-text-900 tracking-tight text-center">
+            <span className="text-primary-600">{userDetails?.username}</span>&apos;s Game List
+          </h1>
+
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+            {statuses.map(status => (
+              <button
+                key={String(status.id)}
+                onClick={() => setSelectedGameStatus(status.id)}
+                className={cn(
+                  "px-5 py-2 text-xs md:text-sm font-bold rounded-full border transition-all duration-200 shadow-xs",
+                  selectedGameStatus === status.id ? status.activeStyles : cn("bg-white", status.styles),
+                )}
+              >
+                {status.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-6 md:p-8 min-h-212.5">
           {isLoading && !isFetchingNextPage ? (
             <GridList>
-              {Array.from({ length: 14 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-264/374 w-full" />
+              {Array.from({ length: 21 }).map((_, i) => (
+                <Skeleton key={i} className="aspect-264/374 w-full rounded-xl" />
               ))}
             </GridList>
           ) : (
@@ -106,7 +114,7 @@ export default function GameListPage(): React.JSX.Element {
               hasNextPage={!!hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
-              className="h-[calc(100vh-300px)]"
+              className="h-200"
               renderItem={(gameListItem: GameList) => (
                 <ItemOverlay
                   key={gameListItem.id}
@@ -118,7 +126,11 @@ export default function GameListPage(): React.JSX.Element {
               )}
             />
           )}
-          {errorFetchingData && <p className="text-error text-center mt-4">Error: {errorFetchingData.message}</p>}
+          {errorFetchingData && (
+            <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
+              <p className="text-error-600 text-center font-medium">Error: {errorFetchingData.message}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

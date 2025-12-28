@@ -37,8 +37,8 @@ function DateInput({ id, name, required, label, placeholder, className }: Readon
             placeholder={placeholder}
             {...field}
             className={cn(
-              "form-control w-full px-3 py-1.5 text-text-700 rounded-lg border border-solid border-gray-300 focus:border-yellow-600 focus:outline-hidden transition-colors",
-              errorMessage && "border-red-500 focus:border-red-500",
+              "flex h-10 w-full rounded-md border border-background-300 bg-white px-3 py-2 text-sm text-text-900 placeholder:text-text-400 focus:outline-hidden focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200",
+              errorMessage && "border-error-500 focus:ring-error-500",
             )}
           />
           <FormError message={errorMessage} />

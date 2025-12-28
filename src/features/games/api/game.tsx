@@ -8,12 +8,16 @@ import {
   GameGameReviewsListData,
   GameGameListsCreateData,
   GameGameListsPartialUpdateData,
+  GamePlatformsListData,
+  GameGenresListData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
 export type GameGamesListDataQuery = GameGamesListData["query"];
 export type GameGameListsListDataQuery = GameGameListsListData["query"];
 export type GameGameReviewsListDataQuery = GameGameReviewsListData["query"];
+export type GamePlatformsListDataQuery = GamePlatformsListData["query"];
+export type GameGenresListDataQuery = GameGenresListData["query"];
 
 export const getGenresAllValues = async () => {
   const { data, response } = await GameService.gameGenresAllValuesList();
@@ -23,8 +27,24 @@ export const getGenresAllValues = async () => {
   return data;
 };
 
+export const getGenresList = async (query?: GameGenresListDataQuery) => {
+  const { data, response } = await GameService.gameGenresList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching genres");
+  }
+  return data;
+};
+
 export const getPlatformsAllValues = async () => {
   const { data, response } = await GameService.gamePlatformsAllValuesList();
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching platforms");
+  }
+  return data;
+};
+
+export const getPlatformsList = async (query?: GamePlatformsListDataQuery) => {
+  const { data, response } = await GameService.gamePlatformsList({ query });
   if (response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching platforms");
   }

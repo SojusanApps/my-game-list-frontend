@@ -1,5 +1,6 @@
 import {
   getGenresAllValues,
+  getGenresList,
   getGamesList,
   GameGamesListDataQuery,
   getGamesDetail,
@@ -18,11 +19,40 @@ import {
   getCompaniesList,
   GameCompaniesListDataQuery,
   getPlatformsAllValues,
+  getPlatformsList,
 } from "../api/game";
-import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { GameList, PaginatedGameList, PaginatedGameListList } from "@/client";
-import { gameKeys, gameListKeys, gameReviewKeys } from "@/lib/queryKeys";
+import { gameKeys, gameListKeys, gameReviewKeys, userKeys } from "@/lib/queryKeys";
+
+export const useGetPlatformsInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.platformsInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getPlatformsList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
 import { useAppMutation } from "@/hooks/useAppMutation";
+
+export const useGetGenresInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.genresInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getGenresList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
 
 export const useGetGenresAllValues = () => {
   return useQuery({
@@ -114,6 +144,10 @@ export const useCreateGameList = () => {
       queryClient.invalidateQueries({
         queryKey: gameListKeys.all,
       });
+      // Also invalidate user details to update statistics
+      queryClient.invalidateQueries({
+        queryKey: userKeys.details(),
+      });
     },
   });
 };
@@ -126,6 +160,10 @@ export const usePartialUpdateGameList = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: gameListKeys.all,
+      });
+      // Also invalidate user details to update statistics
+      queryClient.invalidateQueries({
+        queryKey: userKeys.details(),
       });
     },
   });
@@ -140,6 +178,24 @@ export const useDeleteGameList = () => {
       queryClient.invalidateQueries({
         queryKey: gameListKeys.all,
       });
+      // Also invalidate user details to update statistics
+      queryClient.invalidateQueries({
+        queryKey: userKeys.details(),
+      });
+    },
+  });
+};
+
+export const useGetCompaniesInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.companiesInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getCompaniesList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
     },
   });
 };

@@ -5,9 +5,17 @@ import PlaceholderImage from "@/assets/images/Image_Placeholder.svg";
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
-export function SafeImage({ src, alt, className, fallback = PlaceholderImage, ...props }: SafeImageProps) {
+export function SafeImage({
+  src,
+  alt,
+  className,
+  fallback = PlaceholderImage,
+  objectFit = "cover",
+  ...props
+}: SafeImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -43,6 +51,14 @@ export function SafeImage({ src, alt, className, fallback = PlaceholderImage, ..
   // IMPORTANT: We use src if available, otherwise fallback.
   const displaySrc = isError || !src ? fallback : src;
 
+  const objectFitClass = {
+    cover: "object-cover",
+    contain: "object-contain",
+    fill: "object-fill",
+    none: "object-none",
+    "scale-down": "object-scale-down",
+  }[objectFit];
+
   return (
     <div className={cn("relative overflow-hidden", className)}>
       {isLoading && <Skeleton className="absolute inset-0 w-full h-full z-10" />}
@@ -51,7 +67,8 @@ export function SafeImage({ src, alt, className, fallback = PlaceholderImage, ..
         src={displaySrc}
         alt={alt}
         className={cn(
-          "w-full h-full object-cover transition-opacity duration-300",
+          "w-full h-full transition-opacity duration-300",
+          objectFitClass,
           isLoading ? "opacity-0" : "opacity-100",
           isError && "grayscale opacity-50",
         )}

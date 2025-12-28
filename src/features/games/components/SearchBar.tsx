@@ -4,64 +4,86 @@ import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import SearchIcon from "@/components/ui/Icons/Search";
 import XMarkIcon from "@/components/ui/Icons/XMark";
-import { cn } from "@/utils/cn";
 import { useDebounce } from "@/utils/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function SearchBar(): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const debouncedSearch = useDebounce(search, 300);
+
   const { data: gamesDetails, isLoading } = useGetGamesList(
     { title: debouncedSearch },
     { enabled: debouncedSearch.length > 1 },
   );
 
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleClose = () => {
     setSearch("");
+    setIsOpen(false);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+    setIsOpen(event.target.value.length > 1);
+  };
+
+  const handleInputFocus = () => {
+    if (search.length > 1) {
+      setIsOpen(true);
+    }
   };
 
   return (
-    <section className="relative w-full max-w-md mx-4">
-      <div className={cn("dropdown w-full", search.length > 1 && "dropdown-open")}>
-        <div className="relative group">
-          <input
-            type="text"
-            placeholder="Search for a game..."
-            className="w-full bg-background-100 border border-gray-300 rounded-full py-2 pl-4 pr-10 focus:outline-hidden focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all"
-            autoComplete="off"
-            onChange={event => setSearch(event.target.value)}
-            value={search}
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
-            {search.length > 0 ? (
-              <button
-                onClick={handleClose}
-                type="button"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            ) : (
-              <SearchIcon className="w-5 h-5 text-gray-400" />
-            )}
-          </div>
+    <section ref={containerRef} className="relative w-full max-w-md mx-4">
+      <div className="relative group">
+        <input
+          type="text"
+          placeholder="Search for a game..."
+          className="w-full bg-white/10 border border-white/20 text-white placeholder:text-primary-300 rounded-full py-2 pl-4 pr-10 focus:outline-hidden focus:ring-2 focus:ring-primary-400 focus:bg-white/20 focus:border-transparent transition-all text-sm"
+          autoComplete="off"
+          onChange={handleInputChange}
+          onFocus={handleInputFocus}
+          value={search}
+        />
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+          {search.length > 0 ? (
+            <button onClick={handleClose} type="button" className="text-primary-300 hover:text-white transition-colors">
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          ) : (
+            <SearchIcon className="w-5 h-5 text-primary-400" />
+          )}
         </div>
+      </div>
 
-        {search.length > 1 && (
-          <div className="dropdown-content z-50 mt-2 w-full bg-base-100 rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
-            <ul className="menu p-0 max-h-[60vh] overflow-y-auto flex-col flex-nowrap">
-              {isLoading ? (
-                <li className="p-4 text-center text-gray-500 italic">Searching...</li>
-              ) : gamesDetails?.results && gamesDetails.results.length > 0 ? (
-                gamesDetails.results.map(game => (
-                  <li key={game.id} className="w-full border-b border-gray-50 last:border-0 block">
-                    <Link
-                      to={`/game/${game.id}`}
-                      className="flex items-center gap-3 p-3 hover:bg-secondary-50 active:bg-secondary-100 transition-colors rounded-none w-full"
-                      onClick={handleClose}
-                    >
+      {isOpen && search.length > 1 && (
+        <div className="absolute z-50 mt-2 w-full bg-white rounded-xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <ul className="p-1 max-h-[60vh] overflow-y-auto flex flex-col gap-1">
+            {isLoading ? (
+              <li className="p-8 text-center text-text-500 italic text-sm">Searching...</li>
+            ) : gamesDetails?.results && gamesDetails.results.length > 0 ? (
+              gamesDetails.results.map(game => (
+                <li key={game.id} className="w-full">
+                  <Link
+                    to={`/game/${game.id}`}
+                    className="flex items-center gap-4 p-3 hover:bg-primary-50/80 active:bg-primary-100 transition-all duration-200 group rounded-lg"
+                    onClick={handleClose}
+                  >
+                    <div className="relative overflow-hidden rounded-md shadow-sm shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md">
                       <SafeImage
-                        className="w-12 h-16 rounded shadow-sm shrink-0"
+                        className="w-10 h-14 object-cover"
                         src={
                           game.cover_image_id
                             ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90)
@@ -69,22 +91,35 @@ export default function SearchBar(): React.JSX.Element {
                         }
                         alt={game.title}
                       />
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm line-clamp-1">{game.title}</span>
-                        {game.release_date && (
-                          <span className="text-xs text-gray-500">{new Date(game.release_date).getFullYear()}</span>
-                        )}
-                      </div>
-                    </Link>
-                  </li>
-                ))
-              ) : (
-                <li className="p-4 text-center text-gray-500 italic">No results found</li>
-              )}
-            </ul>
-          </div>
-        )}
-      </div>
+                    </div>
+                    <div className="flex flex-col overflow-hidden transition-transform duration-300 group-hover:translate-x-1">
+                      <span className="font-bold text-text-900 text-sm truncate group-hover:text-primary-600 transition-colors">
+                        {game.title}
+                      </span>
+                      {game.release_date && (
+                        <span className="text-xs text-text-500 font-medium">
+                          {new Date(game.release_date).getFullYear()}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <li className="p-8 text-center text-text-500 italic text-sm">No results found</li>
+            )}
+            <li className="p-1">
+              <Link
+                to="/search"
+                onClick={handleClose}
+                className="block text-center text-xs font-bold text-primary-600 hover:bg-primary-50 active:bg-primary-100 rounded-lg py-3 uppercase tracking-wider transition-colors"
+              >
+                Advanced Search
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

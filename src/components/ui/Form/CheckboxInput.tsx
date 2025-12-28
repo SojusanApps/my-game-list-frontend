@@ -32,7 +32,10 @@ function CheckboxInput({ id, name, label, className }: Readonly<CheckboxInputPro
               checked={!!value}
               onChange={e => onChange(e.target.checked)}
               {...field}
-              className={cn("checkbox checkbox-sm", errorMessage && "checkbox-error")}
+              className={cn(
+                "h-4 w-4 rounded-sm border-background-300 text-primary-600 focus:ring-primary-500 cursor-pointer transition-all",
+                errorMessage && "border-error-500 focus:ring-error-500",
+              )}
             />
             <Label htmlFor={id} className="mb-0 cursor-pointer">
               {label}

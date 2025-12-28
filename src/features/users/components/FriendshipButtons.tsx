@@ -1,5 +1,6 @@
 import * as React from "react";
 import { TokenInfoType } from "@/types";
+import { Button } from "@/components/ui/Button";
 import { Friendship, FriendshipRequest } from "@/client";
 import {
   useSendFriendRequest,
@@ -79,61 +80,42 @@ export default function FriendshipButtons({ currentUser, userId }: FriendshipBut
 
   if (isFriend) {
     return (
-      <button
-        type="button"
-        onClick={handleUnfriend}
-        className="bg-red-700 text-white p-2 rounded-lg mx-auto hover:bg-red-600 transition-colors"
-      >
+      <Button type="button" onClick={handleUnfriend} variant="destructive" className="w-full">
         Unfriend
-      </button>
+      </Button>
     );
   }
 
   if (incomingRequest) {
     return (
-      <div className="flex gap-2 mx-auto">
-        <button
-          type="button"
-          onClick={handleAccept}
-          className="bg-green-600 text-white p-2 rounded-lg hover:bg-green-500 transition-colors"
-        >
+      <div className="flex gap-2 w-full">
+        <Button type="button" onClick={handleAccept} className="flex-1 bg-green-600 hover:bg-green-700">
           Accept
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={handleReject}
           disabled={isIncomingRejected}
-          className={`p-2 rounded-lg text-white transition-colors ${
-            isIncomingRejected ? "bg-red-400 cursor-default" : "bg-red-600 hover:bg-red-500"
-          }`}
+          variant="destructive"
+          className="flex-1"
         >
           {isIncomingRejected ? "Rejected" : "Reject"}
-        </button>
+        </Button>
       </div>
     );
   }
 
   if (isRequestSent) {
     return (
-      <button
-        type="button"
-        disabled
-        className={`p-2 rounded-lg text-white mx-auto cursor-default ${
-          isOutgoingRejected ? "bg-red-400" : "bg-gray-500"
-        }`}
-      >
+      <Button type="button" disabled variant="secondary" className="w-full cursor-default">
         {isOutgoingRejected ? "Request Rejected" : "Request Sent"}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleAddFriend}
-      className="bg-primary-950 text-white p-2 rounded-lg mx-auto hover:bg-primary-800 transition-colors"
-    >
+    <Button type="button" onClick={handleAddFriend} className="w-full">
       Add Friend
-    </button>
+    </Button>
   );
 }
