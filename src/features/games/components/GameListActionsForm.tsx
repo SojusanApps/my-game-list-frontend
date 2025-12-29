@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 
 import SelectInput from "@/components/ui/Form/SelectInput";
-import MultiSelectAutocomplete from "@/components/ui/Form/MultiSelectAutocomplete";
+import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { Button } from "@/components/ui/Button";
 import { TokenInfoType } from "@/types";
 import { StatusEnum } from "@/client";
@@ -17,7 +17,7 @@ import {
   useCreateGameList,
   useDeleteGameList,
   useGetGameListByFilters,
-  useGetGameMediasAllValues,
+  useGetGameMediasInfiniteQuery,
   usePartialUpdateGameList,
 } from "../hooks/gameQueries";
 import { useAuth } from "@/features/auth/context/AuthProvider";
@@ -47,7 +47,6 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
     userInfo = jwtDecode<TokenInfoType>(user.token);
   }
 
-  const { data: gameMediaList, isLoading: isGameMediaLoading } = useGetGameMediasAllValues();
   const { data: gameListDetails } = useGetGameListByFilters(
     parsedGameId.success && userInfo ? { game: parsedGameId.data, user: userInfo.user_id } : undefined,
     { enabled: parsedGameId.success && !!userInfo },
@@ -229,26 +228,16 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
           }))}
           optionToSelect={gameListDetails?.id ? gameListDetails.score?.toString() : undefined}
         />
-        {isGameMediaLoading ? (
-          <div className="flex flex-col gap-2 w-full md:flex-1 min-w-50">
-            <p className="text-sm font-bold text-text-700 mb-0.5">Owned on</p>
-            <div className="h-10 bg-background-100 animate-pulse rounded-md border border-background-200" />
-          </div>
-        ) : (
-          <MultiSelectAutocomplete
-            placeholder="Search media ..."
-            id="owned_on"
-            label="Owned on"
-            name="owned_on"
-            className="w-full md:flex-1 min-w-50"
-            options={
-              gameMediaList?.map(media => ({
-                value: media.id,
-                label: media.name,
-              })) ?? []
-            }
-          />
-        )}
+        <AsyncMultiSelectAutocomplete
+          placeholder="Search media ..."
+          id="owned_on"
+          label="Owned on"
+          name="owned_on"
+          className="w-full md:flex-1 min-w-50"
+          useInfiniteQueryHook={useGetGameMediasInfiniteQuery}
+          getOptionLabel={item => item.name}
+          getOptionValue={item => item.id}
+        />
         <div className="flex flex-col gap-2 w-full md:w-32 shrink-0 h-full justify-end">
           {gameListDetails?.id ? (
             <>

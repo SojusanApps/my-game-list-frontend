@@ -1,5 +1,4 @@
 import {
-  getGenresAllValues,
   getGenresList,
   getGamesList,
   GameGamesListDataQuery,
@@ -15,10 +14,9 @@ import {
   GameListPartialUpdateDataBody,
   partialUpdateGameList,
   getGameListByFilters,
-  getGameMediaAllValues,
+  getGameMediaList,
   getCompaniesList,
   GameCompaniesListDataQuery,
-  getPlatformsAllValues,
   getPlatformsList,
 } from "../api/game";
 import { useInfiniteQuery, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
@@ -54,27 +52,17 @@ export const useGetGenresInfiniteQuery = (name?: string) => {
   });
 };
 
-export const useGetGenresAllValues = () => {
-  return useQuery({
-    queryKey: gameKeys.genres,
-    queryFn: getGenresAllValues,
-    staleTime: Infinity,
-  });
-};
-
-export const useGetGameMediasAllValues = () => {
-  return useQuery({
-    queryKey: gameKeys.medias,
-    queryFn: getGameMediaAllValues,
-    staleTime: Infinity,
-  });
-};
-
-export const useGetPlatformsAllValues = () => {
-  return useQuery({
-    queryKey: gameKeys.platforms,
-    queryFn: getPlatformsAllValues,
-    staleTime: Infinity,
+export const useGetGameMediasInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.mediasInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getGameMediaList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
   });
 };
 

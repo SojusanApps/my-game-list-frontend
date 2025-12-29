@@ -7,6 +7,7 @@ export const gameKeys = {
   genres: ["genres", "all-values"] as const,
   genresInfinite: (name?: string) => ["genres", "infinite", name] as const,
   medias: ["game-medias", "all-values"] as const,
+  mediasInfinite: (name?: string) => ["game-medias", "infinite", name] as const,
   platforms: ["platforms", "all-values"] as const,
   platformsInfinite: (name?: string) => ["platforms", "infinite", name] as const,
   companies: ["companies", "list"] as const,

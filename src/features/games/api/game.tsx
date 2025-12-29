@@ -10,6 +10,7 @@ import {
   GameGameListsPartialUpdateData,
   GamePlatformsListData,
   GameGenresListData,
+  GameGameMediasListData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
@@ -19,26 +20,10 @@ export type GameGameReviewsListDataQuery = GameGameReviewsListData["query"];
 export type GamePlatformsListDataQuery = GamePlatformsListData["query"];
 export type GameGenresListDataQuery = GameGenresListData["query"];
 
-export const getGenresAllValues = async () => {
-  const { data, response } = await GameService.gameGenresAllValuesList();
-  if (response.status !== StatusCode.OK || !data) {
-    return await handleApiError(response, "Error fetching genres");
-  }
-  return data;
-};
-
 export const getGenresList = async (query?: GameGenresListDataQuery) => {
   const { data, response } = await GameService.gameGenresList({ query });
   if (response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching genres");
-  }
-  return data;
-};
-
-export const getPlatformsAllValues = async () => {
-  const { data, response } = await GameService.gamePlatformsAllValuesList();
-  if (response.status !== StatusCode.OK || !data) {
-    return await handleApiError(response, "Error fetching platforms");
   }
   return data;
 };
@@ -135,8 +120,9 @@ export const getGameReviewsDetail = async (id: number) => {
   return data;
 };
 
-export const getGameMediaAllValues = async () => {
-  const { data, response } = await GameService.gameGameMediasAllValuesList();
+export type GameGameMediasListDataQuery = GameGameMediasListData["query"];
+export const getGameMediaList = async (query?: GameGameMediasListDataQuery) => {
+  const { data, response } = await GameService.gameGameMediasList({ query });
   if (response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game medias");
   }
