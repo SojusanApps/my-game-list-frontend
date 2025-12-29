@@ -16,6 +16,7 @@ import {
   getGameListByFilters,
   getGameMediaList,
   getCompaniesList,
+  getCompanyDetail,
   GameCompaniesListDataQuery,
   getPlatformsList,
 } from "../api/game";
@@ -192,5 +193,12 @@ export const useGetCompaniesList = (query?: GameCompaniesListDataQuery) => {
   return useQuery({
     queryKey: gameKeys.companyList(query),
     queryFn: () => getCompaniesList(query),
+  });
+};
+
+export const useGetCompanyDetail = (id: number) => {
+  return useQuery({
+    queryKey: gameKeys.companyDetail(id),
+    queryFn: () => getCompanyDetail(id),
   });
 };

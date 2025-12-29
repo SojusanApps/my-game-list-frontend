@@ -44,6 +44,14 @@ export const getCompaniesList = async (query?: GameCompaniesListDataQuery) => {
   return data;
 };
 
+export const getCompanyDetail = async (id: number) => {
+  const { data, response } = await GameService.gameCompaniesRetrieve({ path: { id } });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching company details");
+  }
+  return data;
+};
+
 export const getGamesList = async (query?: GameGamesListDataQuery) => {
   const { data, response } = await GameService.gameGamesList({
     query,

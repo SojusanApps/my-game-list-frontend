@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { Game } from "@/client";
 
 interface GameInformationProps {
@@ -24,11 +25,33 @@ export default function GameInformation({ gameDetails }: GameInformationProps) {
         </div>
         <div className="flex flex-row justify-between items-start text-sm gap-4">
           <p className="font-medium text-text-600 shrink-0">Publisher:</p>
-          <p className="text-text-900 text-right flex-1">{gameDetails?.publisher?.name || "---"}</p>
+          <p className="text-text-900 text-right flex-1">
+            {gameDetails?.publisher ? (
+              <Link
+                to={`/company/${gameDetails.publisher.id}`}
+                className="hover:text-primary-600 hover:underline transition-colors"
+              >
+                {gameDetails.publisher.name}
+              </Link>
+            ) : (
+              "---"
+            )}
+          </p>
         </div>
         <div className="flex flex-row justify-between items-start text-sm gap-4">
           <p className="font-medium text-text-600 shrink-0">Developer:</p>
-          <p className="text-text-900 text-right flex-1">{gameDetails?.developer?.name || "---"}</p>
+          <p className="text-text-900 text-right flex-1">
+            {gameDetails?.developer ? (
+              <Link
+                to={`/company/${gameDetails.developer.id}`}
+                className="hover:text-primary-600 hover:underline transition-colors"
+              >
+                {gameDetails.developer.name}
+              </Link>
+            ) : (
+              "---"
+            )}
+          </p>
         </div>
         <div className="flex flex-col gap-2 mt-2">
           <p className="text-sm font-medium text-text-600">Genres:</p>

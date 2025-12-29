@@ -13,6 +13,7 @@ export const gameKeys = {
   companies: ["companies", "list"] as const,
   companiesInfinite: (name?: string) => ["companies", "infinite", name] as const,
   companyList: (query: object | undefined) => [...gameKeys.companies, query] as const,
+  companyDetail: (id: number) => ["companies", "detail", id] as const,
 };
 
 export const gameReviewKeys = {
