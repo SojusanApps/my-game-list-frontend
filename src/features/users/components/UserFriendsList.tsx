@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { UserDetail } from "@/client";
-import GameCoverImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 interface UserFriendsListProps {
   userDetails?: UserDetail;
@@ -22,9 +22,9 @@ export default function UserFriendsList({ userDetails }: UserFriendsListProps) {
             {userDetails.friends.map(friend => (
               <Link key={friend.id} to={`/profile/${friend.id}`} className="tooltip" data-tip={`User ${friend.id}`}>
                 <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-background-300 hover:ring-primary-500 transition-all">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={friend.gravatar_url ? `${friend.gravatar_url}` : GameCoverImagePlaceholder}
+                  <SafeImage
+                    className="w-full h-full"
+                    src={friend.gravatar_url || undefined}
                     alt={`friend avatar ${friend.id}`}
                   />
                 </div>

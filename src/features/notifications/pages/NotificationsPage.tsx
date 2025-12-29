@@ -8,10 +8,10 @@ import {
   useDeleteNotification,
   useDeleteAllReadNotifications,
 } from "../hooks/notificationQueries";
-import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { notificationActorSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function NotificationsPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
@@ -117,7 +117,7 @@ export default function NotificationsPage(): React.JSX.Element {
                       <div className="flex items-center gap-3">
                         <div className="avatar">
                           <div className="mask mask-squircle w-10 h-10">
-                            <img src={AvatarImagePlaceholder} alt="User avatar" />
+                            <SafeImage src={undefined} alt="User avatar" />
                           </div>
                         </div>
                         <div>

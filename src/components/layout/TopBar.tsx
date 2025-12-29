@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import AppLogo from "@/components/ui/AppLogo";
 import { Button } from "@/components/ui/Button";
 import { TokenInfoType, LocalStorageUserType } from "@/types";
-import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import SearchBar from "@/features/games/components/SearchBar";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
@@ -44,7 +43,6 @@ function LoggedInView({
             <SafeImage
               src={userDetails?.gravatar_url || undefined}
               alt="User avatar"
-              fallback={AvatarImagePlaceholder}
               className="w-9 h-9 rounded-full ring-2 ring-white/20"
             />
           </div>

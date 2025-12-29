@@ -7,7 +7,6 @@ import {
   useGetUnreadNotificationCount,
   useMarkNotificationAsRead,
 } from "../hooks/notificationQueries";
-import AvatarImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
 import { NotificationUnreadCount } from "@/types";
 import { notificationActorSchema } from "@/lib/validation";
 
@@ -81,7 +80,6 @@ export default function NotificationBell(): React.JSX.Element {
                       <SafeImage
                         className="w-10 h-10 rounded-full ring-2 ring-white shadow-sm"
                         src={undefined} // Fallback to placeholder for now, or use gravatar if available in actor
-                        fallback={AvatarImagePlaceholder}
                         alt="Actor avatar"
                       />
 
