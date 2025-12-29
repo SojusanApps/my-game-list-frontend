@@ -48,20 +48,20 @@ export default function HomePage(): React.JSX.Element {
   };
 
   return (
-    <div className="py-8">
+    <div className="py-12 bg-background-200 min-h-screen">
       <PageMeta title="Home" />
-      <div className="flex flex-col gap-12 max-w-[70%] mx-auto">
-        <section>
+      <div className="flex flex-col gap-16 max-w-7xl mx-auto px-4">
+        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <SectionHeader title="Highest Rated Games" viewMoreHref="/search" />
           {renderGameList(highestRatedGames?.results, isHighestRatedLoading)}
         </section>
 
-        <section>
+        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
           <SectionHeader title="Most Popular Games" viewMoreHref="/search" />
           {renderGameList(mostPopularGames?.results, isMostPopularLoading)}
         </section>
 
-        <section>
+        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
           <SectionHeader title="Recently Added Games" viewMoreHref="/search" />
           {renderGameList(recentlyAddedGames?.results, isRecentlyAddedLoading)}
         </section>

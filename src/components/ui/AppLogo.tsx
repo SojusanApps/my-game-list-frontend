@@ -6,8 +6,8 @@ type AppLogoProps = {
 };
 
 function AppLogo({
-  classNameSojusan = "text-3xl text-secondary-950",
-  classNameGameList = "text-4xl",
+  classNameSojusan = "text-3xl text-primary-600",
+  classNameGameList = "text-4xl text-text-900",
 }: Readonly<AppLogoProps>): React.JSX.Element {
   return (
     <div className="flex-row text-center">

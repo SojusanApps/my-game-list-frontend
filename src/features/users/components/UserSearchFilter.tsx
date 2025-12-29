@@ -11,6 +11,8 @@ const validationSchema = z.object({
 
 export type ValidationSchema = z.infer<typeof validationSchema>;
 
+import { Button } from "@/components/ui/Button";
+
 function UserSearchFilter({
   onSubmitHandlerCallback,
 }: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
@@ -20,13 +22,28 @@ function UserSearchFilter({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate>
-        <div className="flex flex-row flex-wrap gap-2">
-          <TextFieldInput id="username" name="username" type="text" label="Username" placeholder="Enter username ..." />
+      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate className="flex flex-col gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+          <div className="flex flex-col gap-4">
+            <TextFieldInput
+              id="username"
+              name="username"
+              type="text"
+              label="Username"
+              placeholder="Search by username..."
+            />
+          </div>
         </div>
-        <button type="submit" className="bg-primary-950 text-white p-2 rounded-lg mx-auto mt-2">
-          Filter
-        </button>
+
+        <div className="flex justify-center pt-4 border-t border-background-100">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full md:w-64 shadow-md hover:shadow-lg transition-all active:scale-95"
+          >
+            Apply Filters
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

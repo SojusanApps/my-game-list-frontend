@@ -2,7 +2,7 @@ import * as React from "react";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
@@ -102,19 +102,23 @@ function RegisterForm() {
           type="password"
           placeholder="Confirm the password"
         />
-        <Button type="submit" fullWidth uppercase className="mt-4 shadow-md hover:shadow-lg">
-          REGISTER
-        </Button>
-        <Button
-          type="button"
-          onClick={onCancelHandler}
-          variant="secondary"
-          fullWidth
-          uppercase
-          className="mt-2 shadow-md hover:shadow-lg"
-        >
-          CANCEL
-        </Button>
+        <div className="flex flex-col gap-3 mt-8">
+          <Button type="submit" fullWidth uppercase>
+            REGISTER
+          </Button>
+          <Button type="button" onClick={onCancelHandler} variant="ghost" fullWidth uppercase>
+            CANCEL
+          </Button>
+        </div>
+        <p className="mt-6 text-center text-sm text-text-600">
+          Already have an account?&nbsp;
+          <Link
+            to="/login"
+            className="font-semibold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
+          >
+            Login
+          </Link>
+        </p>
       </form>
     </FormProvider>
   );

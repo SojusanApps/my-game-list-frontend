@@ -1,5 +1,3 @@
-import ImagePlaceholder from "@/assets/images/Image_Placeholder.svg";
-
 export default abstract class IGDBImageSize {
   static readonly COVER_SMALL_90_128 = "cover_small";
 
@@ -31,7 +29,7 @@ export default abstract class IGDBImageSize {
  */
 export function getIGDBImageURL(imageHash: string, size: string): string {
   if (imageHash === null || imageHash === undefined || imageHash === "") {
-    return ImagePlaceholder;
+    return "";
   }
   return `https://images.igdb.com/igdb/image/upload/t_${size}/${imageHash}.png`;
 }

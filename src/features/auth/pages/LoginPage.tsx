@@ -6,12 +6,18 @@ import { PageMeta } from "@/components/ui/PageMeta";
 
 export default function LoginPage(): React.JSX.Element {
   return (
-    <div className="container flex justify-center max-w-full max-h-full">
+    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-background-200 relative overflow-hidden">
       <PageMeta title="Login" />
-      <div className="bg-[url(src/assets/images/LoginRegisterBackground.jpg)] bg-cover blur-[2px] h-full w-full max-w-full max-h-full absolute -z-10" />
-      <div className="flex-col justify-items-center w-1/5 min-w-fit mt-20 p-8 bg-background-100 rounded-xl">
-        <div>
-          <AppLogo />
+
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-10 blur-xs -z-10" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl" />
+
+      <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 animate-in fade-in zoom-in duration-500">
+        <div className="mb-8">
+          <AppLogo classNameSojusan="text-primary-600 text-3xl" classNameGameList="text-text-900 text-4xl" />
+          <p className="text-center text-text-500 mt-2">Welcome back! Please login to your account.</p>
         </div>
         <LoginForm />
       </div>

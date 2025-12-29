@@ -5,10 +5,15 @@ export const gameKeys = {
   details: () => [...gameKeys.all, "detail"] as const,
   detail: (id: number) => [...gameKeys.details(), id] as const,
   genres: ["genres", "all-values"] as const,
+  genresInfinite: (name?: string) => ["genres", "infinite", name] as const,
   medias: ["game-medias", "all-values"] as const,
+  mediasInfinite: (name?: string) => ["game-medias", "infinite", name] as const,
   platforms: ["platforms", "all-values"] as const,
+  platformsInfinite: (name?: string) => ["platforms", "infinite", name] as const,
   companies: ["companies", "list"] as const,
+  companiesInfinite: (name?: string) => ["companies", "infinite", name] as const,
   companyList: (query: object | undefined) => [...gameKeys.companies, query] as const,
+  companyDetail: (id: number) => ["companies", "detail", id] as const,
 };
 
 export const gameReviewKeys = {

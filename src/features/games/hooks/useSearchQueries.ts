@@ -27,7 +27,11 @@ const fetchSearchResults = async ({
   }
 };
 
-export const useSearchInfiniteQuery = (category: SearchCategory | null, filters: object) => {
+export const useSearchInfiniteQuery = (
+  category: SearchCategory | null,
+  filters: object,
+  options: { enabled?: boolean } = {},
+) => {
   return useInfiniteQuery({
     queryKey: searchKeys.results(category, filters),
     queryFn: fetchSearchResults,
@@ -38,6 +42,6 @@ export const useSearchInfiniteQuery = (category: SearchCategory | null, filters:
       }
       return null;
     },
-    enabled: !!category,
+    enabled: (options.enabled ?? true) && !!category,
   });
 };
