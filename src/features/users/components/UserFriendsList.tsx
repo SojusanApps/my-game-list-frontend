@@ -20,12 +20,12 @@ export default function UserFriendsList({ userDetails }: UserFriendsListProps) {
         {userDetails?.friends && userDetails.friends.length > 0 ? (
           <div className="flex flex-row flex-wrap gap-3">
             {userDetails.friends.map(friend => (
-              <Link key={friend.id} to={`/profile/${friend.id}`} className="tooltip" data-tip={`User ${friend.id}`}>
+              <Link key={friend.id} to={`/profile/${friend.id}`} className="tooltip" data-tip={friend.username}>
                 <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-background-300 hover:ring-primary-500 transition-all">
                   <SafeImage
                     className="w-full h-full"
                     src={friend.gravatar_url || undefined}
-                    alt={`friend avatar ${friend.id}`}
+                    alt={`friend avatar ${friend.username}`}
                   />
                 </div>
               </Link>
