@@ -113,9 +113,6 @@ export default function CompanyDetailPage(): React.JSX.Element {
                     <span className="bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm">
                       Company
                     </span>
-                    <span className="text-text-400 text-[10px] font-bold uppercase tracking-widest">
-                      ID: {companyDetails?.id}
-                    </span>
                   </div>
                   <h1 className="text-5xl font-black text-text-900 tracking-tight leading-none">
                     {companyDetails?.name}

@@ -12,7 +12,10 @@ export default function UserFriendsList({ userDetails }: UserFriendsListProps) {
     <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
       <div className="bg-background-50 px-4 py-3 border-b border-background-200 flex justify-between items-center">
         <p className="font-semibold text-text-900">Friends</p>
-        <Link to="#" className="text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline">
+        <Link
+          to={userDetails ? `/profile/${userDetails.id}/friends` : "#"}
+          className="text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline"
+        >
           View All
         </Link>
       </div>
