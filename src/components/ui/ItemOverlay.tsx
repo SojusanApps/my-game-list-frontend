@@ -39,7 +39,7 @@ function ItemOverlay({
         {/* Overlay Gradients */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-primary-950/20 transition-colors duration-300" />
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent pt-12 pb-3 px-3 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-          <h2 className="text-white text-[10px] font-bold leading-tight line-clamp-2 text-center group-hover:text-primary-300 transition-colors tracking-tight uppercase">
+          <h2 className="line-clamp-2 text-center text-[10px] font-bold leading-tight tracking-tight text-white transition-colors group-hover:text-primary-300">
             {name}
           </h2>
         </div>
