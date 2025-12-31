@@ -43,6 +43,7 @@ export const friendshipKeys = {
   requests: ["friendship-requests"] as const,
   requestList: (query: object | undefined) => [...friendshipKeys.requests, query] as const,
   list: (query: object | undefined) => [...friendshipKeys.all, query] as const,
+  listInfinite: (query: object | undefined) => [...friendshipKeys.all, "infinite", query] as const,
 };
 
 export const notificationKeys = {
