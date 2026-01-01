@@ -9,6 +9,8 @@ type ItemOverlayProps = {
   itemCoverUrl?: string | null;
   name: string;
   variant?: "cover" | "logo";
+  gameStatus?: string | null;
+  gameType?: string | null;
 };
 
 function ItemOverlay({
@@ -17,6 +19,8 @@ function ItemOverlay({
   itemPageUrl,
   itemCoverUrl,
   variant = "cover",
+  gameStatus,
+  gameType,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
 
@@ -36,6 +40,26 @@ function ItemOverlay({
           loading="lazy"
           objectFit={isLogo ? "contain" : "cover"}
         />
+        {/* Tags */}
+        {(gameStatus !== undefined || gameType) && (
+          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            {gameType && (
+              <span className="bg-primary-600/80 text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold backdrop-blur-xs w-fit">
+                {gameType}
+              </span>
+            )}
+            {gameStatus !== undefined && (
+              <span className="bg-black/60 text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold backdrop-blur-xs w-fit">
+                {gameStatus ?? "Released"}
+              </span>
+            )}
+            {!gameType && gameStatus === undefined && (
+              <span className="bg-black/60 text-white text-[8px] px-1.5 py-0.5 rounded uppercase font-bold backdrop-blur-xs w-fit">
+                Released
+              </span>
+            )}
+          </div>
+        )}
         {/* Overlay Gradients */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-primary-950/20 transition-colors duration-300" />
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/95 via-black/70 to-transparent pt-12 pb-3 px-3 transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">

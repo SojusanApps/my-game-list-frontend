@@ -41,6 +41,8 @@ export default function HomePage(): React.JSX.Element {
                 ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
                 : null
             }
+            gameStatus={game.game_status ?? null}
+            gameType={game.game_type}
           />
         ))}
       </GridList>
