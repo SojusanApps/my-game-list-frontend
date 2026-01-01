@@ -12,7 +12,17 @@ const Footer = (): React.JSX.Element => {
           <Link to="/home" className="hover:opacity-80 transition-opacity scale-75 origin-left">
             <AppLogo classNameSojusan="text-primary-600 text-xl" classNameGameList="text-text-900 text-2xl" />
           </Link>
-          <p className="text-text-400 text-xs hidden sm:block">© {currentYear} Sojusan GameList</p>
+          <p className="text-text-400 text-xs hidden sm:block">
+            © {currentYear} Sojusan GameList • Data provided by{" "}
+            <a
+              href="https://www.igdb.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary-600 transition-colors underline decoration-dotted"
+            >
+              IGDB
+            </a>
+          </p>
         </div>
 
         <nav>
