@@ -13,8 +13,13 @@ import {
   useGetGenresInfiniteQuery,
   useGetPlatformsInfiniteQuery,
   useGetCompaniesInfiniteQuery,
+  useGetGameEnginesInfiniteQuery,
+  useGetGameModesInfiniteQuery,
+  useGetGameStatusesInfiniteQuery,
+  useGetGameTypesInfiniteQuery,
+  useGetPlayerPerspectivesInfiniteQuery,
 } from "../hooks/gameQueries";
-import { Company, Platform, Genre } from "@/client";
+import { Company, Platform, Genre, GameEngine, GameMode, GameStatus, GameType, PlayerPerspective } from "@/client";
 const ORDERING_OPTIONS = [
   "-created_at",
   "created_at",
@@ -31,8 +36,13 @@ const validationSchema = z
     release_date_before: z.coerce.date().optional().or(z.literal("")),
     publisher: z.string().optional(),
     developer: z.string().optional(),
-    platform: z.string().optional(),
+    platforms: z.string().array().optional(),
     genres: z.string().array().optional(),
+    game_engines: z.string().array().optional(),
+    game_modes: z.string().array().optional(),
+    game_status: z.string().array().optional(),
+    game_type: z.string().array().optional(),
+    player_perspectives: z.string().array().optional(),
     ordering: z.enum(ORDERING_OPTIONS).optional().or(z.literal("")),
   })
   .refine(
@@ -65,7 +75,7 @@ function GameSearchFilter({
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate className="flex flex-col gap-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-          {/* Group 1: Core Search */}
+          {/* Group 1: Core Search & Ordering */}
           <div className="flex flex-col gap-4">
             <TextFieldInput id="title" name="title" type="text" label="Game Title" placeholder="Search by name..." />
             <CustomSelect
@@ -82,43 +92,6 @@ function GameSearchFilter({
                 { value: "-popularity", label: "Popularity (Descending)" },
               ]}
             />
-          </div>
-
-          {/* Group 2: Entity & Platform */}
-          <div className="flex flex-col gap-4">
-            <AsyncAutocomplete
-              id="developer"
-              name="developer"
-              label="Developer (Single)"
-              placeholder="Search developer..."
-              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
-              getOptionLabel={(company: Company) => company.name}
-              getOptionValue={(company: Company) => company.name}
-            />
-
-            <AsyncAutocomplete
-              id="publisher"
-              name="publisher"
-              label="Publisher (Single)"
-              placeholder="Search publisher..."
-              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
-              getOptionLabel={(company: Company) => company.name}
-              getOptionValue={(company: Company) => company.name}
-            />
-
-            <AsyncAutocomplete
-              id="platform"
-              name="platform"
-              label="Platform (Single)"
-              placeholder="Search platform..."
-              useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
-              getOptionLabel={(platform: Platform) => platform.name}
-              getOptionValue={(platform: Platform) => platform.name}
-            />
-          </div>
-
-          {/* Group 3: Dates & Genres */}
-          <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-4">
               <YearSelect
                 id="release_date_after"
@@ -133,15 +106,97 @@ function GameSearchFilter({
                 placeholder="Year..."
               />
             </div>
+          </div>
+
+          {/* Group 2: Entities & Genres */}
+          <div className="flex flex-col gap-4">
+            <AsyncAutocomplete
+              id="developer"
+              name="developer"
+              label="Developer"
+              placeholder="Search developer..."
+              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+              getOptionLabel={(company: Company) => company.name}
+              getOptionValue={(company: Company) => company.name}
+            />
+
+            <AsyncAutocomplete
+              id="publisher"
+              name="publisher"
+              label="Publisher"
+              placeholder="Search publisher..."
+              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+              getOptionLabel={(company: Company) => company.name}
+              getOptionValue={(company: Company) => company.name}
+            />
 
             <AsyncMultiSelectAutocomplete
               placeholder="Search genres..."
               id="genres"
-              label="Genres (Multiple)"
+              label="Genres"
               name="genres"
               useInfiniteQueryHook={useGetGenresInfiniteQuery}
               getOptionLabel={(genre: Genre) => genre.name}
               getOptionValue={(genre: Genre) => genre.name}
+            />
+
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search platforms..."
+              id="platforms"
+              label="Platforms"
+              name="platforms"
+              useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
+              getOptionLabel={(platform: Platform) => platform.name}
+              getOptionValue={(platform: Platform) => platform.name}
+            />
+          </div>
+
+          {/* Group 3: Game Properties */}
+          <div className="flex flex-col gap-4">
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search game types..."
+              id="game_type"
+              label="Game Types"
+              name="game_type"
+              useInfiniteQueryHook={useGetGameTypesInfiniteQuery}
+              getOptionLabel={(type: GameType) => type.type}
+              getOptionValue={(type: GameType) => type.type}
+            />
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search game statuses..."
+              id="game_status"
+              label="Game Statuses"
+              name="game_status"
+              useInfiniteQueryHook={useGetGameStatusesInfiniteQuery}
+              getOptionLabel={(status: GameStatus) => status.status}
+              getOptionValue={(status: GameStatus) => status.status}
+            />
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search engines..."
+              id="game_engines"
+              label="Game Engines"
+              name="game_engines"
+              useInfiniteQueryHook={useGetGameEnginesInfiniteQuery}
+              getOptionLabel={(engine: GameEngine) => engine.name}
+              getOptionValue={(engine: GameEngine) => engine.name}
+            />
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search modes..."
+              id="game_modes"
+              label="Game Modes"
+              name="game_modes"
+              useInfiniteQueryHook={useGetGameModesInfiniteQuery}
+              getOptionLabel={(mode: GameMode) => mode.name}
+              getOptionValue={(mode: GameMode) => mode.name}
+            />
+            <AsyncMultiSelectAutocomplete
+              placeholder="Search perspectives..."
+              id="player_perspectives"
+              label="Player Perspectives"
+              name="player_perspectives"
+              useInfiniteQueryHook={useGetPlayerPerspectivesInfiniteQuery}
+              getOptionLabel={(perspective: PlayerPerspective) => perspective.name}
+              getOptionValue={(perspective: PlayerPerspective) => perspective.name}
             />
           </div>
         </div>
