@@ -43,6 +43,7 @@ export default function HomePage(): React.JSX.Element {
             }
             gameStatus={game.game_status ?? null}
             gameType={game.game_type}
+            releaseDate={game.release_date}
           />
         ))}
       </GridList>

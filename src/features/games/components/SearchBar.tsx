@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
+import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import SearchIcon from "@/components/ui/Icons/Search";
 import XMarkIcon from "@/components/ui/Icons/XMark";
@@ -74,7 +75,7 @@ export default function SearchBar(): React.JSX.Element {
             {isLoading ? (
               <li className="p-8 text-center text-text-500 italic text-sm">Searching...</li>
             ) : gamesDetails?.results && gamesDetails.results.length > 0 ? (
-              gamesDetails.results.map(game => (
+              gamesDetails.results.map((game: GameSimpleList) => (
                 <li key={game.id} className="w-full">
                   <Link
                     to={`/game/${game.id}`}
