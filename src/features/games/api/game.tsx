@@ -11,6 +11,11 @@ import {
   GamePlatformsListData,
   GameGenresListData,
   GameGameMediasListData,
+  GameGameEnginesListData,
+  GameGameModesListData,
+  GameGameStatusesListData,
+  GameGameTypesListData,
+  GamePlayerPerspectivesListData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
@@ -19,11 +24,56 @@ export type GameGameListsListDataQuery = GameGameListsListData["query"];
 export type GameGameReviewsListDataQuery = GameGameReviewsListData["query"];
 export type GamePlatformsListDataQuery = GamePlatformsListData["query"];
 export type GameGenresListDataQuery = GameGenresListData["query"];
+export type GameGameEnginesListDataQuery = GameGameEnginesListData["query"];
+export type GameGameModesListDataQuery = GameGameModesListData["query"];
+export type GameGameStatusesListDataQuery = GameGameStatusesListData["query"];
+export type GameGameTypesListDataQuery = GameGameTypesListData["query"];
+export type GamePlayerPerspectivesListDataQuery = GamePlayerPerspectivesListData["query"];
 
 export const getGenresList = async (query?: GameGenresListDataQuery) => {
   const { data, response } = await GameService.gameGenresList({ query });
   if (response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching genres");
+  }
+  return data;
+};
+
+export const getGameEnginesList = async (query?: GameGameEnginesListDataQuery) => {
+  const { data, response } = await GameService.gameGameEnginesList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching game engines");
+  }
+  return data;
+};
+
+export const getGameModesList = async (query?: GameGameModesListDataQuery) => {
+  const { data, response } = await GameService.gameGameModesList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching game modes");
+  }
+  return data;
+};
+
+export const getGameStatusesList = async (query?: GameGameStatusesListDataQuery) => {
+  const { data, response } = await GameService.gameGameStatusesList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching game statuses");
+  }
+  return data;
+};
+
+export const getGameTypesList = async (query?: GameGameTypesListDataQuery) => {
+  const { data, response } = await GameService.gameGameTypesList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching game types");
+  }
+  return data;
+};
+
+export const getPlayerPerspectivesList = async (query?: GamePlayerPerspectivesListDataQuery) => {
+  const { data, response } = await GameService.gamePlayerPerspectivesList({ query });
+  if (response.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching player perspectives");
   }
   return data;
 };

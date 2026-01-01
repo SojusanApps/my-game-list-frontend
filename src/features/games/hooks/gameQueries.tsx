@@ -19,15 +19,90 @@ import {
   getCompanyDetail,
   GameCompaniesListDataQuery,
   getPlatformsList,
+  getGameEnginesList,
+  getGameModesList,
+  getGameStatusesList,
+  getGameTypesList,
+  getPlayerPerspectivesList,
 } from "../api/game";
 import { useInfiniteQuery, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
-import { GameList, PaginatedGameList, PaginatedGameListList } from "@/client";
+import { GameList, PaginatedGameSimpleListList, PaginatedGameListList } from "@/client";
 import { gameKeys, gameListKeys, gameReviewKeys, userKeys } from "@/lib/queryKeys";
 
 export const useGetPlatformsInfiniteQuery = (name?: string) => {
   return useInfiniteQuery({
     queryKey: gameKeys.platformsInfinite(name),
     queryFn: ({ pageParam = 1 }) => getPlatformsList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+export const useGetGameEnginesInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.enginesInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getGameEnginesList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+export const useGetGameModesInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.modesInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getGameModesList({ name, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+export const useGetGameStatusesInfiniteQuery = (status?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.statusesInfinite(status),
+    queryFn: ({ pageParam = 1 }) => getGameStatusesList({ status, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+export const useGetGameTypesInfiniteQuery = (type?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.typesInfinite(type),
+    queryFn: ({ pageParam = 1 }) => getGameTypesList({ type, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+  });
+};
+
+export const useGetPlayerPerspectivesInfiniteQuery = (name?: string) => {
+  return useInfiniteQuery({
+    queryKey: gameKeys.perspectivesInfinite(name),
+    queryFn: ({ pageParam = 1 }) => getPlayerPerspectivesList({ name, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       if (lastPage.next) {
@@ -69,7 +144,7 @@ export const useGetGameMediasInfiniteQuery = (name?: string) => {
 
 export const useGetGamesList = (
   query?: GameGamesListDataQuery,
-  options?: Omit<UseQueryOptions<unknown, Error, PaginatedGameList>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<unknown, Error, PaginatedGameSimpleListList>, "queryKey" | "queryFn">,
 ) => {
   return useQuery({
     queryKey: gameKeys.list(query),

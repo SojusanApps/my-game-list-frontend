@@ -10,7 +10,14 @@ import UserSearchFilter, {
   ValidationSchema as UserSearchFilterValidationSchema,
 } from "@/features/users/components/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import { Game, Company, User, PaginatedCompanyList, PaginatedGameList, PaginatedUserList } from "@/client";
+import {
+  GameSimpleList,
+  Company,
+  User,
+  PaginatedCompanyList,
+  PaginatedGameSimpleListList,
+  PaginatedUserList,
+} from "@/client";
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
@@ -21,7 +28,7 @@ import { cn } from "@/utils/cn";
 import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
 import SearchIcon from "@/components/ui/Icons/Search";
 
-type searchResultsType = PaginatedCompanyList | PaginatedGameList | PaginatedUserList | undefined;
+type searchResultsType = PaginatedCompanyList | PaginatedGameSimpleListList | PaginatedUserList | undefined;
 
 type SearchFilterValidatorsType =
   | GameSearchFilterValidationSchema
@@ -53,7 +60,7 @@ function DisplaySearchResults({
   const renderItem = (item: unknown) => {
     switch (selectedCategory) {
       case "games": {
-        const game = item as Game;
+        const game = item as GameSimpleList;
         return (
           <ItemOverlay
             key={game.id}
@@ -134,10 +141,12 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
     let filterData = {};
+
     for (const [key, value] of Object.entries(data)) {
-      if (value === "" || value === undefined) {
+      if (value === "" || value === undefined || (Array.isArray(value) && value.length === 0)) {
         continue;
       }
+
       filterData = { ...filterData, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
     }
 

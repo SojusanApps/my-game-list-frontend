@@ -2,7 +2,7 @@ import * as React from "react";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGamesList } from "../hooks/gameQueries";
 import { PageMeta } from "@/components/ui/PageMeta";
-import { Game } from "@/client";
+import { GameSimpleList } from "@/client";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { GridList } from "@/components/ui/GridList";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -17,7 +17,7 @@ export default function HomePage(): React.JSX.Element {
     ordering: ["-created_at"],
   });
 
-  const renderGameList = (games: Game[] | undefined, isLoading: boolean) => {
+  const renderGameList = (games: GameSimpleList[] | undefined, isLoading: boolean) => {
     if (isLoading) {
       return (
         <GridList>
@@ -30,7 +30,7 @@ export default function HomePage(): React.JSX.Element {
 
     return (
       <GridList>
-        {games?.slice(0, 7).map((game: Game) => (
+        {games?.slice(0, 7).map((game: GameSimpleList) => (
           <ItemOverlay
             key={game.id}
             className="w-full"
