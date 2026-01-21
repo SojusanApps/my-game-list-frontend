@@ -6,7 +6,7 @@ interface FriendCardProps {
   friendship: Friendship;
 }
 
-export default function FriendCard({ friendship }: FriendCardProps) {
+export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
   const { friend, created_at } = friendship;
 
   return (

@@ -15,16 +15,10 @@ import { cn } from "@/utils/cn";
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
   const parsedId = idSchema.safeParse(id);
+  const userId = parsedId.success ? parsedId.data : undefined;
 
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
-
-  const userId = parsedId.data;
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
-
-  const pageTitle = isUserLoading ? "Loading Game List..." : `${userDetails?.username}'s Game List`;
 
   const {
     data: gameListResults,
@@ -34,6 +28,12 @@ export default function GameListPage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
   } = useGameListInfiniteQuery(userId, selectedGameStatus);
+
+  if (!parsedId.success) {
+    return <Navigate to="/404" replace />;
+  }
+
+  const pageTitle = isUserLoading ? "Loading Game List..." : `${userDetails?.username}'s Game List`;
 
   const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
@@ -104,9 +104,10 @@ export default function GameListPage(): React.JSX.Element {
         <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-6 md:p-8 min-h-212.5">
           {isLoading && !isFetchingNextPage ? (
             <GridList>
-              {Array.from({ length: 21 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-264/374 w-full rounded-xl" />
-              ))}
+              {Array.from({ length: 21 }).map((_, i) => {
+                const skeletonKey = `game-skeleton-${i}`;
+                return <Skeleton key={skeletonKey} className="aspect-264/374 w-full rounded-xl" />;
+              })}
             </GridList>
           ) : (
             <VirtualGridList

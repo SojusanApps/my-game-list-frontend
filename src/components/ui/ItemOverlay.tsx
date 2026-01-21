@@ -30,7 +30,7 @@ function ItemOverlay({
     if (!releaseDate) return null;
     try {
       const date = new Date(releaseDate);
-      return isNaN(date.getTime()) ? null : date.getFullYear();
+      return Number.isNaN(date.getTime()) ? null : date.getFullYear();
     } catch {
       return null;
     }

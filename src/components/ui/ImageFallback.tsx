@@ -6,7 +6,7 @@ interface ImageFallbackProps {
   className?: string;
 }
 
-export function ImageFallback({ className }: ImageFallbackProps) {
+export function ImageFallback({ className }: Readonly<ImageFallbackProps>) {
   return (
     <div
       className={cn(

@@ -29,7 +29,10 @@ export default function NotificationBell(): React.JSX.Element {
 
   return (
     <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className="relative p-2 rounded-full hover:bg-white/10 transition-colors group">
+      <button
+        type="button"
+        className="relative p-2 rounded-full hover:bg-white/10 transition-colors group flex items-center justify-center"
+      >
         <div className="relative">
           <BellIcon className="h-6 w-6 text-primary-200 group-hover:text-white transition-colors" />
           {unreadCount > 0 && (
@@ -38,12 +41,9 @@ export default function NotificationBell(): React.JSX.Element {
             </span>
           )}
         </div>
-      </div>
+      </button>
 
-      <div
-        tabIndex={0}
-        className="dropdown-content z-50 mt-4 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-      >
+      <div className="dropdown-content z-50 mt-4 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
         <div className="p-4 border-b border-background-100 flex justify-between items-center bg-background-50/50">
           <h2 className="font-bold text-text-900">Notifications</h2>
           {unreadCount > 0 && (

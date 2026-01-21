@@ -6,7 +6,7 @@ interface GameInformationProps {
   gameDetails?: Game;
 }
 
-export default function GameInformation({ gameDetails }: GameInformationProps) {
+export default function GameInformation({ gameDetails }: Readonly<GameInformationProps>) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
       <div className="bg-background-50 px-4 py-3 border-b border-background-200">
@@ -85,7 +85,7 @@ export default function GameInformation({ gameDetails }: GameInformationProps) {
               gameDetails.platforms.map(platform => (
                 <div key={platform.id} className="tooltip" data-tip={platform.name}>
                   <p className="inline-flex items-center rounded-md bg-secondary-50 px-2 py-1 text-xs font-medium text-secondary-700 ring-1 ring-inset ring-secondary-700/10">
-                    {platform.abbreviation !== "" ? platform.abbreviation : platform.name}
+                    {platform.abbreviation === "" ? platform.name : platform.abbreviation}
                   </p>
                 </div>
               ))

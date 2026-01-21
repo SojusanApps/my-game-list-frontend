@@ -16,12 +16,12 @@ function CollapsibleSection({
   count,
   children,
   defaultOpen = false,
-}: {
+}: Readonly<{
   title: string;
   count?: number;
   children: React.ReactNode;
   defaultOpen?: boolean;
-}) {
+}>) {
   const [isOpen, setIsOpen] = React.useState(defaultOpen);
 
   return (
@@ -57,13 +57,12 @@ function CollapsibleSection({
 export default function CompanyDetailPage(): React.JSX.Element {
   const { id } = useParams();
   const parsedId = idSchema.safeParse(id);
+  const companyId = parsedId.success ? parsedId.data : undefined;
+  const { data: companyDetails, isLoading: isCompanyLoading } = useGetCompanyDetail(companyId);
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
   }
-
-  const companyId = parsedId.data;
-  const { data: companyDetails, isLoading: isCompanyLoading } = useGetCompanyDetail(companyId);
 
   const developedGamesList = companyDetails?.games_developed || [];
   const publishedGamesList = companyDetails?.games_published || [];

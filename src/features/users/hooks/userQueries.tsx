@@ -3,13 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userKeys } from "@/lib/queryKeys";
 import { useAppMutation } from "@/hooks/useAppMutation";
 
-export const useGetUserDetails = (id: number) => {
-  // To ensure id is a number
-  const idParsed = Number(id);
-
+export const useGetUserDetails = (id?: number) => {
   return useQuery({
-    queryKey: userKeys.detail(idParsed),
-    queryFn: () => getUserDetails(idParsed),
+    queryKey: userKeys.detail(id ?? -1),
+    queryFn: () => getUserDetails(id as number),
+    enabled: !!id,
   });
 };
 

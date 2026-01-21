@@ -9,12 +9,12 @@ export const getStoredUser = (): LocalStorageUserType | null => {
 
 export const setStoredUser = (user: LocalStorageUserType) => {
   localStorage.setItem("user", JSON.stringify(user));
-  window.dispatchEvent(new Event("auth:updated"));
+  globalThis.dispatchEvent(new Event("auth:updated"));
 };
 
 export const clearStoredUser = () => {
   localStorage.removeItem("user");
-  window.dispatchEvent(new Event("auth:logout"));
+  globalThis.dispatchEvent(new Event("auth:logout"));
 };
 
 export const refreshToken = async (): Promise<string | undefined> => {

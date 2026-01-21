@@ -7,7 +7,7 @@ interface UserFriendsListProps {
   userDetails?: UserDetail;
 }
 
-export default function UserFriendsList({ userDetails }: UserFriendsListProps) {
+export default function UserFriendsList({ userDetails }: Readonly<UserFriendsListProps>) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
       <div className="bg-background-50 px-4 py-3 border-b border-background-200 flex justify-between items-center">

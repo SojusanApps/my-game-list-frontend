@@ -21,9 +21,10 @@ export default function HomePage(): React.JSX.Element {
     if (isLoading) {
       return (
         <GridList>
-          {Array.from({ length: 7 }).map((_, i) => (
-            <Skeleton key={i} className="aspect-264/374 w-full" />
-          ))}
+          {Array.from({ length: 7 }).map((_, i) => {
+            const skeletonKey = `game-skeleton-${i}`;
+            return <Skeleton key={skeletonKey} className="aspect-264/374 w-full" />;
+          })}
         </GridList>
       );
     }
@@ -37,9 +38,9 @@ export default function HomePage(): React.JSX.Element {
             name={game.title}
             itemPageUrl={`/game/${game.id}`}
             itemCoverUrl={
-              game.cover_image_id !== undefined
-                ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-                : null
+              game.cover_image_id === undefined
+                ? null
+                : getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
             }
             gameType={game.game_type}
             releaseDate={game.release_date}

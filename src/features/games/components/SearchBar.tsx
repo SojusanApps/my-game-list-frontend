@@ -46,6 +46,42 @@ export default function SearchBar(): React.JSX.Element {
     }
   };
 
+  const renderResults = () => {
+    if (isLoading) {
+      return <li className="p-8 text-center text-text-500 italic text-sm">Searching...</li>;
+    }
+
+    if (gamesDetails?.results && gamesDetails.results.length > 0) {
+      return gamesDetails.results.map((game: GameSimpleList) => (
+        <li key={game.id} className="w-full">
+          <Link
+            to={`/game/${game.id}`}
+            className="flex items-center gap-4 p-3 hover:bg-primary-50/80 active:bg-primary-100 transition-all duration-200 group rounded-lg"
+            onClick={handleClose}
+          >
+            <div className="relative overflow-hidden rounded-md shadow-sm shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md">
+              <SafeImage
+                className="w-10 h-14 object-cover"
+                src={game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90) : undefined}
+                alt={game.title}
+              />
+            </div>
+            <div className="flex flex-col overflow-hidden transition-transform duration-300 group-hover:translate-x-1">
+              <span className="font-bold text-text-900 text-sm truncate group-hover:text-primary-600 transition-colors">
+                {game.title}
+              </span>
+              {game.release_date && (
+                <span className="text-xs text-text-500 font-medium">{new Date(game.release_date).getFullYear()}</span>
+              )}
+            </div>
+          </Link>
+        </li>
+      ));
+    }
+
+    return <li className="p-8 text-center text-text-500 italic text-sm">No results found</li>;
+  };
+
   return (
     <section ref={containerRef} className="relative w-full max-w-md mx-4">
       <div className="relative group">
@@ -72,43 +108,7 @@ export default function SearchBar(): React.JSX.Element {
       {isOpen && search.length > 1 && (
         <div className="absolute z-50 mt-2 w-full bg-white rounded-xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <ul className="p-1 max-h-[60vh] overflow-y-auto flex flex-col gap-1">
-            {isLoading ? (
-              <li className="p-8 text-center text-text-500 italic text-sm">Searching...</li>
-            ) : gamesDetails?.results && gamesDetails.results.length > 0 ? (
-              gamesDetails.results.map((game: GameSimpleList) => (
-                <li key={game.id} className="w-full">
-                  <Link
-                    to={`/game/${game.id}`}
-                    className="flex items-center gap-4 p-3 hover:bg-primary-50/80 active:bg-primary-100 transition-all duration-200 group rounded-lg"
-                    onClick={handleClose}
-                  >
-                    <div className="relative overflow-hidden rounded-md shadow-sm shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md">
-                      <SafeImage
-                        className="w-10 h-14 object-cover"
-                        src={
-                          game.cover_image_id
-                            ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90)
-                            : undefined
-                        }
-                        alt={game.title}
-                      />
-                    </div>
-                    <div className="flex flex-col overflow-hidden transition-transform duration-300 group-hover:translate-x-1">
-                      <span className="font-bold text-text-900 text-sm truncate group-hover:text-primary-600 transition-colors">
-                        {game.title}
-                      </span>
-                      {game.release_date && (
-                        <span className="text-xs text-text-500 font-medium">
-                          {new Date(game.release_date).getFullYear()}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                </li>
-              ))
-            ) : (
-              <li className="p-8 text-center text-text-500 italic text-sm">No results found</li>
-            )}
+            {renderResults()}
             <li className="p-1">
               <Link
                 to="/search"

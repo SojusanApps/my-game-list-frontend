@@ -19,15 +19,16 @@ import { Button } from "@/components/ui/Button";
 export default function UserProfilePage(): React.JSX.Element {
   const { id } = useParams();
   const parsedId = idSchema.safeParse(id);
+  const userId = parsedId.success ? parsedId.data : undefined;
+
+  const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(userId);
+  const { user } = useAuth();
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
   }
 
-  const userId = parsedId.data;
-  const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(userId);
-
-  const { user } = useAuth();
+  const validUserId = parsedId.data;
   let currentUser: TokenInfoType | null = null;
   if (user) {
     currentUser = jwtDecode<TokenInfoType>(user.token);
@@ -64,9 +65,9 @@ export default function UserProfilePage(): React.JSX.Element {
               />
             </div>
 
-            <FriendshipButtons currentUser={currentUser} userId={userId} />
+            <FriendshipButtons currentUser={currentUser} userId={validUserId} />
 
-            <Link to={`/game-list/${userDetails?.id}`} className="w-full">
+            <Link to={`/game-list/${validUserId}`} className="w-full">
               <Button fullWidth variant="default" className="shadow-sm">
                 Game List
               </Button>

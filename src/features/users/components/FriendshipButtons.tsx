@@ -16,7 +16,7 @@ interface FriendshipButtonsProps {
   userId: number;
 }
 
-export default function FriendshipButtons({ currentUser, userId }: FriendshipButtonsProps) {
+export default function FriendshipButtons({ currentUser, userId }: Readonly<FriendshipButtonsProps>) {
   const { mutate: sendRequest } = useSendFriendRequest();
   const { mutate: acceptRequest } = useAcceptFriendRequest();
   const { mutate: rejectRequest } = useRejectFriendRequest();
@@ -69,7 +69,7 @@ export default function FriendshipButtons({ currentUser, userId }: FriendshipBut
   };
 
   const handleUnfriend = () => {
-    if (friendship && window.confirm("Are you sure you want to remove this friend?")) {
+    if (friendship && globalThis.confirm("Are you sure you want to remove this friend?")) {
       deleteFriendship({ id: friendship.id });
     }
   };

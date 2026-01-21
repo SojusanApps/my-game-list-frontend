@@ -8,7 +8,7 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-export function SectionHeader({ title, viewMoreHref, className }: SectionHeaderProps) {
+export function SectionHeader({ title, viewMoreHref, className }: Readonly<SectionHeaderProps>) {
   return (
     <div className={cn("flex items-end justify-between mb-6 border-b border-background-200 pb-2", className)}>
       <div className="flex items-center gap-3">
@@ -20,8 +20,7 @@ export function SectionHeader({ title, viewMoreHref, className }: SectionHeaderP
           to={viewMoreHref}
           className="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1"
         >
-          View More
-          <span className="text-lg">→</span>
+          View More <span className="text-lg">→</span>
         </Link>
       )}
     </div>

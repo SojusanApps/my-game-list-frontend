@@ -6,7 +6,7 @@ interface PageMetaProps {
   description?: string;
 }
 
-export function PageMeta({ title, description }: PageMetaProps) {
+export function PageMeta({ title, description }: Readonly<PageMetaProps>) {
   const fullTitle = title ? `${title} | MyGameList` : "MyGameList";
   const defaultDescription = "Keep track of your gaming progress and discover new titles.";
 

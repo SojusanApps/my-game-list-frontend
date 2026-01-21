@@ -156,10 +156,11 @@ export const useGetGamesList = (
   });
 };
 
-export const useGetGamesDetails = (id: number) => {
+export const useGetGamesDetails = (id?: number) => {
   return useQuery({
-    queryKey: gameKeys.detail(id),
-    queryFn: () => getGamesDetail(id),
+    queryKey: gameKeys.detail(id ?? -1),
+    queryFn: () => getGamesDetail(id as number),
+    enabled: !!id,
   });
 };
 
@@ -271,9 +272,10 @@ export const useGetCompaniesList = (query?: GameCompaniesListDataQuery) => {
   });
 };
 
-export const useGetCompanyDetail = (id: number) => {
+export const useGetCompanyDetail = (id?: number) => {
   return useQuery({
-    queryKey: gameKeys.companyDetail(id),
-    queryFn: () => getCompanyDetail(id),
+    queryKey: gameKeys.companyDetail(id ?? -1),
+    queryFn: () => getCompanyDetail(id as number),
+    enabled: !!id,
   });
 };

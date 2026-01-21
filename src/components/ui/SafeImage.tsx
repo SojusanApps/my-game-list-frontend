@@ -15,7 +15,7 @@ export function SafeImage({
   fallback = <ImageFallback />,
   objectFit = "cover",
   ...props
-}: SafeImageProps) {
+}: Readonly<SafeImageProps>) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);

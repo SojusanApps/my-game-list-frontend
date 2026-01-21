@@ -16,7 +16,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     if (response.url.includes("token/refresh")) {
       // If refresh failed, force logout
       clearStoredUser();
-      window.location.href = "/login";
+      globalThis.location.href = "/login";
       return response;
     }
 
@@ -29,7 +29,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
       response = await fetch(retryRequest);
     } else {
       clearStoredUser();
-      window.location.href = "/login";
+      globalThis.location.href = "/login";
     }
   }
   return response;

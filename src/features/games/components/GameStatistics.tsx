@@ -6,7 +6,7 @@ interface GameStatisticsProps {
   gameDetails?: Game;
 }
 
-export default function GameStatistics({ gameDetails }: GameStatisticsProps) {
+export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsProps>) {
   return (
     <div className="flex flex-col gap-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
