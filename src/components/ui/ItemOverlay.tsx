@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { SafeImage } from "./SafeImage";
+import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 type ItemOverlayProps = {
   className?: string;
@@ -12,6 +13,7 @@ type ItemOverlayProps = {
   gameType?: string | null;
   releaseDate?: string | null;
   rating?: number | null;
+  status?: string | null;
 };
 
 function ItemOverlay({
@@ -23,6 +25,7 @@ function ItemOverlay({
   gameType,
   releaseDate,
   rating,
+  status,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
 
@@ -35,6 +38,13 @@ function ItemOverlay({
       return null;
     }
   }, [releaseDate]);
+
+  const ratingBadgeClass = React.useMemo(() => {
+    if (rating === null || rating === undefined) return "";
+    if (rating < 5) return "bg-red-300/90 border-red-200/50";
+    if (rating < 8) return "bg-yellow-300/90 border-yellow-200/50";
+    return "bg-emerald-300/90 border-emerald-200/50";
+  }, [rating]);
 
   return (
     <div
@@ -67,9 +77,25 @@ function ItemOverlay({
             )}
           </div>
 
-          {rating && (
-            <div className="bg-yellow-500/90 text-black text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border border-yellow-400/50">
+          {rating !== null && rating !== undefined && (
+            <div
+              className={cn(
+                "text-black text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border",
+                ratingBadgeClass,
+              )}
+            >
               {rating.toFixed(1)}
+            </div>
+          )}
+
+          {status && (
+            <div
+              className={cn(
+                "text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border",
+                getStatusConfig(status)?.activeStyles || "bg-background-800/90 text-white border-white/10",
+              )}
+            >
+              {getStatusConfig(status)?.emoji}
             </div>
           )}
         </div>

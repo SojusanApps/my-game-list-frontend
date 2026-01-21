@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer";
 
 const Layout = (): React.JSX.Element => {
   return (
-    <div className="flex flex-col min-h-screen bg-background-200">
+    <div className="flex flex-col min-h-screen">
       <TopBar />
       <main className="grow">
         <Outlet />

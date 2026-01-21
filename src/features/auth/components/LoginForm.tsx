@@ -50,7 +50,7 @@ function LoginForm() {
       const { data: tokenInfo, response } = await TokenService.tokenCreate({
         body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
-      if (response.status !== StatusCode.OK) {
+      if (!response || response.status !== StatusCode.OK) {
         toast.error("Error logging in");
         return;
       }

@@ -58,6 +58,11 @@ export default function ScreenshotModal({ screenshot, onClose }: Readonly<Screen
           className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
           src={getIGDBImageURL(screenshot, IGDBImageSize.SCREENSHOT_HUGE_1280_720)}
           alt="Enlarged screenshot"
+          loader={
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin" />
+            </div>
+          }
         />
       </div>
     </dialog>

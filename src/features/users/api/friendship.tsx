@@ -17,7 +17,7 @@ export type FriendshipFriendshipRequestsListDataQuery = FriendshipFriendshipRequ
 
 export const getFriendshipRequests = async (query?: FriendshipFriendshipRequestsListDataQuery) => {
   const { data, response } = await FriendshipService.friendshipFriendshipRequestsList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching friendship requests");
   }
   return data;
@@ -27,7 +27,7 @@ export type FriendshipFriendshipRequestsCreateDataBody = FriendshipFriendshipReq
 
 export const sendFriendRequest = async (body: FriendshipFriendshipRequestsCreateDataBody) => {
   const { data, response } = await FriendshipService.friendshipFriendshipRequestsCreate({ body });
-  if (response.status !== StatusCode.CREATED || !data) {
+  if (!response || response.status !== StatusCode.CREATED || !data) {
     return await handleApiError(response, "Error sending friend request");
   }
   return data;
@@ -40,7 +40,7 @@ export const acceptFriendRequest = async (path: FriendshipFriendshipRequestsAcce
     path,
     body: {} as FriendshipRequestWritable,
   });
-  if ((response.status !== StatusCode.OK && response.status !== StatusCode.CREATED) || !data) {
+  if (!response || (response.status !== StatusCode.OK && response.status !== StatusCode.CREATED) || !data) {
     return await handleApiError(response, "Error accepting friend request");
   }
   return data;
@@ -53,7 +53,7 @@ export const rejectFriendRequest = async (path: FriendshipFriendshipRequestsReje
     path,
     body: {} as FriendshipRequestWritable,
   });
-  if ((response.status !== StatusCode.OK && response.status !== StatusCode.CREATED) || !data) {
+  if (!response || (response.status !== StatusCode.OK && response.status !== StatusCode.CREATED) || !data) {
     return await handleApiError(response, "Error rejecting friend request");
   }
   return data;
@@ -65,7 +65,7 @@ export type FriendshipFriendshipsListDataQuery = FriendshipFriendshipsListData["
 
 export const getFriendships = async (query?: FriendshipFriendshipsListDataQuery) => {
   const { data, response } = await FriendshipService.friendshipFriendshipsList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching friendships");
   }
   return data;
@@ -75,7 +75,7 @@ export type FriendshipFriendshipsDestroyDataPath = FriendshipFriendshipsDestroyD
 
 export const deleteFriendship = async (path: FriendshipFriendshipsDestroyDataPath) => {
   const { data, response } = await FriendshipService.friendshipFriendshipsDestroy({ path });
-  if (response.status !== StatusCode.NO_CONTENT) {
+  if (!response || response.status !== StatusCode.NO_CONTENT) {
     return await handleApiError(response, "Error deleting friendship");
   }
   return data;

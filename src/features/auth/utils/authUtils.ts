@@ -25,7 +25,7 @@ export const refreshToken = async (): Promise<string | undefined> => {
     body: { access: user.token, refresh: user.refreshToken },
   });
 
-  if (error || !data || response.status !== StatusCode.OK) {
+  if (error || !data || !response || response.status !== StatusCode.OK) {
     return undefined;
   }
 

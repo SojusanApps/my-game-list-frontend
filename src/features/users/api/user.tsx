@@ -6,7 +6,7 @@ export type UserUsersListDataQuery = UserUsersListData["query"];
 
 export const getUserLists = async (query?: UserUsersListDataQuery) => {
   const { data, response } = await UserService.userUsersList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching users");
   }
   return data;
@@ -14,7 +14,7 @@ export const getUserLists = async (query?: UserUsersListDataQuery) => {
 
 export const getUserDetails = async (id: number) => {
   const { data, response } = await UserService.userUsersRetrieve({ path: { id } });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching user details");
   }
   return data;
@@ -23,7 +23,7 @@ export const getUserDetails = async (id: number) => {
 export type UserUsersCreateDataBody = UserUsersCreateData["body"];
 export const createUser = async (body: UserUsersCreateDataBody) => {
   const { data, response } = await UserService.userUsersCreate({ body });
-  if (response.status !== StatusCode.CREATED || !data) {
+  if (!response || response.status !== StatusCode.CREATED || !data) {
     return await handleApiError(response, "Error creating user");
   }
   return data;
