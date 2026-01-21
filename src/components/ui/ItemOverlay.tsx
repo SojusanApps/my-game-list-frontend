@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/utils/cn";
 import { SafeImage } from "./SafeImage";
+import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 type ItemOverlayProps = {
   className?: string;
@@ -12,6 +13,7 @@ type ItemOverlayProps = {
   gameType?: string | null;
   releaseDate?: string | null;
   rating?: number | null;
+  status?: string | null;
 };
 
 function ItemOverlay({
@@ -23,6 +25,7 @@ function ItemOverlay({
   gameType,
   releaseDate,
   rating,
+  status,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
 
@@ -82,6 +85,17 @@ function ItemOverlay({
               )}
             >
               {rating.toFixed(1)}
+            </div>
+          )}
+
+          {status && (
+            <div
+              className={cn(
+                "text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border",
+                getStatusConfig(status)?.activeStyles || "bg-background-800/90 text-white border-white/10",
+              )}
+            >
+              {getStatusConfig(status)?.emoji}
             </div>
           )}
         </div>

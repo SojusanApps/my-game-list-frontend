@@ -2,6 +2,7 @@ import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
+import { STATUS_CONFIG } from "../utils/statusConfig";
 import { GameList, StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
@@ -41,39 +42,14 @@ export default function GameListPage(): React.JSX.Element {
     {
       id: null,
       label: "ALL",
-      styles: "hover:bg-text-100 text-text-600 border-background-300",
+      emoji: "♾️",
+      styles: "hover:bg-text-100 text-text-600 border-background-200",
       activeStyles: "bg-text-800 text-white border-text-800",
     },
-    {
-      id: StatusEnum.P,
-      label: "Playing",
-      styles: "hover:bg-success-50 text-success-700 border-success-200",
-      activeStyles: "bg-success-100 text-success-900 border-success-300",
-    },
-    {
-      id: StatusEnum.C,
-      label: "Completed",
-      styles: "hover:bg-primary-50 text-primary-700 border-primary-200",
-      activeStyles: "bg-primary-100 text-primary-900 border-primary-300",
-    },
-    {
-      id: StatusEnum.PTP,
-      label: "Plan to Play",
-      styles: "hover:bg-background-300 text-text-500 border-background-300",
-      activeStyles: "bg-background-400 text-text-900 border-background-500",
-    },
-    {
-      id: StatusEnum.OH,
-      label: "On Hold",
-      styles: "hover:bg-secondary-50 text-secondary-700 border-secondary-200",
-      activeStyles: "bg-secondary-100 text-secondary-900 border-secondary-300",
-    },
-    {
-      id: StatusEnum.D,
-      label: "Dropped",
-      styles: "hover:bg-error-50 text-error-700 border-error-200",
-      activeStyles: "bg-error-100 text-error-900 border-error-300",
-    },
+    ...Object.entries(STATUS_CONFIG).map(([key, config]) => ({
+      id: key as StatusEnum,
+      ...config,
+    })),
   ];
 
   return (
@@ -95,6 +71,7 @@ export default function GameListPage(): React.JSX.Element {
                   selectedGameStatus === status.id ? status.activeStyles : cn("bg-white", status.styles),
                 )}
               >
+                <span className="mr-1">{status.emoji}</span>
                 {status.label}
               </button>
             ))}
@@ -123,6 +100,8 @@ export default function GameListPage(): React.JSX.Element {
                   name={gameListItem.title}
                   itemPageUrl={`/game/${gameListItem.game_id}`}
                   itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
+                  status={gameListItem.status_code}
+                  rating={gameListItem.score}
                 />
               )}
             />

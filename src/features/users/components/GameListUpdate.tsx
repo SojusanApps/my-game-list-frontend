@@ -3,22 +3,15 @@ import { GameList, StatusEnum } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { cn } from "@/utils/cn";
+import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 interface GameListUpdateProps {
   latestGameListUpdate: GameList;
 }
 
-const statusDot: Record<string, string> = {
-  [StatusEnum.P]: "bg-success-500",
-  [StatusEnum.C]: "bg-primary-500",
-  [StatusEnum.D]: "bg-error-500",
-  [StatusEnum.OH]: "bg-secondary-500",
-  [StatusEnum.PTP]: "bg-background-400",
-};
-
 export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameListUpdateProps>) {
-  const statusKey = latestGameListUpdate.status_code || "PTP";
-  const dotColor = statusDot[statusKey] || statusDot[StatusEnum.PTP];
+  const statusKey = latestGameListUpdate.status_code as StatusEnum;
+  const config = getStatusConfig(statusKey);
 
   return (
     <div className="flex flex-row items-center gap-4 p-3 rounded-xl border border-background-300/50 bg-background-200/50 transition-all hover:bg-background-200 hover:shadow-sm group">
@@ -43,9 +36,14 @@ export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameLi
         </div>
 
         <div className="flex items-center gap-4 mt-1">
-          <div className="flex items-center gap-1.5">
-            <div className={cn("w-2 h-2 rounded-full", dotColor)} />
-            <p className="text-xs font-semibold uppercase tracking-wider">{latestGameListUpdate.status}</p>
+          <div
+            className={cn(
+              "flex items-center gap-1.5 px-2 py-0.5 rounded-full border",
+              config?.activeStyles || "bg-background-100 text-text-600 border-background-200",
+            )}
+          >
+            <span className="text-sm">{config?.emoji}</span>
+            <p className="text-[10px] font-bold uppercase tracking-wider">{latestGameListUpdate.status}</p>
           </div>
 
           {latestGameListUpdate.score && (

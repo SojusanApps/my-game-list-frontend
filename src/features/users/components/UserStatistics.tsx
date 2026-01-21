@@ -1,6 +1,7 @@
 import * as React from "react";
-import { UserDetail } from "@/client";
+import { UserDetail, StatusEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
+import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 interface UserStatisticsProps {
   userDetails?: UserDetail;
@@ -12,41 +13,24 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Status Breakdown Card */}
         <div className="md:col-span-2 flex flex-col gap-3.5 p-5 bg-background-200/50 rounded-2xl border border-background-300/50 shadow-xs">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2 h-2 rounded-full bg-success-500 shadow-glow-success" />
-              <span className="text-text-500 font-semibold">Currently Playing</span>
-            </div>
-            <span className="font-bold text-text-900">{userDetails?.game_list_statistics.playing}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2 h-2 rounded-full bg-secondary-400 shadow-glow-secondary" />
-              <span className="text-text-500 font-semibold">On Hold</span>
-            </div>
-            <span className="font-bold text-text-900">{userDetails?.game_list_statistics.on_hold}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2 h-2 rounded-full bg-error-500 shadow-glow-error" />
-              <span className="text-text-500 font-semibold">Dropped</span>
-            </div>
-            <span className="font-bold text-text-900">{userDetails?.game_list_statistics.dropped}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2 h-2 rounded-full bg-primary-500 shadow-glow-primary" />
-              <span className="text-text-500 font-semibold">Completed</span>
-            </div>
-            <span className="font-bold text-text-900">{userDetails?.game_list_statistics.completed}</span>
-          </div>
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2 h-2 rounded-full bg-background-400 shadow-glow-background" />
-              <span className="text-text-500 font-semibold">Plan To Play</span>
-            </div>
-            <span className="font-bold text-text-900">{userDetails?.game_list_statistics.plan_to_play}</span>
-          </div>
+          {[
+            { key: StatusEnum.P, label: "Currently Playing", count: userDetails?.game_list_statistics.playing },
+            { key: StatusEnum.OH, label: "On Hold", count: userDetails?.game_list_statistics.on_hold },
+            { key: StatusEnum.D, label: "Dropped", count: userDetails?.game_list_statistics.dropped },
+            { key: StatusEnum.C, label: "Completed", count: userDetails?.game_list_statistics.completed },
+            { key: StatusEnum.PTP, label: "Plan To Play", count: userDetails?.game_list_statistics.plan_to_play },
+          ].map(({ key, label, count }) => {
+            const config = getStatusConfig(key);
+            return (
+              <div key={key} className="flex justify-between items-center text-sm">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg leading-none">{config?.emoji}</span>
+                  <span className="text-text-500 font-semibold">{label}</span>
+                </div>
+                <span className="font-bold text-text-900">{count}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Total Entries Card */}
