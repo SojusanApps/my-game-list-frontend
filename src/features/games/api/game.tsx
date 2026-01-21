@@ -32,7 +32,7 @@ export type GamePlayerPerspectivesListDataQuery = GamePlayerPerspectivesListData
 
 export const getGenresList = async (query?: GameGenresListDataQuery) => {
   const { data, response } = await GameService.gameGenresList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching genres");
   }
   return data;
@@ -40,7 +40,7 @@ export const getGenresList = async (query?: GameGenresListDataQuery) => {
 
 export const getGameEnginesList = async (query?: GameGameEnginesListDataQuery) => {
   const { data, response } = await GameService.gameGameEnginesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game engines");
   }
   return data;
@@ -48,7 +48,7 @@ export const getGameEnginesList = async (query?: GameGameEnginesListDataQuery) =
 
 export const getGameModesList = async (query?: GameGameModesListDataQuery) => {
   const { data, response } = await GameService.gameGameModesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game modes");
   }
   return data;
@@ -56,7 +56,7 @@ export const getGameModesList = async (query?: GameGameModesListDataQuery) => {
 
 export const getGameStatusesList = async (query?: GameGameStatusesListDataQuery) => {
   const { data, response } = await GameService.gameGameStatusesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game statuses");
   }
   return data;
@@ -64,7 +64,7 @@ export const getGameStatusesList = async (query?: GameGameStatusesListDataQuery)
 
 export const getGameTypesList = async (query?: GameGameTypesListDataQuery) => {
   const { data, response } = await GameService.gameGameTypesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game types");
   }
   return data;
@@ -72,7 +72,7 @@ export const getGameTypesList = async (query?: GameGameTypesListDataQuery) => {
 
 export const getPlayerPerspectivesList = async (query?: GamePlayerPerspectivesListDataQuery) => {
   const { data, response } = await GameService.gamePlayerPerspectivesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching player perspectives");
   }
   return data;
@@ -80,7 +80,7 @@ export const getPlayerPerspectivesList = async (query?: GamePlayerPerspectivesLi
 
 export const getPlatformsList = async (query?: GamePlatformsListDataQuery) => {
   const { data, response } = await GameService.gamePlatformsList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching platforms");
   }
   return data;
@@ -88,7 +88,7 @@ export const getPlatformsList = async (query?: GamePlatformsListDataQuery) => {
 
 export const getCompaniesList = async (query?: GameCompaniesListDataQuery) => {
   const { data, response } = await GameService.gameCompaniesList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching companies");
   }
   return data;
@@ -96,7 +96,7 @@ export const getCompaniesList = async (query?: GameCompaniesListDataQuery) => {
 
 export const getCompanyDetail = async (id: number) => {
   const { data, response } = await GameService.gameCompaniesRetrieve({ path: { id } });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching company details");
   }
   return data;
@@ -107,7 +107,7 @@ export const getGamesList = async (query?: GameGamesListDataQuery) => {
     query,
     querySerializer: { array: { explode: true, style: "form" } },
   });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching games");
   }
   return data;
@@ -115,7 +115,7 @@ export const getGamesList = async (query?: GameGamesListDataQuery) => {
 
 export const getGamesDetail = async (id: number) => {
   const { data, response } = await GameService.gameGamesRetrieve({ path: { id } });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game details");
   }
   return data;
@@ -123,7 +123,7 @@ export const getGamesDetail = async (id: number) => {
 
 export const getGameListsList = async (query?: GameGameListsListDataQuery) => {
   const { data, response } = await GameService.gameGameListsList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game list");
   }
   return data;
@@ -139,7 +139,7 @@ export const getGameListByFilters = async (query?: GameGameListsListDataQuery) =
 
 export const deleteGameList = async (id: number) => {
   const { response } = await GameService.gameGameListsDestroy({ path: { id } });
-  if (response.status !== StatusCode.NO_CONTENT) {
+  if (!response || response.status !== StatusCode.NO_CONTENT) {
     return await handleApiError(response, "Error deleting game list entry");
   }
 };
@@ -147,7 +147,7 @@ export const deleteGameList = async (id: number) => {
 export type GameListCreateDataBody = GameGameListsCreateData["body"];
 export const createGameList = async (body: GameListCreateDataBody) => {
   const { data, response } = await GameService.gameGameListsCreate({ body });
-  if (response.status !== StatusCode.CREATED || !data) {
+  if (!response || response.status !== StatusCode.CREATED || !data) {
     return await handleApiError(response, "Error creating game list entry");
   }
   return data;
@@ -156,7 +156,7 @@ export const createGameList = async (body: GameListCreateDataBody) => {
 export type GameListPartialUpdateDataBody = GameGameListsPartialUpdateData["body"];
 export const partialUpdateGameList = async (id: number, body: GameListPartialUpdateDataBody) => {
   const { data, response } = await GameService.gameGameListsPartialUpdate({ path: { id }, body });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error updating game list entry");
   }
   return data;
@@ -164,7 +164,7 @@ export const partialUpdateGameList = async (id: number, body: GameListPartialUpd
 
 export const getGameReviewsList = async (query?: GameGameReviewsListDataQuery) => {
   const { data, response } = await GameService.gameGameReviewsList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game reviews");
   }
   return data;
@@ -172,7 +172,7 @@ export const getGameReviewsList = async (query?: GameGameReviewsListDataQuery) =
 
 export const getGameReviewsDetail = async (id: number) => {
   const { data, response } = await GameService.gameGameReviewsRetrieve({ path: { id } });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game review details");
   }
   return data;
@@ -181,7 +181,7 @@ export const getGameReviewsDetail = async (id: number) => {
 export type GameGameMediasListDataQuery = GameGameMediasListData["query"];
 export const getGameMediaList = async (query?: GameGameMediasListDataQuery) => {
   const { data, response } = await GameService.gameGameMediasList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game medias");
   }
   return data;

@@ -3,7 +3,10 @@
  * Parses backend error responses (e.g. from Django REST Framework)
  * and returns a standard Error object with a user-friendly message.
  */
-export async function handleApiError(response: Response, defaultMessage: string): Promise<never> {
+export async function handleApiError(response: Response | undefined, defaultMessage: string): Promise<never> {
+  if (!response) {
+    throw new Error(defaultMessage || "Network error or no response received");
+  }
   let errorMessage = defaultMessage;
 
   try {

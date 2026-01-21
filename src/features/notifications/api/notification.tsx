@@ -12,7 +12,7 @@ export type NotificationListDataQuery = NotificationListData["query"];
 
 export const getNotifications = async (query?: NotificationListDataQuery) => {
   const { data, response } = await NotificationService.notificationList({ query });
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching notifications");
   }
   return data;
@@ -20,7 +20,7 @@ export const getNotifications = async (query?: NotificationListDataQuery) => {
 
 export const getUnreadNotificationCount = async () => {
   const { data, response } = await NotificationService.notificationUnreadCountRetrieve();
-  if (response.status !== StatusCode.OK || !data) {
+  if (!response || response.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching unread notification count");
   }
   return data;
@@ -34,9 +34,10 @@ export const markNotificationAsRead = async (path: NotificationMarkAsReadCreateD
     body: {} as NotificationWritable,
   });
   if (
-    response.status !== StatusCode.OK &&
-    response.status !== StatusCode.CREATED &&
-    response.status !== StatusCode.NO_CONTENT
+    !response ||
+    (response.status !== StatusCode.OK &&
+      response.status !== StatusCode.CREATED &&
+      response.status !== StatusCode.NO_CONTENT)
   ) {
     return await handleApiError(response, "Error marking notification as read");
   }
@@ -49,9 +50,10 @@ export const markAllNotificationsAsRead = async () => {
   });
   // TODO: It should return 204 on backend, fix the swagger generation.
   if (
-    response.status !== StatusCode.OK &&
-    response.status !== StatusCode.CREATED &&
-    response.status !== StatusCode.NO_CONTENT
+    !response ||
+    (response.status !== StatusCode.OK &&
+      response.status !== StatusCode.CREATED &&
+      response.status !== StatusCode.NO_CONTENT)
   ) {
     return await handleApiError(response, "Error marking all notifications as read");
   }
@@ -62,7 +64,7 @@ export type NotificationDestroyDataPath = NotificationDestroyData["path"];
 
 export const deleteNotification = async (path: NotificationDestroyDataPath) => {
   const { data, response } = await NotificationService.notificationDestroy({ path });
-  if (response.status !== StatusCode.NO_CONTENT) {
+  if (!response || response.status !== StatusCode.NO_CONTENT) {
     return await handleApiError(response, "Error deleting notification");
   }
   return data;
@@ -70,7 +72,7 @@ export const deleteNotification = async (path: NotificationDestroyDataPath) => {
 
 export const deleteAllReadNotifications = async () => {
   const { data, response } = await NotificationService.notificationDeleteAllReadDestroy();
-  if (response.status !== StatusCode.NO_CONTENT) {
+  if (!response || response.status !== StatusCode.NO_CONTENT) {
     return await handleApiError(response, "Error deleting all read notifications");
   }
   return data;
