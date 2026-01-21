@@ -16,7 +16,7 @@ const statusDot: Record<string, string> = {
   [StatusEnum.PTP]: "bg-background-400",
 };
 
-export default function GameListUpdate({ latestGameListUpdate }: GameListUpdateProps) {
+export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameListUpdateProps>) {
   const statusKey = latestGameListUpdate.status_code || "PTP";
   const dotColor = statusDot[statusKey] || statusDot[StatusEnum.PTP];
 

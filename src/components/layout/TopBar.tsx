@@ -26,18 +26,14 @@ function LoggedInView({
 
   const handleClick = () => {
     logout();
-    window.location.reload();
+    globalThis.location.reload();
   };
 
   return (
     <div className="flex items-center gap-4">
       <NotificationBell />
       <div className="dropdown dropdown-end">
-        <div
-          tabIndex={0}
-          role="button"
-          className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-        >
+        <button tabIndex={0} className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
           <span className="text-sm font-medium text-primary-100 hidden md:block">{userDetails?.username}</span>
           <div className="avatar">
             <SafeImage
@@ -47,7 +43,7 @@ function LoggedInView({
             />
           </div>
           <ChevronDownIcon className="w-4 h-4 text-primary-300" />
-        </div>
+        </button>
         <ul className="dropdown-content z-1 menu p-2 shadow-2xl bg-white border border-background-200 rounded-xl w-52 mt-4 gap-1">
           <li>
             <Link

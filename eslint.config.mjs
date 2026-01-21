@@ -7,6 +7,8 @@ import typescriptParser from "@typescript-eslint/parser";
 import vitest from "@vitest/eslint-plugin";
 import importPlugin from "eslint-plugin-import";
 import pluginQuery from "@tanstack/eslint-plugin-query";
+import jsxA11y from "eslint-plugin-jsx-a11y";
+import reactHooks from "eslint-plugin-react-hooks";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -40,6 +42,8 @@ export default [
   vitest.configs.recommended,
   importPlugin.flatConfigs.recommended,
   importPlugin.flatConfigs.typescript,
+  jsxA11y.flatConfigs.strict,
+  reactHooks.configs.flat.recommended,
   {
     settings: {
       react: {
@@ -78,8 +82,11 @@ export default [
       "@typescript-eslint/no-shadow": ["error"],
       "react/jsx-filename-extension": ["warn", { extensions: [".tsx"] }],
       "react/jsx-props-no-spreading": "off",
+      "react/jsx-no-constructed-context-values": "error",
+      "react/no-array-index-key": "error",
       "react/jsx-uses-vars": "error",
       "react/jsx-uses-react": "error",
+      "jsx-a11y/prefer-tag-over-role": "error",
     },
   },
   eslintPluginPrettierRecommended,

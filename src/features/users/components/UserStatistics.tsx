@@ -6,7 +6,7 @@ interface UserStatisticsProps {
   userDetails?: UserDetail;
 }
 
-export default function UserStatistics({ userDetails }: UserStatisticsProps) {
+export default function UserStatistics({ userDetails }: Readonly<UserStatisticsProps>) {
   return (
     <div className="flex flex-col gap-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

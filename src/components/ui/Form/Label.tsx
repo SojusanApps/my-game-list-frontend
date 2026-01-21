@@ -5,7 +5,7 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   required?: boolean;
 }
 
-export function Label({ children, className, required, ...props }: LabelProps) {
+export function Label({ children, className, required, ...props }: Readonly<LabelProps>) {
   return (
     <label className={cn("block text-text-700 text-sm font-bold mb-2", className)} {...props}>
       {children}

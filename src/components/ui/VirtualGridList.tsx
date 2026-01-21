@@ -26,11 +26,12 @@ export function VirtualGridList<T>({
   className,
   columnCount = 7,
   rowHeight = 300,
-}: VirtualGridListProps<T>) {
+}: Readonly<VirtualGridListProps<T>>) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowCount = Math.ceil(items.length / columnCount) + (hasNextPage ? 1 : 0);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
@@ -43,8 +44,8 @@ export function VirtualGridList<T>({
   useEffect(() => {
     if (!virtualRows.length || !hasNextPage || isFetchingNextPage || !fetchNextPage) return;
 
-    const lastVirtualRow = virtualRows[virtualRows.length - 1];
-    if (lastVirtualRow.index >= rowCount - 2) {
+    const lastVirtualRow = virtualRows.at(-1);
+    if (lastVirtualRow && lastVirtualRow.index >= rowCount - 2) {
       fetchNextPage();
     }
   }, [virtualRows, hasNextPage, isFetchingNextPage, fetchNextPage, rowCount]);
@@ -99,11 +100,10 @@ export function VirtualGridList<T>({
                 >
                   {items
                     .slice(virtualRow.index * columnCount, (virtualRow.index + 1) * columnCount)
-                    .map((item, index) => (
-                      <div key={virtualRow.index * columnCount + index}>
-                        {renderItem(item, virtualRow.index * columnCount + index)}
-                      </div>
-                    ))}
+                    .map((item, index) => {
+                      const absoluteIndex = virtualRow.index * columnCount + index;
+                      return <div key={`v-grid-item-${absoluteIndex}`}>{renderItem(item, absoluteIndex)}</div>;
+                    })}
                 </div>
               )}
             </div>

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/prefer-tag-over-role */
 import * as React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { cn } from "@/utils/cn";
@@ -90,9 +91,17 @@ export default function YearSelect({
           </Label>
           <div className="relative">
             <div
+              role="button"
+              tabIndex={0}
               onClick={() => setIsOpen(!isOpen)}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsOpen(!isOpen);
+                }
+              }}
               className={cn(
-                "flex items-center justify-between px-3 h-10 w-full rounded-md border border-background-300 bg-white cursor-pointer transition-all hover:border-background-400 focus:ring-2 focus:ring-primary-500 focus:ring-offset-1",
+                "flex items-center justify-between px-3 h-10 w-full rounded-md border border-background-300 bg-white cursor-pointer transition-all hover:border-background-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1",
                 isOpen && "ring-2 ring-primary-500 ring-offset-1 border-transparent shadow-sm",
                 errorMessage && "border-error-500 focus:ring-error-500",
               )}
@@ -118,20 +127,22 @@ export default function YearSelect({
               <div className="absolute z-100 mt-2 w-full bg-white rounded-xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                 <ul className="max-h-60 overflow-y-auto p-1 flex flex-col gap-0.5 custom-scrollbar">
                   {years.map(year => (
-                    <li
-                      key={year}
-                      onClick={() => handleSelect(year)}
-                      className={cn(
-                        "px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors flex items-center justify-between group",
-                        selectedValue?.toString().startsWith(year.toString())
-                          ? "bg-primary-50 text-primary-700 font-bold"
-                          : "text-text-700 hover:bg-background-50",
-                      )}
-                    >
-                      {year}
-                      {selectedValue?.toString().startsWith(year.toString()) && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />
-                      )}
+                    <li key={year}>
+                      <button
+                        type="button"
+                        onClick={() => handleSelect(year)}
+                        className={cn(
+                          "w-full px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors flex items-center justify-between group",
+                          selectedValue?.toString().startsWith(year.toString())
+                            ? "bg-primary-50 text-primary-700 font-bold"
+                            : "text-text-700 hover:bg-background-50",
+                        )}
+                      >
+                        {year}
+                        {selectedValue?.toString().startsWith(year.toString()) && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />
+                        )}
+                      </button>
                     </li>
                   ))}
                 </ul>

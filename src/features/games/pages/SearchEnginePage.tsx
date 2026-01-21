@@ -163,6 +163,56 @@ export default function SearchEnginePage(): React.JSX.Element {
     { id: "users", label: "Users" },
   ] as const;
 
+  const renderSearchContent = () => {
+    if (!hasSearched) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-6 ring-8 ring-primary-50/50">
+            <SearchIcon className="w-10 h-10 text-primary-500" />
+          </div>
+          <h3 className="text-2xl font-bold text-text-900 mb-2">Ready to explore?</h3>
+          <p className="text-text-500 max-w-sm mx-auto">
+            Adjust the filters above and click the button to search for your favorite {selectedCategory}.
+          </p>
+        </div>
+      );
+    }
+
+    if (isLoading && !isFetchingNextPage) {
+      return (
+        <GridList className={cn(selectedCategory === "companies" ? "xl:grid-cols-5" : "xl:grid-cols-7")}>
+          {Array.from({ length: 21 }).map((_, i) => {
+            const skeletonKey = `search-skeleton-${i}`;
+            return (
+              <Skeleton
+                key={skeletonKey}
+                className={cn("w-full rounded-xl", selectedCategory === "companies" ? "aspect-3/2" : "aspect-264/374")}
+              />
+            );
+          })}
+        </GridList>
+      );
+    }
+
+    if (searchResults) {
+      return (
+        <DisplaySearchResults
+          selectedCategory={selectedCategory}
+          searchResults={searchResults}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={!!hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+        />
+      );
+    }
+
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-text-400">
+        <p className="text-lg font-medium">No results found for your search.</p>
+      </div>
+    );
+  };
+
   return (
     <div className="py-12 bg-background-200 min-h-screen">
       <PageMeta title="Search Engine" />
@@ -233,41 +283,7 @@ export default function SearchEnginePage(): React.JSX.Element {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-8 min-h-212.5 relative">
-          {!hasSearched ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-6 ring-8 ring-primary-50/50">
-                <SearchIcon className="w-10 h-10 text-primary-500" />
-              </div>
-              <h3 className="text-2xl font-bold text-text-900 mb-2">Ready to explore?</h3>
-              <p className="text-text-500 max-w-sm mx-auto">
-                Adjust the filters above and click the button to search for your favorite {selectedCategory}.
-              </p>
-            </div>
-          ) : isLoading && !isFetchingNextPage ? (
-            <GridList className={cn(selectedCategory === "companies" ? "xl:grid-cols-5" : "xl:grid-cols-7")}>
-              {Array.from({ length: 21 }).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className={cn(
-                    "w-full rounded-xl",
-                    selectedCategory === "companies" ? "aspect-3/2" : "aspect-264/374",
-                  )}
-                />
-              ))}
-            </GridList>
-          ) : searchResults ? (
-            <DisplaySearchResults
-              selectedCategory={selectedCategory}
-              searchResults={searchResults}
-              fetchNextPage={fetchNextPage}
-              hasNextPage={!!hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-text-400">
-              <p className="text-lg font-medium">No results found for your search.</p>
-            </div>
-          )}
+          {renderSearchContent()}
           {errorFetchingData && (
             <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
               <p className="text-error-600 text-center font-medium">Error: {errorFetchingData.message}</p>

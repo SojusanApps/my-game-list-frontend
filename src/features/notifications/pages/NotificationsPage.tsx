@@ -30,19 +30,19 @@ export default function NotificationsPage(): React.JSX.Element {
   };
 
   const handleMarkAllRead = () => {
-    if (window.confirm("Are you sure you want to mark all notifications as read?")) {
+    if (globalThis.confirm("Are you sure you want to mark all notifications as read?")) {
       markAllAsRead();
     }
   };
 
   const handleDeleteOne = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this notification?")) {
+    if (globalThis.confirm("Are you sure you want to delete this notification?")) {
       deleteOne({ id });
     }
   };
 
   const handleDeleteAllRead = () => {
-    if (window.confirm("Are you sure you want to delete all read notifications?")) {
+    if (globalThis.confirm("Are you sure you want to delete all read notifications?")) {
       deleteAllRead();
     }
   };

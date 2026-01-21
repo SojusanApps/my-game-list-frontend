@@ -5,7 +5,7 @@ interface UserProfileInformationProps {
   userDetails?: UserDetail;
 }
 
-export default function UserProfileInformation({ userDetails }: UserProfileInformationProps) {
+export default function UserProfileInformation({ userDetails }: Readonly<UserProfileInformationProps>) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
       <div className="bg-background-50 px-4 py-3 border-b border-background-200">

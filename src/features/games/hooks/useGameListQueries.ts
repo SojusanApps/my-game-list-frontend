@@ -19,16 +19,17 @@ const fetchGameListItems = async ({
   return await getGameListsList(query);
 };
 
-export const useGameListInfiniteQuery = (userId: number, status: StatusEnum | null) => {
+export const useGameListInfiniteQuery = (userId?: number, status?: StatusEnum | null) => {
   return useInfiniteQuery({
-    queryKey: gameListKeys.infinite(userId, status),
+    queryKey: gameListKeys.infinite(userId ?? -1, status ?? null),
     queryFn: fetchGameListItems,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (lastPage.next !== null && lastPage.next !== undefined) {
-        return (lastPageParam as number) + 1;
+        return lastPageParam + 1;
       }
       return null;
     },
+    enabled: !!userId,
   });
 };

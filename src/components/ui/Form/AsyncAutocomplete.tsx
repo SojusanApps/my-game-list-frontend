@@ -32,6 +32,62 @@ type AsyncAutocompleteProps<T> = {
   getOptionValue: (item: T) => string | number;
 };
 
+interface DropdownListProps<T> {
+  isLoading: boolean;
+  allOptions: T[];
+  handleSelect: (option: T) => void;
+  getOptionLabel: (item: T) => string;
+  getOptionValue: (item: T) => string | number;
+  selectedValue: string | number | undefined;
+  isFetchingNextPage: boolean;
+}
+
+function DropdownList<T>({
+  isLoading,
+  allOptions,
+  handleSelect,
+  getOptionLabel,
+  getOptionValue,
+  selectedValue,
+  isFetchingNextPage,
+}: Readonly<DropdownListProps<T>>) {
+  if (isLoading && allOptions.length === 0) {
+    return <li className="px-3 py-4 text-center text-text-400 text-xs italic animate-pulse">Searching...</li>;
+  }
+
+  if (allOptions.length > 0) {
+    return (
+      <>
+        {allOptions.map(option => {
+          const isSelected = selectedValue?.toString() === getOptionValue(option).toString();
+          return (
+            <li key={getOptionValue(option)}>
+              <button
+                type="button"
+                onClick={() => handleSelect(option)}
+                className={cn(
+                  "w-full text-left px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors flex items-center justify-between group",
+                  isSelected ? "bg-primary-50 text-primary-700 font-bold" : "text-text-700 hover:bg-background-50",
+                )}
+              >
+                {getOptionLabel(option)}
+                {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />}
+              </button>
+            </li>
+          );
+        })}
+        {isFetchingNextPage && (
+          <li className="px-3 py-2 text-center">
+            <span className="loading loading-spinner loading-xs text-primary-500"></span>
+          </li>
+        )}
+      </>
+    );
+  }
+
+  return <li className="px-3 py-4 text-center text-text-400 text-xs italic">No results found</li>;
+}
+
 export default function AsyncAutocomplete<T>({
   id,
   name,
@@ -60,7 +116,7 @@ export default function AsyncAutocomplete<T>({
   const selectedValue = watch(name);
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQueryHook(debouncedSearch);
 
-  const allOptions = data?.pages.flatMap(page => page.results) || [];
+  const allOptions = React.useMemo(() => data?.pages.flatMap(page => page.results) || [], [data]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,6 +127,25 @@ export default function AsyncAutocomplete<T>({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleContainerClick = (e: MouseEvent) => {
+      // Don't focus if we clicked a button or the input itself
+      const target = e.target as HTMLElement;
+      if (target.closest("button") || target.tagName === "INPUT") return;
+
+      const input = document.getElementById(id);
+      if (input) {
+        (input as HTMLInputElement).focus();
+      }
+    };
+
+    container.addEventListener("click", handleContainerClick);
+    return () => container.removeEventListener("click", handleContainerClick);
+  }, [id]);
 
   const handleScroll = (e: React.UIEvent<HTMLUListElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -114,7 +189,7 @@ export default function AsyncAutocomplete<T>({
     } else if (!selectedValue) {
       setSelectedLabel(null);
     }
-  }, [selectedValue, allOptions]);
+  }, [selectedValue, allOptions, getOptionLabel, getOptionValue]);
 
   return (
     <Controller
@@ -127,7 +202,6 @@ export default function AsyncAutocomplete<T>({
           </Label>
           <div className="relative">
             <div
-              onClick={() => setIsOpen(!isOpen)}
               className={cn(
                 "flex items-center gap-2 px-3 h-10 w-full rounded-md border border-background-300 bg-white cursor-text transition-all focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-1",
                 isOpen && "ring-2 ring-primary-500 ring-offset-1 border-transparent",
@@ -146,7 +220,7 @@ export default function AsyncAutocomplete<T>({
                 <input
                   id={id}
                   type="text"
-                  placeholder={!selectedLabel ? placeholder : ""}
+                  placeholder={selectedLabel ? "" : placeholder}
                   className="flex-1 bg-transparent border-none outline-hidden text-sm placeholder:text-text-400 h-full min-w-30"
                   value={searchTerm}
                   onKeyDown={handleKeyDown}
@@ -158,9 +232,19 @@ export default function AsyncAutocomplete<T>({
                   autoComplete="off"
                 />
               </div>
-              <ChevronDownIcon
-                className={cn("w-4 h-4 text-text-400 transition-transform shrink-0 ml-1", isOpen && "rotate-180")}
-              />
+              <button
+                type="button"
+                onClick={e => {
+                  e.stopPropagation();
+                  setIsOpen(!isOpen);
+                }}
+                className="focus:outline-hidden"
+                tabIndex={-1} // Skip tab index as the input handles the main focus
+              >
+                <ChevronDownIcon
+                  className={cn("w-4 h-4 text-text-400 transition-transform shrink-0 ml-1", isOpen && "rotate-180")}
+                />
+              </button>
             </div>
 
             {isOpen && (
@@ -170,36 +254,15 @@ export default function AsyncAutocomplete<T>({
                   onScroll={handleScroll}
                   className="max-h-60 overflow-y-auto p-1 flex flex-col gap-0.5 custom-scrollbar"
                 >
-                  {isLoading && allOptions.length === 0 ? (
-                    <li className="px-3 py-4 text-center text-text-400 text-xs italic animate-pulse">Searching...</li>
-                  ) : allOptions.length > 0 ? (
-                    <>
-                      {allOptions.map((option, idx) => (
-                        <li
-                          key={`${getOptionValue(option)}-${idx}`}
-                          onClick={() => handleSelect(option)}
-                          className={cn(
-                            "px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors flex items-center justify-between group",
-                            selectedValue?.toString() === getOptionValue(option).toString()
-                              ? "bg-primary-50 text-primary-700 font-bold"
-                              : "text-text-700 hover:bg-background-50",
-                          )}
-                        >
-                          {getOptionLabel(option)}
-                          {selectedValue?.toString() === getOptionValue(option).toString() && (
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary-500 shadow-glow-primary" />
-                          )}
-                        </li>
-                      ))}
-                      {isFetchingNextPage && (
-                        <li className="px-3 py-2 text-center">
-                          <span className="loading loading-spinner loading-xs text-primary-500"></span>
-                        </li>
-                      )}
-                    </>
-                  ) : (
-                    <li className="px-3 py-4 text-center text-text-400 text-xs italic">No results found</li>
-                  )}
+                  <DropdownList
+                    isLoading={isLoading}
+                    allOptions={allOptions}
+                    handleSelect={handleSelect}
+                    getOptionLabel={getOptionLabel}
+                    getOptionValue={getOptionValue}
+                    selectedValue={selectedValue}
+                    isFetchingNextPage={isFetchingNextPage}
+                  />
                 </ul>
               </div>
             )}

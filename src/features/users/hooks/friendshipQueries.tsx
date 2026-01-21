@@ -84,6 +84,7 @@ export const useGetFriendshipsInfiniteQuery = (query?: FriendshipFriendshipsList
       }
       return undefined;
     },
+    enabled: !!query?.user,
   });
 };
 

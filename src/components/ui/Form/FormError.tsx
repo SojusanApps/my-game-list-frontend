@@ -5,7 +5,7 @@ interface FormErrorProps extends React.HTMLAttributes<HTMLParagraphElement> {
   message?: string;
 }
 
-export function FormError({ message, className, ...props }: FormErrorProps) {
+export function FormError({ message, className, ...props }: Readonly<FormErrorProps>) {
   if (!message) return null;
   return (
     <p
