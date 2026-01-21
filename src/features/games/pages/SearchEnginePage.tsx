@@ -214,7 +214,7 @@ export default function SearchEnginePage(): React.JSX.Element {
   };
 
   return (
-    <div className="py-12 bg-background-200 min-h-screen">
+    <div className="py-12 min-h-screen">
       <PageMeta title="Search Engine" />
       <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
         <div className="flex flex-col items-center gap-6">

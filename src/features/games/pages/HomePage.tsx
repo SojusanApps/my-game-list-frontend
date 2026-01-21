@@ -52,7 +52,7 @@ export default function HomePage(): React.JSX.Element {
   };
 
   return (
-    <div className="py-12 bg-background-200 min-h-screen">
+    <div className="py-12 min-h-screen">
       <PageMeta title="Home" />
       <div className="flex flex-col gap-16 max-w-7xl mx-auto px-4">
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
