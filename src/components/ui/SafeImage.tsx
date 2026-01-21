@@ -5,6 +5,7 @@ import { ImageFallback } from "./ImageFallback";
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: React.ReactNode;
+  loader?: React.ReactNode;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
@@ -13,6 +14,7 @@ export function SafeImage({
   alt,
   className,
   fallback = <ImageFallback />,
+  loader,
   objectFit = "cover",
   ...props
 }: Readonly<SafeImageProps>) {
@@ -65,7 +67,7 @@ export function SafeImage({
 
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      {isLoading && <Skeleton className="absolute inset-0 w-full h-full z-10" />}
+      {isLoading && (loader || <Skeleton className="absolute inset-0 w-full h-full z-10" />)}
 
       {showFallback ? (
         <div className="w-full h-full">{fallback}</div>
