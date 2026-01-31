@@ -13,6 +13,7 @@ import { AuthRoutes } from "./features/auth/routes";
 import { GamesRoutes } from "./features/games/routes";
 import { UserRoutes } from "./features/users/routes";
 import { NotificationRoutes } from "./features/notifications/routes";
+import { CollectionsRoutes } from "./features/collections/routes";
 import { MiscRoutes } from "./features/misc/routes";
 
 function App(): React.JSX.Element {
@@ -27,6 +28,7 @@ function App(): React.JSX.Element {
               {GamesRoutes}
               {UserRoutes}
               {NotificationRoutes}
+              {CollectionsRoutes}
               {MiscRoutes}
             </Route>
           </Routes>
