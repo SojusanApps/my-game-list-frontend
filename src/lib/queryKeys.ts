@@ -57,6 +57,16 @@ export const notificationKeys = {
   unreadCount: ["notifications", "unread-count"] as const,
 };
 
+export const collectionKeys = {
+  all: ["collections"] as const,
+  lists: () => [...collectionKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...collectionKeys.lists(), query] as const,
+  infinite: (userId: number, filters: object) => [...collectionKeys.all, "infinite", userId, filters] as const,
+  details: () => [...collectionKeys.all, "detail"] as const,
+  detail: (id: number) => [...collectionKeys.details(), id] as const,
+  items: (collectionId: number, filters: object) => [...collectionKeys.all, "items", collectionId, filters] as const,
+};
+
 export const searchKeys = {
   all: ["search-results"] as const,
   results: (category: string | null, filters: object) => [...searchKeys.all, category, filters] as const,

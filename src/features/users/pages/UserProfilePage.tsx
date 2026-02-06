@@ -73,6 +73,16 @@ export default function UserProfilePage(): React.JSX.Element {
               </Button>
             </Link>
 
+            <Link to={`/profile/${validUserId}/collections`} className="w-full">
+              <Button
+                fullWidth
+                variant="outline"
+                className="shadow-sm border-primary-200 text-primary-600 hover:bg-primary-50"
+              >
+                Collections
+              </Button>
+            </Link>
+
             <UserProfileInformation userDetails={userDetails} />
             <UserFriendsList userDetails={userDetails} />
           </div>

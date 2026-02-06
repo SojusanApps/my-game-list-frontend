@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/utils/cn";
 import { Skeleton } from "./Skeleton";
 import { ImageFallback } from "./ImageFallback";
@@ -22,13 +22,6 @@ export function SafeImage({
   const [isError, setIsError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Use useLayoutEffect to check for cached images before paint
-  useLayoutEffect(() => {
-    if (imgRef.current?.complete) {
-      setIsLoading(false);
-    }
-  }, [src]);
-
   useEffect(() => {
     if (!src) {
       setIsLoading(false);
@@ -36,13 +29,14 @@ export function SafeImage({
       return;
     }
 
-    // Reset state when src changes
-    setIsLoading(true);
+    // Reset state for new image
     setIsError(false);
 
-    // Check again after mount/change
+    // Check if the image is already complete (cached) immediately
     if (imgRef.current?.complete) {
       setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
   }, [src]);
 

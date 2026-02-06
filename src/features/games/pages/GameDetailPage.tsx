@@ -13,6 +13,9 @@ import GameDetailsMainTab from "../components/GameDetailsMainTab";
 import GameDetailsRelatedTab from "../components/GameDetailsRelatedTab";
 import GameDetailsScreenshotsTab from "../components/GameDetailsScreenshotsTab";
 import ScreenshotModal from "../components/ScreenshotModal";
+import AddToCollectionModal from "@/features/collections/components/AddToCollectionModal";
+import { useAuth } from "@/features/auth/context/AuthProvider";
+import { Button } from "@/components/ui/Button";
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -24,6 +27,8 @@ export default function GameDetailPage(): React.JSX.Element {
 
   const [activeTab, setActiveTab] = React.useState<"main" | "related" | "screenshots">("main");
   const [selectedScreenshot, setSelectedScreenshot] = React.useState<string | null>(null);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = React.useState(false);
+  const { user } = useAuth();
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
@@ -63,11 +68,26 @@ export default function GameDetailPage(): React.JSX.Element {
               />
             </div>
 
+            {user && (
+              <div className="w-full">
+                <Button
+                  onClick={() => setIsCollectionModalOpen(true)}
+                  variant="outline"
+                  fullWidth
+                  className="shadow-sm border-primary-200 text-primary-600 hover:bg-primary-50 font-bold"
+                >
+                  Add to Collection
+                </Button>
+              </div>
+            )}
+
             <GameInformation gameDetails={gameDetails} />
           </div>
 
           <div className="col-span-3 flex flex-col gap-6">
-            <h1 className="text-4xl font-bold text-text-900 tracking-tight">{gameDetails?.title}</h1>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <h1 className="text-4xl font-bold text-text-900 tracking-tight">{gameDetails?.title}</h1>
+            </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
               <GameListActionsForm gameID={id} />
@@ -128,6 +148,10 @@ export default function GameDetailPage(): React.JSX.Element {
 
       {selectedScreenshot && (
         <ScreenshotModal screenshot={selectedScreenshot} onClose={() => setSelectedScreenshot(null)} />
+      )}
+
+      {isCollectionModalOpen && gameId && (
+        <AddToCollectionModal gameId={gameId} onClose={() => setIsCollectionModalOpen(false)} />
       )}
     </div>
   );
