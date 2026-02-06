@@ -16,7 +16,6 @@ type SelectInputInputProps = {
   label: string;
   placeholder: string;
   selectOptions: SelectOption[];
-  optionToSelect?: string | string[];
   multiple?: boolean;
   className?: string;
 };
@@ -28,20 +27,13 @@ function SelectInput({
   label,
   placeholder,
   selectOptions,
-  optionToSelect = undefined,
   multiple = false,
   className,
 }: Readonly<SelectInputInputProps>) {
   const {
     control,
-    setValue,
     formState: { errors },
   } = useFormContext();
-  const [selectedValue, setSelectedValue] = React.useState<string | undefined | string[]>(optionToSelect);
-
-  React.useEffect(() => {
-    setSelectedValue(optionToSelect);
-  }, [optionToSelect]);
 
   const error = errors[name];
   const errorMessage = (Array.isArray(error) ? error[0]?.message : error?.message) as string | undefined;
@@ -50,7 +42,6 @@ function SelectInput({
     <Controller
       control={control}
       name={name}
-      defaultValue={optionToSelect}
       render={({ field }) => (
         <div className={className}>
           <Label htmlFor={id} required={required}>
@@ -60,15 +51,13 @@ function SelectInput({
             <select
               id={id}
               {...field}
-              value={selectedValue ?? optionToSelect ?? (multiple ? [] : "")}
+              value={field.value ?? (multiple ? [] : "")}
               onChange={event => {
-                field.onChange(event);
                 if (multiple) {
                   const selectedValues = Array.from(event.target.selectedOptions, option => option.value);
-                  setSelectedValue(selectedValues);
-                  setValue(name, selectedValues);
+                  field.onChange(selectedValues);
                 } else {
-                  setSelectedValue(event.target.value);
+                  field.onChange(event.target.value);
                 }
               }}
               className={cn(

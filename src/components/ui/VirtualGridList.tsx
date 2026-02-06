@@ -96,7 +96,13 @@ export function VirtualGridList<T>({
                     "grid-cols-2": columnCount === 2,
                     "grid-cols-3": columnCount === 3,
                     "grid-cols-5": columnCount === 5,
+                    "grid-cols-8": columnCount === 8,
                   })}
+                  style={
+                    [2, 3, 4, 5, 7, 8].includes(columnCount)
+                      ? {}
+                      : { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }
+                  }
                 >
                   {items
                     .slice(virtualRow.index * columnCount, (virtualRow.index + 1) * columnCount)

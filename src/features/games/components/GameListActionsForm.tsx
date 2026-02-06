@@ -214,7 +214,6 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
             value: codeToValue.code,
             label: codeToValue.value,
           }))}
-          optionToSelect={gameListDetails?.id ? gameListDetails.status_code : undefined}
         />
         <SelectInput
           placeholder="Score ..."
@@ -226,7 +225,6 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
             value: score,
             label: score.toString(),
           }))}
-          optionToSelect={gameListDetails?.id ? gameListDetails.score?.toString() : undefined}
         />
         <AsyncMultiSelectAutocomplete
           placeholder="Search media ..."

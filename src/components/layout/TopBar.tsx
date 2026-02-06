@@ -125,14 +125,24 @@ function TopBar(): React.JSX.Element {
             </li>
 
             {user && (
-              <li>
-                <Link
-                  to={`/game-list/${userInfo?.user_id}`}
-                  className="text-sm font-semibold text-primary-200 transition-colors hover:text-white"
-                >
-                  Game List
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to={`/game-list/${userInfo?.user_id}`}
+                    className="text-sm font-semibold text-primary-200 transition-colors hover:text-white"
+                  >
+                    Game List
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to={`/profile/${userInfo?.user_id}/collections`}
+                    className="text-sm font-semibold text-primary-200 transition-colors hover:text-white"
+                  >
+                    Collections
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

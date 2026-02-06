@@ -30,6 +30,10 @@ type AsyncMultiSelectAutocompleteProps<T> = {
   className?: string;
   getOptionLabel: (item: T) => string;
   getOptionValue: (item: T) => string | number;
+  renderOption?: (item: T) => React.ReactNode;
+  hideTags?: boolean;
+  onAdd?: (item: T) => void;
+  onRemove?: (item: T) => void;
 };
 
 export default function AsyncMultiSelectAutocomplete<T>({
@@ -42,6 +46,10 @@ export default function AsyncMultiSelectAutocomplete<T>({
   className,
   getOptionLabel,
   getOptionValue,
+  renderOption,
+  hideTags = false,
+  onAdd,
+  onRemove,
 }: Readonly<AsyncMultiSelectAutocompleteProps<T>>) {
   const {
     control,
@@ -54,7 +62,6 @@ export default function AsyncMultiSelectAutocomplete<T>({
   const [searchTerm, setSearchTerm] = React.useState("");
   const debouncedSearch = useDebounce(searchTerm, 300);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const dropdownRef = React.useRef<HTMLSelectElement>(null);
 
   const watchedValues = watch(name);
   const selectedValues = React.useMemo(() => watchedValues || [], [watchedValues]);
@@ -72,25 +79,40 @@ export default function AsyncMultiSelectAutocomplete<T>({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleScroll = (e: React.UIEvent<HTMLSelectElement>) => {
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     if (scrollHeight - scrollTop <= clientHeight + 50 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
 
-  const toggleOption = (option: T) => {
-    const value = getOptionValue(option).toString();
-    const newValues = selectedValues.includes(value)
-      ? selectedValues.filter((v: string) => v !== value)
-      : [...selectedValues, value];
-    setValue(name, newValues, { shouldValidate: true, shouldDirty: true });
-  };
+  const toggleOption = React.useCallback(
+    (option: T) => {
+      const value = getOptionValue(option).toString();
+      const isCurrentlySelected = selectedValues.includes(value);
+      const newValues = isCurrentlySelected
+        ? selectedValues.filter((v: string) => v !== value)
+        : [...selectedValues, value];
+      setValue(name, newValues, { shouldValidate: true, shouldDirty: true });
+
+      if (isCurrentlySelected) {
+        onRemove?.(option);
+      } else {
+        onAdd?.(option);
+      }
+    },
+    [getOptionValue, selectedValues, setValue, name, onAdd, onRemove],
+  );
 
   const removeValue = (e: React.MouseEvent, value: string) => {
     e.stopPropagation();
     const newValues = selectedValues.filter((v: string) => v !== value);
     setValue(name, newValues, { shouldValidate: true, shouldDirty: true });
+
+    const option = allOptions.find(o => getOptionValue(o).toString() === value);
+    if (option) {
+      onRemove?.(option);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -99,25 +121,20 @@ export default function AsyncMultiSelectAutocomplete<T>({
       toggleOption(allOptions[0]);
       setSearchTerm("");
     }
+    if (e.key === "Escape") {
+      setIsOpen(false);
+    }
   };
 
   const errorMessage = errors[name]?.message as string | undefined;
 
   const dropdownContent = React.useMemo(() => {
     if (isLoading && allOptions.length === 0) {
-      return (
-        <option disabled className="animate-pulse px-3 py-4 text-center text-xs italic text-text-400">
-          Searching...
-        </option>
-      );
+      return <div className="animate-pulse px-3 py-4 text-center text-xs italic text-text-400">Searching...</div>;
     }
 
     if (allOptions.length === 0) {
-      return (
-        <option disabled className="px-3 py-4 text-center text-xs italic text-text-400">
-          No results found
-        </option>
-      );
+      return <div className="px-3 py-4 text-center text-xs italic text-text-400">No results found</div>;
     }
 
     return (
@@ -126,27 +143,38 @@ export default function AsyncMultiSelectAutocomplete<T>({
           const val = getOptionValue(option).toString();
           const isSelected = selectedValues.includes(val);
           return (
-            <option
+            /* eslint-disable-next-line jsx-a11y/interactive-supports-focus, jsx-a11y/prefer-tag-over-role */
+            <div
               key={val}
-              value={val}
+              role="option"
+              aria-selected={isSelected}
+              onMouseDown={e => {
+                e.preventDefault();
+                toggleOption(option);
+              }}
               className={cn(
-                "cursor-pointer px-3 py-2 text-sm transition-colors outline-hidden focus:bg-background-50",
+                "flex cursor-pointer items-center gap-2 outline-hidden transition-colors px-3 py-2 text-sm",
                 isSelected ? "bg-primary-50 font-bold text-primary-700" : "text-text-700 hover:bg-background-50",
               )}
             >
-              {isSelected ? "✓ " : ""}
-              {getOptionLabel(option)}
-            </option>
+              {isSelected ? <span className="shrink-0 text-primary-600">✓</span> : <span className="w-3.5 shrink-0" />}
+              {renderOption ? renderOption(option) : <span>{getOptionLabel(option)}</span>}
+            </div>
           );
         })}
-        {isFetchingNextPage && (
-          <option disabled className="px-3 py-2 text-center">
-            Loading more...
-          </option>
-        )}
+        {isFetchingNextPage && <div className="px-3 py-2 text-center text-xs text-text-400">Loading more...</div>}
       </>
     );
-  }, [isLoading, allOptions, selectedValues, getOptionValue, getOptionLabel, isFetchingNextPage]);
+  }, [
+    isLoading,
+    allOptions,
+    selectedValues,
+    getOptionValue,
+    getOptionLabel,
+    isFetchingNextPage,
+    renderOption,
+    toggleOption,
+  ]);
 
   return (
     <Controller
@@ -167,29 +195,30 @@ export default function AsyncMultiSelectAutocomplete<T>({
               )}
             >
               <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                {selectedValues.map((val: string) => {
-                  const option = allOptions.find(o => getOptionValue(o).toString() === val);
-                  return (
-                    <span
-                      key={val}
-                      className="inline-flex shrink-0 animate-in fade-in zoom-in items-center gap-1 whitespace-nowrap rounded bg-primary-100 px-2 py-0.5 text-[10px] font-bold text-primary-700 duration-200"
-                    >
-                      {option ? getOptionLabel(option) : val}
-                      <button
-                        type="button"
-                        onClick={e => {
-                          e.stopPropagation();
-                          removeValue(e, val);
-                        }}
-                        onMouseDown={e => e.stopPropagation()}
-                        className="transition-colors hover:text-primary-900"
-                        aria-label={`Remove ${option ? getOptionLabel(option) : val}`}
+                {!hideTags &&
+                  selectedValues.map((val: string) => {
+                    const option = allOptions.find(o => getOptionValue(o).toString() === val);
+                    return (
+                      <span
+                        key={val}
+                        className="inline-flex shrink-0 animate-in fade-in zoom-in items-center gap-1 whitespace-nowrap rounded bg-primary-100 px-2 py-0.5 text-[10px] font-bold text-primary-700 duration-200"
                       >
-                        <XMarkIcon className="h-3 w-3" />
-                      </button>
-                    </span>
-                  );
-                })}
+                        {option ? getOptionLabel(option) : val}
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            removeValue(e, val);
+                          }}
+                          onMouseDown={e => e.stopPropagation()}
+                          className="transition-colors hover:text-primary-900"
+                          aria-label={`Remove ${option ? getOptionLabel(option) : val}`}
+                        >
+                          <XMarkIcon className="h-3 w-3" />
+                        </button>
+                      </span>
+                    );
+                  })}
                 <input
                   id={id}
                   role="combobox"
@@ -237,27 +266,14 @@ export default function AsyncMultiSelectAutocomplete<T>({
             </label>
 
             {isOpen && (
-              <div className="absolute z-100 mt-2 w-full animate-in fade-in slide-in-from-top-2 overflow-hidden rounded-xl border border-background-200 bg-white shadow-2xl duration-200">
-                <select
-                  id={`${id}-listbox`}
-                  multiple
-                  size={Math.min(allOptions.length || 1, 10)}
-                  ref={dropdownRef}
-                  onScroll={handleScroll}
-                  className="custom-scrollbar flex max-h-60 w-full flex-col gap-0.5 overflow-y-auto border-none p-1 outline-hidden focus:ring-0"
-                  onMouseDown={e => {
-                    const target = e.target as HTMLElement;
-                    if (target.tagName === "OPTION") {
-                      e.preventDefault();
-                      const value = (target as HTMLOptionElement).value;
-                      const opt = allOptions.find(o => getOptionValue(o).toString() === value);
-                      if (opt) toggleOption(opt);
-                    }
-                  }}
-                  onChange={() => {}} // Selection is handled via onMouseDown to allow toggle behavior
-                >
-                  {dropdownContent}
-                </select>
+              /* eslint-disable-next-line jsx-a11y/prefer-tag-over-role */
+              <div
+                id={`${id}-listbox`}
+                role="listbox"
+                onScroll={handleScroll}
+                className="custom-scrollbar absolute z-100 mt-2 flex max-h-60 w-full animate-in fade-in slide-in-from-top-2 flex-col gap-0.5 overflow-y-auto rounded-xl border border-background-200 bg-white p-1 shadow-2xl duration-200"
+              >
+                {dropdownContent}
               </div>
             )}
           </div>
