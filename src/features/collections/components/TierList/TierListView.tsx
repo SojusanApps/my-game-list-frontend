@@ -1,32 +1,20 @@
 import * as React from "react";
-import {
-  DndContext,
-  DragOverlay,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragStartEvent,
-  DragOverEvent,
-  DragEndEvent,
-  defaultDropAnimationSideEffects,
-  pointerWithin,
-  rectIntersection,
-  getFirstCollision,
-  CollisionDetection,
-} from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { CollectionItem, TierEnum, BlankEnum } from "@/client";
-import { TierRow } from "./TierRow";
+import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { SortableGameCard } from "./SortableGameCard";
-import { Button } from "@/components/ui/Button";
-import { useUpdateCollectionItem } from "../../hooks/useCollectionQueries";
+import { TierDropZone } from "./TierDropZone";
+import {
+  useCollectionItemsByTierInfiniteQuery,
+  useUpdateCollectionItemTier,
+  useUpdateCollectionItem,
+} from "../../hooks/useCollectionQueries";
 import toast from "react-hot-toast";
+import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 
 interface TierListViewProps {
-  initialItems: CollectionItem[];
+  collectionId: number;
   isOwner: boolean;
+  onRemove?: (itemId: number, gameTitle: string) => void;
 }
 
 const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[] = [
@@ -39,275 +27,313 @@ const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[] = [
   { id: "UNRANKED", label: "?", color: "bg-neutral-500" },
 ];
 
-export function TierListView({ initialItems, isOwner }: Readonly<TierListViewProps>) {
-  const [items, setItems] = React.useState<CollectionItem[]>(initialItems);
-  const [activeId, setActiveId] = React.useState<string | null>(null);
-  const [dirtyIds, setDirtyIds] = React.useState<Set<number>>(new Set());
+type TierIdType = TierEnum | "UNRANKED" | null;
 
-  const { mutateAsync: updateItem, isPending: isUpdating } = useUpdateCollectionItem();
+export const TierListView = React.memo(function TierListView({
+  collectionId,
+  isOwner,
+  onRemove,
+}: Readonly<TierListViewProps>) {
+  const { mutateAsync: updateItemTier } = useUpdateCollectionItemTier();
+  const { mutateAsync: updateItem } = useUpdateCollectionItem();
 
-  // Update local state when initialItems change (e.g. after a save or fetch)
-  React.useEffect(() => {
-    setItems(initialItems);
-    setDirtyIds(new Set());
-  }, [initialItems]);
+  // Fetch data for each tier separately
+  const sTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.S);
+  const aTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.A);
+  const bTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.B);
+  const cTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.C);
+  const dTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.D);
+  const eTierQuery = useCollectionItemsByTierInfiniteQuery(collectionId, TierEnum.E);
+  const unrankedQuery = useCollectionItemsByTierInfiniteQuery(collectionId, "UNRANKED");
 
-  const sensors = React.useMemo(
-    () => [
-      {
-        sensor: PointerSensor,
-        options: {
-          activationConstraint: {
-            distance: 5,
-          },
-        },
-      },
-      {
-        sensor: KeyboardSensor,
-        options: {
-          coordinateGetter: sortableKeyboardCoordinates,
-        },
-      },
+  // Extract items from each tier query
+  const tierData = React.useMemo(
+    () => ({
+      [TierEnum.S]: sTierQuery.data?.pages.flatMap(page => page.results) || [],
+      [TierEnum.A]: aTierQuery.data?.pages.flatMap(page => page.results) || [],
+      [TierEnum.B]: bTierQuery.data?.pages.flatMap(page => page.results) || [],
+      [TierEnum.C]: cTierQuery.data?.pages.flatMap(page => page.results) || [],
+      [TierEnum.D]: dTierQuery.data?.pages.flatMap(page => page.results) || [],
+      [TierEnum.E]: eTierQuery.data?.pages.flatMap(page => page.results) || [],
+      UNRANKED: unrankedQuery.data?.pages.flatMap(page => page.results) || [],
+    }),
+    [
+      sTierQuery.data,
+      aTierQuery.data,
+      bTierQuery.data,
+      cTierQuery.data,
+      dTierQuery.data,
+      eTierQuery.data,
+      unrankedQuery.data,
     ],
-    [],
   );
 
-  const dndSensors = useSensors(
-    useSensor(sensors[0].sensor, sensors[0].options),
-    useSensor(sensors[1].sensor, sensors[1].options),
+  // Map tier IDs to their query objects for easier access
+  const tierQueries = React.useMemo(
+    () => ({
+      [TierEnum.S]: sTierQuery,
+      [TierEnum.A]: aTierQuery,
+      [TierEnum.B]: bTierQuery,
+      [TierEnum.C]: cTierQuery,
+      [TierEnum.D]: dTierQuery,
+      [TierEnum.E]: eTierQuery,
+      UNRANKED: unrankedQuery,
+    }),
+    [sTierQuery, aTierQuery, bTierQuery, cTierQuery, dTierQuery, eTierQuery, unrankedQuery],
   );
 
-  const tierItems = React.useMemo(() => {
-    const groups: Record<string, CollectionItem[]> = {};
-    // Initialize groups
-    TIERS.forEach(t => {
-      groups[t.id] = [];
-    });
-
-    // Distribute items
-    items.forEach(item => {
-      const tierId = !item.tier || (item.tier as string) === BlankEnum[""] ? "UNRANKED" : item.tier;
-      if (groups[tierId]) {
-        groups[tierId].push(item);
-      } else {
-        // Fallback for unexpected tiers
-        if (!groups["UNRANKED"]) groups["UNRANKED"] = [];
-        groups["UNRANKED"].push(item);
+  const handleItemMove = React.useCallback(
+    async (itemId: string, tierId: string) => {
+      if (!isOwner) {
+        return;
       }
-    });
 
-    return groups;
-  }, [items]);
-
-  const customCollisionDetection: CollisionDetection = React.useCallback(args => {
-    // First, check for pointer collisions (good for small hits)
-    const pointerCollisions = pointerWithin(args);
-    const firstPointerCollision = getFirstCollision(pointerCollisions, "id");
-
-    if (firstPointerCollision) {
-      // If we hit a tier row directly, prioritize it
-      const isTierRow = TIERS.some(t => t.id === firstPointerCollision);
-      if (isTierRow) {
-        return pointerCollisions;
+      const numericItemId = Number.parseInt(itemId, 10);
+      const tierConfig = TIERS.find(t => t.id === tierId);
+      if (!tierConfig) {
+        return;
       }
-    }
 
-    // Fallback to rectIntersection which is better for larger containers
-    const rectCollisions = rectIntersection(args);
-    const firstRectCollision = getFirstCollision(rectCollisions, "id");
+      const targetTier = tierConfig.id === "UNRANKED" ? BlankEnum[""] : tierConfig.id;
 
-    if (firstRectCollision) {
-      const isTierRow = TIERS.some(t => t.id === firstRectCollision);
-      if (isTierRow) {
-        return rectCollisions;
-      }
-    }
-
-    // If no container hit, default to closestCenter for sorting items
-    return closestCenter(args);
-  }, []);
-
-  const handleDragStart = React.useCallback(
-    (event: DragStartEvent) => {
-      if (!isOwner) return;
-      setActiveId(String(event.active.id));
-    },
-    [isOwner],
-  );
-
-  const handleDragOver = React.useCallback(
-    (event: DragOverEvent) => {
-      if (!isOwner) return;
-      const { active, over } = event;
-      if (!over || active.id === over.id) return;
-
-      const draggedId = String(active.id);
-      const overId = String(over.id);
-      const overTier = TIERS.find(t => t.id === overId);
-
-      setItems(prev => {
-        const activeItemIndex = prev.findIndex(i => String(i.id) === draggedId);
-        if (activeItemIndex === -1) return prev;
-
-        const activeItem = prev[activeItemIndex];
-        let targetTier: TierEnum | BlankEnum | undefined;
-
-        if (overTier) {
-          targetTier = overTier.id === "UNRANKED" ? BlankEnum[""] : (overTier.id as TierEnum);
-        } else {
-          const overItem = prev.find(i => String(i.id) === overId);
-          if (overItem) targetTier = overItem.tier as TierEnum;
+      // Find source tier by looking for the item in tierData
+      let sourceTierId: TierIdType = null;
+      for (const [tier, items] of Object.entries(tierData)) {
+        if (items.some(item => item.id === numericItemId)) {
+          sourceTierId = tier as TierEnum | "UNRANKED";
+          break;
         }
+      }
 
-        if (targetTier && activeItem.tier !== targetTier) {
-          const newItems = [...prev];
-          newItems[activeItemIndex] = { ...activeItem, tier: targetTier as TierEnum };
-          return newItems;
+      try {
+        await updateItemTier({
+          collectionId,
+          itemId: numericItemId,
+          tier: targetTier,
+          oldTier: sourceTierId,
+        });
+
+        toast.success("Item moved successfully");
+      } catch (error) {
+        toast.error("Failed to move item");
+        console.error(error);
+      }
+    },
+    [isOwner, collectionId, updateItemTier, tierData],
+  );
+
+  const handleReorder = React.useCallback(
+    async (itemId: string, targetTierId: string, targetIndex: number, edge: Edge | null) => {
+      if (!isOwner) {
+        return;
+      }
+
+      const numericItemId = Number.parseInt(itemId, 10);
+      const tierConfig = TIERS.find(t => t.id === targetTierId);
+      if (!tierConfig) {
+        return;
+      }
+
+      const targetTier = tierConfig.id === "UNRANKED" ? BlankEnum[""] : tierConfig.id;
+
+      // Find source tier by looking for the item in tierData
+      let sourceTierId: TierIdType = null;
+      for (const [tier, items] of Object.entries(tierData)) {
+        if (items.some(item => item.id === numericItemId)) {
+          sourceTierId = tier as TierEnum | "UNRANKED";
+          break;
         }
+      }
 
-        return prev;
-      });
+      // Calculate insertion position (0-based for API)
+      let position = targetIndex;
+      if (edge === "right") {
+        position += 1;
+      }
+
+      // If moving within the same tier, adjust for the item being removed first
+      if (sourceTierId === targetTierId) {
+        const currentIndex = tierData[sourceTierId].findIndex(item => item.id === numericItemId);
+        if (currentIndex !== -1 && currentIndex < position) {
+          position -= 1;
+        }
+      }
+
+      try {
+        await updateItemTier({
+          collectionId,
+          itemId: numericItemId,
+          tier: targetTier,
+          position,
+          oldTier: sourceTierId,
+        });
+
+        toast.success("Item reordered successfully");
+      } catch (error) {
+        toast.error("Failed to reorder item");
+        console.error(error);
+      }
     },
-    [isOwner],
+    [isOwner, collectionId, updateItemTier, tierData],
   );
 
-  const handleDragEnd = React.useCallback(
-    (event: DragEndEvent) => {
+  const handleDescriptionChange = React.useCallback(
+    async (itemId: number, newDescription: string) => {
       if (!isOwner) return;
-      const { active, over } = event;
-      const draggedId = String(active.id);
 
-      if (over && active.id !== over.id) {
-        const overId = String(over.id);
-
-        setItems(prev => {
-          const activeIndex = prev.findIndex(i => String(i.id) === draggedId);
-          const overIndex = prev.findIndex(i => String(i.id) === overId);
-
-          if (activeIndex !== -1 && overIndex !== -1) {
-            return arrayMove(prev, activeIndex, overIndex);
-          }
-          return prev;
-        });
+      try {
+        await updateItem({ id: itemId, body: { description: newDescription } });
+        toast.success("Description updated");
+      } catch (error) {
+        toast.error("Failed to update description");
+        console.error(error);
       }
-
-      // Sync dirty state after drag operation is complete
-      const finalItem = items.find(i => String(i.id) === draggedId);
-      const initialItem = initialItems.find(i => String(i.id) === draggedId);
-
-      if (finalItem && initialItem) {
-        const isDirty = (finalItem.tier || BlankEnum[""]) !== (initialItem.tier || BlankEnum[""]);
-        setDirtyIds(prev => {
-          const next = new Set(prev);
-          if (isDirty) next.add(finalItem.id);
-          else next.delete(finalItem.id);
-          return next;
-        });
-      }
-
-      setActiveId(null);
     },
-    [isOwner, items, initialItems],
+    [isOwner, updateItem],
   );
 
-  const handleSave = React.useCallback(async () => {
-    if (dirtyIds.size === 0) {
-      toast.error("No changes to save");
-      return;
-    }
-
-    // Filter items that are actually dirty to avoid unnecessary overhead in the map
-    const itemsToUpdate = items.filter(item => dirtyIds.has(item.id));
-
-    try {
-      const promises = itemsToUpdate.map(item =>
-        updateItem({
-          id: item.id,
-          body: { tier: item.tier || BlankEnum[""] },
-        }),
+  // Render function for individual game cards
+  const renderGameCard = React.useCallback(
+    (item: CollectionItem, tierId: TierEnum | "UNRANKED", index: number) => {
+      return (
+        <SortableGameCard
+          key={item.id}
+          id={String(item.id)}
+          tierId={tierId}
+          index={index}
+          title={item.game.title}
+          coverImageId={item.game.cover_image_id}
+          description={item.description}
+          isOwner={isOwner}
+          onRemove={onRemove ? () => onRemove(item.id, item.game.title) : undefined}
+          onReorder={handleReorder}
+          onDescriptionChange={newDesc => handleDescriptionChange(item.id, newDesc)}
+        />
       );
+    },
+    [isOwner, onRemove, handleReorder, handleDescriptionChange],
+  );
 
-      await Promise.all(promises);
-      toast.success("Tiers updated successfully!");
-      setDirtyIds(new Set());
-    } catch (error) {
-      toast.error("Failed to update some tiers");
-      console.error(error);
-    }
-  }, [dirtyIds, items, updateItem]);
-
-  const activeItem = activeId ? items.find(i => String(i.id) === activeId) : null;
+  // Calculate total items from API count
+  const totalItems = React.useMemo(() => {
+    return (
+      (sTierQuery.data?.pages[0]?.count ?? 0) +
+      (aTierQuery.data?.pages[0]?.count ?? 0) +
+      (bTierQuery.data?.pages[0]?.count ?? 0) +
+      (cTierQuery.data?.pages[0]?.count ?? 0) +
+      (dTierQuery.data?.pages[0]?.count ?? 0) +
+      (eTierQuery.data?.pages[0]?.count ?? 0) +
+      (unrankedQuery.data?.pages[0]?.count ?? 0)
+    );
+  }, [
+    sTierQuery.data,
+    aTierQuery.data,
+    bTierQuery.data,
+    cTierQuery.data,
+    dTierQuery.data,
+    eTierQuery.data,
+    unrankedQuery.data,
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
-      {isOwner && dirtyIds.size > 0 && (
-        <div className="flex justify-between items-center bg-primary-50 p-4 rounded-2xl border border-primary-100 sticky top-4 z-40 shadow-lg animate-in fade-in slide-in-from-top-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-3 w-3 rounded-full bg-primary-500 animate-pulse" />
-            <span className="text-sm font-bold text-primary-900">
-              You have {dirtyIds.size} unsaved tier {dirtyIds.size === 1 ? "change" : "changes"}
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setItems(initialItems);
-                setDirtyIds(new Set());
-              }}
-              disabled={isUpdating}
+      <div className="flex items-center justify-between sticky top-4 z-30 bg-linear-to-r from-red-50 via-orange-50 to-yellow-50 p-4 rounded-2xl border border-orange-200 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-red-500 to-orange-500 shadow-md">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="w-5 h-5 text-white"
             >
-              Reset
-            </Button>
-            <Button size="sm" onClick={handleSave} isLoading={isUpdating}>
-              Save Tiers
-            </Button>
+              <path
+                fillRule="evenodd"
+                d="M2.24 6.8a.75.75 0 001.06-.04l1.95-2.1v8.59a.75.75 0 001.5 0V4.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0L2.2 5.74a.75.75 0 00.04 1.06zm8 6.4a.75.75 0 00-.04 1.06l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75a.75.75 0 00-1.5 0v8.59l-1.95-2.1a.75.75 0 00-1.06-.04z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <div>
+            <div className="text-2xl font-black text-orange-600 leading-none">{totalItems}</div>
+            <div className="text-xs font-semibold text-text-500 uppercase tracking-wider mt-0.5">Total Games</div>
           </div>
         </div>
-      )}
-
-      <DndContext
-        sensors={dndSensors}
-        collisionDetection={customCollisionDetection}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex flex-col gap-4">
-          {TIERS.map(tier => (
-            <TierRow
-              key={tier.id}
-              id={tier.id}
-              label={tier.label}
-              colorClass={tier.color}
-              items={tierItems[tier.id] || []}
-            />
-          ))}
+        <div className="flex items-center gap-3">
+          {TIERS.slice(0, -1).map(tier => {
+            const query = tierQueries[tier.id];
+            const count = query.data?.pages[0]?.count ?? 0;
+            return (
+              <div
+                key={tier.id}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 rounded-lg border border-background-200"
+              >
+                <span className={`w-2 h-2 rounded-full ${tier.color}`} />
+                <span className="text-xs font-black text-text-600">{count}</span>
+              </div>
+            );
+          })}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 rounded-lg border border-background-200">
+            <span className="text-xs font-semibold text-text-400">?</span>
+            <span className="text-xs font-black text-text-600">{unrankedQuery.data?.pages[0]?.count ?? 0}</span>
+          </div>
         </div>
+      </div>
 
-        <DragOverlay
-          dropAnimation={{
-            sideEffects: defaultDropAnimationSideEffects({
-              styles: {
-                active: {
-                  opacity: "0.5",
-                },
-              },
-            }),
-          }}
-        >
-          {activeItem ? (
-            <SortableGameCard
-              id={String(activeItem.id)}
-              gameId={activeItem.game.id}
-              title={activeItem.game.title}
-              coverImageId={activeItem.game.cover_image_id}
-              className="cursor-grabbing"
-            />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+      <div className="flex flex-col gap-4">
+        {TIERS.map(tier => {
+          const items = tierData[tier.id] || [];
+          const query = tierQueries[tier.id];
+          const totalCount = query.data?.pages[0]?.count ?? 0;
+
+          return (
+            <div key={tier.id} className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 px-4">
+                <div
+                  className={`flex items-center justify-center w-12 h-12 ${tier.color} rounded-xl shadow-md border-2 border-white`}
+                >
+                  <span className="text-xl font-black text-white">{tier.label}</span>
+                </div>
+                <div className="flex-1 h-1 bg-background-200 rounded-full" />
+                <div className="text-sm font-bold text-text-600">{totalCount} games</div>
+              </div>
+
+              <TierDropZone tierId={tier.id} isEmpty={items.length === 0} isOwner={isOwner} onItemMove={handleItemMove}>
+                {(() => {
+                  if (query.isLoading && !query.isFetchingNextPage) {
+                    return (
+                      <div className="flex items-center justify-center h-64">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+                      </div>
+                    );
+                  }
+
+                  if (items.length === 0) {
+                    return (
+                      <div className="flex items-center justify-center h-32 text-text-400 text-sm">
+                        No games in this tier
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <VirtualGridList
+                      items={items}
+                      renderItem={(item: CollectionItem, index: number) => renderGameCard(item, tier.id, index)}
+                      hasNextPage={query.hasNextPage ?? false}
+                      isFetchingNextPage={query.isFetchingNextPage}
+                      fetchNextPage={query.fetchNextPage}
+                      columnCount={7}
+                      rowHeight={180}
+                      className="h-64"
+                      gap={3}
+                    />
+                  );
+                })()}
+              </TierDropZone>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
-}
+});

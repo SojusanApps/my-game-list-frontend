@@ -11,12 +11,14 @@ import {
   addCollectionItem,
   removeCollectionItem,
   updateCollectionItem,
-  reorderCollectionItems,
+  reorderCollectionItem,
+  updateCollectionItemTier,
 } from "../api/collection";
 import { collectionKeys } from "@/lib/queryKeys";
 import { useGetFriendshipsInfiniteQuery } from "@/features/users/hooks/friendshipQueries";
 import { useAuth } from "@/features/auth/context/AuthProvider";
 import { TokenInfoType } from "@/types";
+import { TierEnum } from "@/client";
 
 const fetchCollections = async ({ pageParam = 1, queryKey }: { pageParam?: number; queryKey: readonly unknown[] }) => {
   const [, , userId, filters] = queryKey as [string, string, number, object];
@@ -115,6 +117,17 @@ export const useCollectionItemsInfiniteQuery = (collectionId?: number, filters: 
   });
 };
 
+export const useCollectionItemsByTierInfiniteQuery = (collectionId: number, tier: TierEnum | "UNRANKED") => {
+  const filters = React.useMemo(() => {
+    if (tier === "UNRANKED") {
+      return { has_tier: false };
+    }
+    return { tier: [tier] };
+  }, [tier]);
+
+  return useCollectionItemsInfiniteQuery(collectionId, filters);
+};
+
 export const useAddCollectionItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -150,19 +163,59 @@ export const useUpdateCollectionItem = () => {
   });
 };
 
-export const useReorderCollectionItems = () => {
+export const useReorderCollectionItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ collectionId, itemId, position }: { collectionId: number; itemId: number; position: number }) =>
+      reorderCollectionItem(collectionId, itemId, position),
+    onSuccess: (data, variables) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: [...collectionKeys.all, "items", variables.collectionId] });
+        queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
+      }
+    },
+  });
+};
+
+export const useUpdateCollectionItemTier = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       collectionId,
-      items,
+      itemId,
+      tier,
+      position,
+      // oldTier is used in the onSuccess handler
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      oldTier,
     }: {
       collectionId: number;
-      items: { id: number; order: number; description?: string }[];
-    }) => reorderCollectionItems(collectionId, items),
-    onSuccess: data => {
-      queryClient.invalidateQueries({ queryKey: [...collectionKeys.all, "items", data.id] });
-      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(data.id) });
+      itemId: number;
+      tier: string;
+      position?: number;
+      oldTier?: TierEnum | "UNRANKED" | null;
+    }) => updateCollectionItemTier(collectionId, itemId, tier, position),
+    onSuccess: (data, variables) => {
+      if (data) {
+        const { collectionId, tier, oldTier } = variables;
+
+        // Convert tier values to match filter formats
+        const newTierFilter = tier === "" ? "UNRANKED" : (tier as TierEnum);
+
+        // Invalidate the old tier query if provided
+        if (oldTier) {
+          const oldFilters = oldTier === "UNRANKED" ? { has_tier: false } : { tier: [oldTier] };
+          queryClient.invalidateQueries({ queryKey: collectionKeys.items(collectionId, oldFilters) });
+        }
+
+        // Only invalidate new tier if it's different from old tier
+        if (!oldTier || oldTier !== newTierFilter) {
+          const newFilters = newTierFilter === "UNRANKED" ? { has_tier: false } : { tier: [newTierFilter] };
+          queryClient.invalidateQueries({ queryKey: collectionKeys.items(collectionId, newFilters) });
+        }
+
+        queryClient.invalidateQueries({ queryKey: collectionKeys.detail(collectionId) });
+      }
     },
   });
 };

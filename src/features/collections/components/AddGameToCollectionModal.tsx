@@ -66,7 +66,6 @@ export default function AddGameToCollectionModal({
       {
         collection: collectionId,
         game: game.id,
-        order: 0, // Backend handles order usually, but type requires it? Check type.
       },
       {
         onSuccess: () => {

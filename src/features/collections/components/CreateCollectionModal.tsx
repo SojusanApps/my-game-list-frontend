@@ -3,7 +3,7 @@ import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast";
-import { VisibilityEnum, ModeEnum, Friendship, CollectionDetail } from "@/client";
+import { VisibilityEnum, ModeEnum, TypeEnum, Friendship, CollectionDetail } from "@/client";
 import { useCreateCollection, useFriendSearch, useUpdateCollection } from "../hooks/useCollectionQueries";
 import { Button } from "@/components/ui/Button";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -19,6 +19,7 @@ const validationSchema = z.object({
   is_favorite: z.boolean(),
   visibility: z.enum(VisibilityEnum),
   mode: z.enum(ModeEnum),
+  type: z.enum(TypeEnum),
   collaborators: z.array(z.string()),
 });
 
@@ -65,6 +66,7 @@ export default function CreateCollectionModal({
       is_favorite: initialData?.is_favorite ?? false,
       visibility: initialData?.visibility ?? VisibilityEnum.PUB,
       mode: initialData?.mode ?? ModeEnum.S,
+      type: initialData?.type ?? TypeEnum.NOR,
       collaborators: initialData?.collaborators?.map(u => u.id.toString()) ?? [],
     },
   });
@@ -221,6 +223,18 @@ export default function CreateCollectionModal({
                   ]}
                 />
               </div>
+
+              <SelectInput
+                id="type-select"
+                label="Collection Type"
+                name="type"
+                placeholder="Select type"
+                selectOptions={[
+                  { value: TypeEnum.NOR, label: "Normal" },
+                  { value: TypeEnum.RNK, label: "Ranking" },
+                  { value: TypeEnum.TIE, label: "Tier List" },
+                ]}
+              />
 
               {selectedMode === ModeEnum.C && (
                 <div className="flex flex-col gap-4">

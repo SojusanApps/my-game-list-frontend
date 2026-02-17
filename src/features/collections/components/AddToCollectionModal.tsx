@@ -66,7 +66,6 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
           addCollectionItem({
             collection: Number(collectionId),
             game: gameId,
-            order: 0,
           }),
         ),
       );
