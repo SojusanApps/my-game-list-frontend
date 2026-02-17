@@ -11,6 +11,7 @@ interface VirtualGridListProps<T> {
   className?: string;
   columnCount?: number;
   rowHeight?: number;
+  gap?: number;
 }
 
 /**
@@ -26,6 +27,7 @@ export function VirtualGridList<T>({
   className,
   columnCount = 7,
   rowHeight = 300,
+  gap = 6,
 }: Readonly<VirtualGridListProps<T>>) {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +92,7 @@ export function VirtualGridList<T>({
                 </div>
               ) : (
                 <div
-                  className={cn("grid gap-6 py-2", {
+                  className={cn("grid py-2", {
                     "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7": columnCount === 7,
                     "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4": columnCount === 4,
                     "grid-cols-2": columnCount === 2,
@@ -98,11 +100,12 @@ export function VirtualGridList<T>({
                     "grid-cols-5": columnCount === 5,
                     "grid-cols-8": columnCount === 8,
                   })}
-                  style={
-                    [2, 3, 4, 5, 7, 8].includes(columnCount)
+                  style={{
+                    gap: `${gap * 0.25}rem`,
+                    ...([2, 3, 4, 5, 7, 8].includes(columnCount)
                       ? {}
-                      : { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }
-                  }
+                      : { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }),
+                  }}
                 >
                   {items
                     .slice(virtualRow.index * columnCount, (virtualRow.index + 1) * columnCount)

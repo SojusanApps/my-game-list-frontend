@@ -48,14 +48,16 @@ export default function CollectionsPage(): React.JSX.Element {
   const [isFavoriteFilter, setIsFavoriteFilter] = React.useState<boolean | null>(null);
   const [visibilityFilter, setVisibilityFilter] = React.useState<string | null>(null);
   const [modeFilter, setModeFilter] = React.useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
 
   const queryFilters = React.useMemo(() => {
     const filters: Required<CollectionCollectionsListData>["query"] = {};
     if (isFavoriteFilter !== null) filters.is_favorite = isFavoriteFilter;
     if (visibilityFilter !== null) filters.visibility = [visibilityFilter as "FRI" | "PRI" | "PUB"];
     if (modeFilter !== null) filters.mode = [modeFilter as "C" | "S"];
+    if (typeFilter !== null) filters.type = [typeFilter as "NOR" | "RNK" | "TIE"];
     return filters;
-  }, [isFavoriteFilter, visibilityFilter, modeFilter]);
+  }, [isFavoriteFilter, visibilityFilter, modeFilter, typeFilter]);
 
   const {
     data: collectionsResults,
@@ -90,6 +92,13 @@ export default function CollectionsPage(): React.JSX.Element {
     { value: "", label: "Any Mode" },
     { value: "S", label: "Solo" },
     { value: "C", label: "Collaborative" },
+  ];
+
+  const typeOptions = [
+    { value: "", label: "Any Type" },
+    { value: "NOR", label: "Normal" },
+    { value: "RNK", label: "Ranking" },
+    { value: "TIE", label: "Tier List" },
   ];
 
   return (
@@ -178,6 +187,35 @@ export default function CollectionsPage(): React.JSX.Element {
                       className="w-full h-11 bg-white border border-background-200 rounded-xl px-4 py-2 text-xs font-black text-text-700 appearance-none focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer uppercase tracking-wider"
                     >
                       {modeOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Type Filters */}
+                <div className="flex flex-col gap-3">
+                  <label
+                    htmlFor="type-filter"
+                    className="text-[10px] font-black text-text-400 uppercase tracking-widest ml-1"
+                  >
+                    Type
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="type-filter"
+                      value={typeFilter || ""}
+                      onChange={e => setTypeFilter(e.target.value || null)}
+                      className="w-full h-11 bg-white border border-background-200 rounded-xl px-4 py-2 text-xs font-black text-text-700 appearance-none focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer uppercase tracking-wider"
+                    >
+                      {typeOptions.map(opt => (
                         <option key={opt.value} value={opt.value}>
                           {opt.label}
                         </option>

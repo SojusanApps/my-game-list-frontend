@@ -93,18 +93,38 @@ export const updateCollectionItem = async (id: number, body: CollectionCollectio
   return data;
 };
 
-export const reorderCollectionItems = async (
-  id: number,
-  items: { id: number; order: number; description?: string }[],
-) => {
-  const { data, response } = await CollectionService.collectionCollectionsReorderItemsCreate({
-    path: { id },
-    body: items as unknown as CollectionWritable,
+export const reorderCollectionItem = async (collectionId: number, itemId: number, position: number) => {
+  const { data, response } = await CollectionService.collectionCollectionsItemsReorderCreate({
+    path: { id: collectionId, item_id: String(itemId) },
+    body: { position } as unknown as CollectionWritable,
   });
 
-  if (!response || (response.status !== StatusCode.OK && response.status !== StatusCode.NO_CONTENT)) {
-    return await handleApiError(response, "Error reordering collection items");
+  if (response?.status !== StatusCode.OK) {
+    return await handleApiError(response, "Error reordering collection item");
   }
 
-  return data || { id };
+  return data;
+};
+
+export const updateCollectionItemTier = async (
+  collectionId: number,
+  itemId: number,
+  tier: string,
+  position?: number,
+) => {
+  const body: { tier: string; position?: number } = { tier };
+  if (position !== undefined) {
+    body.position = position;
+  }
+
+  const { data, response } = await CollectionService.collectionCollectionsItemsUpdateTierCreate({
+    path: { id: collectionId, item_id: String(itemId) },
+    body: body as unknown as CollectionWritable,
+  });
+
+  if (response?.status !== StatusCode.OK) {
+    return await handleApiError(response, "Error updating collection item tier");
+  }
+
+  return data;
 };

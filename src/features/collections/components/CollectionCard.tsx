@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Collection } from "@/client";
+import { Collection, TypeEnum } from "@/client";
 import { cn } from "@/utils/cn";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -44,6 +44,30 @@ export default function CollectionCard({ className, collection }: Readonly<Colle
       ? "bg-secondary/10 text-secondary-600 border-secondary/10"
       : "bg-warning/10 text-warning-700 border-warning/10";
   }, [collection.mode]);
+
+  const typeClasses = React.useMemo(() => {
+    switch (collection.type) {
+      case TypeEnum.RNK:
+        return "bg-amber-100 text-amber-700 border-amber-200";
+      case TypeEnum.TIE:
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      case TypeEnum.NOR:
+      default:
+        return "bg-blue-100 text-blue-700 border-blue-200";
+    }
+  }, [collection.type]);
+
+  const typeDisplay = React.useMemo(() => {
+    switch (collection.type) {
+      case TypeEnum.RNK:
+        return "Ranking";
+      case TypeEnum.TIE:
+        return "Tier List";
+      case TypeEnum.NOR:
+      default:
+        return "Normal";
+    }
+  }, [collection.type]);
 
   return (
     <div className={cn("group relative flex flex-col items-center pt-8", className)}>
@@ -134,6 +158,15 @@ export default function CollectionCard({ className, collection }: Readonly<Colle
                 )}
               >
                 {collection.mode_display}
+              </span>
+
+              <span
+                className={cn(
+                  "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
+                  typeClasses,
+                )}
+              >
+                {typeDisplay}
               </span>
 
               <span className="text-xs font-black text-text-700">
