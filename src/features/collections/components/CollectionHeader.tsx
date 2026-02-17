@@ -10,9 +10,10 @@ interface CollectionHeaderProps {
   collection: CollectionDetail;
   onEdit?: () => void;
   onAddGame?: () => void;
+  onPairwiseRank?: () => void;
 }
 
-export const CollectionHeader = ({ collection, onEdit, onAddGame }: CollectionHeaderProps) => {
+export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank }: CollectionHeaderProps) => {
   const { user } = useAuth();
 
   const isOwner = React.useMemo(() => {
@@ -60,6 +61,11 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame }: CollectionHe
         </div>
 
         <div className="flex flex-wrap gap-3">
+          {canEdit && onPairwiseRank && (
+            <Button onClick={onPairwiseRank} variant="outline" className="font-bold uppercase tracking-wider px-6">
+              ⚔️ Pairwise Rank
+            </Button>
+          )}
           {canEdit && (
             <Button
               onClick={onAddGame}
