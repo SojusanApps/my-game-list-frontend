@@ -93,6 +93,24 @@ export const updateCollectionItem = async (id: number, body: CollectionCollectio
   return data;
 };
 
+export interface BulkReorderItem {
+  id: number;
+  position: number;
+}
+
+export const bulkReorderCollectionItems = async (collectionId: number, items: BulkReorderItem[]) => {
+  const { data, response } = await CollectionService.collectionCollectionsBulkReorderCreate({
+    path: { id: collectionId },
+    body: { items } as unknown as CollectionWritable,
+  });
+
+  if (response?.status !== StatusCode.OK) {
+    return await handleApiError(response, "Error bulk-reordering collection items");
+  }
+
+  return data;
+};
+
 export const reorderCollectionItem = async (collectionId: number, itemId: number, position: number) => {
   const { data, response } = await CollectionService.collectionCollectionsItemsReorderCreate({
     path: { id: collectionId, item_id: String(itemId) },

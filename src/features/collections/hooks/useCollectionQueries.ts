@@ -12,6 +12,7 @@ import {
   removeCollectionItem,
   updateCollectionItem,
   reorderCollectionItem,
+  bulkReorderCollectionItems,
   updateCollectionItemTier,
 } from "../api/collection";
 import { collectionKeys } from "@/lib/queryKeys";
@@ -173,6 +174,18 @@ export const useReorderCollectionItem = () => {
         queryClient.invalidateQueries({ queryKey: [...collectionKeys.all, "items", variables.collectionId] });
         queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
       }
+    },
+  });
+};
+
+export const useBulkReorderCollectionItems = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ collectionId, items }: { collectionId: number; items: Array<{ id: number; position: number }> }) =>
+      bulkReorderCollectionItems(collectionId, items),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [...collectionKeys.all, "items", variables.collectionId] });
+      queryClient.invalidateQueries({ queryKey: collectionKeys.detail(variables.collectionId) });
     },
   });
 };

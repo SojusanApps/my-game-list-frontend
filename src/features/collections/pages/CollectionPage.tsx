@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/Button";
 import toast from "react-hot-toast";
 import { TierListView } from "../components/TierList/TierListView";
 import { RankingListView } from "../components/RankingList/RankingListView";
+import { PairwiseRankingModal } from "@/features/ranking";
 
 export default function CollectionPage(): React.JSX.Element {
   const { id } = useParams();
@@ -33,6 +34,7 @@ export default function CollectionPage(): React.JSX.Element {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isAddGameModalOpen, setIsAddGameModalOpen] = React.useState(false);
+  const [isPairwiseModalOpen, setIsPairwiseModalOpen] = React.useState(false);
   const { user } = useAuth();
 
   const {
@@ -213,6 +215,7 @@ export default function CollectionPage(): React.JSX.Element {
               collection={collection}
               onEdit={() => setIsModalOpen(true)}
               onAddGame={() => setIsAddGameModalOpen(true)}
+              onPairwiseRank={collection.type === TypeEnum.RNK ? () => setIsPairwiseModalOpen(true) : undefined}
             />
           )
         )}
@@ -251,6 +254,14 @@ export default function CollectionPage(): React.JSX.Element {
 
       {isAddGameModalOpen && collection && (
         <AddGameToCollectionModal onClose={() => setIsAddGameModalOpen(false)} collectionId={collection.id} />
+      )}
+
+      {isPairwiseModalOpen && collection && (
+        <PairwiseRankingModal
+          collectionId={collection.id}
+          collectionItems={collection.items}
+          onClose={() => setIsPairwiseModalOpen(false)}
+        />
       )}
     </div>
   );
