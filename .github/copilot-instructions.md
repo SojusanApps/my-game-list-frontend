@@ -12,23 +12,23 @@ A React 19 + TypeScript frontend for tracking game collections, reviews, and soc
 
 ```bash
 # Development (regenerates API client + starts dev server)
-npm run dev
+pnpm dev
 
 # Production build
-npm run build
+pnpm build
 
 # Run tests
-npm run test
+pnpm test
 
 # Coverage report
-npm run coverage
+pnpm coverage
 
 # Lint and format
-npm run lint
-npm run format
+pnpm lint
+pnpm format
 ```
 
-**Prerequisites:** Ensure `openapi.json` exists in root (auto-copied from `../my-game-list-backend/` on `npm run dev`)
+**Prerequisites:** Ensure `openapi.json` exists in root (auto-copied from `../my-game-list-backend/` on `pnpm dev`)
 
 ## Code Style
 
@@ -139,7 +139,7 @@ src/features/[feature]/
 
 ### API Integration
 
-**CRITICAL:** `src/client/` contains **GENERATED CODE** - never edit manually. Regenerate via `npm run openapi-ts`.
+**CRITICAL:** `src/client/` contains **GENERATED CODE** - never edit manually. Regenerate via `pnpm openapi-ts`.
 
 **API Layer Pattern** (see [src/features/games/api/game.tsx](src/features/games/api/game.tsx)):
 
@@ -323,7 +323,7 @@ export const FeatureRoutes = (
 
 - Framework: Vitest + React Testing Library
 - Location: `tests/` directory
-- Run: `npm run test` (watch mode) or `npm run coverage`
+- Run: `pnpm test` (watch mode) or `pnpm coverage`
 
 ---
 

@@ -26,7 +26,8 @@ A modern, responsive web application for gamers to track their game collections,
 
 ## ⚙️ Prerequisites
 
-- **Node.js:** v18 or higher recommended.
+- **Node.js:** v20 or higher recommended.
+- **pnpm:** v10 or higher. Enable via Corepack (`corepack enable`) or install from [pnpm.io](https://pnpm.io/installation).
 - **Backend:** The application relies on the [My Game List Backend](https://github.com/MyGameListPlaceholder/my-game-list-backend). Ensure you have access to the backend API and its `openapi.json` definition.
 
 ## 📥 Installation & Setup
@@ -41,7 +42,7 @@ A modern, responsive web application for gamers to track their game collections,
 2. **Install dependencies:**
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Environment Setup:**
@@ -64,7 +65,7 @@ A modern, responsive web application for gamers to track their game collections,
 Starts the Vite development server. This command will also attempt to regenerate the API client from `openapi.json`.
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### Production Build
@@ -72,7 +73,7 @@ npm run dev
 Builds the application for production.
 
 ```bash
-npm run build
+pnpm build
 ```
 
 ### Preview Production Build
@@ -80,7 +81,7 @@ npm run build
 Locally preview the production build.
 
 ```bash
-npm run preview
+pnpm preview
 ```
 
 ## 🧪 Testing & Code Quality
@@ -88,25 +89,25 @@ npm run preview
 - **Run Tests:**
 
   ```bash
-  npm run test
+  pnpm test
   ```
 
 - **Check Test Coverage:**
 
   ```bash
-  npm run coverage
+  pnpm coverage
   ```
 
 - **Lint Code:**
 
   ```bash
-  npm run lint
+  pnpm lint
   ```
 
 - **Format Code:**
 
   ```bash
-  npm run format
+  pnpm format
   ```
 
 ## 🐳 Docker
