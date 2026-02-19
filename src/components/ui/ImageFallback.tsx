@@ -1,6 +1,6 @@
 import React from "react";
+import { Stack, Text } from "@mantine/core";
 import AppLogo from "./AppLogo";
-import { cn } from "@/utils/cn";
 
 interface ImageFallbackProps {
   className?: string;
@@ -8,14 +8,20 @@ interface ImageFallbackProps {
 
 export function ImageFallback({ className }: Readonly<ImageFallbackProps>) {
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center bg-background-100 text-text-500 w-full h-full p-2",
-        className,
-      )}
+    <Stack
+      align="center"
+      justify="center"
+      w="100%"
+      h="100%"
+      p={8}
+      bg="var(--color-background-100)"
+      c="var(--color-text-500)"
+      className={className}
     >
-      <AppLogo classNameSojusan="text-md text-primary-400" classNameGameList="text-base text-text-500" />
-      <span className="text-lg font-medium uppercase tracking-wider mt-1 opacity-70">No Image</span>
-    </div>
+      <AppLogo size="sm" />
+      <Text component="span" fz="lg" fw={500} tt="uppercase" mt={4} style={{ letterSpacing: "0.1em", opacity: 0.7 }}>
+        No Image
+      </Text>
+    </Stack>
   );
 }

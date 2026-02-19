@@ -8,10 +8,13 @@ import {
   useDeleteNotification,
   useDeleteAllReadNotifications,
 } from "../hooks/notificationQueries";
-import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { IconTrash, IconCheck } from "@tabler/icons-react";
 import { notificationActorSchema } from "@/lib/validation";
+import pageStyles from "./NotificationsPage.module.css";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { Table, Badge, Loader, Tooltip, ActionIcon, Group, Pagination, Box, Text, Title } from "@mantine/core";
+import { Button } from "@/components/ui/Button";
 
 export default function NotificationsPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
@@ -24,6 +27,8 @@ export default function NotificationsPage(): React.JSX.Element {
   const notifications = notificationsData?.results ?? [];
   const hasNext = !!notificationsData?.next;
   const hasPrevious = !!notificationsData?.previous;
+  const addToPage = hasNext ? 1 : 0;
+  const totalPages = hasNext || hasPrevious ? Math.max(page + addToPage, page) : 1;
 
   const handleMarkAsRead = (id: number) => {
     markAsRead({ id });
@@ -49,9 +54,9 @@ export default function NotificationsPage(): React.JSX.Element {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
+      <Box style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "256px" }}>
+        <Loader size="lg" />
+      </Box>
     );
   }
 
@@ -59,126 +64,138 @@ export default function NotificationsPage(): React.JSX.Element {
   const hasRead = notifications.some(n => !n.unread);
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
+    <Box maw={1024} mx="auto" p={16}>
       <PageMeta title="Notifications" />
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold">All Notifications</h1>
-          {isFetching && <span className="loading loading-spinner loading-sm text-primary"></span>}
-        </div>
-        <div className="flex flex-wrap gap-2">
+      <Group justify="space-between" align="center" mb={24} gap={16} wrap="wrap">
+        <Group gap={8}>
+          <Title order={1} fz={24} fw={700}>
+            All Notifications
+          </Title>
+          {isFetching && <Loader size="sm" />}
+        </Group>
+        <Group gap="sm">
           {hasUnread && (
-            <button onClick={handleMarkAllRead} className="btn btn-primary btn-sm">
-              <CheckIcon className="h-4 w-4 mr-1" />
+            <Button onClick={handleMarkAllRead} size="sm">
+              <IconCheck style={{ width: 16, height: 16, marginRight: 4 }} />
               Mark all as read
-            </button>
+            </Button>
           )}
           {hasRead && (
-            <button onClick={handleDeleteAllRead} className="btn btn-error btn-outline btn-sm">
-              <TrashIcon className="h-4 w-4 mr-1" />
+            <Button onClick={handleDeleteAllRead} variant="destructive" size="sm">
+              <IconTrash style={{ width: 16, height: 16, marginRight: 4 }} />
               Delete all read
-            </button>
+            </Button>
           )}
-        </div>
-      </div>
+        </Group>
+      </Group>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>User</th>
-              <th>Action</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Box
+        style={{ overflowX: "auto", background: "white", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
+      >
+        <Table highlightOnHover>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Status</Table.Th>
+              <Table.Th>User</Table.Th>
+              <Table.Th>Action</Table.Th>
+              <Table.Th>Date</Table.Th>
+              <Table.Th>Actions</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
             {notifications.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-gray-500">
+              <Table.Tr>
+                <Table.Td
+                  colSpan={5}
+                  style={{ textAlign: "center", paddingBlock: "32px", color: "var(--color-text-400)" }}
+                >
                   No notifications found.
-                </td>
-              </tr>
+                </Table.Td>
+              </Table.Tr>
             ) : (
               notifications.map((notification: Notification) => {
                 const actorResult = notificationActorSchema.safeParse(notification.actor);
                 const actor = actorResult.success ? actorResult.data : null;
                 return (
-                  <tr key={notification.id} className={notification.unread ? "bg-blue-50" : ""}>
-                    <td>
+                  <Table.Tr
+                    key={notification.id}
+                    bg={notification.unread ? "var(--mantine-color-primary-0)" : undefined}
+                  >
+                    <Table.Td>
                       {notification.unread ? (
-                        <div className="badge badge-primary badge-sm">New</div>
+                        <Badge size="sm" color="blue">
+                          New
+                        </Badge>
                       ) : (
-                        <div className="badge badge-ghost badge-sm opacity-50">Read</div>
+                        <Badge size="sm" variant="light" color="gray" style={{ opacity: 0.5 }}>
+                          Read
+                        </Badge>
                       )}
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-10 h-10">
-                            <SafeImage src={undefined} alt="User avatar" />
-                          </div>
-                        </div>
-                        <div>
-                          <Link
-                            to={actor?.type === "user" ? `/profile/${actor.id}` : "#"}
-                            className="font-bold hover:text-primary-600"
-                          >
-                            {actor?.str || "Someone"}
-                          </Link>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{notification.verb}</td>
-                    <td>
-                      <span className="text-sm opacity-70">{new Date(notification.timestamp).toLocaleString()}</span>
-                    </td>
-                    <td>
-                      <div className="flex gap-1">
+                    </Table.Td>
+                    <Table.Td>
+                      <Group gap={12}>
+                        <Box style={{ width: "40px", height: "40px", borderRadius: "9999px", overflow: "hidden" }}>
+                          <SafeImage
+                            src={undefined}
+                            alt="User avatar"
+                            containerStyle={{ width: "40px", height: "40px" }}
+                          />
+                        </Box>
+                        <Link
+                          to={actor?.type === "user" ? `/profile/${actor.id}` : "#"}
+                          className={pageStyles.tableUserLink}
+                        >
+                          {actor?.str || "Someone"}
+                        </Link>
+                      </Group>
+                    </Table.Td>
+                    <Table.Td>{notification.verb}</Table.Td>
+                    <Table.Td>
+                      <Text component="span" fz="sm" style={{ opacity: 0.7 }}>
+                        {new Date(notification.timestamp).toLocaleString()}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Group gap="xs">
                         {notification.unread && (
-                          <button
-                            onClick={() => handleMarkAsRead(notification.id)}
-                            className="btn btn-ghost btn-xs text-primary-600 tooltip"
-                            data-tip="Mark as read"
-                          >
-                            <CheckIcon className="h-4 w-4" />
-                          </button>
+                          <Tooltip label="Mark as read">
+                            <ActionIcon
+                              variant="subtle"
+                              color="blue"
+                              size="sm"
+                              onClick={() => handleMarkAsRead(notification.id)}
+                            >
+                              <IconCheck style={{ width: 16, height: 16 }} />
+                            </ActionIcon>
+                          </Tooltip>
                         )}
                         {!notification.unread && (
-                          <button
-                            onClick={() => handleDeleteOne(notification.id)}
-                            className="btn btn-ghost btn-xs text-error tooltip"
-                            data-tip="Delete"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
+                          <Tooltip label="Delete">
+                            <ActionIcon
+                              variant="subtle"
+                              color="red"
+                              size="sm"
+                              onClick={() => handleDeleteOne(notification.id)}
+                            >
+                              <IconTrash style={{ width: 16, height: 16 }} />
+                            </ActionIcon>
+                          </Tooltip>
                         )}
-                      </div>
-                    </td>
-                  </tr>
+                      </Group>
+                    </Table.Td>
+                  </Table.Tr>
                 );
               })
             )}
-          </tbody>
-        </table>
-      </div>
+          </Table.Tbody>
+        </Table>
+      </Box>
 
       {(hasNext || hasPrevious) && (
-        <div className="flex justify-center mt-6">
-          <div className="join">
-            <button className="join-item btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={!hasPrevious}>
-              «
-            </button>
-
-            <button className="join-item btn">Page {page}</button>
-
-            <button className="join-item btn" onClick={() => setPage(p => p + 1)} disabled={!hasNext}>
-              »
-            </button>
-          </div>
-        </div>
+        <Group justify="center" mt={24}>
+          <Pagination total={totalPages} value={page} onChange={setPage} />
+        </Group>
       )}
-    </div>
+    </Box>
   );
 }

@@ -1,8 +1,8 @@
 import * as React from "react";
+import { Group, Stack, Text } from "@mantine/core";
 import { GameList, StatusEnum } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { cn } from "@/utils/cn";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 interface GameListUpdateProps {
@@ -14,9 +14,18 @@ export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameLi
   const config = getStatusConfig(statusKey);
 
   return (
-    <div className="flex flex-row items-center gap-4 p-3 rounded-xl border border-background-300/50 bg-background-200/50 transition-all hover:bg-background-200 hover:shadow-sm group">
+    <Group
+      gap={16}
+      align="center"
+      style={{
+        padding: 12,
+        borderRadius: 12,
+        border: "1px solid var(--color-background-200)",
+        background: "var(--color-background-50)",
+      }}
+    >
       <SafeImage
-        className="w-12 h-18 rounded-lg shadow-sm shrink-0 overflow-hidden transition-transform duration-300 group-hover:scale-105"
+        style={{ width: 48, height: 72, borderRadius: 8, flexShrink: 0, objectFit: "cover", display: "block" }}
         src={
           latestGameListUpdate.game_cover_image
             ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
@@ -25,35 +34,71 @@ export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameLi
         alt={`game cover ${latestGameListUpdate.id}`}
       />
 
-      <div className="flex flex-col flex-1 min-w-0">
-        <div className="flex justify-between items-start gap-2">
-          <p className="font-bold text-text-900 truncate text-sm md:text-base">{latestGameListUpdate.title}</p>
-          <span className="text-[10px] font-bold whitespace-nowrap opacity-60">
+      <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
+        <Group justify="space-between" align="flex-start" gap={8}>
+          <Text
+            fw={700}
+            size="sm"
+            c="var(--color-text-900)"
+            style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}
+          >
+            {latestGameListUpdate.title}
+          </Text>
+          <Text
+            component="span"
+            size="xs"
+            c="var(--color-text-400)"
+            style={{ whiteSpace: "nowrap", flexShrink: 0, opacity: 0.7 }}
+          >
             {new Date(
               latestGameListUpdate?.last_modified_at ? latestGameListUpdate.last_modified_at : "",
             ).toLocaleDateString()}
-          </span>
-        </div>
+          </Text>
+        </Group>
 
-        <div className="flex items-center gap-4 mt-1">
-          <div
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-0.5 rounded-full border",
-              config?.activeStyles || "bg-background-100 text-text-600 border-background-200",
-            )}
+        <Group gap={16} mt={4}>
+          <Group
+            gap={6}
+            style={{
+              padding: "2px 8px",
+              borderRadius: 9999,
+              border: "1px solid",
+              ...(config?.badgeStyle ?? {
+                background: "var(--color-background-100)",
+                color: "var(--color-text-600)",
+                borderColor: "var(--color-background-200)",
+              }),
+            }}
           >
-            <span className="text-sm">{config?.emoji}</span>
-            <p className="text-[10px] font-bold uppercase tracking-wider">{latestGameListUpdate.status}</p>
-          </div>
+            <Text component="span" size="sm">
+              {config?.emoji}
+            </Text>
+            <Text style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+              {latestGameListUpdate.status}
+            </Text>
+          </Group>
 
           {latestGameListUpdate.score && (
-            <div className="flex items-center gap-1 border-l border-current/20 pl-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Score</span>
-              <span className="text-xs font-black">{latestGameListUpdate.score}</span>
-            </div>
+            <Group gap={4} style={{ borderLeft: "1px solid rgba(0,0,0,0.1)", paddingLeft: 16 }}>
+              <Text
+                component="span"
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  opacity: 0.6,
+                }}
+              >
+                Score
+              </Text>
+              <Text component="span" size="xs" fw={900}>
+                {latestGameListUpdate.score}
+              </Text>
+            </Group>
           )}
-        </div>
-      </div>
-    </div>
+        </Group>
+      </Stack>
+    </Group>
   );
 }

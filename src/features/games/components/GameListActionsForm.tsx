@@ -1,12 +1,11 @@
 import React from "react";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 import { jwtDecode } from "jwt-decode";
+import { notifications } from "@mantine/notifications";
+import { Tooltip, Select, Group, Stack, Text } from "@mantine/core";
 
-import toast from "react-hot-toast";
-
-import SelectInput from "@/components/ui/Form/SelectInput";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { Button } from "@/components/ui/Button";
 import { TokenInfoType } from "@/types";
@@ -34,7 +33,6 @@ const validationSchema = z.object({
 });
 
 type ValidationSchema = z.output<typeof validationSchema>;
-type ValidationInput = z.input<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
   const { user } = useAuth();
@@ -56,32 +54,29 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   const { mutate: createGameListItem } = useCreateGameList();
   const { mutate: partialUpdateGameListItem } = usePartialUpdateGameList();
 
-  const defaultValues: ValidationInput = {
-    status: StatusEnum.PTP,
-    score: undefined,
-    owned_on: [],
-  };
-
-  const methods = useForm<ValidationInput, object, ValidationSchema>({
-    resolver: zodResolver(validationSchema),
-    defaultValues,
+  const form = useForm<ValidationSchema>({
+    initialValues: {
+      status: StatusEnum.PTP,
+      score: undefined,
+      owned_on: [],
+    },
+    validate: zod4Resolver(validationSchema),
   });
-
-  const { reset } = methods;
 
   React.useEffect(() => {
     if (gameListDetails?.id) {
-      reset({
+      form.setValues({
         status: gameListDetails.status_code as StatusEnum,
         score: gameListDetails.score ?? undefined,
         owned_on: gameListDetails.owned_on.map(media => media.id.toString()),
       });
     }
-  }, [gameListDetails, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameListDetails]);
 
   const addGameListItem = async (data: ValidationSchema) => {
     if (!parsedGameId.success || !userInfo) {
-      toast.error("Error during creating the game list");
+      notifications.show({ title: "Error", message: "Error during creating the game list", color: "red" });
       return;
     }
     createGameListItem(
@@ -93,15 +88,17 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         owned_on: data.owned_on?.map(Number) ?? [],
       },
       {
-        onSuccess: () => toast.success("Added to list successfully"),
-        onError: error => toast.error(error.message || "Failed to add to list"),
+        onSuccess: () =>
+          notifications.show({ title: "Success", message: "Added to list successfully", color: "green" }),
+        onError: error =>
+          notifications.show({ title: "Error", message: error.message || "Failed to add to list", color: "red" }),
       },
     );
   };
 
   const updateGameListItem = async (data: ValidationSchema) => {
     if (!gameListDetails?.id) {
-      toast.error("Error during updating the game list");
+      notifications.show({ title: "Error", message: "Error during updating the game list", color: "red" });
       return;
     }
 
@@ -116,15 +113,16 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
       },
       {
         onSuccess: () => {
-          toast.success("Updated list successfully");
+          notifications.show({ title: "Success", message: "Updated list successfully", color: "green" });
           setIsCollapsed(true);
         },
-        onError: error => toast.error(error.message || "Failed to update list"),
+        onError: error =>
+          notifications.show({ title: "Error", message: error.message || "Failed to update list", color: "red" }),
       },
     );
   };
 
-  const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
+  const onSubmitHandler = async (data: ValidationSchema) => {
     try {
       if (gameListDetails?.id) {
         await updateGameListItem(data);
@@ -132,144 +130,214 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         await addGameListItem(data);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      notifications.show({
+        title: "Error",
+        message: error instanceof Error ? error.message : "An error occurred",
+        color: "red",
+      });
     }
   };
 
   const handleRemove = () => {
     if (gameListDetails?.id) {
       deleteGameListItem(gameListDetails.id, {
-        onSuccess: () => toast.success("Removed from list successfully"),
-        onError: error => toast.error(error.message || "Failed to remove from list"),
+        onSuccess: () =>
+          notifications.show({ title: "Success", message: "Removed from list successfully", color: "green" }),
+        onError: error =>
+          notifications.show({ title: "Error", message: error.message || "Failed to remove from list", color: "red" }),
       });
     }
   };
 
+  const labelStyle: React.CSSProperties = {
+    fontSize: "10px",
+    fontWeight: 700,
+    color: "var(--color-text-400)",
+    textTransform: "uppercase",
+    letterSpacing: "0.1em",
+    marginBottom: 4,
+  };
+
   if (gameListDetails?.id && isCollapsed) {
     return (
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 w-full animate-in fade-in slide-in-from-top-1 duration-300">
-        <div className="flex flex-wrap items-center gap-6 flex-1">
-          <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-bold text-text-400 uppercase tracking-widest">Status</span>
-            <span className="text-sm font-bold text-primary-600 bg-primary-50 px-3 py-1 rounded-full border border-primary-100">
+      <Stack gap={12}>
+        <Text fw={800} fz="md" c="var(--color-text-900)" style={{ letterSpacing: "-0.02em" }}>
+          My List Entry
+        </Text>
+
+        <Group align="flex-start" gap={24} wrap="wrap">
+          <Stack gap={4}>
+            <Text component="span" style={labelStyle}>
+              Status
+            </Text>
+            <Text
+              component="span"
+              style={{
+                fontSize: "13px",
+                fontWeight: 700,
+                color: "var(--mantine-color-primary-7)",
+                background: "var(--mantine-color-primary-0)",
+                padding: "4px 14px",
+                borderRadius: "9999px",
+                border: "1px solid var(--mantine-color-primary-2)",
+                whiteSpace: "nowrap",
+              }}
+            >
               {gameListDetails.status}
-            </span>
-          </div>
+            </Text>
+          </Stack>
 
           {gameListDetails.score && (
-            <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-text-400 uppercase tracking-widest">Your Score</span>
-              <span className="text-sm font-black text-secondary-700 bg-secondary-50 px-3 py-1 rounded-full border border-secondary-100 text-center">
+            <Stack gap={4}>
+              <Text component="span" style={labelStyle}>
+                Score
+              </Text>
+              <Text
+                component="span"
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 900,
+                  color: "var(--mantine-color-secondary-7, #92400e)",
+                  background: "var(--mantine-color-secondary-0, #fffbeb)",
+                  padding: "4px 14px",
+                  borderRadius: "9999px",
+                  border: "1px solid var(--mantine-color-secondary-2, #fde68a)",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {gameListDetails.score} / 10
-              </span>
-            </div>
+              </Text>
+            </Stack>
           )}
 
           {gameListDetails.owned_on.length > 0 && (
-            <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-text-400 uppercase tracking-widest">Owned On</span>
-              <div className="flex gap-1.5 flex-wrap">
+            <Stack gap={4}>
+              <Text component="span" style={labelStyle}>
+                Owned On
+              </Text>
+              <Group gap={6} wrap="wrap">
                 {gameListDetails.owned_on.map(media => (
-                  <span
+                  <Text
+                    component="span"
                     key={media.id}
-                    className="text-[10px] font-bold text-text-600 bg-background-100 px-2 py-0.5 rounded border border-background-200"
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      color: "var(--color-text-600)",
+                      background: "var(--color-background-100)",
+                      padding: "3px 10px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--color-background-300)",
+                    }}
                   >
                     {media.name}
-                  </span>
+                  </Text>
                 ))}
-              </div>
-            </div>
+              </Group>
+            </Stack>
           )}
-        </div>
+        </Group>
 
-        <div className="tooltip" data-tip="Modify your list entry">
-          <Button
-            onClick={() => setIsCollapsed(false)}
-            variant="outline"
-            size="sm"
-            className="w-full md:w-32 h-10 font-bold border-primary-200 text-primary-600 hover:bg-primary-50"
-          >
-            Edit Entry
-          </Button>
-        </div>
-      </div>
+        <Group justify="flex-end">
+          <Tooltip label="Modify your list entry">
+            <Button onClick={() => setIsCollapsed(false)} variant="outline" size="sm">
+              Edit Entry
+            </Button>
+          </Tooltip>
+        </Group>
+      </Stack>
     );
   }
 
   return (
-    <FormProvider {...methods}>
+    <Stack gap={16}>
+      <Text fw={800} fz="md" c="var(--color-text-900)" style={{ letterSpacing: "-0.02em" }}>
+        {gameListDetails?.id ? "Edit List Entry" : "Add to My List"}
+      </Text>
+
       <form
-        onSubmit={methods.handleSubmit(onSubmitHandler)}
+        onSubmit={form.onSubmit(onSubmitHandler)}
         noValidate
-        className="flex flex-col md:flex-row gap-6 items-end w-full animate-in fade-in slide-in-from-top-1 duration-300"
+        style={{ display: "flex", flexDirection: "column", gap: "16px" }}
       >
-        <SelectInput
-          placeholder="Select status ..."
-          required
-          id="status"
-          label="Status"
-          name="status"
-          className="w-full md:w-44 shrink-0"
-          selectOptions={code_to_value_mapping().map(codeToValue => ({
-            value: codeToValue.code,
-            label: codeToValue.value,
-          }))}
-        />
-        <SelectInput
-          placeholder="Score ..."
-          id="score"
-          label="Score"
-          name="score"
-          className="w-full md:w-20 shrink-0"
-          selectOptions={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => ({
-            value: score,
-            label: score.toString(),
-          }))}
-        />
-        <AsyncMultiSelectAutocomplete
-          placeholder="Search media ..."
-          id="owned_on"
-          label="Owned on"
-          name="owned_on"
-          className="w-full md:flex-1 min-w-50"
-          useInfiniteQueryHook={useGetGameMediasInfiniteQuery}
-          getOptionLabel={item => item.name}
-          getOptionValue={item => item.id}
-        />
-        <div className="flex flex-col gap-2 w-full md:w-32 shrink-0 h-full justify-end">
+        <Group align="flex-end" gap={12} wrap="wrap">
+          <Select
+            placeholder="Select a status..."
+            required
+            id="status"
+            label="Status"
+            name="status"
+            size="md"
+            style={{ minWidth: "180px", flex: "1 1 180px" }}
+            searchable
+            clearable
+            data={code_to_value_mapping().map(codeToValue => ({
+              value: codeToValue.code,
+              label: codeToValue.value,
+            }))}
+            {...form.getInputProps("status")}
+          />
+          <Select
+            placeholder="1 – 10"
+            id="score"
+            label="Your Score"
+            name="score"
+            size="md"
+            style={{ minWidth: "110px", flex: "0 0 110px" }}
+            searchable
+            clearable
+            data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => ({
+              value: score.toString(),
+              label: `${score} / 10`,
+            }))}
+            {...form.getInputProps("score")}
+          />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search platforms / media..."
+            id="owned_on"
+            label="Owned On"
+            name="owned_on"
+            style={{ flex: "1 1 200px" }}
+            useInfiniteQueryHook={useGetGameMediasInfiniteQuery}
+            getOptionLabel={item => item.name}
+            getOptionValue={item => item.id}
+            {...form.getInputProps("owned_on")}
+          />
+        </Group>
+
+        <Group justify="space-between" gap={8}>
           {gameListDetails?.id ? (
             <>
-              <div className="tooltip" data-tip="Save changes to your list entry">
-                <Button type="submit" className="w-full h-10">
-                  Update
+              <Tooltip label="Remove this game from your list">
+                <Button type="button" onClick={handleRemove} variant="destructive" size="sm">
+                  Remove from List
                 </Button>
-              </div>
-              <div className="tooltip" data-tip="Discard changes and hide form">
-                <Button
-                  type="button"
-                  onClick={() => setIsCollapsed(true)}
-                  variant="outline"
-                  className="w-full h-10 text-sm font-bold border-background-300 text-text-600 hover:bg-background-100 hover:text-text-900 transition-all"
-                >
-                  Cancel
-                </Button>
-              </div>
-              <div className="tooltip" data-tip="Remove this game from your collection">
-                <Button type="button" onClick={handleRemove} variant="destructive" className="w-full h-10">
-                  Delete
-                </Button>
-              </div>
+              </Tooltip>
+              <Group gap={8}>
+                <Tooltip label="Discard changes">
+                  <Button type="button" onClick={() => setIsCollapsed(true)} variant="outline" size="sm">
+                    Cancel
+                  </Button>
+                </Tooltip>
+                <Tooltip label="Save changes to your list entry">
+                  <Button type="submit" size="sm">
+                    Save Changes
+                  </Button>
+                </Tooltip>
+              </Group>
             </>
           ) : (
-            <div className="tooltip" data-tip="Add this game to your personal library">
-              <Button type="submit" fullWidth className="h-10">
-                Add to List
-              </Button>
-            </div>
+            <Group justify="flex-end" style={{ width: "100%" }}>
+              <Tooltip label="Add this game to your personal library">
+                <Button type="submit" size="sm">
+                  Add to My List
+                </Button>
+              </Tooltip>
+            </Group>
           )}
-        </div>
+        </Group>
       </form>
-    </FormProvider>
+    </Stack>
   );
 }
 

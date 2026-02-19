@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { Box, Group, Loader } from "@mantine/core";
 import { cn } from "@/utils/cn";
 
 interface VirtualListProps<T> {
@@ -9,6 +10,7 @@ interface VirtualListProps<T> {
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
   className?: string;
+  style?: React.CSSProperties;
   itemHeight?: number;
   overscan?: number;
   getItemKey?: (item: T, index: number) => React.Key;
@@ -26,6 +28,7 @@ export const VirtualList = React.forwardRef(function VirtualList<T>(
     isFetchingNextPage,
     fetchNextPage,
     className,
+    style,
     itemHeight = 120,
     overscan = 5,
     getItemKey,
@@ -59,14 +62,17 @@ export const VirtualList = React.forwardRef(function VirtualList<T>(
   }, [virtualItems, hasNextPage, isFetchingNextPage, fetchNextPage, itemCount]);
 
   return (
-    <div
+    <Box
       ref={parentRef}
-      className={cn("h-full overflow-auto custom-scrollbar", className)}
+      className={cn("custom-scrollbar", className)}
       style={{
+        height: "100%",
+        overflow: "auto",
         contain: "strict",
+        ...style,
       }}
     >
-      <div
+      <Box
         style={{
           height: `${virtualizer.getTotalSize()}px`,
           width: "100%",
@@ -87,7 +93,7 @@ export const VirtualList = React.forwardRef(function VirtualList<T>(
           }
 
           return (
-            <div
+            <Box
               key={itemKey}
               style={{
                 position: "absolute",
@@ -99,20 +105,16 @@ export const VirtualList = React.forwardRef(function VirtualList<T>(
               }}
             >
               {isLoaderRow ? (
-                <div className="flex justify-center items-center h-full py-4">
-                  {isFetchingNextPage ? (
-                    <span className="loading loading-spinner loading-md"></span>
-                  ) : (
-                    <div className="h-4" />
-                  )}
-                </div>
+                <Group justify="center" align="center" style={{ height: "100%", paddingBlock: "16px" }}>
+                  {isFetchingNextPage ? <Loader size="md" /> : <Box style={{ height: "16px" }} />}
+                </Group>
               ) : (
                 item && renderItem(item, virtualItem.index)
               )}
-            </div>
+            </Box>
           );
         })}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }) as <T>(props: VirtualListProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> }) => React.ReactElement;

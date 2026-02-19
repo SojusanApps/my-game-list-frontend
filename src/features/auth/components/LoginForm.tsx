@@ -1,17 +1,16 @@
 import * as React from "react";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 
 import { Button } from "@/components/ui/Button";
 import GoogleLogo from "@/assets/logos/GoogleLogo.svg";
 import FacebookLogo from "@/assets/logos/FacebookLogo.svg";
+import authStyles from "./auth.module.css";
 import XLogo from "@/assets/logos/XLogo.svg";
-import TextFieldInput from "@/components/ui/Form/TextFieldInput";
-import CheckboxInput from "@/components/ui/Form/CheckboxInput";
+import { TextInput, PasswordInput, Checkbox, Divider, Group, Text } from "@mantine/core";
 import StatusCode from "@/utils/StatusCode";
 import { TokenService } from "@/client";
 import { useAuth } from "@/features/auth/context/AuthProvider";
@@ -34,93 +33,95 @@ function LoginForm() {
   const from = location.state?.from?.pathname || "/";
   const { login } = useAuth();
 
-  const defaultValues: ValidationSchema = {
-    email: "",
-    password: "",
-    remember: false,
-  };
-
-  const methods = useForm<ValidationSchema>({
-    resolver: zodResolver(validationSchema),
-    defaultValues,
+  const form = useForm<ValidationSchema>({
+    initialValues: {
+      email: "",
+      password: "",
+      remember: false,
+    },
+    validate: zod4Resolver(validationSchema),
   });
 
-  const onSubmitHandler: SubmitHandler<ValidationSchema> = async (data: ValidationSchema) => {
+  const onSubmitHandler = async (data: ValidationSchema) => {
     try {
       const { data: tokenInfo, response } = await TokenService.tokenCreate({
         body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
-      if (!response || response.status !== StatusCode.OK) {
-        toast.error("Error logging in");
+      if (response?.status !== StatusCode.OK) {
+        notifications.show({ title: "Error", message: "Error logging in", color: "red" });
         return;
       }
       const token = tokenInfo?.access;
       const refreshToken = tokenInfo?.refresh;
       if (token && refreshToken) {
         login({ email: data.email, token, refreshToken });
-        toast.success("Logged in successfully");
+        notifications.show({ title: "Success", message: "Logged in successfully", color: "green" });
       }
       navigate(from, { replace: true });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      notifications.show({
+        title: "Error",
+        message: error instanceof Error ? error.message : "An error occurred",
+        color: "red",
+      });
     }
   };
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmitHandler)} noValidate>
-        <TextFieldInput
+    <>
+      <form onSubmit={form.onSubmit(onSubmitHandler)} noValidate>
+        <TextInput
           placeholder="Please enter your email"
           required
           id="email"
           label="Email"
           name="email"
-          type="text"
+          {...form.getInputProps("email")}
         />
-        <TextFieldInput
+        <PasswordInput
           placeholder="Please enter your password"
           required
           id="password"
           label="Password"
           name="password"
-          type="password"
+          {...form.getInputProps("password")}
         />
-        <CheckboxInput name="remember" id="remember" label="Remember me" />
-        <p className="mt-4 text-center text-sm text-text-600">
+        <Checkbox
+          name="remember"
+          id="remember"
+          label="Remember me"
+          {...form.getInputProps("remember", { type: "checkbox" })}
+        />
+        <Text ta="center" size="sm" mt="md" c="var(--color-text-600)">
           Don&apos;t have an account?&nbsp;
-          <Link
-            to="/register"
-            className="font-semibold text-primary-600 hover:text-primary-700 hover:underline transition-colors"
-          >
+          <Link to="/register" className={authStyles.authLink}>
             Sign up
           </Link>
-        </p>
-        <Button type="submit" fullWidth uppercase className="mt-6">
+        </Text>
+        <Button type="submit" fullWidth uppercase style={{ marginTop: 24 }}>
           LOGIN
         </Button>
       </form>
 
-      <div className="relative mt-8">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="w-full border-t border-background-200"></div>
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white/0 px-2 text-text-400">Or continue with</span>
-        </div>
-      </div>
+      <Divider
+        label="Or continue with"
+        labelPosition="center"
+        my="lg"
+        classNames={{ label: "text-text-400 uppercase text-xs" }}
+      />
 
-      <div className="grid grid-cols-3 gap-4 mt-6">
-        <Button variant="outline" size="sm" className="w-full">
-          <img src={GoogleLogo} alt="google logo" className="w-5" />
+      <Group grow gap="md">
+        <Button variant="outline" size="sm" style={{ width: "100%" }}>
+          <img src={GoogleLogo} alt="google logo" style={{ width: "20px" }} />
         </Button>
-        <Button variant="outline" size="sm" className="w-full">
-          <img src={FacebookLogo} alt="facebook logo" className="w-5" />
+        <Button variant="outline" size="sm" style={{ width: "100%" }}>
+          <img src={FacebookLogo} alt="facebook logo" style={{ width: "20px" }} />
         </Button>
-        <Button variant="outline" size="sm" className="w-full">
-          <img src={XLogo} alt="x logo" className="w-5" />
+        <Button variant="outline" size="sm" style={{ width: "100%" }}>
+          <img src={XLogo} alt="x logo" style={{ width: "20px" }} />
         </Button>
-      </div>
-    </FormProvider>
+      </Group>
+    </>
   );
 }
 

@@ -1,0 +1,50 @@
+.tierGameCard {
+  position: relative;
+  flex-shrink: 0;
+}
+.tierGameCard .tierGameCardBorder {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  cursor: grab;
+  transition: border-color 200ms;
+}
+.tierGameCard .tierGameCardBorder:active {
+  cursor: grabbing;
+}
+.tierGameCard:hover .tierGameCardBorder {
+  border-color: var(--color-primary-500);
+}
+.tierGameCard .tierGameCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 200ms;
+  display: flex;
+  align-items: flex-end;
+  padding: 4px;
+  pointer-events: none;
+}
+.tierGameCard:hover .tierGameCardOverlay {
+  opacity: 1;
+}
+.tierGameCard .tierGameCardPencil {
+  opacity: 0;
+  transition:
+    opacity 200ms,
+    transform 200ms;
+}
+.tierGameCard:hover .tierGameCardPencil {
+  opacity: 1;
+}
+.tierGameCard .tierGameCardRemove {
+  opacity: 0;
+  transition:
+    opacity 200ms,
+    transform 200ms;
+}
+.tierGameCard:hover .tierGameCardRemove {
+  opacity: 1;
+}

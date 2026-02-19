@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { cn } from "@/utils/cn";
+import { Box, Group, Loader } from "@mantine/core";
+import { cn } from "@/utils/cn"; // cn still used for custom-scrollbar merging
 
 interface VirtualGridListProps<T> {
   items: T[];
@@ -9,6 +10,7 @@ interface VirtualGridListProps<T> {
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
   className?: string;
+  style?: React.CSSProperties;
   columnCount?: number;
   rowHeight?: number;
   gap?: number;
@@ -25,6 +27,7 @@ export function VirtualGridList<T>({
   isFetchingNextPage,
   fetchNextPage,
   className,
+  style,
   columnCount = 7,
   rowHeight = 300,
   gap = 6,
@@ -53,14 +56,18 @@ export function VirtualGridList<T>({
   }, [virtualRows, hasNextPage, isFetchingNextPage, fetchNextPage, rowCount]);
 
   return (
-    <div
+    <Box
       ref={parentRef}
-      className={cn("h-200 overflow-auto custom-scrollbar px-2", className)}
+      className={cn("custom-scrollbar", className)}
       style={{
+        height: "800px",
+        overflow: "auto",
+        paddingInline: "8px",
         contain: "strict",
+        ...style,
       }}
     >
-      <div
+      <Box
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: "100%",
@@ -71,7 +78,7 @@ export function VirtualGridList<T>({
           const isLoaderRow = virtualRow.index >= Math.ceil(items.length / columnCount);
 
           return (
-            <div
+            <Box
               key={virtualRow.key}
               style={{
                 position: "absolute",
@@ -83,42 +90,30 @@ export function VirtualGridList<T>({
               }}
             >
               {isLoaderRow ? (
-                <div className="flex justify-center items-center h-full py-4">
-                  {isFetchingNextPage ? (
-                    <span className="loading loading-spinner loading-md"></span>
-                  ) : (
-                    <div className="h-4" />
-                  )}
-                </div>
+                <Group justify="center" align="center" style={{ height: "100%", paddingBlock: "16px" }}>
+                  {isFetchingNextPage ? <Loader size="md" /> : <Box style={{ height: "16px" }} />}
+                </Group>
               ) : (
-                <div
-                  className={cn("grid py-2", {
-                    "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7": columnCount === 7,
-                    "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4": columnCount === 4,
-                    "grid-cols-2": columnCount === 2,
-                    "grid-cols-3": columnCount === 3,
-                    "grid-cols-5": columnCount === 5,
-                    "grid-cols-8": columnCount === 8,
-                  })}
+                <Box
                   style={{
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
                     gap: `${gap * 0.25}rem`,
-                    ...([2, 3, 4, 5, 7, 8].includes(columnCount)
-                      ? {}
-                      : { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }),
+                    paddingBlock: "8px",
                   }}
                 >
                   {items
                     .slice(virtualRow.index * columnCount, (virtualRow.index + 1) * columnCount)
                     .map((item, index) => {
                       const absoluteIndex = virtualRow.index * columnCount + index;
-                      return <div key={`v-grid-item-${absoluteIndex}`}>{renderItem(item, absoluteIndex)}</div>;
+                      return <Box key={`v-grid-item-${absoluteIndex}`}>{renderItem(item, absoluteIndex)}</Box>;
                     })}
-                </div>
+                </Box>
               )}
-            </div>
+            </Box>
           );
         })}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

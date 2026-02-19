@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box } from "@mantine/core";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import {
@@ -134,7 +135,7 @@ export const SortableRankingRow = React.memo(function SortableRankingRow({
   }, [id, rank, isOwner, onItemMove, title]);
 
   return (
-    <div
+    <Box
       ref={dragRef}
       className={className}
       style={{
@@ -159,14 +160,30 @@ export const SortableRankingRow = React.memo(function SortableRankingRow({
       />
       {/* Show placeholder box at destination */}
       {closestEdge && (
-        <div className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-2xl pointer-events-none" />
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px dashed var(--color-primary-400)",
+            borderRadius: 16,
+            pointerEvents: "none",
+          }}
+        />
       )}
       {/* Show drop indicator line at destination */}
       {closestEdge && <DropIndicator edge={closestEdge} gap="8px" />}
       {/* Show dashed border at source when dragging */}
       {isDragging && (
-        <div className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-2xl pointer-events-none" />
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px dashed var(--color-primary-400)",
+            borderRadius: 16,
+            pointerEvents: "none",
+          }}
+        />
       )}
-    </div>
+    </Box>
   );
 });

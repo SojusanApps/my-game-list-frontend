@@ -8,7 +8,8 @@ import {
   useCollectionItemsInfiniteQuery,
 } from "../../hooks/useCollectionQueries";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import toast from "react-hot-toast";
+import { Box, Group, Loader, Stack, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import EditDescriptionModal from "./EditDescriptionModal";
 
 interface RankingListViewProps {
@@ -120,7 +121,7 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        toast.error("Failed to reorder item");
+        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
@@ -159,7 +160,7 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        toast.error("Failed to move item up");
+        notifications.show({ title: "Error", message: "Failed to move item up", color: "red" });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
@@ -198,7 +199,7 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        toast.error("Failed to move item down");
+        notifications.show({ title: "Error", message: "Failed to move item down", color: "red" });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
@@ -216,7 +217,15 @@ export const RankingListView = React.memo(function RankingListView({
         return itemsResults;
       }
 
-      const toastId = toast.loading("Loading more items...");
+      const loadingId = "loading-items";
+      notifications.show({
+        id: loadingId,
+        title: "Loading",
+        message: "Loading more items...",
+        loading: true,
+        autoClose: false,
+        withCloseButton: false,
+      });
       try {
         const itemsPerPage = itemsResults?.pages[0]?.results.length || 25;
         const pagesNeeded = Math.ceil(targetPosition / itemsPerPage);
@@ -231,10 +240,24 @@ export const RankingListView = React.memo(function RankingListView({
           }
         }
 
-        toast.success("Items loaded", { id: toastId });
+        notifications.update({
+          id: loadingId,
+          title: "Success",
+          message: "Items loaded",
+          color: "green",
+          loading: false,
+          autoClose: 3000,
+        });
         return latestQueryResult;
       } catch (error) {
-        toast.error("Failed to load items", { id: toastId });
+        notifications.update({
+          id: loadingId,
+          title: "Error",
+          message: "Failed to load items",
+          color: "red",
+          loading: false,
+          autoClose: 3000,
+        });
         throw error;
       }
     },
@@ -245,7 +268,7 @@ export const RankingListView = React.memo(function RankingListView({
   const validateReorder = React.useCallback((sortedItems: CollectionItem[], itemId: number, targetPosition: number) => {
     const currentIndex = sortedItems.findIndex(i => i.id === itemId);
     if (currentIndex === -1) {
-      toast.error("Item not found");
+      notifications.show({ title: "Error", message: "Item not found", color: "red" });
       return null;
     }
 
@@ -255,7 +278,11 @@ export const RankingListView = React.memo(function RankingListView({
     }
 
     if (targetIndex >= sortedItems.length) {
-      toast.error(`Cannot move to position ${targetPosition}. Only ${sortedItems.length} items available.`);
+      notifications.show({
+        title: "Error",
+        message: `Cannot move to position ${targetPosition}. Only ${sortedItems.length} items available.`,
+        color: "red",
+      });
       return null;
     }
 
@@ -277,7 +304,7 @@ export const RankingListView = React.memo(function RankingListView({
         await reorderItem({ collectionId, itemId, position: targetIndex });
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        toast.error("Failed to reorder item");
+        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
         console.error(error);
@@ -343,33 +370,66 @@ export const RankingListView = React.memo(function RankingListView({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
+      <Group justify="center" align="center" style={{ height: 256 }}>
+        <Loader size="lg" />
+      </Group>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6" style={{ height: "calc(100vh - 200px)" }}>
+    <Stack gap={24} style={{ height: "calc(100vh - 200px)" }}>
       {/* Collection Stats */}
-      <div className="flex items-center justify-between sticky top-4 z-30 bg-linear-to-r from-primary-50 to-secondary-50 p-4 rounded-2xl border border-primary-100 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-500 shadow-md">
+      <Group
+        justify="space-between"
+        align="center"
+        style={{
+          position: "sticky",
+          top: 16,
+          zIndex: 30,
+          background: "linear-gradient(to right, var(--color-primary-50), var(--color-secondary-50))",
+          padding: 16,
+          borderRadius: 16,
+          border: "1px solid var(--color-primary-100)",
+          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        }}
+      >
+        <Group gap={12}>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              background: "var(--color-primary-500)",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="w-5 h-5 text-white"
+              style={{ width: 20, height: 20, color: "white" }}
             >
               <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
             </svg>
-          </div>
-          <div>
-            <div className="text-2xl font-black text-primary-600 leading-none">{totalCount}</div>
-            <div className="text-xs font-semibold text-text-500 uppercase tracking-wider mt-0.5">Total Games</div>
-          </div>
-        </div>
-      </div>
+          </Box>
+          <Box>
+            <Text fw={900} fz={24} c="var(--color-primary-600)" style={{ lineHeight: 1 }}>
+              {totalCount}
+            </Text>
+            <Text
+              size="xs"
+              fw={600}
+              c="var(--color-text-500)"
+              style={{ textTransform: "uppercase", letterSpacing: "0.05em", marginTop: 2 }}
+            >
+              Total Games
+            </Text>
+          </Box>
+        </Group>
+      </Group>
 
       <VirtualList
         ref={virtualListRef}
@@ -381,7 +441,7 @@ export const RankingListView = React.memo(function RankingListView({
         itemHeight={120}
         overscan={5}
         getItemKey={item => item.id}
-        className="flex-1"
+        style={{ flex: 1 }}
       />
 
       {editingItem && (
@@ -392,6 +452,6 @@ export const RankingListView = React.memo(function RankingListView({
           onSave={handleDescriptionSave}
         />
       )}
-    </div>
+    </Stack>
   );
 });

@@ -1,9 +1,10 @@
 import * as React from "react";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import TextFieldInput from "@/components/ui/Form/TextFieldInput";
+import { Box, Group, Stack, TextInput } from "@mantine/core";
+import { Button } from "@/components/ui/Button";
 
 const validationSchema = z.object({
   username: z.string().optional(),
@@ -11,41 +12,45 @@ const validationSchema = z.object({
 
 export type ValidationSchema = z.infer<typeof validationSchema>;
 
-import { Button } from "@/components/ui/Button";
-
 function UserSearchFilter({
   onSubmitHandlerCallback,
-}: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
-  const methods = useForm<ValidationSchema>({
-    resolver: zodResolver(validationSchema),
+}: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void }>) {
+  const form = useForm<ValidationSchema>({
+    initialValues: {
+      username: "",
+    },
+    validate: zod4Resolver(validationSchema),
   });
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate className="flex flex-col gap-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-          <div className="flex flex-col gap-4">
-            <TextFieldInput
-              id="username"
-              name="username"
-              type="text"
-              label="Username"
-              placeholder="Search by username..."
-            />
-          </div>
-        </div>
+    <Box
+      component="form"
+      style={{ display: "flex", flexDirection: "column", gap: "32px" }}
+      onSubmit={form.onSubmit(onSubmitHandlerCallback)}
+      noValidate
+    >
+      <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px 32px" }}>
+        <Stack gap={16}>
+          <TextInput
+            id="username"
+            name="username"
+            label="Username"
+            placeholder="Search by username..."
+            {...form.getInputProps("username")}
+          />
+        </Stack>
+      </Box>
 
-        <div className="flex justify-center pt-4 border-t border-background-100">
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full md:w-64 shadow-md hover:shadow-lg transition-all active:scale-95"
-          >
-            Apply Filters
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
+      <Group justify="center" pt={16} style={{ borderTop: "1px solid var(--color-background-100)" }}>
+        <Button
+          type="submit"
+          size="lg"
+          style={{ width: "100%", maxWidth: "256px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+        >
+          Apply Filters
+        </Button>
+      </Group>
+    </Box>
   );
 }
 

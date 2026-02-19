@@ -1,0 +1,53 @@
+.topbarIconBtn {
+  position: relative;
+  padding: 8px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.topbarIconBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notificationCard {
+  background: rgba(226, 232, 240, 0.5);
+  border: 1px solid rgba(203, 213, 225, 0.5);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition:
+    background 200ms,
+    box-shadow 200ms;
+}
+.notificationCard:hover {
+  background: var(--color-background-400);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.notificationItemLink {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem;
+  text-decoration: none;
+}
+
+.notificationsAllLink {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0;
+  color: var(--mantine-color-primary-6);
+  text-decoration: none;
+  transition: color 150ms;
+}
+.notificationsAllLink:hover {
+  color: var(--mantine-color-primary-7);
+}

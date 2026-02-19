@@ -2,12 +2,12 @@ import * as React from "react";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import SearchIcon from "@/components/ui/Icons/Search";
-import XMarkIcon from "@/components/ui/Icons/XMark";
+import { IconSearch, IconX } from "@tabler/icons-react";
+import { ActionIcon, Modal, Stack, Group, Box, Title, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { useDebounce } from "@/utils/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { useAddCollectionItem } from "../hooks/useCollectionQueries";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 
 interface AddGameToCollectionModalProps {
   onClose: () => void;
@@ -18,7 +18,6 @@ export default function AddGameToCollectionModal({
   onClose,
   collectionId,
 }: Readonly<AddGameToCollectionModalProps>): React.JSX.Element {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
   const [search, setSearch] = React.useState<string>("");
   const debouncedSearch = useDebounce(search, 300);
 
@@ -28,34 +27,6 @@ export default function AddGameToCollectionModal({
   );
 
   const { mutate: addItem, isPending: isAdding } = useAddCollectionItem();
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) {
-      dialog.showModal();
-    }
-  }, []);
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    const handleClick = (e: MouseEvent) => {
-      const rect = dialog.getBoundingClientRect();
-      const isInDialog =
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width;
-
-      if (!isInDialog) {
-        onClose();
-      }
-    };
-
-    dialog.addEventListener("click", handleClick);
-    return () => dialog.removeEventListener("click", handleClick);
-  }, [onClose]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -69,11 +40,11 @@ export default function AddGameToCollectionModal({
       },
       {
         onSuccess: () => {
-          toast.success(`Added ${game.title} to collection`);
+          notifications.show({ title: "Success", message: `Added ${game.title} to collection`, color: "green" });
           // Kept open for multiple adds as per user request
         },
         onError: error => {
-          toast.error(error.message || "Failed to add game");
+          notifications.show({ title: "Error", message: error.message || "Failed to add game", color: "red" });
         },
       },
     );
@@ -81,103 +52,155 @@ export default function AddGameToCollectionModal({
 
   const renderContent = () => {
     if (isSearchLoading) {
-      return <div className="py-12 text-center text-text-400 animate-pulse font-medium">Searching our library...</div>;
+      return (
+        <Text
+          py={48}
+          ta="center"
+          c="var(--color-text-400)"
+          fw={500}
+          style={{ animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite" }}
+        >
+          Searching our library...
+        </Text>
+      );
     }
 
     if (search.length > 1 && gamesDetails?.results) {
       if (gamesDetails.results.length === 0) {
         return (
-          <div className="py-12 text-center text-text-400 font-medium">
+          <Text py={48} ta="center" c="var(--color-text-400)" fw={500}>
             No games found matching &quot;{search}&quot;
-          </div>
+          </Text>
         );
       }
 
       return (
-        <div className="flex flex-col gap-2">
+        <Stack gap={8}>
           {gamesDetails.results.map(game => (
-            <button
+            <UnstyledButton
               key={game.id}
               onClick={() => handleAddGame(game)}
               disabled={isAdding}
-              className="flex items-center gap-4 p-3 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all duration-200 group text-left w-full border border-transparent hover:border-primary-100"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1px solid transparent",
+                width: "100%",
+                textAlign: "left",
+                transition: "all 200ms",
+              }}
             >
-              <div className="relative w-12 h-16 rounded-lg overflow-hidden shadow-sm shrink-0 bg-background-200">
+              <Box
+                style={{
+                  position: "relative",
+                  width: 48,
+                  height: 64,
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                  flexShrink: 0,
+                  background: "var(--color-background-200)",
+                }}
+              >
                 <SafeImage
                   src={
                     game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90) : undefined
                   }
                   alt={game.title}
-                  className="w-full h-full object-cover"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
-              </div>
-              <div className="flex flex-col flex-1">
-                <span className="font-bold text-text-900 group-hover:text-primary-700 transition-colors">
+              </Box>
+              <Stack gap={2} style={{ flex: 1 }}>
+                <Text span fw={700} c="var(--color-text-900)">
                   {game.title}
-                </span>
+                </Text>
                 {game.release_date && (
-                  <span className="text-xs text-text-500 font-medium tracking-wide">
+                  <Text span fz="xs" c="var(--color-text-500)" fw={500} style={{ letterSpacing: "0.05em" }}>
                     {new Date(game.release_date).getFullYear()}
-                  </span>
+                  </Text>
                 )}
-              </div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity text-primary-600 font-bold text-sm bg-primary-100 px-3 py-1 rounded-full">
+              </Stack>
+              <Box
+                style={{
+                  color: "var(--color-primary-600)",
+                  fontWeight: 700,
+                  fontSize: "14px",
+                  background: "var(--color-primary-100)",
+                  padding: "4px 12px",
+                  borderRadius: "9999px",
+                }}
+              >
                 Add
-              </div>
-            </button>
+              </Box>
+            </UnstyledButton>
           ))}
-        </div>
+        </Stack>
       );
     }
 
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-text-400 gap-4">
-        <SearchIcon className="w-12 h-12 opacity-20" />
-        <p className="font-medium">Type to search for games</p>
-      </div>
+      <Stack align="center" justify="center" gap={16} py={48} c="var(--color-text-400)">
+        <IconSearch style={{ width: 48, height: 48, opacity: 0.2 }} />
+        <Text fw={500}>Type to search for games</Text>
+      </Stack>
     );
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="bg-white rounded-3xl p-0 border-none shadow-2xl backdrop:bg-black/60 outline-none m-auto w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-300"
-      onCancel={onClose}
+    <Modal
+      opened={true}
+      onClose={onClose}
+      withCloseButton={false}
+      padding={0}
+      radius="xl"
+      size="lg"
+      overlayProps={{ backgroundOpacity: 0.6 }}
     >
-      <div className="flex flex-col h-full max-h-[90vh]">
+      <Stack gap={0} style={{ height: "100%", maxHeight: "90vh" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-background-100 bg-background-50/50">
-          <h2 className="text-2xl font-black text-text-900 tracking-tight">
-            Add <span className="text-primary-600">Game</span>
-          </h2>
-          <button
+        <Group
+          justify="space-between"
+          style={{
+            padding: "24px 32px",
+            borderBottom: "1px solid var(--color-background-100)",
+            background: "rgba(248,250,252,0.5)",
+          }}
+        >
+          <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
+            Add{" "}
+            <Text span c="var(--color-primary-600)">
+              Game
+            </Text>
+          </Title>
+          <ActionIcon
             onClick={onClose}
-            className="p-2 hover:bg-background-200 rounded-full transition-colors text-text-400 hover:text-text-900"
+            variant="subtle"
+            size="lg"
+            style={{ borderRadius: "9999px", color: "var(--color-text-400)" }}
           >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
+            <IconX style={{ width: 24, height: 24 }} />
+          </ActionIcon>
+        </Group>
 
         {/* Search Input Area */}
-        <div className="p-8 pb-4">
-          <div className="relative group">
-            <input
-              type="text"
-              placeholder="Search for a game to add..."
-              className="w-full bg-background-50 border border-background-200 text-text-900 placeholder:text-text-400 rounded-xl py-4 pl-12 pr-4 focus:outline-hidden focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all font-medium text-lg"
-              autoComplete="off"
-              onChange={handleInputChange}
-              value={search}
-            />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-              <SearchIcon className="w-6 h-6 text-text-400 group-focus-within:text-primary-500 transition-colors" />
-            </div>
-          </div>
-        </div>
+        <Box p={32} pb={16}>
+          <TextInput
+            placeholder="Search for a game to add..."
+            leftSection={<IconSearch style={{ width: 24, height: 24, color: "var(--color-text-400)" }} />}
+            autoComplete="off"
+            size="lg"
+            onChange={handleInputChange}
+            value={search}
+            style={{ width: "100%" }}
+          />
+        </Box>
 
         {/* Results List */}
-        <div className="flex-1 overflow-y-auto px-8 pb-8">{renderContent()}</div>
-      </div>
-    </dialog>
+        <Box style={{ flex: 1, overflowY: "auto", padding: "0 32px 32px" }}>{renderContent()}</Box>
+      </Stack>
+    </Modal>
   );
 }

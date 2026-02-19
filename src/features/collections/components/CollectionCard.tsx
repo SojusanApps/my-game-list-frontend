@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Collection, TypeEnum } from "@/client";
-import { cn } from "@/utils/cn";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
+import { Stack, Group, Box, Title, Text } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 
 interface CollectionCardProps {
-  className?: string;
   collection: Collection;
 }
 
@@ -19,41 +19,56 @@ const HeartIcon = ({ filled }: { filled?: boolean }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className={cn("w-5 h-5", filled ? "text-red-500" : "text-text-400")}
+    style={{ width: 20, height: 20, color: filled ? "#ef4444" : "var(--color-text-400)" }}
   >
     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.505 4.04 3 5.5L12 21l7-7Z" />
   </svg>
 );
 
-export default function CollectionCard({ className, collection }: Readonly<CollectionCardProps>) {
+export default function CollectionCard({ collection }: Readonly<CollectionCardProps>) {
+  const { hovered, ref } = useHover<HTMLDivElement>();
   const images = collection.items_cover_image_ids || [];
   const deckLimit = 5;
 
-  const visibilityClasses = React.useMemo(() => {
-    if (collection.visibility === "PUB") {
-      return "bg-success/10 text-success-600 border-success/10";
-    }
-    if (collection.visibility === "FRI") {
-      return "bg-primary/10 text-primary-600 border-primary/10";
-    }
-    return "bg-neutral/10 text-neutral-600 border-neutral-100";
+  const visibilityStyle = React.useMemo((): React.CSSProperties => {
+    if (collection.visibility === "PUB")
+      return {
+        background: "rgba(16,185,129,0.1)",
+        color: "var(--color-success-600)",
+        border: "1px solid rgba(16,185,129,0.1)",
+      };
+    if (collection.visibility === "FRI")
+      return {
+        background: "rgba(99,102,241,0.1)",
+        color: "var(--color-primary-600)",
+        border: "1px solid rgba(99,102,241,0.1)",
+      };
+    return {
+      background: "rgba(100,116,139,0.1)",
+      color: "var(--color-text-500)",
+      border: "1px solid var(--color-background-300)",
+    };
   }, [collection.visibility]);
 
-  const modeClasses = React.useMemo(() => {
+  const modeStyle = React.useMemo((): React.CSSProperties => {
     return collection.mode === "S"
-      ? "bg-secondary/10 text-secondary-600 border-secondary/10"
-      : "bg-warning/10 text-warning-700 border-warning/10";
+      ? {
+          background: "rgba(249,115,22,0.1)",
+          color: "var(--color-secondary-600)",
+          border: "1px solid rgba(249,115,22,0.1)",
+        }
+      : { background: "rgba(234,179,8,0.1)", color: "#a16207", border: "1px solid rgba(234,179,8,0.1)" };
   }, [collection.mode]);
 
-  const typeClasses = React.useMemo(() => {
+  const typeStyle = React.useMemo((): React.CSSProperties => {
     switch (collection.type) {
       case TypeEnum.RNK:
-        return "bg-amber-100 text-amber-700 border-amber-200";
+        return { background: "#fef3c7", color: "#b45309", border: "1px solid #fde68a" };
       case TypeEnum.TIE:
-        return "bg-purple-100 text-purple-700 border-purple-200";
+        return { background: "#f3e8ff", color: "#7e22ce", border: "1px solid #e9d5ff" };
       case TypeEnum.NOR:
       default:
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return { background: "#dbeafe", color: "#1d4ed8", border: "1px solid #bfdbfe" };
     }
   }, [collection.type]);
 
@@ -69,113 +84,164 @@ export default function CollectionCard({ className, collection }: Readonly<Colle
     }
   }, [collection.type]);
 
+  const badgeStyle: React.CSSProperties = {
+    padding: "2px 10px",
+    borderRadius: "9999px",
+    fontSize: "10px",
+    fontWeight: 900,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+  };
+
   return (
-    <div className={cn("group relative flex flex-col items-center pt-8", className)}>
+    <Stack ref={ref} align="center" pt={32} style={{ position: "relative" }}>
       {/* Deck View (Sits on top) */}
       <Link
         to={`/collection/${collection.id}`}
-        className="relative w-[75%] aspect-3/4 -mb-10 z-10 transition-transform duration-500 ease-out group-hover:-translate-y-4"
+        style={{
+          position: "relative",
+          width: "75%",
+          aspectRatio: "3/4",
+          marginBottom: "-40px",
+          zIndex: 10,
+          transition: "transform 500ms ease-out",
+          transform: hovered ? "translateY(-16px)" : "translateY(0)",
+          display: "block",
+        }}
       >
         {images.length === 0 ? (
-          <div className="w-full h-full rounded-2xl bg-background-100 flex items-center justify-center border-2 border-dashed border-background-300 shadow-sm">
-            <span className="text-text-400 text-[10px] font-bold uppercase tracking-widest">Empty</span>
-          </div>
+          <Box
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "16px",
+              background: "var(--color-background-100)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "2px dashed var(--color-background-300)",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            }}
+          >
+            <Text span fz={10} fw={900} c="var(--color-text-400)" tt="uppercase" style={{ letterSpacing: "0.1em" }}>
+              Empty
+            </Text>
+          </Box>
         ) : (
           images
             .slice(0, deckLimit)
             .reverse()
             .map((hash, index) => {
               const total = Math.min(images.length, deckLimit);
-              const pos = total - 1 - index; // 0 is topmost
+              const pos = total - 1 - index;
               return (
-                <div
+                <Box
                   key={`${collection.id}-preview-${hash}-${pos}`}
-                  className="absolute inset-0 rounded-xl overflow-hidden shadow-lg border border-white/40 transition-all duration-500 ease-out"
                   style={{
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: "0 10px 15px rgba(0,0,0,0.1)",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    transition: "all 500ms ease-out",
                     zIndex: index,
-                    transform: `
-                        translateX(${pos * 14}px)
-                        translateY(${pos * -8}px)
-                        rotate(${pos * 4}deg)
-                      `,
+                    transform: `translateX(${pos * 14}px) translateY(${pos * -8}px) rotate(${pos * 4}deg)`,
                   }}
                 >
                   <SafeImage
                     src={getIGDBImageURL(hash ?? "", IGDBImageSize.COVER_BIG_264_374)}
                     alt={`Game ${pos + 1}`}
-                    className="w-full h-full object-cover"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
-                </div>
+                </Box>
               );
             })
         )}
 
-        {/* Favorite Badge (Floating on deck top-right) */}
+        {/* Favorite Badge */}
         {collection.is_favorite && (
-          <div className="absolute -top-2 -right-2 z-20 p-1.5 rounded-full bg-white shadow-md border border-background-100">
+          <Box
+            style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-8px",
+              zIndex: 20,
+              padding: "6px",
+              borderRadius: "9999px",
+              background: "white",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              border: "1px solid var(--color-background-100)",
+            }}
+          >
             <HeartIcon filled />
-          </div>
+          </Box>
         )}
       </Link>
 
       {/* Info Card (Base) */}
-      <div className="w-full flex flex-col pt-12 pb-5 px-5 rounded-3xl bg-white border border-background-200 shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:border-primary-100 relative z-0">
-        <div className="flex flex-col gap-1.5 text-center">
-          <Link to={`/collection/${collection.id}`} className="block">
-            <h3
-              className="text-lg font-black text-text-900 group-hover:text-primary-600 transition-colors line-clamp-1"
+      <Box
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          paddingTop: "48px",
+          paddingBottom: "20px",
+          paddingInline: "20px",
+          borderRadius: "24px",
+          background: "white",
+          border: `1px solid ${hovered ? "var(--color-primary-100)" : "var(--color-background-200)"}`,
+          boxShadow: hovered ? "0 20px 25px rgba(0,0,0,0.1)" : "0 1px 3px rgba(0,0,0,0.06)",
+          transition: "all 500ms",
+          position: "relative",
+          zIndex: 0,
+        }}
+      >
+        <Stack align="center" gap={6} style={{ textAlign: "center" }}>
+          <Link to={`/collection/${collection.id}`} style={{ display: "block" }}>
+            <Title
+              order={3}
+              fz="lg"
+              fw={900}
+              c={hovered ? "var(--color-primary-600)" : "var(--color-text-900)"}
+              style={{
+                overflow: "hidden",
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                transition: "color 200ms",
+              }}
               title={collection.name}
             >
               {collection.name}
-            </h3>
+            </Title>
           </Link>
 
-          <div className="flex flex-col gap-2 items-center justify-center">
-            <div className="text-xs font-medium text-text-500">
+          <Stack align="center" justify="center" gap={8}>
+            <Text size="xs" fw={500} c="var(--color-text-500)">
               by{" "}
-              <Link
-                to={`/profile/${collection.user.id}`}
-                className="font-bold text-text-700 hover:text-primary-600 transition-colors"
-              >
+              <Link to={`/profile/${collection.user.id}`} style={{ fontWeight: 700, color: "var(--color-text-700)" }}>
                 {collection.user.username}
               </Link>
-            </div>
+            </Text>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 mt-1">
-              <span
-                className={cn(
-                  "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
-                  visibilityClasses,
-                )}
-              >
+            <Group wrap="wrap" justify="center" gap={8} mt={4}>
+              <Text span style={{ ...badgeStyle, ...visibilityStyle }}>
                 {collection.visibility_display}
-              </span>
-
-              <span
-                className={cn(
-                  "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
-                  modeClasses,
-                )}
-              >
+              </Text>
+              <Text span style={{ ...badgeStyle, ...modeStyle }}>
                 {collection.mode_display}
-              </span>
-
-              <span
-                className={cn(
-                  "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border",
-                  typeClasses,
-                )}
-              >
+              </Text>
+              <Text span style={{ ...badgeStyle, ...typeStyle }}>
                 {typeDisplay}
-              </span>
-
-              <span className="text-xs font-black text-text-700">
+              </Text>
+              <Text span fz="xs" fw={900} c="var(--color-text-700)">
                 {collection.items_count} {collection.items_count === 1 ? "Game" : "Games"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </Text>
+            </Group>
+          </Stack>
+        </Stack>
+      </Box>
+    </Stack>
   );
 }

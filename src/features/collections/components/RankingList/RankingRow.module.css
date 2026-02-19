@@ -1,0 +1,14 @@
+.rankingRow .rankingRowRemove {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.rankingRow:hover .rankingRowRemove {
+  opacity: 1;
+}
+.rankingRow .rankingRowDrag {
+  opacity: 0.3;
+  transition: opacity 200ms;
+}
+.rankingRow:hover .rankingRowDrag {
+  opacity: 1;
+}

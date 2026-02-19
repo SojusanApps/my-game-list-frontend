@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { cn } from "@/utils/cn";
-import { Skeleton } from "./Skeleton";
+import { Box, Skeleton } from "@mantine/core";
 import { ImageFallback } from "./ImageFallback";
 
 interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: React.ReactNode;
   loader?: React.ReactNode;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  containerStyle?: React.CSSProperties;
 }
 
 export function SafeImage({
@@ -16,6 +16,7 @@ export function SafeImage({
   fallback = <ImageFallback />,
   loader,
   objectFit = "cover",
+  containerStyle,
   ...props
 }: Readonly<SafeImageProps>) {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,35 +52,32 @@ export function SafeImage({
 
   const showFallback = isError || !src;
 
-  const objectFitClass = {
-    cover: "object-cover",
-    contain: "object-contain",
-    fill: "object-fill",
-    none: "object-none",
-    "scale-down": "object-scale-down",
-  }[objectFit];
-
   return (
-    <div className={cn("relative overflow-hidden", className)}>
-      {isLoading && (loader || <Skeleton className="absolute inset-0 w-full h-full z-10" />)}
+    <Box pos="relative" style={{ overflow: "hidden", ...containerStyle }} className={className}>
+      {isLoading &&
+        (loader || <Skeleton style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 10 }} />)}
 
       {showFallback ? (
-        <div className="w-full h-full">{fallback}</div>
+        <Box w="100%" h="100%">
+          {fallback}
+        </Box>
       ) : (
         <img
           ref={imgRef}
           src={src}
           alt={alt}
-          className={cn(
-            "w-full h-full transition-opacity duration-300",
-            objectFitClass,
-            isLoading ? "opacity-0" : "opacity-100",
-          )}
+          style={{
+            width: "100%",
+            height: "100%",
+            transition: "opacity 300ms",
+            objectFit: objectFit,
+            opacity: isLoading ? 0 : 1,
+          }}
           onLoad={handleLoad}
           onError={handleError}
           {...props}
         />
       )}
-    </div>
+    </Box>
   );
 }

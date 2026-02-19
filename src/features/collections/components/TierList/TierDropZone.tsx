@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box } from "@mantine/core";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { cn } from "@/utils/cn";
 
@@ -66,7 +67,7 @@ export const TierDropZone = React.memo(function TierDropZone({
   }, [tierId, isEmpty, isOwner, onItemMove]);
 
   return (
-    <div
+    <Box
       ref={dropRef}
       className={cn(
         "bg-background-50 rounded-xl border border-background-200 overflow-hidden transition-colors",
@@ -74,6 +75,6 @@ export const TierDropZone = React.memo(function TierDropZone({
       )}
     >
       {children}
-    </div>
+    </Box>
   );
 });

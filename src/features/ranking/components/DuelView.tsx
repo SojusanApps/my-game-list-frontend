@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Group, Kbd, Stack, Text } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
 import { DuelGameCard } from "./DuelGameCard";
 import type { CurrentDuel, DuelChoice } from "../types";
@@ -46,50 +47,75 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
   }, [onChoice, onSkip]);
 
   return (
-    <div className="flex flex-col items-center gap-8 animate-in fade-in duration-300">
+    <Stack align="center" gap={32} className="animate-in fade-in duration-300">
       {/* Cards */}
-      <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 w-full justify-center">
+      <Group align="center" gap={32} wrap="wrap" justify="center" className="w-full">
         <DuelGameCard item={duel.itemA} side="left" onClick={() => onChoice("A")} />
 
         {/* VS divider */}
-        <div className="flex items-center justify-center">
-          <div className="flex items-center justify-center w-14 h-14 rounded-full bg-background-50 border-2 border-background-200 shadow-inner">
-            <span className="text-xl font-black text-text-400 tracking-tighter">VS</span>
-          </div>
-        </div>
+        <Group justify="center" align="center">
+          <Box className="flex items-center justify-center w-14 h-14 rounded-full bg-background-50 border-2 border-background-200 shadow-inner">
+            <Text component="span" className="text-xl font-black text-text-400 tracking-tighter">
+              VS
+            </Text>
+          </Box>
+        </Group>
 
         <DuelGameCard item={duel.itemB} side="right" onClick={() => onChoice("B")} />
-      </div>
+      </Group>
 
       {/* Action buttons */}
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex items-center gap-3">
+      <Stack align="center" gap={16}>
+        <Group gap={12}>
           <Button onClick={() => onChoice("A")} className="font-bold uppercase tracking-wider px-8">
-            <span>Choose Left</span>{" "}
-            <kbd className="ml-2 text-[10px] opacity-60 bg-white/20 px-1.5 py-0.5 rounded">←</kbd>
+            <Text component="span">Choose Left</Text>{" "}
+            <Kbd size="xs" className="ml-2 opacity-60 bg-white/20">
+              ←
+            </Kbd>
           </Button>
           <Button onClick={() => onChoice("tie")} variant="outline" className="font-bold uppercase tracking-wider px-6">
-            <span>Tie</span>{" "}
-            <kbd className="ml-2 text-[10px] opacity-60 bg-background-100 px-1.5 py-0.5 rounded">Enter</kbd>
+            <Text component="span">Tie</Text>{" "}
+            <Kbd size="xs" className="ml-2 opacity-60">
+              Enter
+            </Kbd>
           </Button>
           <Button onClick={() => onChoice("B")} className="font-bold uppercase tracking-wider px-8">
-            <span>Choose Right</span>{" "}
-            <kbd className="ml-2 text-[10px] opacity-60 bg-white/20 px-1.5 py-0.5 rounded">→</kbd>
+            <Text component="span">Choose Right</Text>{" "}
+            <Kbd size="xs" className="ml-2 opacity-60 bg-white/20">
+              →
+            </Kbd>
           </Button>
-        </div>
+        </Group>
 
         <Button onClick={onSkip} variant="ghost" size="sm" className="text-text-400">
-          <span>Skip this pair</span>{" "}
-          <kbd className="ml-1 text-[10px] opacity-60 bg-background-100 px-1.5 py-0.5 rounded">S</kbd>
+          <Text component="span">Skip this pair</Text>{" "}
+          <Kbd size="xs" className="ml-1 opacity-60">
+            S
+          </Kbd>
         </Button>
-      </div>
+      </Stack>
 
       {/* Keyboard hint */}
-      <p className="text-xs text-text-400 text-center">
-        Use keyboard: <strong>← / 1</strong> left &middot; <strong>→ / 2</strong> right &middot;{" "}
-        <strong>Enter / 3</strong> tie &middot; <strong>S</strong> skip
-      </p>
-    </div>
+      <Text size="xs" className="text-text-400 text-center">
+        Use keyboard:{" "}
+        <Text component="span" fw={700}>
+          ← / 1
+        </Text>{" "}
+        left &middot;{" "}
+        <Text component="span" fw={700}>
+          → / 2
+        </Text>{" "}
+        right &middot;{" "}
+        <Text component="span" fw={700}>
+          Enter / 3
+        </Text>{" "}
+        tie &middot;{" "}
+        <Text component="span" fw={700}>
+          S
+        </Text>{" "}
+        skip
+      </Text>
+    </Stack>
   );
 });
 

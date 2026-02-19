@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, SimpleGrid, UnstyledButton } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { Game } from "@/client";
@@ -13,11 +14,11 @@ export default function GameDetailsScreenshotsTab({
   onScreenshotClick,
 }: Readonly<GameDetailsScreenshotsTabProps>) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 p-6 animate-in fade-in duration-300">
+    <Box className="bg-white rounded-xl shadow-sm border border-background-200 p-6 animate-in fade-in duration-300">
       {gameDetails?.screenshots && gameDetails.screenshots.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing={16}>
           {gameDetails.screenshots.map((screenshot, index) => (
-            <button
+            <UnstyledButton
               key={screenshot || index}
               onClick={() => onScreenshotClick(screenshot)}
               className="rounded-lg overflow-hidden shadow-md group cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-primary-500"
@@ -27,12 +28,12 @@ export default function GameDetailsScreenshotsTab({
                 src={getIGDBImageURL(screenshot, IGDBImageSize.SCREENSHOT_MED_569_320)}
                 alt={`${gameDetails.title} screenshot ${index + 1}`}
               />
-            </button>
+            </UnstyledButton>
           ))}
-        </div>
+        </SimpleGrid>
       ) : (
-        <div className="text-center text-text-500 italic py-8">No screenshots available.</div>
+        <Box className="text-center text-text-500 italic py-8">No screenshots available.</Box>
       )}
-    </div>
+    </Box>
   );
 }

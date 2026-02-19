@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@/utils/cn";
+import { SimpleGrid } from "@mantine/core";
 
 interface GridListProps {
   children: React.ReactNode;
@@ -8,27 +8,24 @@ interface GridListProps {
 }
 
 export function GridList({ children, className, columnCount = 7 }: Readonly<GridListProps>) {
+  const getCols = () => {
+    switch (columnCount) {
+      case 7:
+        return { base: 2, sm: 3, md: 4, lg: 5, xl: 7 } as const;
+      case 5:
+        return { base: 2, sm: 3, md: 4, xl: 5 } as const;
+      case 4:
+        return { base: 1, sm: 2, md: 3, lg: 4 } as const;
+      case 8:
+        return { base: 2, sm: 3, md: 4, lg: 6, xl: 8 } as const;
+      default:
+        return { base: columnCount } as const;
+    }
+  };
+
   return (
-    <div
-      className={cn(
-        "grid gap-6",
-        {
-          "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7": columnCount === 7,
-          "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4": columnCount === 4,
-          "grid-cols-2": columnCount === 2,
-          "grid-cols-3": columnCount === 3,
-          "grid-cols-5": columnCount === 5,
-          "grid-cols-8": columnCount === 8,
-        },
-        className,
-      )}
-      style={
-        [2, 3, 4, 5, 7, 8].includes(columnCount)
-          ? {}
-          : { gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }
-      }
-    >
+    <SimpleGrid cols={getCols()} spacing="md" className={className}>
       {children}
-    </div>
+    </SimpleGrid>
   );
 }

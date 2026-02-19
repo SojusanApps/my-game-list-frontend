@@ -1,0 +1,15 @@
+.collectionItem {
+  position: relative;
+  width: 100%;
+}
+.collectionItem .collectionItemDelete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 30;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.collectionItem:hover .collectionItemDelete {
+  opacity: 1;
+}

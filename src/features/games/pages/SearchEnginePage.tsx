@@ -21,12 +21,10 @@ import {
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Accordion, Box, Group, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { GridList } from "@/components/ui/GridList";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
-import { cn } from "@/utils/cn";
-import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
-import SearchIcon from "@/components/ui/Icons/Search";
+import { IconSearch } from "@tabler/icons-react";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameSimpleListList | PaginatedUserList | undefined;
 
@@ -49,7 +47,7 @@ function DisplaySearchResults({
   isFetchingNextPage: boolean;
 }>): React.JSX.Element {
   if (searchResults === undefined || searchResults.pages.length === 0) {
-    return <p>No results</p>;
+    return <Text>No results</Text>;
   }
 
   const allItems = searchResults.pages
@@ -64,7 +62,6 @@ function DisplaySearchResults({
         return (
           <ItemOverlay
             key={game.id}
-            className="w-full"
             name={game.title}
             itemPageUrl={`/game/${game.id}`}
             itemCoverUrl={
@@ -81,7 +78,6 @@ function DisplaySearchResults({
         return (
           <ItemOverlay
             key={company.id}
-            className="w-full"
             variant="logo"
             name={company.name}
             itemPageUrl={`/company/${company.id}`}
@@ -96,7 +92,6 @@ function DisplaySearchResults({
         return (
           <ItemOverlay
             key={user.id}
-            className="w-full"
             name={user.username}
             itemPageUrl={`/profile/${user.id}`}
             itemCoverUrl={user.gravatar_url}
@@ -120,7 +115,6 @@ function DisplaySearchResults({
       fetchNextPage={fetchNextPage}
       columnCount={columnCount}
       rowHeight={rowHeight}
-      className="h-200"
     />
   );
 }
@@ -128,7 +122,7 @@ function DisplaySearchResults({
 export default function SearchEnginePage(): React.JSX.Element {
   const [selectedCategory, setSelectedCategory] = React.useState<SearchCategory | null>("games");
   const [filters, setFilters] = React.useState<object>({});
-  const [isFiltersExpanded, setIsFiltersExpanded] = React.useState(true);
+  const [filtersOpen, setFiltersOpen] = React.useState<string | null>("filters");
   const [hasSearched, setHasSearched] = React.useState(false);
 
   const {
@@ -153,8 +147,8 @@ export default function SearchEnginePage(): React.JSX.Element {
 
     setFilters(filterData);
     setHasSearched(true);
-    // Optionally collapse filters on search to show more results
-    setIsFiltersExpanded(false);
+    // Collapse filters on search to show more results
+    setFiltersOpen(null);
   };
 
   const categories = [
@@ -166,27 +160,53 @@ export default function SearchEnginePage(): React.JSX.Element {
   const renderSearchContent = () => {
     if (!hasSearched) {
       return (
-        <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-6 ring-8 ring-primary-50/50">
-            <SearchIcon className="w-10 h-10 text-primary-500" />
-          </div>
-          <h3 className="text-2xl font-bold text-text-900 mb-2">Ready to explore?</h3>
-          <p className="text-text-500 max-w-sm mx-auto">
-            Adjust the filters above and click the button to search for your favorite {selectedCategory}.
-          </p>
-        </div>
+        <Stack
+          align="center"
+          justify="center"
+          gap={24}
+          style={{
+            paddingBlock: "80px",
+            textAlign: "center",
+          }}
+        >
+          <Box
+            style={{
+              width: "80px",
+              height: "80px",
+              background: "var(--mantine-color-primary-0)",
+              borderRadius: "9999px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <IconSearch style={{ width: 40, height: 40, color: "var(--mantine-color-primary-5)" }} />
+          </Box>
+          <Stack gap={8}>
+            <Title order={3} fz={24} fw={700} c="var(--color-text-900)">
+              Ready to explore?
+            </Title>
+            <Text c="var(--color-text-500)" maw={384} mx="auto">
+              Adjust the filters above and click the button to search for your favorite {selectedCategory}.
+            </Text>
+          </Stack>
+        </Stack>
       );
     }
 
     if (isLoading && !isFetchingNextPage) {
       return (
-        <GridList className={cn(selectedCategory === "companies" ? "xl:grid-cols-5" : "xl:grid-cols-7")}>
+        <GridList columnCount={selectedCategory === "companies" ? 5 : 7}>
           {Array.from({ length: 21 }).map((_, i) => {
             const skeletonKey = `search-skeleton-${i}`;
             return (
               <Skeleton
                 key={skeletonKey}
-                className={cn("w-full rounded-xl", selectedCategory === "companies" ? "aspect-3/2" : "aspect-264/374")}
+                style={{
+                  width: "100%",
+                  borderRadius: "12px",
+                  aspectRatio: selectedCategory === "companies" ? "3/2" : "264/374",
+                }}
               />
             );
           })}
@@ -207,90 +227,128 @@ export default function SearchEnginePage(): React.JSX.Element {
     }
 
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-text-400">
-        <p className="text-lg font-medium">No results found for your search.</p>
-      </div>
+      <Stack align="center" justify="center" c="var(--color-text-400)" style={{ paddingBlock: "80px" }}>
+        <Text size="lg" fw={500}>
+          No results found for your search.
+        </Text>
+      </Stack>
     );
   };
 
   return (
-    <div className="py-12 min-h-screen">
+    <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title="Search Engine" />
-      <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
-        <div className="flex flex-col items-center gap-6">
-          <h1 className="text-4xl font-bold text-text-900 tracking-tight">Search Engine</h1>
+      <Stack gap={40} maw={1280} mx="auto" px={16}>
+        <Stack align="center" gap={24}>
+          <Title fz={36} fw={700} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
+            Search Engine
+          </Title>
 
-          <div className="flex p-1 bg-background-300 rounded-xl">
+          <Group gap={4} p={4} style={{ background: "var(--color-background-300)", borderRadius: "12px" }}>
             {categories.map(cat => (
-              <button
+              <UnstyledButton
                 key={cat.id}
                 onClick={() => {
                   setSelectedCategory(cat.id);
                   setHasSearched(false);
-                  setIsFiltersExpanded(true);
+                  setFiltersOpen("filters");
                 }}
-                className={cn(
-                  "px-8 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200",
-                  selectedCategory === cat.id
-                    ? "bg-white text-primary-600 shadow-sm"
-                    : "text-text-600 hover:text-text-900",
-                )}
+                style={{
+                  padding: "10px 32px",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  borderRadius: "8px",
+                  transition: "all 200ms",
+                  ...(selectedCategory === cat.id
+                    ? {
+                        background: "white",
+                        color: "var(--mantine-color-primary-6)",
+                        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                      }
+                    : { background: "transparent", color: "var(--color-text-600)" }),
+                }}
               >
                 {cat.label}
-              </button>
+              </UnstyledButton>
             ))}
-          </div>
-        </div>
+          </Group>
+        </Stack>
 
-        <div
-          className={cn(
-            "bg-white rounded-2xl shadow-sm border border-background-200 transition-all duration-300",
-            !isFiltersExpanded && "overflow-hidden",
-          )}
+        <Accordion
+          value={filtersOpen}
+          onChange={setFiltersOpen}
+          styles={{
+            root: {
+              background: "white",
+              borderRadius: "16px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              border: "1px solid var(--color-background-200)",
+            },
+            item: { border: "none" },
+            control: { padding: "16px 24px" },
+            chevron: { color: "var(--color-text-400)" },
+            label: { padding: 0 },
+          }}
         >
-          <button
-            onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
-            className="w-full flex items-center justify-between p-6 hover:bg-background-50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-1 h-6 bg-primary-600 rounded-full" />
-              <h2 className="font-bold text-xl text-text-900">Filters</h2>
-            </div>
-            <ChevronDownIcon
-              className={cn(
-                "w-5 h-5 text-text-400 transition-transform duration-300",
-                isFiltersExpanded && "rotate-180",
+          <Accordion.Item value="filters">
+            <Accordion.Control>
+              <Group gap={12}>
+                <Box
+                  style={{
+                    width: "4px",
+                    height: "24px",
+                    background: "var(--mantine-color-primary-6)",
+                    borderRadius: "9999px",
+                  }}
+                />
+                <Text fw={700} fz="xl" c="var(--color-text-900)">
+                  Filters
+                </Text>
+              </Group>
+            </Accordion.Control>
+            <Accordion.Panel px="lg" pb="lg">
+              {selectedCategory === "games" && (
+                <GameSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
               )}
-            />
-          </button>
+              {selectedCategory === "companies" && (
+                <CompanySearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
+              )}
+              {selectedCategory === "users" && (
+                <UserSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
+              )}
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
 
-          <div
-            className={cn(
-              "px-8 pb-8 transition-all duration-300 ease-in-out",
-              isFiltersExpanded ? "max-h-250 opacity-100 overflow-visible" : "max-h-0 opacity-0 overflow-hidden",
-            )}
-          >
-            {selectedCategory === "games" && (
-              <GameSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-            )}
-            {selectedCategory === "companies" && (
-              <CompanySearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-            )}
-            {selectedCategory === "users" && (
-              <UserSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-8 min-h-212.5 relative">
+        <Box
+          style={{
+            background: "white",
+            borderRadius: "16px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            border: "1px solid var(--color-background-200)",
+            padding: "32px",
+            minHeight: "850px",
+            position: "relative",
+          }}
+        >
           {renderSearchContent()}
           {errorFetchingData && (
-            <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
-              <p className="text-error-600 text-center font-medium">Error: {errorFetchingData.message}</p>
-            </div>
+            <Box
+              style={{
+                background: "var(--color-error-50)",
+                border: "1px solid var(--color-error-200)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginTop: "16px",
+              }}
+            >
+              <Text ta="center" fw={500} c="var(--color-error-600)">
+                Error: {errorFetchingData.message}
+              </Text>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Stack>
+    </Box>
   );
 }

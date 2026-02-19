@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box } from "@mantine/core";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import {
@@ -10,7 +11,6 @@ import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indi
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { GameCard } from "./GameCard";
-import { cn } from "@/utils/cn";
 
 interface SortableGameCardProps {
   id: string;
@@ -19,7 +19,6 @@ interface SortableGameCardProps {
   title: string;
   coverImageId?: string | null;
   description?: string;
-  className?: string;
   onRemove?: () => void;
   onDescriptionChange?: (description: string) => void;
   isOwner: boolean;
@@ -27,19 +26,8 @@ interface SortableGameCardProps {
 }
 
 export const SortableGameCard = React.memo(function SortableGameCard(props: SortableGameCardProps) {
-  const {
-    id,
-    tierId,
-    index,
-    title,
-    coverImageId,
-    description,
-    className,
-    onRemove,
-    onDescriptionChange,
-    isOwner,
-    onReorder,
-  } = props;
+  const { id, tierId, index, title, coverImageId, description, onRemove, onDescriptionChange, isOwner, onReorder } =
+    props;
   const dragRef = React.useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = React.useState(false);
   const [closestEdge, setClosestEdge] = React.useState<Edge | null>(null);
@@ -132,15 +120,16 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
     );
   }, [id, tierId, index, isOwner, onReorder, title]);
 
+  const draggingCursor = isDragging ? "grabbing" : "grab";
+
   return (
-    <div
+    <Box
       ref={dragRef}
-      className={cn(
-        "cursor-grab active:cursor-grabbing relative",
-        className,
-        isDragging && "opacity-30",
-        !isOwner && "cursor-default",
-      )}
+      style={{
+        cursor: isOwner ? draggingCursor : "default",
+        opacity: isDragging ? 0.3 : 1,
+        position: "relative",
+      }}
     >
       <GameCard
         title={title}
@@ -152,14 +141,14 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
       />
       {/* Show placeholder box at destination */}
       {closestEdge && (
-        <div className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
+        <Box className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
       )}
       {/* Show drop indicator line at destination */}
       {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
       {/* Show dashed border at source when dragging */}
       {isDragging && (
-        <div className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
+        <Box className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
       )}
-    </div>
+    </Box>
   );
 });

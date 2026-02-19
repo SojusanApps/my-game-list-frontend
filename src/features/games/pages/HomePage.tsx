@@ -1,10 +1,11 @@
 import * as React from "react";
+import { Carousel } from "@mantine/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGamesList } from "../hooks/gameQueries";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GameSimpleList } from "@/client";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { GridList } from "@/components/ui/GridList";
+import { Box, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 
@@ -17,59 +18,69 @@ export default function HomePage(): React.JSX.Element {
     ordering: ["-created_at"],
   });
 
-  const renderGameList = (games: GameSimpleList[] | undefined, isLoading: boolean) => {
+  const autoplayPlugin = () => Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true });
+
+  const renderGameCarousel = (games: GameSimpleList[] | undefined, isLoading: boolean) => {
     if (isLoading) {
       return (
-        <GridList>
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 5, xl: 7 }} spacing="md">
           {Array.from({ length: 7 }).map((_, i) => {
             const skeletonKey = `game-skeleton-${i}`;
-            return <Skeleton key={skeletonKey} className="aspect-264/374 w-full" />;
+            return <Skeleton key={skeletonKey} style={{ aspectRatio: "264/374", width: "100%", borderRadius: 12 }} />;
           })}
-        </GridList>
+        </SimpleGrid>
       );
     }
 
+    const items = games?.slice(0, 14) ?? [];
+
     return (
-      <GridList>
-        {games?.slice(0, 7).map((game: GameSimpleList) => (
-          <ItemOverlay
-            key={game.id}
-            className="w-full"
-            name={game.title}
-            itemPageUrl={`/game/${game.id}`}
-            itemCoverUrl={
-              game.cover_image_id === undefined
-                ? null
-                : getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-            }
-            gameType={game.game_type}
-            releaseDate={game.release_date}
-            rating={game.average_score}
-          />
+      <Carousel
+        emblaOptions={{ loop: true, align: "start", slidesToScroll: 1 }}
+        slideSize={{ base: "50%", sm: "33.333%", md: "25%", lg: "20%", xl: "14.285%" }}
+        slideGap="md"
+        plugins={[autoplayPlugin()]}
+      >
+        {items.map((game: GameSimpleList) => (
+          <Carousel.Slide key={game.id}>
+            <ItemOverlay
+              style={{ width: "100%" }}
+              name={game.title}
+              itemPageUrl={`/game/${game.id}`}
+              itemCoverUrl={
+                game.cover_image_id === undefined
+                  ? null
+                  : getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+              }
+              gameType={game.game_type}
+              releaseDate={game.release_date}
+              rating={game.average_score}
+            />
+          </Carousel.Slide>
         ))}
-      </GridList>
+      </Carousel>
     );
   };
 
   return (
-    <div className="py-12 min-h-screen">
+    <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title="Home" />
-      <div className="flex flex-col gap-16 max-w-7xl mx-auto px-4">
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <Stack gap={64} maw={1280} mx="auto" px={16}>
+        <Box component="section">
           <SectionHeader title="Highest Rated Games" viewMoreHref="/search" />
-          {renderGameList(highestRatedGames?.results, isHighestRatedLoading)}
-        </section>
+          {renderGameCarousel(highestRatedGames?.results, isHighestRatedLoading)}
+        </Box>
 
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <Box component="section">
           <SectionHeader title="Most Popular Games" viewMoreHref="/search" />
-          {renderGameList(mostPopularGames?.results, isMostPopularLoading)}
-        </section>
+          {renderGameCarousel(mostPopularGames?.results, isMostPopularLoading)}
+        </Box>
 
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+        <Box component="section">
           <SectionHeader title="Recently Added Games" viewMoreHref="/search" />
-          {renderGameList(recentlyAddedGames?.results, isRecentlyAddedLoading)}
-        </section>
-      </div>
-    </div>
+          {renderGameCarousel(recentlyAddedGames?.results, isRecentlyAddedLoading)}
+        </Box>
+      </Stack>
+    </Box>
   );
 }

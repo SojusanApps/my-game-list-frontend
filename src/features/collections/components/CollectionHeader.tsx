@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/context/AuthProvider";
 import { jwtDecode } from "jwt-decode";
 import { TokenInfoType } from "@/types";
+import { Stack, Group, Title, Text, Flex } from "@mantine/core";
 
 interface CollectionHeaderProps {
   collection: CollectionDetail;
@@ -39,48 +40,79 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
   }, [isOwner, user, collection.mode, collection.collaborators]);
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3 text-sm font-bold text-text-500 uppercase tracking-widest">
+    <Stack gap="md" w="100%">
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        align={{ base: "flex-start", md: "center" }}
+        justify="space-between"
+        gap="md"
+      >
+        <Stack gap={8}>
+          <Group gap={12} fz="sm" fw={700} c="var(--color-text-500)" tt="uppercase" style={{ letterSpacing: "0.1em" }}>
             <Link
               to={`/profile/${collection.user.id}/collections`}
               className="hover:text-primary-600 transition-colors"
             >
               {collection.user.username}&apos;s Collections
             </Link>
-            <span>•</span>
-            <span>{new Date(collection.created_at).toLocaleDateString()}</span>
-            <span>•</span>
-            <span className="text-primary-500/80">{collection.visibility_display}</span>
-          </div>
-          <h1 className="text-3xl md:text-5xl font-black text-text-900 tracking-tight">{collection.name}</h1>
+            <Text span>•</Text>
+            <Text span>{new Date(collection.created_at).toLocaleDateString()}</Text>
+            <Text span>•</Text>
+            <Text span c="var(--color-primary-500)">
+              {collection.visibility_display}
+            </Text>
+          </Group>
+          <Title
+            order={1}
+            fz={{ base: 30, md: 48 }}
+            fw={900}
+            c="var(--color-text-900)"
+            style={{ letterSpacing: "-0.025em" }}
+          >
+            {collection.name}
+          </Title>
           {collection.description && (
-            <p className="text-text-600 max-w-2xl text-lg leading-relaxed">{collection.description}</p>
+            <Text c="var(--color-text-600)" maw={672} fz="lg" style={{ lineHeight: 1.6 }}>
+              {collection.description}
+            </Text>
           )}
-        </div>
+        </Stack>
 
-        <div className="flex flex-wrap gap-3">
+        <Group gap={12} wrap="wrap">
           {canEdit && onPairwiseRank && (
-            <Button onClick={onPairwiseRank} variant="outline" className="font-bold uppercase tracking-wider px-6">
+            <Button
+              onClick={onPairwiseRank}
+              variant="outline"
+              style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: "24px" }}
+            >
               ⚔️ Pairwise Rank
             </Button>
           )}
           {canEdit && (
             <Button
               onClick={onAddGame}
-              className="font-bold uppercase tracking-wider px-6 shadow-lg shadow-primary-200"
+              style={{
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                paddingInline: "24px",
+                boxShadow: "0 10px 15px -3px rgba(99,102,241,0.2)",
+              }}
             >
               Add Game
             </Button>
           )}
           {isOwner && (
-            <Button onClick={onEdit} variant="outline" className="font-bold uppercase tracking-wider px-6">
+            <Button
+              onClick={onEdit}
+              variant="outline"
+              style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: "24px" }}
+            >
               Edit Collection
             </Button>
           )}
-        </div>
-      </div>
-    </div>
+        </Group>
+      </Flex>
+    </Stack>
   );
 };

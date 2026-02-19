@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Group, Text, UnstyledButton } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { cn } from "@/utils/cn";
@@ -18,8 +19,7 @@ export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onCli
   const accentColor = side === "left" ? "bg-primary-500" : "bg-secondary-500";
 
   return (
-    <button
-      type="button"
+    <UnstyledButton
       onClick={onClick}
       className={cn(
         "group flex flex-col items-center gap-4 p-6 rounded-2xl border-2 border-background-200 bg-white shadow-sm cursor-pointer transition-all duration-200",
@@ -27,25 +27,30 @@ export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onCli
         hoverColor,
       )}
     >
-      <div className="w-40 h-56 md:w-48 md:h-68 rounded-xl overflow-hidden shadow-md border border-background-100">
+      <Box className="w-40 h-56 md:w-48 md:h-68 rounded-xl overflow-hidden shadow-md border border-background-100">
         <SafeImage
           src={getIGDBImageURL(item.coverImageId ?? "", IGDBImageSize.COVER_BIG_264_374)}
           alt={item.title}
           className="w-full h-full object-cover"
         />
-      </div>
+      </Box>
 
-      <h3 className="font-black text-text-900 text-center line-clamp-2 uppercase tracking-tight text-sm md:text-base max-w-48">
+      <Text
+        fw={900}
+        className="text-text-900 text-center line-clamp-2 uppercase tracking-tight text-sm md:text-base max-w-48"
+      >
         {item.title}
-      </h3>
+      </Text>
 
-      <div className="flex items-center gap-2">
-        <span className={cn("text-xs font-bold text-white px-2 py-0.5 rounded-full", accentColor)}>{item.rating}</span>
-        <span className="text-xs text-text-400">
+      <Group gap={8}>
+        <Text component="span" className={cn("text-xs font-bold text-white px-2 py-0.5 rounded-full", accentColor)}>
+          {item.rating}
+        </Text>
+        <Text component="span" className="text-xs text-text-400">
           {item.matchesPlayed} {item.matchesPlayed === 1 ? "match" : "matches"}
-        </span>
-      </div>
-    </button>
+        </Text>
+      </Group>
+    </UnstyledButton>
   );
 });
 

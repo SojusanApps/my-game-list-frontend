@@ -11,7 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import { TokenInfoType } from "@/types";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, Stack, Group, Box, Title, Text } from "@mantine/core";
 import { CollectionHeader } from "../components/CollectionHeader";
 import CreateCollectionModal from "../components/CreateCollectionModal";
 import AddGameToCollectionModal from "../components/AddGameToCollectionModal";
@@ -20,12 +20,13 @@ import ItemOverlay from "@/components/ui/ItemOverlay";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { CollectionItem, ModeEnum, TypeEnum } from "@/client";
 import { GridList } from "@/components/ui/GridList";
-import TrashIcon from "@/components/ui/Icons/Trash";
+import { IconTrash } from "@tabler/icons-react";
 import { Button } from "@/components/ui/Button";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 import { TierListView } from "../components/TierList/TierListView";
 import { RankingListView } from "../components/RankingList/RankingListView";
 import { PairwiseRankingModal } from "@/features/ranking";
+import pageStyles from "./CollectionPage.module.css";
 
 export default function CollectionPage(): React.JSX.Element {
   const { id } = useParams();
@@ -86,8 +87,9 @@ export default function CollectionPage(): React.JSX.Element {
         removeCollectionItem(
           { itemId, collectionId },
           {
-            onSuccess: () => toast.success("Game removed from collection"),
-            onError: () => toast.error("Failed to remove game"),
+            onSuccess: () =>
+              notifications.show({ title: "Success", message: "Game removed from collection", color: "green" }),
+            onError: () => notifications.show({ title: "Error", message: "Failed to remove game", color: "red" }),
           },
         );
       }
@@ -114,42 +116,65 @@ export default function CollectionPage(): React.JSX.Element {
         return isItemsLoading && !isFetchingNextPage ? (
           <GridList columnCount={8}>
             {skeletonIds.map(skeletonId => (
-              <Skeleton key={skeletonId} className="aspect-264/374 w-full rounded-xl" />
+              <Skeleton key={skeletonId} style={{ aspectRatio: "264/374", width: "100%", borderRadius: "12px" }} />
             ))}
           </GridList>
         ) : (
           <>
-            <div className="flex items-center justify-between mb-6 bg-linear-to-r from-primary-50 to-secondary-50 p-4 rounded-2xl border border-primary-100 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary-500 shadow-md">
+            <Group
+              style={{
+                marginBottom: "24px",
+                background:
+                  "linear-gradient(to right, var(--mantine-color-primary-0), var(--mantine-color-secondary-0, #fef3c7))",
+                padding: "16px",
+                borderRadius: "16px",
+                border: "1px solid var(--mantine-color-primary-1)",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              }}
+            >
+              <Group gap={12}>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "12px",
+                    background: "var(--mantine-color-primary-5)",
+                    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.2)",
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="w-5 h-5 text-white"
+                    style={{ width: "20px", height: "20px", color: "white" }}
                   >
                     <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
                   </svg>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-primary-600 leading-none">{totalCount}</div>
-                  <div className="text-xs font-semibold text-text-500 uppercase tracking-wider mt-0.5">Total Games</div>
-                </div>
-              </div>
-            </div>
+                </Box>
+                <Stack gap={2}>
+                  <Text fz={24} fw={900} c="var(--mantine-color-primary-6)" lh={1}>
+                    {totalCount}
+                  </Text>
+                  <Text size="xs" fw={600} c="var(--color-text-500)" tt="uppercase" style={{ letterSpacing: "0.05em" }}>
+                    Total Games
+                  </Text>
+                </Stack>
+              </Group>
+            </Group>
 
             <VirtualGridList
               items={allItems}
               hasNextPage={!!hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
-              className="h-200"
               columnCount={8}
               rowHeight={280}
               renderItem={(item: CollectionItem) => (
-                <div key={item.id} className="relative group w-full">
+                <Box key={item.id} className={pageStyles.collectionItem}>
                   <ItemOverlay
-                    className="w-full"
                     name={item.game.title}
                     itemPageUrl={`/game/${item.game.id}`}
                     itemCoverUrl={getIGDBImageURL(item.game.cover_image_id ?? "", IGDBImageSize.COVER_BIG_264_374)}
@@ -157,30 +182,57 @@ export default function CollectionPage(): React.JSX.Element {
 
                   {/* Added By Badge - Only show in Collaborative mode */}
                   {collection?.mode === ModeEnum.C && (
-                    <div className="absolute top-3 left-3 z-30 pointer-events-none">
-                      <span className="bg-primary-600/80 text-white text-[8px] px-2 py-1 rounded-md uppercase font-black tracking-wider backdrop-blur-md shadow-lg border border-white/10 w-fit flex items-center gap-1">
-                        <span className="opacity-60">BY</span> {item.added_by.username}
-                      </span>
-                    </div>
+                    <Box style={{ position: "absolute", top: "12px", left: "12px", zIndex: 30, pointerEvents: "none" }}>
+                      <Text
+                        span
+                        style={{
+                          background: "rgba(79,70,229,0.8)",
+                          color: "white",
+                          fontSize: "8px",
+                          padding: "4px 8px",
+                          borderRadius: "6px",
+                          textTransform: "uppercase",
+                          fontWeight: 900,
+                          letterSpacing: "0.05em",
+                          backdropFilter: "blur(8px)",
+                          boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          width: "fit-content",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <Text span style={{ opacity: 0.6 }}>
+                          BY
+                        </Text>{" "}
+                        {item.added_by.username}
+                      </Text>
+                    </Box>
                   )}
 
                   {canEdit && (
-                    <div className="absolute top-2 right-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Box className={pageStyles.collectionItemDelete}>
                       <Button
                         variant="destructive"
                         size="icon"
-                        className="w-8 h-8 rounded-full shadow-lg"
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "9999px",
+                          boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
+                        }}
                         onClick={e => {
                           e.preventDefault();
                           e.stopPropagation();
                           handleDeleteItem(item.id, item.game.title);
                         }}
                       >
-                        <TrashIcon className="w-4 h-4" />
+                        <IconTrash style={{ width: 16, height: 16 }} />
                       </Button>
-                    </div>
+                    </Box>
                   )}
-                </div>
+                </Box>
               )}
             />
           </>
@@ -190,25 +242,27 @@ export default function CollectionPage(): React.JSX.Element {
 
   if (collectionError) {
     return (
-      <div className="py-20 flex justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-error-600 mb-2">Error Loading Collection</h1>
-          <p className="text-text-600">{collectionError.message}</p>
-        </div>
-      </div>
+      <Group justify="center" style={{ paddingBlock: "80px" }}>
+        <Stack align="center" gap={8}>
+          <Title order={1} fz={24} fw={700} c="var(--color-error-600)">
+            Error Loading Collection
+          </Title>
+          <Text c="var(--color-text-600)">{collectionError.message}</Text>
+        </Stack>
+      </Group>
     );
   }
 
   return (
-    <div className="py-12 min-h-screen">
+    <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title={collection?.name ?? "Collection Details"} />
-      <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
+      <Stack gap={40} maw={1280} mx="auto" px={16}>
         {isCollectionLoading ? (
-          <div className="flex flex-col gap-4">
-            <Skeleton className="h-6 w-64 rounded-full" />
-            <Skeleton className="h-12 w-96 rounded-lg" />
-            <Skeleton className="h-4 w-full max-w-2xl rounded-lg" />
-          </div>
+          <Stack gap={16}>
+            <Skeleton style={{ height: "24px", width: "256px", borderRadius: "9999px" }} />
+            <Skeleton style={{ height: "48px", width: "384px", borderRadius: "8px" }} />
+            <Skeleton style={{ height: "16px", width: "100%", maxWidth: "672px", borderRadius: "8px" }} />
+          </Stack>
         ) : (
           collection && (
             <CollectionHeader
@@ -220,7 +274,7 @@ export default function CollectionPage(): React.JSX.Element {
           )
         )}
 
-        <div
+        <Box
           className={cn(
             "rounded-2xl min-h-212.5 transition-all outline-hidden",
             collection?.type === TypeEnum.NOR || !collection?.type
@@ -231,22 +285,48 @@ export default function CollectionPage(): React.JSX.Element {
           {renderView()}
 
           {!isItemsLoading && collection?.type === TypeEnum.NOR && allItems.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 bg-background-50 rounded-full flex items-center justify-center mb-4">
-                <span className="text-4xl">🎮</span>
-              </div>
-              <h3 className="text-lg font-bold text-text-900">No games in this collection</h3>
-              <p className="text-text-500 max-w-xs mt-2">This collection is empty.</p>
-            </div>
+            <Stack align="center" justify="center" gap={16} style={{ paddingBlock: "80px", textAlign: "center" }}>
+              <Box
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  background: "var(--color-background-50)",
+                  borderRadius: "9999px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text span fz={36}>
+                  🎮
+                </Text>
+              </Box>
+              <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
+                No games in this collection
+              </Title>
+              <Text c="var(--color-text-500)" maw={320}>
+                This collection is empty.
+              </Text>
+            </Stack>
           )}
 
           {itemsError && (
-            <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
-              <p className="text-error-600 text-center font-medium">Error loading games: {itemsError.message}</p>
-            </div>
+            <Box
+              style={{
+                background: "var(--color-error-50)",
+                border: "1px solid var(--color-error-200)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginTop: "16px",
+              }}
+            >
+              <Text c="var(--color-error-600)" ta="center" fw={500}>
+                Error loading games: {itemsError.message}
+              </Text>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Stack>
 
       {isModalOpen && collection && (
         <CreateCollectionModal onClose={() => setIsModalOpen(false)} initialData={collection} mode="edit" />
@@ -263,6 +343,6 @@ export default function CollectionPage(): React.JSX.Element {
           onClose={() => setIsPairwiseModalOpen(false)}
         />
       )}
-    </div>
+    </Box>
   );
 }
