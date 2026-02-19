@@ -4,11 +4,10 @@ import GameListActionsForm from "../components/GameListActionsForm";
 import GameInformation from "../components/GameInformation";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGameReviewsList, useGetGamesDetails } from "../hooks/gameQueries";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, Grid, Group, Skeleton, Stack, Tabs, Title } from "@mantine/core";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { cn } from "@/utils/cn";
 import GameDetailsMainTab from "../components/GameDetailsMainTab";
 import GameDetailsRelatedTab from "../components/GameDetailsRelatedTab";
 import GameDetailsScreenshotsTab from "../components/GameDetailsScreenshotsTab";
@@ -37,122 +36,124 @@ export default function GameDetailPage(): React.JSX.Element {
   const pageTitle = isGameDetailsLoading ? "Loading Game..." : gameDetails?.title;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto p-4">
-      <PageMeta title={pageTitle} description={gameDetails?.summary} />
+    <Box py={48} style={{ minHeight: "100vh" }}>
+      <Grid gutter="md" maw={1152} mx="auto" px={16}>
+        <PageMeta title={pageTitle} description={gameDetails?.summary} />
 
-      {isGameDetailsLoading ? (
-        <>
-          <div className="flex flex-col gap-4">
-            <Skeleton className="w-full h-64 rounded-xl" />
-            <Skeleton className="w-full h-32 rounded-xl" />
-            <Skeleton className="w-full h-48 rounded-xl" />
-          </div>
-          <div className="col-span-3 flex flex-col gap-4">
-            <Skeleton className="w-1/2 h-8 rounded-lg" />
-            <Skeleton className="w-full h-32 rounded-xl" />
-            <Skeleton className="w-full h-24 rounded-xl" />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex flex-col gap-4">
-            <div className="rounded-xl overflow-hidden shadow-lg ring-1 ring-background-900/5">
-              <SafeImage
-                className="w-full object-cover aspect-264/374"
-                src={
-                  gameDetails?.cover_image_id
-                    ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}`
-                    : undefined
-                }
-                alt={gameDetails?.title}
-              />
-            </div>
-
-            {user && (
-              <div className="w-full">
-                <Button
-                  onClick={() => setIsCollectionModalOpen(true)}
-                  variant="outline"
-                  fullWidth
-                  className="shadow-sm border-primary-200 text-primary-600 hover:bg-primary-50 font-bold"
+        {isGameDetailsLoading ? (
+          <>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Stack gap={16}>
+                <Skeleton w="100%" h={256} style={{ borderRadius: 12 }} />
+                <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
+                <Skeleton w="100%" h={192} style={{ borderRadius: 12 }} />
+              </Stack>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 9 }}>
+              <Stack gap={16}>
+                <Skeleton w="50%" h={32} style={{ borderRadius: 8 }} />
+                <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
+                <Skeleton w="100%" h={96} style={{ borderRadius: 12 }} />
+              </Stack>
+            </Grid.Col>
+          </>
+        ) : (
+          <>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Stack gap={16}>
+                <Box
+                  style={{
+                    borderRadius: 12,
+                    overflow: "hidden",
+                    boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)",
+                  }}
                 >
-                  Add to Collection
-                </Button>
-              </div>
-            )}
+                  <SafeImage
+                    style={{ width: "100%", objectFit: "cover", aspectRatio: "264/374", display: "block" }}
+                    src={
+                      gameDetails?.cover_image_id
+                        ? `${getIGDBImageURL(gameDetails.cover_image_id, IGDBImageSize.COVER_BIG_264_374)}`
+                        : undefined
+                    }
+                    alt={gameDetails?.title}
+                  />
+                </Box>
 
-            <GameInformation gameDetails={gameDetails} />
-          </div>
-
-          <div className="col-span-3 flex flex-col gap-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <h1 className="text-4xl font-bold text-text-900 tracking-tight">{gameDetails?.title}</h1>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-              <GameListActionsForm gameID={id} />
-            </div>
-
-            <div className="flex border-b border-background-200">
-              <button
-                onClick={() => setActiveTab("main")}
-                className={cn(
-                  "px-6 py-3 text-sm font-bold transition-colors border-b-2",
-                  activeTab === "main"
-                    ? "border-primary-600 text-primary-600"
-                    : "border-transparent text-text-500 hover:text-text-700",
+                {user && (
+                  <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
+                    Add to Collection
+                  </Button>
                 )}
-              >
-                Information
-              </button>
-              <button
-                onClick={() => setActiveTab("related")}
-                className={cn(
-                  "px-6 py-3 text-sm font-bold transition-colors border-b-2",
-                  activeTab === "related"
-                    ? "border-primary-600 text-primary-600"
-                    : "border-transparent text-text-500 hover:text-text-700",
-                )}
-              >
-                Related Games
-              </button>
-              <button
-                onClick={() => setActiveTab("screenshots")}
-                className={cn(
-                  "px-6 py-3 text-sm font-bold transition-colors border-b-2",
-                  activeTab === "screenshots"
-                    ? "border-primary-600 text-primary-600"
-                    : "border-transparent text-text-500 hover:text-text-700",
-                )}
-              >
-                Screenshots
-              </button>
-            </div>
 
-            {activeTab === "main" && (
-              <GameDetailsMainTab
-                gameDetails={gameDetails}
-                gameReviewItems={gameReviewItems}
-                isGameReviewsLoading={isGameReviewsLoading}
-              />
-            )}
+                <GameInformation gameDetails={gameDetails} />
+              </Stack>
+            </Grid.Col>
 
-            {activeTab === "related" && <GameDetailsRelatedTab gameDetails={gameDetails} />}
+            <Grid.Col span={{ base: 12, md: 9 }}>
+              <Stack gap={24}>
+                <Group justify="space-between" align="center">
+                  <Title
+                    order={1}
+                    fz={{ base: 28, md: 36 }}
+                    fw={700}
+                    c="var(--color-text-900)"
+                    style={{ letterSpacing: "-0.025em" }}
+                  >
+                    {gameDetails?.title}
+                  </Title>
+                </Group>
 
-            {activeTab === "screenshots" && (
-              <GameDetailsScreenshotsTab gameDetails={gameDetails} onScreenshotClick={setSelectedScreenshot} />
-            )}
-          </div>
-        </>
-      )}
+                <Box
+                  style={{
+                    background: "white",
+                    borderRadius: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    border: "1px solid var(--color-background-200)",
+                    padding: 24,
+                  }}
+                >
+                  <GameListActionsForm gameID={id} />
+                </Box>
 
-      {selectedScreenshot && (
-        <ScreenshotModal screenshot={selectedScreenshot} onClose={() => setSelectedScreenshot(null)} />
-      )}
+                <Tabs
+                  value={activeTab}
+                  onChange={val => {
+                    if (val) setActiveTab(val as typeof activeTab);
+                  }}
+                  keepMounted={false}
+                >
+                  <Tabs.List>
+                    <Tabs.Tab value="main">Information</Tabs.Tab>
+                    <Tabs.Tab value="related">Related Games</Tabs.Tab>
+                    <Tabs.Tab value="screenshots">Screenshots</Tabs.Tab>
+                  </Tabs.List>
+                  <Tabs.Panel value="main" pt="md">
+                    <GameDetailsMainTab
+                      gameDetails={gameDetails}
+                      gameReviewItems={gameReviewItems}
+                      isGameReviewsLoading={isGameReviewsLoading}
+                    />
+                  </Tabs.Panel>
+                  <Tabs.Panel value="related" pt="md">
+                    <GameDetailsRelatedTab gameDetails={gameDetails} />
+                  </Tabs.Panel>
+                  <Tabs.Panel value="screenshots" pt="md">
+                    <GameDetailsScreenshotsTab gameDetails={gameDetails} onScreenshotClick={setSelectedScreenshot} />
+                  </Tabs.Panel>
+                </Tabs>
+              </Stack>
+            </Grid.Col>
+          </>
+        )}
 
-      {isCollectionModalOpen && gameId && (
-        <AddToCollectionModal gameId={gameId} onClose={() => setIsCollectionModalOpen(false)} />
-      )}
-    </div>
+        {selectedScreenshot && (
+          <ScreenshotModal screenshot={selectedScreenshot} onClose={() => setSelectedScreenshot(null)} />
+        )}
+
+        {isCollectionModalOpen && gameId && (
+          <AddToCollectionModal gameId={gameId} onClose={() => setIsCollectionModalOpen(false)} />
+        )}
+      </Grid>
+    </Box>
   );
 }

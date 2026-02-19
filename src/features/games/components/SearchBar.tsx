@@ -1,10 +1,10 @@
 import * as React from "react";
+import { Box, Stack, Text, UnstyledButton } from "@mantine/core";
 import { Link } from "react-router-dom";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import SearchIcon from "@/components/ui/Icons/Search";
-import XMarkIcon from "@/components/ui/Icons/XMark";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { useDebounce } from "@/utils/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 
@@ -48,79 +48,183 @@ export default function SearchBar(): React.JSX.Element {
 
   const renderResults = () => {
     if (isLoading) {
-      return <li className="p-8 text-center text-text-500 italic text-sm">Searching...</li>;
+      return (
+        <Box
+          component="li"
+          style={{
+            padding: "32px",
+            textAlign: "center",
+            color: "var(--color-text-500)",
+            fontStyle: "italic",
+            fontSize: "14px",
+          }}
+        >
+          Searching...
+        </Box>
+      );
     }
 
     if (gamesDetails?.results && gamesDetails.results.length > 0) {
       return gamesDetails.results.map((game: GameSimpleList) => (
-        <li key={game.id} className="w-full">
+        <Box component="li" key={game.id} style={{ width: "100%" }}>
           <Link
             to={`/game/${game.id}`}
-            className="flex items-center gap-4 p-3 hover:bg-primary-50/80 active:bg-primary-100 transition-all duration-200 group rounded-lg"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "16px",
+              padding: "12px",
+              borderRadius: "8px",
+              transition: "all 200ms",
+            }}
             onClick={handleClose}
           >
-            <div className="relative overflow-hidden rounded-md shadow-sm shrink-0 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-md">
+            <Box
+              style={{
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: "6px",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                flexShrink: 0,
+              }}
+            >
               <SafeImage
-                className="w-10 h-14 object-cover"
+                style={{ width: 40, height: 56, objectFit: "cover" }}
                 src={game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.THUMB_90_90) : undefined}
                 alt={game.title}
               />
-            </div>
-            <div className="flex flex-col overflow-hidden transition-transform duration-300 group-hover:translate-x-1">
-              <span className="font-bold text-text-900 text-sm truncate group-hover:text-primary-600 transition-colors">
+            </Box>
+            <Stack gap={0} style={{ overflow: "hidden" }}>
+              <Text
+                component="span"
+                fw={700}
+                c="var(--color-text-900)"
+                fz="sm"
+                style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+              >
                 {game.title}
-              </span>
+              </Text>
               {game.release_date && (
-                <span className="text-xs text-text-500 font-medium">{new Date(game.release_date).getFullYear()}</span>
+                <Text component="span" fz="xs" c="var(--color-text-500)" fw={500}>
+                  {new Date(game.release_date).getFullYear()}
+                </Text>
               )}
-            </div>
+            </Stack>
           </Link>
-        </li>
+        </Box>
       ));
     }
 
-    return <li className="p-8 text-center text-text-500 italic text-sm">No results found</li>;
+    return (
+      <Box
+        component="li"
+        style={{
+          padding: "32px",
+          textAlign: "center",
+          color: "var(--color-text-500)",
+          fontStyle: "italic",
+          fontSize: "14px",
+        }}
+      >
+        No results found
+      </Box>
+    );
   };
 
   return (
-    <section ref={containerRef} className="relative w-full max-w-md mx-4">
-      <div className="relative group">
-        <input
+    <Box
+      component="section"
+      ref={containerRef}
+      style={{ position: "relative", width: "100%", maxWidth: "448px", margin: "0 16px" }}
+    >
+      <Box style={{ position: "relative" }}>
+        <Box
+          component="input"
           type="text"
           placeholder="Search for a game..."
-          className="w-full bg-white/10 border border-white/20 text-white placeholder:text-primary-300 rounded-full py-2 pl-4 pr-10 focus:outline-hidden focus:ring-2 focus:ring-primary-400 focus:bg-white/20 focus:border-transparent transition-all text-sm"
+          style={{
+            width: "100%",
+            background: "rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: "white",
+            borderRadius: "9999px",
+            padding: "8px 40px 8px 16px",
+            fontSize: "14px",
+            outline: "none",
+          }}
           autoComplete="off"
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           value={search}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+        <Box
+          style={{
+            position: "absolute",
+            right: "12px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {search.length > 0 ? (
-            <button onClick={handleClose} type="button" className="text-primary-300 hover:text-white transition-colors">
-              <XMarkIcon className="w-5 h-5" />
-            </button>
+            <UnstyledButton onClick={handleClose} style={{ color: "var(--color-primary-300)" }}>
+              <IconX style={{ width: 20, height: 20 }} />
+            </UnstyledButton>
           ) : (
-            <SearchIcon className="w-5 h-5 text-primary-400" />
+            <IconSearch style={{ width: 20, height: 20, color: "var(--color-primary-400)" }} />
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {isOpen && search.length > 1 && (
-        <div className="absolute z-50 mt-2 w-full bg-white rounded-xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <ul className="p-1 max-h-[60vh] overflow-y-auto flex flex-col gap-1">
+        <Box
+          style={{
+            position: "absolute",
+            zIndex: 50,
+            marginTop: "8px",
+            width: "100%",
+            background: "white",
+            borderRadius: "12px",
+            boxShadow: "0 25px 50px rgba(0,0,0,0.25)",
+            border: "1px solid var(--color-background-200)",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            component="ul"
+            style={{
+              padding: "4px",
+              maxHeight: "60vh",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}
+          >
             {renderResults()}
-            <li className="p-1">
+            <Box component="li" style={{ padding: "4px" }}>
               <Link
                 to="/search"
                 onClick={handleClose}
-                className="block text-center text-xs font-bold text-primary-600 hover:bg-primary-50 active:bg-primary-100 rounded-lg py-3 uppercase tracking-wider transition-colors"
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "var(--color-primary-600)",
+                  borderRadius: "8px",
+                  padding: "12px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                }}
               >
                 Advanced Search
               </Link>
-            </li>
-          </ul>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       )}
-    </section>
+    </Box>
   );
 }

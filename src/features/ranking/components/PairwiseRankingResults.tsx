@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Group, Stack, Text, Title } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -34,11 +35,13 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
   const totalItems = items.length;
 
   return (
-    <div className="flex flex-col gap-4 animate-in fade-in duration-300">
+    <Stack gap={16} className="animate-in fade-in duration-300">
       {/* Actions */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-black text-text-900 uppercase tracking-tight">Ranking Results</h3>
-        <div className="flex items-center gap-2">
+      <Group justify="space-between" align="center">
+        <Title order={3} className="text-lg font-black text-text-900 uppercase tracking-tight">
+          Ranking Results
+        </Title>
+        <Group gap={8}>
           <Button
             onClick={onContinueDueling}
             variant="outline"
@@ -55,69 +58,77 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
           >
             {isApplying ? "Applying…" : "Apply to Collection"}
           </Button>
-        </div>
-      </div>
+        </Group>
+      </Group>
 
       {/* Confidence legend */}
-      <div className="flex items-center gap-4 text-xs text-text-500">
-        <span className="font-semibold">Confidence:</span>
+      <Group gap={16} className="text-xs text-text-500">
+        <Text component="span" fw={600}>
+          Confidence:
+        </Text>
         {(["high", "medium", "low"] as const).map(level => (
-          <span key={level} className="flex items-center gap-1">
-            <span className={cn("w-2 h-2 rounded-full", CONFIDENCE_COLORS[level])} />
+          <Group key={level} gap={4}>
+            <Box className={cn("w-2 h-2 rounded-full", CONFIDENCE_COLORS[level])} />
             {CONFIDENCE_LABELS[level]}
-          </span>
+          </Group>
         ))}
-      </div>
+      </Group>
 
       {/* Ranked list */}
-      <div className="flex flex-col gap-2 max-h-[55vh] overflow-y-auto pr-1">
+      <Stack gap={8} style={{ maxHeight: "55vh", overflowY: "auto", paddingRight: 4 }}>
         {items.map((item, index) => {
           const confidence = getConfidenceLevel(item, totalItems);
           return (
-            <div
+            <Group
               key={item.itemId}
-              className="flex items-center gap-4 p-3 bg-white rounded-xl border border-background-200 shadow-xs hover:border-primary-200 transition-colors"
+              gap={16}
+              align="center"
+              className="p-3 bg-white rounded-xl border border-background-200 shadow-xs hover:border-primary-200 transition-colors"
             >
               {/* Rank */}
-              <div className="flex items-center justify-center w-10 h-8 rounded-lg bg-background-50 text-sm font-black text-primary-600 shrink-0 border border-background-100">
+              <Box className="flex items-center justify-center w-10 h-8 rounded-lg bg-background-50 text-sm font-black text-primary-600 shrink-0 border border-background-100">
                 #{index + 1}
-              </div>
+              </Box>
 
               {/* Confidence dot */}
-              <span
+              <Box
                 className={cn("w-2.5 h-2.5 rounded-full shrink-0 tooltip tooltip-right", CONFIDENCE_COLORS[confidence])}
                 data-tip={CONFIDENCE_LABELS[confidence]}
               />
 
               {/* Cover */}
-              <div className="w-10 h-14 rounded-lg overflow-hidden shrink-0 shadow-xs border border-background-100">
+              <Box className="w-10 h-14 rounded-lg overflow-hidden shrink-0 shadow-xs border border-background-100">
                 <SafeImage
                   src={getIGDBImageURL(item.coverImageId ?? "", IGDBImageSize.COVER_SMALL_90_128)}
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </Box>
 
               {/* Title */}
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-text-900 line-clamp-1 text-sm">{item.title}</h4>
-              </div>
+              <Box className="flex-1 min-w-0">
+                <Text fw={700} className="text-text-900 line-clamp-1 text-sm">
+                  {item.title}
+                </Text>
+              </Box>
 
               {/* Stats */}
-              <div className="flex items-center gap-3 text-xs shrink-0">
-                <span className="font-black text-primary-600 bg-primary-50 px-2 py-1 rounded-lg">{item.rating}</span>
-                <span className="text-text-400">
+              <Group gap={12} className="text-xs shrink-0">
+                <Text component="span" className="font-black text-primary-600 bg-primary-50 px-2 py-1 rounded-lg">
+                  {item.rating}
+                </Text>
+                <Text component="span" className="text-text-400">
                   {item.wins}W / {item.losses}L / {item.draws}D
-                </span>
-                <span className="text-text-300">
+                </Text>
+                <Text component="span" className="text-text-300">
                   {item.matchesPlayed} {item.matchesPlayed === 1 ? "match" : "matches"}
-                </span>
-              </div>
-            </div>
+                </Text>
+              </Group>
+            </Group>
           );
         })}
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 });
 

@@ -1,0 +1,8 @@
+.tableUserLink {
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 150ms;
+}
+.tableUserLink:hover {
+  color: var(--mantine-color-primary-6);
+}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Stack } from "@mantine/core";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import ItemOverlay from "@/components/ui/ItemOverlay";
@@ -19,7 +20,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
           hasNextPage={false}
           isFetchingNextPage={false}
           fetchNextPage={() => {}}
-          className="h-100"
+          style={{ height: "400px" }}
           renderItem={(game: CompanyGame) => (
             <ItemOverlay
               itemPageUrl={`/game/${game.id}`}
@@ -35,10 +36,10 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
   };
 
   return (
-    <div className="flex flex-col gap-4 animate-in fade-in duration-300">
+    <Stack gap={16}>
       {gameDetails?.parent_game && (
         <CollapsibleSection title="Parent Game" defaultOpen={true}>
-          <div className="max-w-50">
+          <Box maw={200}>
             <ItemOverlay
               itemPageUrl={`/game/${gameDetails.parent_game.id}`}
               itemCoverUrl={
@@ -48,7 +49,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
               }
               name={gameDetails.parent_game.title}
             />
-          </div>
+          </Box>
         </CollapsibleSection>
       )}
       {renderRelatedGamesSection("DLCs", gameDetails?.dlcs)}
@@ -67,10 +68,21 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
         (!gameDetails?.expanded_games || gameDetails.expanded_games.length === 0) &&
         (!gameDetails?.forks || gameDetails.forks.length === 0) &&
         (!gameDetails?.ports || gameDetails.ports.length === 0) && (
-          <div className="bg-white rounded-xl shadow-sm border border-background-200 p-8 text-center text-text-500 italic">
+          <Box
+            style={{
+              background: "white",
+              borderRadius: "12px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              border: "1px solid var(--color-background-200)",
+              padding: "32px",
+              textAlign: "center",
+              color: "var(--color-text-500)",
+              fontStyle: "italic",
+            }}
+          >
             No related games found.
-          </div>
+          </Box>
         )}
-    </div>
+    </Stack>
   );
 }

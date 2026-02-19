@@ -1,4 +1,5 @@
 import * as React from "react";
+import { SimpleGrid, Stack, Text } from "@mantine/core";
 import { Game } from "@/client";
 import { Button } from "@/components/ui/Button";
 
@@ -8,37 +9,123 @@ interface GameStatisticsProps {
 
 export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsProps>) {
   return (
-    <div className="flex flex-col gap-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+    <Stack gap={32}>
+      <SimpleGrid cols={{ base: 2, md: 4 }} spacing={{ base: 16, md: 24 }}>
         {/* Score Card */}
-        <div className="flex flex-col items-center justify-center p-6 bg-secondary-100/50 rounded-2xl border border-secondary-200/50 shadow-xs transition-transform hover:scale-[1.02]">
-          <p className="text-[11px] font-bold text-secondary-700 uppercase tracking-widest mb-2">Score</p>
-          <p className="text-4xl font-black text-secondary-900">{gameDetails?.average_score || "N/A"}</p>
-          <p className="text-[10px] text-secondary-600 font-semibold mt-1">{gameDetails?.scores_count} ratings</p>
-        </div>
+        <Stack
+          align="center"
+          justify="center"
+          p="lg"
+          style={{
+            background: "rgba(255,237,213,0.5)",
+            borderRadius: "16px",
+            border: "1px solid rgba(253,186,116,0.5)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            transition: "transform 200ms",
+          }}
+        >
+          <Text
+            fz={11}
+            fw={700}
+            c="var(--color-secondary-700)"
+            tt="uppercase"
+            style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
+          >
+            Score
+          </Text>
+          <Text fz={36} fw={900} c="var(--color-secondary-900)">
+            {gameDetails?.average_score || "N/A"}
+          </Text>
+          <Text fz={10} c="var(--color-secondary-600)" fw={600} mt={4}>
+            {gameDetails?.scores_count} ratings
+          </Text>
+        </Stack>
 
         {/* Ranked Card */}
-        <div className="flex flex-col items-center justify-center p-6 bg-success-100/50 rounded-2xl border border-success-200/50 shadow-xs transition-transform hover:scale-[1.02]">
-          <p className="text-[11px] font-bold text-success-700 uppercase tracking-widest mb-2">Ranked</p>
-          <p className="text-4xl font-black text-success-900">#{gameDetails?.rank_position || "-"}</p>
-        </div>
+        <Stack
+          align="center"
+          justify="center"
+          p="lg"
+          style={{
+            background: "rgba(209,250,229,0.5)",
+            borderRadius: "16px",
+            border: "1px solid rgba(167,243,208,0.5)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            transition: "transform 200ms",
+          }}
+        >
+          <Text
+            fz={11}
+            fw={700}
+            c="var(--color-success-700)"
+            tt="uppercase"
+            style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
+          >
+            Ranked
+          </Text>
+          <Text fz={36} fw={900} c="var(--color-success-900)">
+            #{gameDetails?.rank_position || "-"}
+          </Text>
+        </Stack>
 
         {/* Popularity Card */}
-        <div className="flex flex-col items-center justify-center p-6 bg-primary-100/50 rounded-2xl border border-primary-200/50 shadow-xs transition-transform hover:scale-[1.02]">
-          <p className="text-[11px] font-bold text-primary-700 uppercase tracking-widest mb-2">Popularity</p>
-          <p className="text-4xl font-black text-primary-900">#{gameDetails?.popularity || "-"}</p>
-        </div>
+        <Stack
+          align="center"
+          justify="center"
+          p="lg"
+          style={{
+            background: "rgba(224,231,255,0.5)",
+            borderRadius: "16px",
+            border: "1px solid rgba(199,210,254,0.5)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            transition: "transform 200ms",
+          }}
+        >
+          <Text
+            fz={11}
+            fw={700}
+            c="var(--color-primary-700)"
+            tt="uppercase"
+            style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
+          >
+            Popularity
+          </Text>
+          <Text fz={36} fw={900} c="var(--color-primary-900)">
+            #{gameDetails?.popularity || "-"}
+          </Text>
+        </Stack>
 
         {/* Members Card */}
-        <div className="flex flex-col items-center justify-center p-6 bg-background-200/50 rounded-2xl border border-background-300/50 shadow-xs transition-transform hover:scale-[1.02]">
-          <p className="text-[11px] font-bold text-text-500 uppercase tracking-widest mb-2">Members</p>
-          <p className="text-4xl font-black text-text-900">{gameDetails?.members_count || "0"}</p>
-        </div>
-      </div>
+        <Stack
+          align="center"
+          justify="center"
+          p="lg"
+          style={{
+            background: "rgba(226,232,240,0.5)",
+            borderRadius: "16px",
+            border: "1px solid rgba(203,213,225,0.5)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            transition: "transform 200ms",
+          }}
+        >
+          <Text
+            fz={11}
+            fw={700}
+            c="var(--color-text-500)"
+            tt="uppercase"
+            style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
+          >
+            Members
+          </Text>
+          <Text fz={36} fw={900} c="var(--color-text-900)">
+            {gameDetails?.members_count || "0"}
+          </Text>
+        </Stack>
+      </SimpleGrid>
 
-      <Button variant="ghost" size="sm" className="mx-auto text-text-400 hover:text-primary-600">
+      <Button variant="ghost" size="sm" style={{ margin: "0 auto", color: "var(--color-text-400)" }}>
         More statistics
       </Button>
-    </div>
+    </Stack>
   );
 }

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Group, Stack, Text } from "@mantine/core";
 import { UserDetail } from "@/client";
 
 interface UserProfileInformationProps {
@@ -7,28 +8,50 @@ interface UserProfileInformationProps {
 
 export default function UserProfileInformation({ userDetails }: Readonly<UserProfileInformationProps>) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
-      <div className="bg-background-50 px-4 py-3 border-b border-background-200">
-        <p className="font-semibold text-text-900">Information</p>
-      </div>
-      <div className="p-4 flex flex-col gap-3">
-        <div className="flex flex-row justify-between text-sm">
-          <p className="font-medium text-text-600">Joined:</p>
-          <p className="text-text-900">
+    <Box
+      style={{
+        background: "white",
+        borderRadius: "12px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        border: "1px solid var(--color-background-200)",
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        style={{
+          background: "var(--color-background-50)",
+          padding: "12px 16px",
+          borderBottom: "1px solid var(--color-background-200)",
+        }}
+      >
+        <Text fw={600} c="var(--color-text-900)">
+          Information
+        </Text>
+      </Box>
+      <Stack gap={12} p={16}>
+        <Group justify="space-between" fz="sm">
+          <Text fw={500} c="var(--color-text-600)">
+            Joined:
+          </Text>
+          <Text c="var(--color-text-900)">
             {new Date(userDetails?.date_joined ? userDetails.date_joined : "").toLocaleDateString()}
-          </p>
-        </div>
-        <div className="flex flex-row justify-between text-sm">
-          <p className="font-medium text-text-600">Gender:</p>
-          <p className="text-text-900">Private</p>
-        </div>
-        <div className="flex flex-row justify-between text-sm">
-          <p className="font-medium text-text-600">Last login:</p>
-          <p className="text-text-900">
+          </Text>
+        </Group>
+        <Group justify="space-between" fz="sm">
+          <Text fw={500} c="var(--color-text-600)">
+            Gender:
+          </Text>
+          <Text c="var(--color-text-900)">Private</Text>
+        </Group>
+        <Group justify="space-between" fz="sm">
+          <Text fw={500} c="var(--color-text-600)">
+            Last login:
+          </Text>
+          <Text c="var(--color-text-900)">
             {new Date(userDetails?.last_login ? userDetails.last_login : "").toLocaleDateString()}
-          </p>
-        </div>
-      </div>
-    </div>
+          </Text>
+        </Group>
+      </Stack>
+    </Box>
   );
 }

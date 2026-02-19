@@ -2,31 +2,44 @@ import * as React from "react";
 import { GameReview as GameReviewType } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import ReactMarkdown from "react-markdown";
-import { cn } from "@/utils/cn";
-import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
+import { Box, Group, Stack, Text, UnstyledButton } from "@mantine/core";
+import { IconChevronDown } from "@tabler/icons-react";
 
 type GameReviewProps = {
-  className?: string;
   gameReview: GameReviewType;
 };
 
-function GameReview({ className, gameReview }: Readonly<GameReviewProps>): React.JSX.Element {
+function GameReview({ gameReview }: Readonly<GameReviewProps>): React.JSX.Element {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [shouldTruncate, setShouldTruncate] = React.useState(false);
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   const CreatedAt = new Date(gameReview.created_at);
 
-  const getScoreStyles = (score: number) => {
-    if (score >= 8) return "bg-success-100 text-success-900 border-success-200";
-    if (score >= 5) return "bg-secondary-100 text-secondary-900 border-secondary-200";
-    return "bg-error-100 text-error-900 border-error-200";
+  const getScoreStyles = (score: number): React.CSSProperties => {
+    if (score >= 8)
+      return {
+        background: "var(--color-success-100)",
+        color: "var(--color-success-900)",
+        border: "1px solid var(--color-success-200)",
+      };
+    if (score >= 5)
+      return {
+        background: "var(--color-secondary-100)",
+        color: "var(--color-secondary-900)",
+        border: "1px solid var(--color-secondary-200)",
+      };
+    return {
+      background: "var(--color-error-100)",
+      color: "var(--color-error-900)",
+      border: "1px solid var(--color-error-200)",
+    };
   };
 
-  const getScoreLabelStyles = (score: number) => {
-    if (score >= 8) return "text-success-700";
-    if (score >= 5) return "text-secondary-700";
-    return "text-error-700";
+  const getScoreLabelColor = (score: number): string => {
+    if (score >= 8) return "var(--color-success-700)";
+    if (score >= 5) return "var(--color-secondary-700)";
+    return "var(--color-error-700)";
   };
 
   React.useLayoutEffect(() => {
@@ -39,78 +52,154 @@ function GameReview({ className, gameReview }: Readonly<GameReviewProps>): React
   }, [gameReview.review]);
 
   return (
-    <article
-      className={cn(
-        "flex flex-col gap-4 p-6 rounded-2xl border border-background-300/50 bg-background-200/50 transition-all hover:bg-background-200 group shadow-xs",
-        className,
-      )}
+    <Box
+      component="article"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        padding: "24px",
+        borderRadius: "16px",
+        border: "1px solid rgba(203,213,225,0.5)",
+        background: "rgba(226,232,240,0.5)",
+        transition: "background 200ms",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+      }}
     >
-      <div className="flex flex-row items-center justify-between gap-4">
-        <div className="flex flex-row items-center gap-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white shadow-sm shrink-0">
+      <Group justify="space-between" align="center" gap={16}>
+        <Group align="center" gap={12}>
+          <Box
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: "9999px",
+              overflow: "hidden",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+              flexShrink: 0,
+            }}
+          >
             <SafeImage
-              className="w-full h-full object-cover"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
               src={gameReview?.user.gravatar_url || undefined}
               alt={gameReview?.user.username}
             />
-          </div>
-          <div className="flex flex-col min-w-0">
-            <p className="font-bold text-text-900 truncate">{gameReview?.user.username}</p>
-            <p className="text-xs text-text-500 font-medium italic">{CreatedAt.toLocaleDateString()}</p>
-          </div>
-        </div>
+          </Box>
+          <Stack gap={0} style={{ minWidth: 0 }}>
+            <Text
+              fw={700}
+              c="var(--color-text-900)"
+              style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            >
+              {gameReview?.user.username}
+            </Text>
+            <Text fz="xs" c="var(--color-text-500)" fw={500} fs="italic">
+              {CreatedAt.toLocaleDateString()}
+            </Text>
+          </Stack>
+        </Group>
 
         {gameReview?.score && (
-          <div
-            className={cn(
-              "flex flex-col items-center justify-center px-4 py-1.5 rounded-xl border shadow-xs transition-colors duration-300",
-              getScoreStyles(gameReview.score),
-            )}
+          <Stack
+            align="center"
+            justify="center"
+            style={{
+              padding: "4px 16px",
+              borderRadius: "12px",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+              transition: "colors 300ms",
+              ...getScoreStyles(gameReview.score),
+            }}
           >
-            <span
-              className={cn(
-                "text-[10px] font-bold uppercase tracking-widest leading-none mb-0.5",
-                getScoreLabelStyles(gameReview.score),
-              )}
+            <Text
+              component="span"
+              fz={10}
+              fw={700}
+              tt="uppercase"
+              style={{
+                letterSpacing: "0.1em",
+                lineHeight: 1,
+                marginBottom: "2px",
+                color: getScoreLabelColor(gameReview.score),
+              }}
             >
               Score
-            </span>
-            <span className="text-xl font-black leading-none">{gameReview.score}</span>
-          </div>
+            </Text>
+            <Text component="span" fz="xl" fw={900} style={{ lineHeight: 1 }}>
+              {gameReview.score}
+            </Text>
+          </Stack>
         )}
-      </div>
+      </Group>
 
-      <div className="relative w-full">
-        <div
+      <Box style={{ position: "relative", width: "100%" }}>
+        <Box
           ref={contentRef}
-          className={cn(
-            "prose prose-slate prose-sm max-w-3xl mx-auto text-text-700 leading-relaxed bg-white/60 p-6 rounded-2xl border border-background-100 shadow-sm transition-all duration-500 ease-in-out overflow-hidden",
-            shouldTruncate && !isExpanded ? "max-h-40" : "max-h-1250",
-          )}
+          style={{
+            color: "var(--color-text-700)",
+            lineHeight: 1.6,
+            background: "rgba(255,255,255,0.6)",
+            padding: "24px",
+            borderRadius: "16px",
+            border: "1px solid var(--color-background-100)",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            transition: "all 500ms ease-in-out",
+            overflow: "hidden",
+            maxHeight: shouldTruncate && !isExpanded ? "160px" : "1250px",
+          }}
         >
           <ReactMarkdown>{gameReview?.review || ""}</ReactMarkdown>
 
           {shouldTruncate && !isExpanded && (
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-white/90 to-transparent pointer-events-none" />
+            <Box
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "96px",
+                background: "linear-gradient(to top, rgba(255,255,255,0.9), transparent)",
+                pointerEvents: "none",
+              }}
+            />
           )}
-        </div>
+        </Box>
 
         {shouldTruncate && (
-          <div className={cn("flex justify-center relative z-10", isExpanded ? "mt-6" : "-mt-3")}>
-            <button
-              type="button"
+          <Group
+            justify="center"
+            style={{ position: "relative", zIndex: 10, marginTop: isExpanded ? "24px" : "-12px" }}
+          >
+            <UnstyledButton
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 px-6 py-2 bg-white border border-background-200 rounded-full text-xs font-bold text-primary-600 shadow-lg hover:bg-primary-50 hover:text-primary-700 transition-all active:scale-95 hover:-translate-y-0.5"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 24px",
+                background: "white",
+                border: "1px solid var(--color-background-200)",
+                borderRadius: "9999px",
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "var(--color-primary-600)",
+                boxShadow: "0 10px 15px rgba(0,0,0,0.1)",
+                transition: "all 200ms",
+              }}
             >
-              <span>{isExpanded ? "Show Less" : "Read Full Review"}</span>
-              <ChevronDownIcon
-                className={cn("w-3 h-3 transition-transform duration-300", isExpanded && "rotate-180")}
+              <Text component="span">{isExpanded ? "Show Less" : "Read Full Review"}</Text>
+              <IconChevronDown
+                style={{
+                  width: 12,
+                  height: 12,
+                  transition: "transform 300ms",
+                  transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                }}
               />
-            </button>
-          </div>
+            </UnstyledButton>
+          </Group>
         )}
-      </div>
-    </article>
+      </Box>
+    </Box>
   );
 }
 

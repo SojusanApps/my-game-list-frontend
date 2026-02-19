@@ -3,18 +3,38 @@ import * as React from "react";
 import AppLogo from "@/components/ui/AppLogo";
 import RegisterForm from "../components/RegisterForm";
 import { PageMeta } from "@/components/ui/PageMeta";
+import { Box, Flex, Stack, Text } from "@mantine/core";
 
 export default function RegisterPage(): React.JSX.Element {
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center relative overflow-hidden">
+    <Flex
+      style={{ minHeight: "calc(100vh - 64px)", overflow: "hidden" }}
+      align="center"
+      justify="center"
+      pos="relative"
+    >
       <PageMeta title="Register" />
-      <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/50 animate-in fade-in zoom-in duration-500">
-        <div className="mb-8">
-          <AppLogo classNameSojusan="text-primary-600 text-3xl" classNameGameList="text-text-900 text-4xl" />
-          <p className="text-center text-text-500 mt-2">Join our community and start tracking your games.</p>
-        </div>
+      <Box
+        style={{
+          width: "100%",
+          maxWidth: "448px",
+          padding: "32px",
+          background: "rgba(255,255,255,0.8)",
+          backdropFilter: "blur(16px)",
+          borderRadius: "16px",
+          boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)",
+          border: "1px solid rgba(255,255,255,0.5)",
+          animation: "fade-in 500ms ease",
+        }}
+      >
+        <Stack gap={8} mb="lg">
+          <AppLogo size="lg" />
+          <Text ta="center" c="var(--color-text-500)">
+            Join our community and start tracking your games.
+          </Text>
+        </Stack>
         <RegisterForm />
-      </div>
-    </div>
+      </Box>
+    </Flex>
   );
 }

@@ -1,11 +1,14 @@
 import * as React from "react";
+import { Box, Title } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 
 export default function UserProfilePage(): React.JSX.Element {
   return (
-    <div>
+    <Box>
       <PageMeta title="Settings" />
-      <h2 className="text-center text-9xl font-bold">Settings</h2>
-    </div>
+      <Title order={2} className="text-center text-9xl font-bold">
+        Settings
+      </Title>
+    </Box>
   );
 }

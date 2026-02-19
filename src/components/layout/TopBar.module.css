@@ -1,0 +1,40 @@
+.navLink {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-200);
+  text-decoration: none;
+  transition: color 150ms;
+}
+.navLink:hover {
+  color: #fff;
+}
+
+.navItem {
+  list-style: none;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.logoLink:hover {
+  opacity: 0.9;
+}
+
+.userMenuBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: opacity 150ms;
+}
+.userMenuBtn:hover {
+  opacity: 0.8;
+}

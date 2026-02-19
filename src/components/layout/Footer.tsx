@@ -1,60 +1,56 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { Box, Group, Text } from "@mantine/core";
 import AppLogo from "@/components/ui/AppLogo";
+import styles from "./Footer.module.css";
 
 const Footer = (): React.JSX.Element => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white border-t border-background-200 py-6 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="flex items-center gap-6">
-          <Link to="/home" className="hover:opacity-80 transition-opacity scale-75 origin-left">
-            <AppLogo classNameSojusan="text-primary-600 text-xl" classNameGameList="text-text-900 text-2xl" />
+    <Box
+      component="footer"
+      style={{
+        background: "white",
+        borderTop: "1px solid var(--color-background-400)",
+        paddingBlock: "24px",
+        marginTop: "auto",
+      }}
+    >
+      <Group justify="space-between" wrap="wrap" align="center" maw={1280} mx="auto" px={16}>
+        <Group gap={24}>
+          <Link to="/home" className={styles.logoLink} style={{ transform: "scale(0.75)", transformOrigin: "left" }}>
+            <AppLogo size="md" />
           </Link>
-          <p className="text-text-400 text-xs hidden sm:block">
+          <Text size="xs" c="var(--color-text-400)" visibleFrom="sm">
             © {currentYear} Sojusan GameList • Data provided by{" "}
-            <a
-              href="https://www.igdb.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary-600 transition-colors underline decoration-dotted"
-            >
+            <a href="https://www.igdb.com/" target="_blank" rel="noopener noreferrer" className={styles.footerExtLink}>
               IGDB
             </a>
-          </p>
-        </div>
+          </Text>
+        </Group>
 
-        <nav>
-          <ul className="flex items-center gap-8">
-            <li>
-              <Link
-                to="/home"
-                className="text-text-500 hover:text-primary-600 text-xs font-semibold uppercase tracking-wider transition-colors"
-              >
+        <Box component="nav">
+          <Group component="ul" gap={32}>
+            <Box component="li">
+              <Link to="/home" className={styles.footerLink}>
                 Home
               </Link>
-            </li>
-            <li>
-              <Link
-                to="/search"
-                className="text-text-500 hover:text-primary-600 text-xs font-semibold uppercase tracking-wider transition-colors"
-              >
+            </Box>
+            <Box component="li">
+              <Link to="/search" className={styles.footerLink}>
                 Search
               </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                className="text-text-500 hover:text-primary-600 text-xs font-semibold uppercase tracking-wider transition-colors"
-              >
+            </Box>
+            <Box component="li">
+              <Link to="#" className={styles.footerLink}>
                 Privacy
               </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </footer>
+            </Box>
+          </Group>
+        </Box>
+      </Group>
+    </Box>
   );
 };
 

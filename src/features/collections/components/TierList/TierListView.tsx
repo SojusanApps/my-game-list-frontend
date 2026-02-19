@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Box, Group, Stack, Text } from "@mantine/core";
 import { CollectionItem, TierEnum, BlankEnum } from "@/client";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { SortableGameCard } from "./SortableGameCard";
@@ -8,7 +9,7 @@ import {
   useUpdateCollectionItemTier,
   useUpdateCollectionItem,
 } from "../../hooks/useCollectionQueries";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 
 interface TierListViewProps {
@@ -18,13 +19,13 @@ interface TierListViewProps {
 }
 
 const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[] = [
-  { id: TierEnum.S, label: "S", color: "bg-red-500" },
-  { id: TierEnum.A, label: "A", color: "bg-orange-500" },
-  { id: TierEnum.B, label: "B", color: "bg-yellow-500" },
-  { id: TierEnum.C, label: "C", color: "bg-green-500" },
-  { id: TierEnum.D, label: "D", color: "bg-blue-500" },
-  { id: TierEnum.E, label: "E", color: "bg-purple-500" },
-  { id: "UNRANKED", label: "?", color: "bg-neutral-500" },
+  { id: TierEnum.S, label: "S", color: "#ef4444" },
+  { id: TierEnum.A, label: "A", color: "#f97316" },
+  { id: TierEnum.B, label: "B", color: "#eab308" },
+  { id: TierEnum.C, label: "C", color: "#22c55e" },
+  { id: TierEnum.D, label: "D", color: "#3b82f6" },
+  { id: TierEnum.E, label: "E", color: "#a855f7" },
+  { id: "UNRANKED", label: "?", color: "#737373" },
 ];
 
 type TierIdType = TierEnum | "UNRANKED" | null;
@@ -113,9 +114,9 @@ export const TierListView = React.memo(function TierListView({
           oldTier: sourceTierId,
         });
 
-        toast.success("Item moved successfully");
+        notifications.show({ title: "Success", message: "Item moved successfully", color: "green" });
       } catch (error) {
-        toast.error("Failed to move item");
+        notifications.show({ title: "Error", message: "Failed to move item", color: "red" });
         console.error(error);
       }
     },
@@ -168,9 +169,9 @@ export const TierListView = React.memo(function TierListView({
           oldTier: sourceTierId,
         });
 
-        toast.success("Item reordered successfully");
+        notifications.show({ title: "Success", message: "Item reordered successfully", color: "green" });
       } catch (error) {
-        toast.error("Failed to reorder item");
+        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
         console.error(error);
       }
     },
@@ -183,9 +184,9 @@ export const TierListView = React.memo(function TierListView({
 
       try {
         await updateItem({ id: itemId, body: { description: newDescription } });
-        toast.success("Description updated");
+        notifications.show({ title: "Success", message: "Description updated", color: "green" });
       } catch (error) {
-        toast.error("Failed to update description");
+        notifications.show({ title: "Error", message: "Failed to update description", color: "red" });
         console.error(error);
       }
     },
@@ -236,15 +237,39 @@ export const TierListView = React.memo(function TierListView({
   ]);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex items-center justify-between sticky top-4 z-30 bg-linear-to-r from-red-50 via-orange-50 to-yellow-50 p-4 rounded-2xl border border-orange-200 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-red-500 to-orange-500 shadow-md">
+    <Stack gap={32}>
+      <Group
+        justify="space-between"
+        align="center"
+        style={{
+          position: "sticky",
+          top: 16,
+          zIndex: 30,
+          background: "linear-gradient(to right, #fff1f2, #fff7ed, #fefce8)",
+          padding: 16,
+          borderRadius: 16,
+          border: "1px solid #fed7aa",
+          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        }}
+      >
+        <Group gap={12}>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              background: "linear-gradient(135deg, #ef4444, #f97316)",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="w-5 h-5 text-white"
+              style={{ width: 20, height: 20, color: "white" }}
             >
               <path
                 fillRule="evenodd"
@@ -252,69 +277,127 @@ export const TierListView = React.memo(function TierListView({
                 clipRule="evenodd"
               />
             </svg>
-          </div>
-          <div>
-            <div className="text-2xl font-black text-orange-600 leading-none">{totalItems}</div>
-            <div className="text-xs font-semibold text-text-500 uppercase tracking-wider mt-0.5">Total Games</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
+          </Box>
+          <Box>
+            <Text fw={900} fz={24} c="#ea580c" style={{ lineHeight: 1 }}>
+              {totalItems}
+            </Text>
+            <Text
+              size="xs"
+              fw={600}
+              c="var(--color-text-500)"
+              style={{ textTransform: "uppercase", letterSpacing: "0.05em", marginTop: 2 }}
+            >
+              Total Games
+            </Text>
+          </Box>
+        </Group>
+        <Group gap={12}>
           {TIERS.slice(0, -1).map(tier => {
             const query = tierQueries[tier.id];
             const count = query.data?.pages[0]?.count ?? 0;
             return (
-              <div
+              <Group
                 key={tier.id}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 rounded-lg border border-background-200"
+                gap={6}
+                style={{
+                  padding: "6px 12px",
+                  background: "rgba(255,255,255,0.9)",
+                  borderRadius: 8,
+                  border: "1px solid var(--color-background-200)",
+                }}
               >
-                <span className={`w-2 h-2 rounded-full ${tier.color}`} />
-                <span className="text-xs font-black text-text-600">{count}</span>
-              </div>
+                <Box style={{ width: 8, height: 8, borderRadius: "9999px", background: tier.color }} />
+                <Text component="span" size="xs" fw={900} c="var(--color-text-600)">
+                  {count}
+                </Text>
+              </Group>
             );
           })}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 rounded-lg border border-background-200">
-            <span className="text-xs font-semibold text-text-400">?</span>
-            <span className="text-xs font-black text-text-600">{unrankedQuery.data?.pages[0]?.count ?? 0}</span>
-          </div>
-        </div>
-      </div>
+          <Group
+            key="unranked-count"
+            gap={6}
+            style={{
+              padding: "6px 12px",
+              background: "rgba(255,255,255,0.9)",
+              borderRadius: 8,
+              border: "1px solid var(--color-background-200)",
+            }}
+          >
+            <Text component="span" size="xs" fw={600} c="var(--color-text-400)">
+              ?
+            </Text>
+            <Text component="span" size="xs" fw={900} c="var(--color-text-600)">
+              {unrankedQuery.data?.pages[0]?.count ?? 0}
+            </Text>
+          </Group>
+        </Group>
+      </Group>
 
-      <div className="flex flex-col gap-4">
+      <Stack gap={16}>
         {TIERS.map(tier => {
           const items = tierData[tier.id] || [];
           const query = tierQueries[tier.id];
           const totalCount = query.data?.pages[0]?.count ?? 0;
 
           return (
-            <div key={tier.id} className="flex flex-col gap-2">
-              <div className="flex items-center gap-3 px-4">
-                <div
-                  className={`flex items-center justify-center w-12 h-12 ${tier.color} rounded-xl shadow-md border-2 border-white`}
+            <Stack gap={8} key={tier.id}>
+              <Group gap={12} style={{ paddingInline: 16 }}>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 48,
+                    height: 48,
+                    borderRadius: 12,
+                    background: tier.color,
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                    border: "2px solid white",
+                  }}
                 >
-                  <span className="text-xl font-black text-white">{tier.label}</span>
-                </div>
-                <div className="flex-1 h-1 bg-background-200 rounded-full" />
-                <div className="text-sm font-bold text-text-600">{totalCount} games</div>
-              </div>
+                  <Text component="span" fz="xl" fw={900} c="white">
+                    {tier.label}
+                  </Text>
+                </Box>
+                <Box style={{ flex: 1, height: 4, background: "var(--color-background-200)", borderRadius: 9999 }} />
+                <Text fw={700} size="sm" c="var(--color-text-600)">
+                  {totalCount} games
+                </Text>
+              </Group>
 
               <TierDropZone tierId={tier.id} isEmpty={items.length === 0} isOwner={isOwner} onItemMove={handleItemMove}>
                 {(() => {
                   if (query.isLoading && !query.isFetchingNextPage) {
                     return (
-                      <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
-                      </div>
+                      <Group justify="center" align="center" style={{ height: 256 }}>
+                        <Box
+                          style={{
+                            animation: "spin 1s linear infinite",
+                            borderRadius: "9999px",
+                            width: 32,
+                            height: 32,
+                            borderBottom: "2px solid var(--color-primary-600)",
+                          }}
+                        />
+                      </Group>
                     );
                   }
 
                   if (items.length === 0) {
                     return (
-                      <div className="flex items-center justify-center h-32 text-text-400 text-sm">
+                      <Group justify="center" align="center" style={{ height: 128 }} c="var(--color-text-400)" fz="sm">
                         No games in this tier
-                      </div>
+                      </Group>
                     );
                   }
 
+                  const COLUMN_COUNT = 7;
+                  const ROW_HEIGHT = 180;
+                  const MAX_VISIBLE_ROWS = 3;
+                  const rowCount = Math.ceil(items.length / COLUMN_COUNT);
+                  const visibleRows = Math.min(rowCount, MAX_VISIBLE_ROWS);
+                  const listHeight = visibleRows * ROW_HEIGHT + 24;
                   return (
                     <VirtualGridList
                       items={items}
@@ -322,18 +405,18 @@ export const TierListView = React.memo(function TierListView({
                       hasNextPage={query.hasNextPage ?? false}
                       isFetchingNextPage={query.isFetchingNextPage}
                       fetchNextPage={query.fetchNextPage}
-                      columnCount={7}
-                      rowHeight={180}
-                      className="h-64"
+                      columnCount={COLUMN_COUNT}
+                      rowHeight={ROW_HEIGHT}
+                      style={{ height: listHeight }}
                       gap={3}
                     />
                   );
                 })()}
               </TierDropZone>
-            </div>
+            </Stack>
           );
         })}
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   );
 });

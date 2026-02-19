@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { Game } from "@/client";
 
 interface GameInformationProps {
@@ -8,144 +9,245 @@ interface GameInformationProps {
 
 export default function GameInformation({ gameDetails }: Readonly<GameInformationProps>) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
-      <div className="bg-background-50 px-4 py-3 border-b border-background-200">
-        <p className="font-semibold text-text-900">Information</p>
-      </div>
-      <div className="p-4 flex flex-col gap-3">
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">IGDB ID:</p>
-          <p className="text-text-900 text-right flex-1 break-all">{gameDetails?.igdb_id || "---"}</p>
-        </div>
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">Release date:</p>
-          <p className="text-text-900 text-right flex-1">
+    <Box
+      style={{
+        background: "white",
+        borderRadius: 12,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        border: "1px solid var(--color-background-200)",
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        style={{
+          background: "var(--color-background-50)",
+          padding: "12px 16px",
+          borderBottom: "1px solid var(--color-background-200)",
+        }}
+      >
+        <Text fw={600} c="var(--color-text-900)">
+          Information
+        </Text>
+      </Box>
+      <Stack gap={12} p="md">
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            IGDB ID:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1, wordBreak: "break-all" }}>
+            {gameDetails?.igdb_id || "---"}
+          </Text>
+        </Group>
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            Release date:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
             {gameDetails?.release_date ? gameDetails.release_date.toString() : "---"}
-          </p>
-        </div>
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">Game Status:</p>
-          <p className="text-text-900 text-right flex-1">{gameDetails?.game_status?.status || "Released"}</p>
-        </div>
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">Game Type:</p>
-          <p className="text-text-900 text-right flex-1">{gameDetails?.game_type?.type || "---"}</p>
-        </div>
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">Publisher:</p>
-          <p className="text-text-900 text-right flex-1">
+          </Text>
+        </Group>
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            Game Status:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
+            {gameDetails?.game_status?.status || "Released"}
+          </Text>
+        </Group>
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            Game Type:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
+            {gameDetails?.game_type?.type || "---"}
+          </Text>
+        </Group>
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            Publisher:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
             {gameDetails?.publisher ? (
               <Link
                 to={`/company/${gameDetails.publisher.id}`}
-                className="text-primary-600 font-semibold hover:text-primary-700 hover:underline transition-colors"
+                style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
               >
                 {gameDetails.publisher.name}
               </Link>
             ) : (
               "---"
             )}
-          </p>
-        </div>
-        <div className="flex flex-row justify-between items-start text-sm gap-4">
-          <p className="font-medium text-text-600 shrink-0">Developer:</p>
-          <p className="text-text-900 text-right flex-1">
+          </Text>
+        </Group>
+        <Group justify="space-between" align="flex-start" gap="md">
+          <Text size="sm" fw={500} c="var(--color-text-600)" style={{ flexShrink: 0 }}>
+            Developer:
+          </Text>
+          <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
             {gameDetails?.developer ? (
               <Link
                 to={`/company/${gameDetails.developer.id}`}
-                className="text-primary-600 font-semibold hover:text-primary-700 hover:underline transition-colors"
+                style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
               >
                 {gameDetails.developer.name}
               </Link>
             ) : (
               "---"
             )}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-text-600">Genres:</p>
-          <div className="flex flex-row flex-wrap gap-2">
+          </Text>
+        </Group>
+        <Stack gap={8}>
+          <Text size="sm" fw={500} c="var(--color-text-600)">
+            Genres:
+          </Text>
+          <Group gap={8} wrap="wrap">
             {gameDetails?.genres && gameDetails.genres.length > 0 ? (
               gameDetails.genres.map(genre => (
-                <p
+                <Text
+                  component="span"
                   key={genre.id}
-                  className="inline-flex items-center rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-700/10"
+                  size="xs"
+                  fw={500}
+                  style={{
+                    background: "var(--mantine-color-primary-0)",
+                    color: "var(--mantine-color-primary-7)",
+                    border: "1px solid var(--mantine-color-primary-2)",
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                  }}
                 >
                   {genre.name}
-                </p>
+                </Text>
               ))
             ) : (
-              <p className="text-sm text-text-900">---</p>
+              <Text size="sm" c="var(--color-text-900)">
+                ---
+              </Text>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium text-text-600">Platforms:</p>
-          <div className="flex flex-row flex-wrap gap-2">
+          </Group>
+        </Stack>
+        <Stack gap={4}>
+          <Text size="sm" fw={500} c="var(--color-text-600)">
+            Platforms:
+          </Text>
+          <Group gap={8} wrap="wrap">
             {gameDetails?.platforms && gameDetails.platforms.length > 0 ? (
               gameDetails.platforms.map(platform => (
-                <div key={platform.id} className="tooltip" data-tip={platform.name}>
-                  <p className="inline-flex items-center rounded-md bg-secondary-50 px-2 py-1 text-xs font-medium text-secondary-700 ring-1 ring-inset ring-secondary-700/10">
+                <Tooltip key={platform.id} label={platform.name}>
+                  <Text
+                    component="span"
+                    size="xs"
+                    fw={500}
+                    style={{
+                      background: "var(--mantine-color-secondary-0, #fffbeb)",
+                      color: "var(--mantine-color-secondary-7, #92400e)",
+                      border: "1px solid var(--mantine-color-secondary-2, #fde68a)",
+                      borderRadius: 6,
+                      padding: "2px 8px",
+                    }}
+                  >
                     {platform.abbreviation === "" ? platform.name : platform.abbreviation}
-                  </p>
-                </div>
+                  </Text>
+                </Tooltip>
               ))
             ) : (
-              <p className="text-sm text-text-900">---</p>
+              <Text size="sm" c="var(--color-text-900)">
+                ---
+              </Text>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium text-text-600">Engines:</p>
-          <div className="flex flex-row flex-wrap gap-2">
+          </Group>
+        </Stack>
+        <Stack gap={4}>
+          <Text size="sm" fw={500} c="var(--color-text-600)">
+            Engines:
+          </Text>
+          <Group gap={8} wrap="wrap">
             {gameDetails?.game_engines && gameDetails.game_engines.length > 0 ? (
               gameDetails.game_engines.map(engine => (
-                <p
+                <Text
+                  component="span"
                   key={engine.id}
-                  className="inline-flex items-center rounded-md bg-background-100 px-2 py-1 text-xs font-medium text-text-700 ring-1 ring-inset ring-background-300"
+                  size="xs"
+                  fw={500}
+                  style={{
+                    background: "var(--color-background-100)",
+                    color: "var(--color-text-700)",
+                    border: "1px solid var(--color-background-300)",
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                  }}
                 >
                   {engine.name}
-                </p>
+                </Text>
               ))
             ) : (
-              <p className="text-sm text-text-900">---</p>
+              <Text size="sm" c="var(--color-text-900)">
+                ---
+              </Text>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium text-text-600">Game Modes:</p>
-          <div className="flex flex-row flex-wrap gap-2">
+          </Group>
+        </Stack>
+        <Stack gap={4}>
+          <Text size="sm" fw={500} c="var(--color-text-600)">
+            Game Modes:
+          </Text>
+          <Group gap={8} wrap="wrap">
             {gameDetails?.game_modes && gameDetails.game_modes.length > 0 ? (
               gameDetails.game_modes.map(mode => (
-                <p
+                <Text
+                  component="span"
                   key={mode.id}
-                  className="inline-flex items-center rounded-md bg-background-100 px-2 py-1 text-xs font-medium text-text-700 ring-1 ring-inset ring-background-300"
+                  size="xs"
+                  fw={500}
+                  style={{
+                    background: "var(--color-background-100)",
+                    color: "var(--color-text-700)",
+                    border: "1px solid var(--color-background-300)",
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                  }}
                 >
                   {mode.name}
-                </p>
+                </Text>
               ))
             ) : (
-              <p className="text-sm text-text-900">---</p>
+              <Text size="sm" c="var(--color-text-900)">
+                ---
+              </Text>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium text-text-600">Player Perspectives:</p>
-          <div className="flex flex-row flex-wrap gap-2">
+          </Group>
+        </Stack>
+        <Stack gap={4}>
+          <Text size="sm" fw={500} c="var(--color-text-600)">
+            Player Perspectives:
+          </Text>
+          <Group gap={8} wrap="wrap">
             {gameDetails?.player_perspectives && gameDetails.player_perspectives.length > 0 ? (
               gameDetails.player_perspectives.map(perspective => (
-                <p
+                <Text
+                  component="span"
                   key={perspective.id}
-                  className="inline-flex items-center rounded-md bg-background-100 px-2 py-1 text-xs font-medium text-text-700 ring-1 ring-inset ring-background-300"
+                  size="xs"
+                  fw={500}
+                  style={{
+                    background: "var(--color-background-100)",
+                    color: "var(--color-text-700)",
+                    border: "1px solid var(--color-background-300)",
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                  }}
                 >
                   {perspective.name}
-                </p>
+                </Text>
               ))
             ) : (
-              <p className="text-sm text-text-900">---</p>
+              <Text size="sm" c="var(--color-text-900)">
+                ---
+              </Text>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Group>
+        </Stack>
+      </Stack>
+    </Box>
   );
 }

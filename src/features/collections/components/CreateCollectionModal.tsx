@@ -1,17 +1,15 @@
 import * as React from "react";
-import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 import { VisibilityEnum, ModeEnum, TypeEnum, Friendship, CollectionDetail } from "@/client";
 import { useCreateCollection, useFriendSearch, useUpdateCollection } from "../hooks/useCollectionQueries";
 import { Button } from "@/components/ui/Button";
 import { SafeImage } from "@/components/ui/SafeImage";
-import TextFieldInput from "@/components/ui/Form/TextFieldInput";
-import SelectInput from "@/components/ui/Form/SelectInput";
-import CheckboxInput from "@/components/ui/Form/CheckboxInput";
+import { TextInput, Select, Checkbox, ActionIcon, Modal, Stack, Group, Box, Title, Text } from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
-import XMarkIcon from "@/components/ui/Icons/XMark";
 
 const validationSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -36,7 +34,6 @@ export default function CreateCollectionModal({
   initialData,
   mode = "create",
 }: Readonly<CreateCollectionModalProps>) {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
   const { mutate: createCollection, isPending: isCreatePending } = useCreateCollection();
   const { mutate: updateCollection, isPending: isUpdatePending } = useUpdateCollection();
 
@@ -47,10 +44,9 @@ export default function CreateCollectionModal({
   // When editing, populate selectedCollaboratorObjects based on initialData.collaborators
   React.useEffect(() => {
     if (mode === "edit" && initialData?.collaborators) {
-      // Map Users to Friendship-like interface that AsyncMultiSelectAutocomplete expects
       const initialCollaborators = initialData.collaborators.map(user => ({
         friend: user,
-        user: user, // Using the same user for both fields as a placeholder
+        user: user,
         id: -1,
         created_at: "",
       }));
@@ -58,9 +54,8 @@ export default function CreateCollectionModal({
     }
   }, [mode, initialData]);
 
-  const methods = useForm<ValidationSchema>({
-    resolver: zodResolver(validationSchema),
-    defaultValues: {
+  const form = useForm<ValidationSchema>({
+    initialValues: {
       name: initialData?.name ?? "",
       description: initialData?.description ?? "",
       is_favorite: initialData?.is_favorite ?? false,
@@ -69,45 +64,18 @@ export default function CreateCollectionModal({
       type: initialData?.type ?? TypeEnum.NOR,
       collaborators: initialData?.collaborators?.map(u => u.id.toString()) ?? [],
     },
+    validate: zod4Resolver(validationSchema),
   });
 
-  const { watch, setValue } = methods;
-  const selectedMode = watch("mode");
+  const selectedMode = form.values.mode;
 
   React.useEffect(() => {
     if (selectedMode === ModeEnum.S) {
-      setValue("collaborators", []);
+      form.setFieldValue("collaborators", []);
       setSelectedCollaboratorObjects([]);
     }
-  }, [selectedMode, setValue]);
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) {
-      dialog.showModal();
-    }
-  }, []);
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    const handleClick = (e: MouseEvent) => {
-      const rect = dialog.getBoundingClientRect();
-      const isInDialog =
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width;
-
-      if (!isInDialog) {
-        onClose();
-      }
-    };
-
-    dialog.addEventListener("click", handleClick);
-    return () => dialog.removeEventListener("click", handleClick);
-  }, [onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMode]);
 
   const handleAddCollaborator = (friendship: Friendship) => {
     setSelectedCollaboratorObjects(prev => [...prev, friendship]);
@@ -118,16 +86,15 @@ export default function CreateCollectionModal({
   };
 
   const removeCollaborator = (friendId: number) => {
-    const currentCollaborators = watch("collaborators");
-    setValue(
+    const currentCollaborators = form.values.collaborators;
+    form.setFieldValue(
       "collaborators",
       currentCollaborators.filter(id => id !== friendId.toString()),
     );
     setSelectedCollaboratorObjects(prev => prev.filter(f => f.friend.id !== friendId));
   };
 
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const onSubmit: SubmitHandler<any> = data => {
+  const onSubmit = (data: ValidationSchema) => {
     const payload = {
       ...data,
       collaborators: data.collaborators.map(Number),
@@ -138,106 +105,135 @@ export default function CreateCollectionModal({
         { id: initialData.id, body: payload },
         {
           onSuccess: () => {
-            toast.success("Collection updated successfully");
+            notifications.show({ title: "Success", message: "Collection updated successfully", color: "green" });
             onClose();
           },
           onError: error => {
-            toast.error(error.message || "Failed to update collection");
+            notifications.show({
+              title: "Error",
+              message: error.message || "Failed to update collection",
+              color: "red",
+            });
           },
         },
       );
     } else {
       createCollection(payload, {
         onSuccess: () => {
-          toast.success("Collection created successfully");
+          notifications.show({ title: "Success", message: "Collection created successfully", color: "green" });
           onClose();
         },
         onError: error => {
-          toast.error(error.message || "Failed to create collection");
+          notifications.show({ title: "Error", message: error.message || "Failed to create collection", color: "red" });
         },
       });
     }
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="bg-white rounded-3xl p-0 border-none shadow-2xl backdrop:bg-black/60 outline-none m-auto w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-300"
-      onCancel={onClose}
+    <Modal
+      opened={true}
+      onClose={onClose}
+      withCloseButton={false}
+      padding={0}
+      radius="xl"
+      size="lg"
+      overlayProps={{ backgroundOpacity: 0.6 }}
     >
-      <div className="flex flex-col h-full max-h-[90vh]">
+      <Stack gap={0} style={{ height: "100%", maxHeight: "90vh" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-background-100 bg-background-50/50">
-          <h2 className="text-2xl font-black text-text-900 tracking-tight">
-            {mode === "create" ? "Create" : "Edit"} <span className="text-primary-600">Collection</span>
-          </h2>
-          <button
+        <Group
+          justify="space-between"
+          style={{
+            padding: "24px 32px",
+            borderBottom: "1px solid var(--color-background-100)",
+            background: "rgba(248,250,252,0.5)",
+          }}
+        >
+          <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
+            {mode === "create" ? "Create" : "Edit"}{" "}
+            <Text span c="var(--color-primary-600)">
+              Collection
+            </Text>
+          </Title>
+          <ActionIcon
             onClick={onClose}
-            className="p-2 hover:bg-background-200 rounded-full transition-colors text-text-400 hover:text-text-900"
+            variant="subtle"
+            size="lg"
+            style={{ borderRadius: "9999px", color: "var(--color-text-400)" }}
           >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
+            <IconX style={{ width: 24, height: 24 }} />
+          </ActionIcon>
+        </Group>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <FormProvider {...methods}>
-            <form id="create-collection-form" onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-              <TextFieldInput
+        <Box style={{ flex: 1, overflowY: "auto", padding: 32 }}>
+          <form id="create-collection-form" onSubmit={form.onSubmit(onSubmit)}>
+            <Stack gap="lg">
+              <TextInput
                 id="name-input"
                 label="Collection Name"
                 name="name"
-                type="text"
                 placeholder="My Awesome Collection"
                 required
+                {...form.getInputProps("name")}
               />
 
-              <TextFieldInput
+              <TextInput
                 id="description-input"
                 label="Description"
                 name="description"
-                type="text"
                 placeholder="What is this collection about?"
+                {...form.getInputProps("description")}
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <SelectInput
+              <Box style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <Select
                   id="visibility-select"
                   label="Visibility"
                   name="visibility"
                   placeholder="Select visibility"
-                  selectOptions={[
+                  searchable
+                  clearable
+                  data={[
                     { value: VisibilityEnum.PUB, label: "Public" },
                     { value: VisibilityEnum.FRI, label: "Friends Only" },
                     { value: VisibilityEnum.PRI, label: "Private" },
                   ]}
+                  {...form.getInputProps("visibility")}
                 />
-                <SelectInput
+                <Select
                   id="mode-select"
                   label="Mode"
                   name="mode"
                   placeholder="Select mode"
-                  selectOptions={[
+                  searchable
+                  clearable
+                  data={[
                     { value: ModeEnum.S, label: "Solo" },
                     { value: ModeEnum.C, label: "Collaborative" },
                   ]}
+                  {...form.getInputProps("mode")}
                 />
-              </div>
+              </Box>
 
-              <SelectInput
+              <Select
                 id="type-select"
                 label="Collection Type"
                 name="type"
                 placeholder="Select type"
-                selectOptions={[
+                searchable
+                clearable
+                data={[
                   { value: TypeEnum.NOR, label: "Normal" },
                   { value: TypeEnum.RNK, label: "Ranking" },
                   { value: TypeEnum.TIE, label: "Tier List" },
                 ]}
+                {...form.getInputProps("type")}
               />
 
               {selectedMode === ModeEnum.C && (
-                <div className="flex flex-col gap-4">
+                <Stack gap="md">
                   <AsyncMultiSelectAutocomplete<Friendship>
                     id="collaborators"
                     name="collaborators"
@@ -250,54 +246,111 @@ export default function CreateCollectionModal({
                     onAdd={handleAddCollaborator}
                     onRemove={handleRemoveCollaborator}
                     renderOption={item => (
-                      <div className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full overflow-hidden shrink-0">
+                      <Group gap={12}>
+                        <Box
+                          style={{ width: 24, height: 24, borderRadius: "9999px", overflow: "hidden", flexShrink: 0 }}
+                        >
                           <SafeImage src={item.friend.gravatar_url} alt={item.friend.username} />
-                        </div>
-                        <span className="font-medium">{item.friend.username}</span>
-                      </div>
+                        </Box>
+                        <Text span fw={500}>
+                          {item.friend.username}
+                        </Text>
+                      </Group>
                     )}
+                    {...form.getInputProps("collaborators")}
                   />
 
                   {/* Selected Collaborators Special Area */}
                   {selectedCollaboratorObjects.length > 0 && (
-                    <div className="flex flex-col gap-2 p-4 rounded-2xl bg-background-50 border border-background-100 animate-in fade-in slide-in-from-top-2">
-                      <p className="text-[10px] font-bold text-text-400 uppercase tracking-widest px-1">
+                    <Stack
+                      gap="xs"
+                      style={{
+                        padding: 16,
+                        borderRadius: 16,
+                        background: "var(--color-background-50)",
+                        border: "1px solid var(--color-background-100)",
+                      }}
+                    >
+                      <Text
+                        fz={10}
+                        fw={700}
+                        c="var(--color-text-400)"
+                        style={{ textTransform: "uppercase", letterSpacing: "0.1em", paddingInline: 4 }}
+                      >
                         Selected Collaborators
-                      </p>
-                      <div className="flex flex-wrap gap-2">
+                      </Text>
+                      <Group wrap="wrap" gap={8}>
                         {selectedCollaboratorObjects.map(f => (
-                          <div
+                          <Group
                             key={f.friend.id}
-                            className="flex items-center gap-2 pl-1.5 pr-2.5 py-1.5 bg-white rounded-full border border-background-200 shadow-xs group animate-in zoom-in-95 duration-200"
+                            gap={8}
+                            style={{
+                              paddingLeft: 6,
+                              paddingRight: 10,
+                              paddingBlock: 6,
+                              background: "white",
+                              borderRadius: "9999px",
+                              border: "1px solid var(--color-background-200)",
+                            }}
                           >
-                            <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 ring-1 ring-background-100">
+                            <Box
+                              style={{
+                                width: 24,
+                                height: 24,
+                                borderRadius: "9999px",
+                                overflow: "hidden",
+                                flexShrink: 0,
+                                boxShadow: "0 0 0 1px var(--color-background-100)",
+                              }}
+                            >
                               <SafeImage src={f.friend.gravatar_url} alt={f.friend.username} />
-                            </div>
-                            <span className="text-xs font-bold text-text-700">{f.friend.username}</span>
-                            <button
+                            </Box>
+                            <Text span fz="xs" fw={700} c="var(--color-text-700)">
+                              {f.friend.username}
+                            </Text>
+                            <ActionIcon
                               type="button"
                               onClick={() => removeCollaborator(f.friend.id)}
-                              className="p-0.5 hover:bg-error-50 hover:text-error-600 rounded-full transition-colors text-text-400"
+                              variant="subtle"
+                              size="xs"
+                              style={{ borderRadius: "9999px", color: "var(--color-text-400)" }}
                             >
-                              <XMarkIcon className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
+                              <IconX style={{ width: 14, height: 14 }} />
+                            </ActionIcon>
+                          </Group>
                         ))}
-                      </div>
-                    </div>
+                      </Group>
+                    </Stack>
                   )}
-                </div>
+                </Stack>
               )}
 
-              <CheckboxInput id="is_favorite_checkbox" label="Mark as Favorite" name="is_favorite" />
-            </form>
-          </FormProvider>
-        </div>
+              <Checkbox
+                id="is_favorite_checkbox"
+                label="Mark as Favorite"
+                name="is_favorite"
+                {...form.getInputProps("is_favorite", { type: "checkbox" })}
+              />
+            </Stack>
+          </form>
+        </Box>
 
         {/* Footer */}
-        <div className="px-8 py-6 border-t border-background-100 bg-background-50/50 flex flex-row gap-3">
-          <Button type="button" variant="outline" fullWidth onClick={onClose} className="font-bold py-3">
+        <Group
+          gap={12}
+          style={{
+            padding: "24px 32px",
+            borderTop: "1px solid var(--color-background-100)",
+            background: "rgba(248,250,252,0.5)",
+          }}
+        >
+          <Button
+            type="button"
+            variant="outline"
+            fullWidth
+            onClick={onClose}
+            style={{ fontWeight: 700, paddingBlock: 12 }}
+          >
             Cancel
           </Button>
           <Button
@@ -305,12 +358,12 @@ export default function CreateCollectionModal({
             type="submit"
             fullWidth
             isLoading={isPending}
-            className="font-black py-3 shadow-lg shadow-primary-200"
+            style={{ fontWeight: 900, paddingBlock: 12 }}
           >
             {mode === "create" ? "Create" : "Save Changes"}
           </Button>
-        </div>
-      </div>
-    </dialog>
+        </Group>
+      </Stack>
+    </Modal>
   );
 }

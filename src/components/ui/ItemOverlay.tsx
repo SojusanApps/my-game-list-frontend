@@ -1,11 +1,13 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { cn } from "@/utils/cn";
+import { Box, Group, Stack, Title } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 import { SafeImage } from "./SafeImage";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 type ItemOverlayProps = {
   className?: string;
+  style?: React.CSSProperties;
   itemPageUrl: string;
   itemCoverUrl?: string | null;
   name: string;
@@ -18,6 +20,7 @@ type ItemOverlayProps = {
 
 function ItemOverlay({
   className,
+  style,
   name = "Name Placeholder",
   itemPageUrl,
   itemCoverUrl,
@@ -28,6 +31,7 @@ function ItemOverlay({
   status,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
+  const { hovered, ref } = useHover<HTMLDivElement>();
 
   const releaseYear = React.useMemo(() => {
     if (!releaseDate) return null;
@@ -39,100 +43,198 @@ function ItemOverlay({
     }
   }, [releaseDate]);
 
-  const ratingBadgeClass = React.useMemo(() => {
-    if (rating === null || rating === undefined) return "";
-    if (rating < 5) return "bg-red-300/90 border-red-200/50";
-    if (rating < 8) return "bg-yellow-300/90 border-yellow-200/50";
-    return "bg-emerald-300/90 border-emerald-200/50";
+  const ratingBg = React.useMemo(() => {
+    if (rating === null || rating === undefined) return "transparent";
+    if (rating < 5) return "rgba(252,165,165,0.9)";
+    if (rating < 8) return "rgba(253,224,71,0.9)";
+    return "rgba(110,231,183,0.9)";
   }, [rating]);
 
   return (
-    <div
-      className={cn(
-        "relative group flex flex-col overflow-hidden rounded-2xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
-        "bg-background-900 shadow-lg hover:shadow-2xl ring-1 ring-white/5",
-        isLogo ? "aspect-3/2" : "aspect-264/374",
-        className,
-      )}
+    <Box
+      ref={ref}
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        borderRadius: "16px",
+        transition: "all 500ms cubic-bezier(0.23,1,0.32,1)",
+        background: "var(--color-background-900)",
+        boxShadow: hovered ? "0 25px 50px -12px rgba(0,0,0,0.8)" : "0 10px 15px -3px rgba(0,0,0,0.3)",
+        outline: "1px solid rgba(255,255,255,0.05)",
+        aspectRatio: isLogo ? "3/2" : "264/374",
+        ...style,
+      }}
+      className={className}
     >
-      <Link to={itemPageUrl} className="block w-full h-full relative overflow-hidden">
+      <Link
+        to={itemPageUrl}
+        style={{ display: "block", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}
+      >
         {/* Poster Image with Parallax Shift */}
-        <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110 group-hover:-translate-y-4">
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            transition: "transform 700ms cubic-bezier(0.23,1,0.32,1)",
+            transform: hovered ? "scale(1.1) translateY(-16px)" : "scale(1) translateY(0)",
+          }}
+        >
           <SafeImage
-            className="w-full h-full"
+            containerStyle={{ width: "100%", height: "100%" }}
             src={itemCoverUrl || undefined}
             alt={name}
             loading="lazy"
             objectFit={isLogo ? "contain" : "cover"}
           />
-        </div>
+        </Box>
 
         {/* Top Badges (Floating Chips) */}
-        <div className="absolute top-3 inset-x-3 flex justify-between items-start z-20 pointer-events-none">
-          <div className="flex flex-col gap-1.5">
+        <Box
+          style={{
+            position: "absolute",
+            top: "12px",
+            left: "12px",
+            right: "12px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            zIndex: 20,
+            pointerEvents: "none",
+          }}
+        >
+          <Stack gap={6}>
             {gameType && (
-              <span className="bg-primary-600/90 text-white text-[8px] px-2 py-0.5 rounded-md uppercase font-black tracking-tighter backdrop-blur-md shadow-lg border border-white/10 w-fit">
+              <Box
+                component="span"
+                style={{
+                  background: "rgba(79,70,229,0.9)",
+                  color: "white",
+                  fontSize: "8px",
+                  padding: "2px 8px",
+                  borderRadius: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 900,
+                  letterSpacing: "-0.05em",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  width: "fit-content",
+                }}
+              >
                 {gameType}
-              </span>
+              </Box>
             )}
-          </div>
+          </Stack>
 
           {rating !== null && rating !== undefined && (
-            <div
-              className={cn(
-                "text-black text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border",
-                ratingBadgeClass,
-              )}
+            <Box
+              style={{
+                background: ratingBg,
+                color: "black",
+                fontSize: "10px",
+                fontWeight: 900,
+                padding: "2px 6px",
+                borderRadius: "6px",
+                backdropFilter: "blur(8px)",
+                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
+                border: "1px solid rgba(255,255,255,0.3)",
+              }}
             >
               {rating.toFixed(1)}
-            </div>
+            </Box>
           )}
 
           {status && (
-            <div
-              className={cn(
-                "text-[10px] font-black px-1.5 py-0.5 rounded-md backdrop-blur-md shadow-lg border",
-                getStatusConfig(status)?.activeStyles || "bg-background-800/90 text-white border-white/10",
-              )}
+            <Box
+              style={{
+                fontSize: "10px",
+                fontWeight: 900,
+                padding: "2px 6px",
+                borderRadius: "6px",
+                backdropFilter: "blur(8px)",
+                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
+                ...(getStatusConfig(status)?.badgeStyle
+                  ? { border: "1px solid transparent", ...getStatusConfig(status)!.badgeStyle }
+                  : { background: "rgba(30,30,40,0.9)", color: "white", border: "1px solid rgba(255,255,255,0.1)" }),
+              }}
             >
               {getStatusConfig(status)?.emoji}
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
 
         {/* Dynamic Info Anchor (Bottom) */}
-        <div
-          className={cn(
-            "absolute inset-x-0 bottom-0 z-10 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
-            "bg-linear-to-t from-black via-black/80 to-transparent",
-            "p-4 pt-16",
-          )}
+        <Box
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 10,
+            transition: "all 500ms cubic-bezier(0.23,1,0.32,1)",
+            background: "linear-gradient(to top, #000 0%, rgba(0,0,0,0.8) 60%, transparent 100%)",
+            padding: "16px",
+            paddingTop: "64px",
+          }}
         >
-          <div className="flex flex-col gap-1.5">
-            {/* Title - Auto-expanding with image shift */}
-            <h2
-              className={cn(
-                "text-[11px] font-bold leading-[1.2] text-white tracking-tight drop-shadow-md transition-colors duration-300",
-                "group-hover:text-primary-300 line-clamp-2 group-hover:line-clamp-4",
-              )}
+          <Stack gap={6}>
+            <Title
+              order={2}
+              lineClamp={hovered ? 4 : 2}
+              style={{
+                fontSize: "11px",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                color: hovered ? "var(--mantine-color-primary-3)" : "white",
+                letterSpacing: "-0.025em",
+                transition: "color 300ms",
+                textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+              }}
             >
               {name}
-            </h2>
+            </Title>
 
-            {/* Metadata Line */}
-            <div className="flex items-center gap-2">
+            <Group gap={8}>
               {releaseYear && (
-                <span className="text-[9px] font-black text-white/40 tracking-widest uppercase">{releaseYear}</span>
+                <Box
+                  component="span"
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 900,
+                    color: "rgba(255,255,255,0.4)",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {releaseYear}
+                </Box>
               )}
-              <div className="h-px flex-1 bg-white/10 group-hover:bg-primary-500/30 transition-colors" />
-            </div>
-          </div>
-        </div>
+              <Box
+                style={{
+                  height: "1px",
+                  flex: 1,
+                  background: hovered ? "rgba(99,102,241,0.3)" : "rgba(255,255,255,0.1)",
+                  transition: "background-color 300ms",
+                }}
+              />
+            </Group>
+          </Stack>
+        </Box>
 
-        {/* Overlay Lens (Subtle contrast boost on hover) */}
-        <div className="absolute inset-0 bg-primary-950/0 group-hover:bg-primary-950/10 transition-colors duration-500 pointer-events-none" />
+        {/* Overlay Lens */}
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: hovered ? "rgba(30,27,75,0.1)" : "transparent",
+            transition: "background-color 500ms",
+            pointerEvents: "none",
+          }}
+        />
       </Link>
-    </div>
+    </Box>
   );
 }
 

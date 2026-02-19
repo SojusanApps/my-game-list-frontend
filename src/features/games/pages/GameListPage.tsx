@@ -9,9 +9,8 @@ import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, Button, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
-import { cn } from "@/utils/cn";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -38,52 +37,91 @@ export default function GameListPage(): React.JSX.Element {
 
   const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
-  const statuses = [
+  const statuses: { id: StatusEnum | null; label: string; emoji: string; color: string }[] = [
+    { id: null, label: "ALL", emoji: "♾️", color: "gray" },
     {
-      id: null,
-      label: "ALL",
-      emoji: "♾️",
-      styles: "hover:bg-text-100 text-text-600 border-background-200",
-      activeStyles: "bg-text-800 text-white border-text-800",
+      id: StatusEnum.P,
+      label: STATUS_CONFIG[StatusEnum.P].label,
+      emoji: STATUS_CONFIG[StatusEnum.P].emoji,
+      color: "teal",
     },
-    ...Object.entries(STATUS_CONFIG).map(([key, config]) => ({
-      id: key as StatusEnum,
-      ...config,
-    })),
+    {
+      id: StatusEnum.C,
+      label: STATUS_CONFIG[StatusEnum.C].label,
+      emoji: STATUS_CONFIG[StatusEnum.C].emoji,
+      color: "indigo",
+    },
+    {
+      id: StatusEnum.PTP,
+      label: STATUS_CONFIG[StatusEnum.PTP].label,
+      emoji: STATUS_CONFIG[StatusEnum.PTP].emoji,
+      color: "gray",
+    },
+    {
+      id: StatusEnum.OH,
+      label: STATUS_CONFIG[StatusEnum.OH].label,
+      emoji: STATUS_CONFIG[StatusEnum.OH].emoji,
+      color: "orange",
+    },
+    {
+      id: StatusEnum.D,
+      label: STATUS_CONFIG[StatusEnum.D].label,
+      emoji: STATUS_CONFIG[StatusEnum.D].emoji,
+      color: "red",
+    },
   ];
 
   return (
-    <div className="py-12 min-h-screen">
+    <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title={pageTitle} />
-      <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
-        <div className="flex flex-col items-center gap-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-900 tracking-tight text-center">
-            <span className="text-primary-600">{userDetails?.username}</span>&apos;s Game List
-          </h1>
+      <Stack gap={40} maw={1280} mx="auto" px={16}>
+        <Stack align="center" gap={24}>
+          <Title
+            order={1}
+            fz={{ base: 30, md: 36 }}
+            fw={700}
+            c="var(--color-text-900)"
+            ta="center"
+            style={{ letterSpacing: "-0.025em" }}
+          >
+            <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
+            {"'s Game List"}
+          </Title>
 
-          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+          <Group justify="center" wrap="wrap" gap={8}>
             {statuses.map(status => (
-              <button
+              <Button
                 key={String(status.id)}
+                variant={selectedGameStatus === status.id ? "filled" : "light"}
+                color={status.color}
+                size="md"
+                radius="xl"
                 onClick={() => setSelectedGameStatus(status.id)}
-                className={cn(
-                  "px-5 py-2 text-xs md:text-sm font-bold rounded-full border transition-all duration-200 shadow-xs",
-                  selectedGameStatus === status.id ? status.activeStyles : cn("bg-white", status.styles),
-                )}
+                leftSection={<span>{status.emoji}</span>}
               >
-                <span className="mr-1">{status.emoji}</span>
                 {status.label}
-              </button>
+              </Button>
             ))}
-          </div>
-        </div>
+          </Group>
+        </Stack>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-6 md:p-8 min-h-212.5">
+        <Box
+          style={{
+            background: "white",
+            borderRadius: "16px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            border: "1px solid var(--color-background-200)",
+            padding: "24px",
+            minHeight: "850px",
+          }}
+        >
           {isLoading && !isFetchingNextPage ? (
             <GridList>
               {Array.from({ length: 21 }).map((_, i) => {
                 const skeletonKey = `game-skeleton-${i}`;
-                return <Skeleton key={skeletonKey} className="aspect-264/374 w-full rounded-xl" />;
+                return (
+                  <Skeleton key={skeletonKey} style={{ aspectRatio: "264/374", width: "100%", borderRadius: "12px" }} />
+                );
               })}
             </GridList>
           ) : (
@@ -92,11 +130,9 @@ export default function GameListPage(): React.JSX.Element {
               hasNextPage={!!hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
-              className="h-200"
               renderItem={(gameListItem: GameList) => (
                 <ItemOverlay
                   key={gameListItem.id}
-                  className="w-full"
                   name={gameListItem.title}
                   itemPageUrl={`/game/${gameListItem.game_id}`}
                   itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
@@ -107,12 +143,22 @@ export default function GameListPage(): React.JSX.Element {
             />
           )}
           {errorFetchingData && (
-            <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
-              <p className="text-error-600 text-center font-medium">Error: {errorFetchingData.message}</p>
-            </div>
+            <Box
+              style={{
+                background: "var(--color-error-50)",
+                border: "1px solid var(--color-error-200)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginTop: "16px",
+              }}
+            >
+              <Text ta="center" fw={500} c="var(--color-error-600)">
+                Error: {errorFetchingData.message}
+              </Text>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Stack>
+    </Box>
   );
 }

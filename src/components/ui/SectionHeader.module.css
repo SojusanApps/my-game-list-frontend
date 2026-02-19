@@ -1,0 +1,13 @@
+.viewMoreLink {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--mantine-color-primary-6);
+  transition: color 150ms;
+}
+.viewMoreLink:hover {
+  color: var(--mantine-color-primary-7);
+}

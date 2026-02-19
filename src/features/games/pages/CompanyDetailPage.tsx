@@ -1,58 +1,14 @@
 import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { useGetCompanyDetail } from "../hooks/gameQueries";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
-import { cn } from "@/utils/cn";
 import { SafeImage } from "@/components/ui/SafeImage";
-
-function CollapsibleSection({
-  title,
-  count,
-  children,
-  defaultOpen = false,
-}: Readonly<{
-  title: string;
-  count?: number;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}>) {
-  const [isOpen, setIsOpen] = React.useState(defaultOpen);
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 bg-white hover:bg-background-50 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-text-900">{title}</h2>
-          {count !== undefined && (
-            <span className="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
-          )}
-        </div>
-        <ChevronDownIcon
-          className={cn("w-5 h-5 text-text-400 transition-transform duration-300", isOpen && "rotate-180")}
-        />
-      </button>
-      <div
-        className={cn(
-          "grid transition-all duration-300 ease-in-out",
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-        )}
-      >
-        <div className="overflow-hidden">
-          <div className="p-6 pt-0">{children}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
 export default function CompanyDetailPage(): React.JSX.Element {
   const { id } = useParams();
@@ -73,101 +29,158 @@ export default function CompanyDetailPage(): React.JSX.Element {
   const pageTitle = isCompanyLoading ? "Loading Company..." : companyDetails?.name;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 flex flex-col gap-6">
-      <PageMeta title={pageTitle} />
+    <Box py={48} style={{ minHeight: "100vh" }}>
+      <Stack gap={24} maw={1152} mx="auto" px={16}>
+        <PageMeta title={pageTitle} />
 
-      {isCompanyLoading ? (
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            <Skeleton className="w-32 h-32 rounded-xl shrink-0" />
-            <div className="flex flex-col gap-4 w-full">
-              <Skeleton className="w-1/2 h-10 rounded-lg" />
-              <Skeleton className="w-full h-24 rounded-xl" />
-            </div>
-          </div>
-          <Skeleton className="w-full h-16 rounded-xl" />
-          <Skeleton className="w-full h-16 rounded-xl" />
-        </div>
-      ) : (
-        <>
-          <div className="bg-white rounded-2xl shadow-md border border-background-200 overflow-hidden">
-            <div className="h-32 bg-linear-to-r from-primary-700 to-primary-950" />
-            <div className="px-8 pb-8 -mt-16">
-              <div className="flex flex-col md:flex-row gap-8 items-end">
-                <div className="w-48 h-48 shrink-0 rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white bg-white p-6 flex items-center justify-center transition-transform hover:scale-105 duration-300">
-                  <SafeImage
-                    className="w-full h-full"
-                    objectFit="contain"
-                    src={
-                      companyDetails?.company_logo_id
-                        ? `${getIGDBImageURL(companyDetails.company_logo_id, IGDBImageSize.LOGO_MED_284_160)}`
-                        : undefined
-                    }
-                    alt={companyDetails?.name}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-3 pb-2 flex-1">
-                  <div className="flex items-center gap-3">
-                    <span className="bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md shadow-sm">
-                      Company
-                    </span>
-                  </div>
-                  <h1 className="text-5xl font-black text-text-900 tracking-tight leading-none">
-                    {companyDetails?.name}
-                  </h1>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <CollapsibleSection title="Games Developed" count={developedCount} defaultOpen={false}>
-            {developedGamesList.length > 0 ? (
-              <VirtualGridList
-                items={developedGamesList}
-                hasNextPage={false}
-                isFetchingNextPage={false}
-                fetchNextPage={() => {}}
-                className="h-150"
-                renderItem={game => (
-                  <ItemOverlay
-                    itemPageUrl={`/game/${game.id}`}
-                    itemCoverUrl={
-                      game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
-                    }
-                    name={game.title}
-                  />
-                )}
+        {isCompanyLoading ? (
+          <Stack gap={24}>
+            <Group align="flex-start" gap={24} wrap="wrap">
+              <Skeleton w={128} h={128} style={{ borderRadius: 12, flexShrink: 0 }} />
+              <Stack gap={16} style={{ flex: 1 }}>
+                <Skeleton w="50%" h={40} style={{ borderRadius: 8 }} />
+                <Skeleton w="100%" h={96} style={{ borderRadius: 12 }} />
+              </Stack>
+            </Group>
+            <Skeleton w="100%" h={64} style={{ borderRadius: 12 }} />
+            <Skeleton w="100%" h={64} style={{ borderRadius: 12 }} />
+          </Stack>
+        ) : (
+          <>
+            <Box
+              style={{
+                background: "white",
+                borderRadius: 16,
+                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04)",
+                border: "1px solid var(--color-background-200)",
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                style={{
+                  height: 128,
+                  background:
+                    "linear-gradient(to right, var(--mantine-color-primary-7), var(--mantine-color-primary-9))",
+                }}
               />
-            ) : (
-              <p className="text-text-500 italic">No games developed found.</p>
-            )}
-          </CollapsibleSection>
+              <Box style={{ padding: "0 32px 32px", marginTop: -64 }}>
+                <Group align="flex-end" wrap="wrap" gap={32}>
+                  <Box
+                    style={{
+                      width: 128,
+                      height: 128,
+                      flexShrink: 0,
+                      borderRadius: 16,
+                      overflow: "hidden",
+                      boxShadow: "0 20px 25px -5px rgba(0,0,0,0.2)",
+                      border: "4px solid white",
+                      background: "white",
+                      padding: 16,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <SafeImage
+                      style={{ width: "100%", height: "100%" }}
+                      objectFit="contain"
+                      src={
+                        companyDetails?.company_logo_id
+                          ? `${getIGDBImageURL(companyDetails.company_logo_id, IGDBImageSize.LOGO_MED_284_160)}`
+                          : undefined
+                      }
+                      alt={companyDetails?.name}
+                    />
+                  </Box>
 
-          <CollapsibleSection title="Games Published" count={publishedCount} defaultOpen={false}>
-            {publishedGamesList.length > 0 ? (
-              <VirtualGridList
-                items={publishedGamesList}
-                hasNextPage={false}
-                isFetchingNextPage={false}
-                fetchNextPage={() => {}}
-                className="h-150"
-                renderItem={game => (
-                  <ItemOverlay
-                    itemPageUrl={`/game/${game.id}`}
-                    itemCoverUrl={
-                      game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
-                    }
-                    name={game.title}
-                  />
-                )}
-              />
-            ) : (
-              <p className="text-text-500 italic">No games published found.</p>
-            )}
-          </CollapsibleSection>
-        </>
-      )}
-    </div>
+                  <Stack gap={12} pb={8} style={{ flex: 1 }}>
+                    <Group gap={12}>
+                      <Text
+                        component="span"
+                        style={{
+                          background: "var(--mantine-color-primary-6)",
+                          color: "white",
+                          fontSize: 10,
+                          fontWeight: 900,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.12em",
+                          padding: "3px 10px",
+                          borderRadius: 6,
+                        }}
+                      >
+                        Company
+                      </Text>
+                    </Group>
+                    <Title
+                      order={1}
+                      fz={{ base: 32, md: 44 }}
+                      fw={900}
+                      c="var(--color-text-900)"
+                      style={{ letterSpacing: "-0.03em", lineHeight: 1 }}
+                    >
+                      {companyDetails?.name}
+                    </Title>
+                  </Stack>
+                </Group>
+              </Box>
+            </Box>
+
+            <CollapsibleSection title="Games Developed" count={developedCount} defaultOpen={false}>
+              {developedGamesList.length > 0 ? (
+                <VirtualGridList
+                  items={developedGamesList}
+                  hasNextPage={false}
+                  isFetchingNextPage={false}
+                  fetchNextPage={() => {}}
+                  style={{ height: 600 }}
+                  renderItem={game => (
+                    <ItemOverlay
+                      itemPageUrl={`/game/${game.id}`}
+                      itemCoverUrl={
+                        game.cover_image_id
+                          ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                          : null
+                      }
+                      name={game.title}
+                    />
+                  )}
+                />
+              ) : (
+                <Text fs="italic" c="var(--color-text-500)">
+                  No games developed found.
+                </Text>
+              )}
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Games Published" count={publishedCount} defaultOpen={false}>
+              {publishedGamesList.length > 0 ? (
+                <VirtualGridList
+                  items={publishedGamesList}
+                  hasNextPage={false}
+                  isFetchingNextPage={false}
+                  fetchNextPage={() => {}}
+                  style={{ height: 600 }}
+                  renderItem={game => (
+                    <ItemOverlay
+                      itemPageUrl={`/game/${game.id}`}
+                      itemCoverUrl={
+                        game.cover_image_id
+                          ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                          : null
+                      }
+                      name={game.title}
+                    />
+                  )}
+                />
+              ) : (
+                <Text fs="italic" c="var(--color-text-500)">
+                  No games published found.
+                </Text>
+              )}
+            </CollapsibleSection>
+          </>
+        )}
+      </Stack>
+    </Box>
   );
 }

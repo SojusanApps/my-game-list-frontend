@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Group } from "@mantine/core";
 import { TokenInfoType } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Friendship, FriendshipRequest } from "@/client";
@@ -88,7 +89,7 @@ export default function FriendshipButtons({ currentUser, userId }: Readonly<Frie
 
   if (incomingRequest) {
     return (
-      <div className="flex gap-2 w-full">
+      <Group gap={8} className="w-full">
         <Button type="button" onClick={handleAccept} className="flex-1 bg-green-600 hover:bg-green-700">
           Accept
         </Button>
@@ -101,7 +102,7 @@ export default function FriendshipButtons({ currentUser, userId }: Readonly<Frie
         >
           {isIncomingRejected ? "Rejected" : "Reject"}
         </Button>
-      </div>
+      </Group>
     );
   }
 

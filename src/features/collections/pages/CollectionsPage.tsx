@@ -7,12 +7,11 @@ import { useCollectionsInfiniteQuery } from "../hooks/useCollectionQueries";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton, Stack, Group, Box, Title, Text, Select, UnstyledButton } from "@mantine/core";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { Button } from "@/components/ui/Button";
 import CollectionCard from "../components/CollectionCard";
 import CreateCollectionModal from "../components/CreateCollectionModal";
-import { cn } from "@/utils/cn";
 import { useAuth } from "@/features/auth/context/AuthProvider";
 import { TokenInfoType } from "@/types";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
@@ -81,174 +80,184 @@ export default function CollectionsPage(): React.JSX.Element {
     { id: true, label: "Favorites", emoji: "❤️" },
   ];
 
-  const visibilityOptions = [
-    { value: "", label: "Any Visibility" },
-    { value: "PUB", label: "Public" },
-    { value: "FRI", label: "Friends" },
-    { value: "PRI", label: "Private" },
-  ];
-
-  const modeOptions = [
-    { value: "", label: "Any Mode" },
-    { value: "S", label: "Solo" },
-    { value: "C", label: "Collaborative" },
-  ];
-
-  const typeOptions = [
-    { value: "", label: "Any Type" },
-    { value: "NOR", label: "Normal" },
-    { value: "RNK", label: "Ranking" },
-    { value: "TIE", label: "Tier List" },
-  ];
-
   return (
-    <div className="py-12 min-h-screen">
+    <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title={pageTitle} />
-      <div className="flex flex-col gap-10 max-w-7xl mx-auto px-4">
-        <div className="flex flex-col items-center gap-8">
-          <div className="flex flex-col items-center">
-            <h1 className="text-3xl md:text-4xl font-black text-text-900 tracking-tight text-center">
-              <span className="text-primary-600">{userDetails?.username}</span>&apos;s Collections
-            </h1>
+      <Stack gap={40} maw={1280} mx="auto" px={16}>
+        <Stack align="center" gap={32}>
+          <Stack align="center">
+            <Title
+              order={1}
+              fz={{ base: 30, md: 36 }}
+              fw={900}
+              c="var(--color-text-900)"
+              ta="center"
+              style={{ letterSpacing: "-0.025em" }}
+            >
+              <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
+              {"'s Collections"}
+            </Title>
             {isOwner && (
-              <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest mt-2 px-3 py-1 bg-primary-50 rounded-full border border-primary-100">
+              <Text
+                span
+                style={{
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  color: "var(--mantine-color-primary-5)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  marginTop: "8px",
+                  padding: "4px 12px",
+                  background: "var(--mantine-color-primary-0)",
+                  borderRadius: "9999px",
+                  border: "1px solid var(--mantine-color-primary-1)",
+                }}
+              >
                 Owner View
-              </span>
+              </Text>
             )}
-          </div>
+          </Stack>
 
-          <div className="flex flex-col w-full gap-4">
+          <Stack w="100%" gap={16}>
             <CollapsibleSection title="Filters">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
+              <Box
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "24px",
+                  paddingBlock: "16px",
+                }}
+              >
                 {/* Favorite Filters */}
-                <div className="flex flex-col gap-3">
-                  <span className="text-[10px] font-black text-text-400 uppercase tracking-widest ml-1">Type</span>
-                  <div className="flex flex-wrap gap-2">
-                    {favoriteFilters.map(filter => (
-                      <button
-                        key={String(filter.id)}
-                        onClick={() => setIsFavoriteFilter(filter.id)}
-                        className={cn(
-                          "px-5 py-2 text-xs font-black rounded-xl border transition-all duration-300 uppercase tracking-wider",
-                          isFavoriteFilter === filter.id
-                            ? "bg-primary-600 text-white border-primary-600 shadow-lg shadow-primary-200"
-                            : "bg-white text-text-500 border-background-200 hover:border-primary-300 hover:text-primary-600",
-                        )}
-                      >
-                        <span className="mr-2">{filter.emoji}</span>
-                        {filter.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Visibility Filters */}
-                <div className="flex flex-col gap-3">
-                  <label
-                    htmlFor="visibility-filter"
-                    className="text-[10px] font-black text-text-400 uppercase tracking-widest ml-1"
-                  >
-                    Visibility
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="visibility-filter"
-                      value={visibilityFilter || ""}
-                      onChange={e => setVisibilityFilter(e.target.value || null)}
-                      className="w-full h-11 bg-white border border-background-200 rounded-xl px-4 py-2 text-xs font-black text-text-700 appearance-none focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer uppercase tracking-wider"
-                    >
-                      {visibilityOptions.map(opt => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-400">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mode Filters */}
-                <div className="flex flex-col gap-3">
-                  <label
-                    htmlFor="mode-filter"
-                    className="text-[10px] font-black text-text-400 uppercase tracking-widest ml-1"
-                  >
-                    Mode
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="mode-filter"
-                      value={modeFilter || ""}
-                      onChange={e => setModeFilter(e.target.value || null)}
-                      className="w-full h-11 bg-white border border-background-200 rounded-xl px-4 py-2 text-xs font-black text-text-700 appearance-none focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer uppercase tracking-wider"
-                    >
-                      {modeOptions.map(opt => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-400">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Type Filters */}
-                <div className="flex flex-col gap-3">
-                  <label
-                    htmlFor="type-filter"
-                    className="text-[10px] font-black text-text-400 uppercase tracking-widest ml-1"
+                <Stack gap={12}>
+                  <Text
+                    span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 900,
+                      color: "var(--color-text-400)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      marginLeft: "4px",
+                    }}
                   >
                     Type
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="type-filter"
-                      value={typeFilter || ""}
-                      onChange={e => setTypeFilter(e.target.value || null)}
-                      className="w-full h-11 bg-white border border-background-200 rounded-xl px-4 py-2 text-xs font-black text-text-700 appearance-none focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all cursor-pointer uppercase tracking-wider"
-                    >
-                      {typeOptions.map(opt => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-400">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  </Text>
+                  <Group wrap="wrap" gap={8}>
+                    {favoriteFilters.map(filter => (
+                      <UnstyledButton
+                        key={String(filter.id)}
+                        onClick={() => setIsFavoriteFilter(filter.id)}
+                        style={{
+                          padding: "8px 20px",
+                          fontSize: "12px",
+                          fontWeight: 900,
+                          borderRadius: "12px",
+                          border: "1px solid",
+                          transition: "all 300ms",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          ...(isFavoriteFilter === filter.id
+                            ? {
+                                background: "var(--mantine-color-primary-6)",
+                                color: "white",
+                                borderColor: "var(--mantine-color-primary-6)",
+                                boxShadow: "0 4px 6px -1px rgba(99,102,241,0.3)",
+                              }
+                            : {
+                                background: "white",
+                                color: "var(--color-text-500)",
+                                borderColor: "var(--color-background-200)",
+                              }),
+                        }}
+                      >
+                        <Text span style={{ marginRight: "8px" }}>
+                          {filter.emoji}
+                        </Text>
+                        {filter.label}
+                      </UnstyledButton>
+                    ))}
+                  </Group>
+                </Stack>
+
+                {/* Visibility Filter */}
+                <Select
+                  id="visibility-filter"
+                  label="Visibility"
+                  value={visibilityFilter}
+                  onChange={setVisibilityFilter}
+                  clearable
+                  placeholder="Any Visibility"
+                  data={[
+                    { value: "PUB", label: "Public" },
+                    { value: "FRI", label: "Friends" },
+                    { value: "PRI", label: "Private" },
+                  ]}
+                />
+
+                {/* Mode Filter */}
+                <Select
+                  id="mode-filter"
+                  label="Mode"
+                  value={modeFilter}
+                  onChange={setModeFilter}
+                  clearable
+                  placeholder="Any Mode"
+                  data={[
+                    { value: "S", label: "Solo" },
+                    { value: "C", label: "Collaborative" },
+                  ]}
+                />
+
+                {/* Type Filter */}
+                <Select
+                  id="type-filter"
+                  label="Type"
+                  value={typeFilter}
+                  onChange={setTypeFilter}
+                  clearable
+                  placeholder="Any Type"
+                  data={[
+                    { value: "NOR", label: "Normal" },
+                    { value: "RNK", label: "Ranking" },
+                    { value: "TIE", label: "Tier List" },
+                  ]}
+                />
+              </Box>
             </CollapsibleSection>
 
             {isOwner && (
-              <div className="flex justify-center mt-4">
+              <Group justify="center">
                 <Button
                   onClick={() => setIsModalOpen(true)}
-                  className="w-full md:w-auto px-12 py-4 text-sm font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-primary-200 hover:scale-[1.02] active:scale-95 transition-all"
+                  size="sm"
+                  style={{
+                    fontWeight: 700,
+                    letterSpacing: "0.05em",
+                    borderRadius: 12,
+                  }}
                 >
-                  Create New Collection
+                  + Create New Collection
                 </Button>
-              </div>
+              </Group>
             )}
-          </div>
-        </div>
+          </Stack>
+        </Stack>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-background-200 p-6 md:p-8 min-h-212.5">
+        <Box
+          style={{
+            background: "white",
+            borderRadius: "16px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            border: "1px solid var(--color-background-200)",
+            padding: "24px",
+            minHeight: "850px",
+          }}
+        >
           {isLoading && !isFetchingNextPage ? (
             <GridList columnCount={5}>
               {skeletonIds.map(skeletonId => (
-                <Skeleton key={skeletonId} className="aspect-3/4 w-full rounded-3xl" />
+                <Skeleton key={skeletonId} style={{ aspectRatio: "3/4", width: "100%", borderRadius: "24px" }} />
               ))}
             </GridList>
           ) : (
@@ -257,35 +266,64 @@ export default function CollectionsPage(): React.JSX.Element {
               hasNextPage={!!hasNextPage}
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
-              className="h-200"
               columnCount={5}
               rowHeight={450}
               renderItem={(collection: Collection) => <CollectionCard key={collection.id} collection={collection} />}
             />
           )}
           {errorFetchingData && (
-            <div className="bg-error-50 border border-error-200 rounded-xl p-4 mt-4">
-              <p className="text-error-600 text-center font-medium">Error: {errorFetchingData.message}</p>
-            </div>
+            <Box
+              style={{
+                background: "var(--color-error-50)",
+                border: "1px solid var(--color-error-200)",
+                borderRadius: "12px",
+                padding: "16px",
+                marginTop: "16px",
+              }}
+            >
+              <Text c="var(--color-error-600)" ta="center" fw={500}>
+                Error: {errorFetchingData.message}
+              </Text>
+            </Box>
           )}
           {!isLoading && allItems.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-20 h-20 bg-background-50 rounded-full flex items-center justify-center mb-4">
-                <span className="text-4xl">📂</span>
-              </div>
-              <h3 className="text-lg font-bold text-text-900">No collections found</h3>
-              <p className="text-text-500 max-w-xs mt-2">This user hasn&apos;t created any collections yet.</p>
+            <Stack align="center" justify="center" gap={16} style={{ paddingBlock: "80px", textAlign: "center" }}>
+              <Box
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  background: "var(--color-background-50)",
+                  borderRadius: "9999px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text span fz={36}>
+                  📂
+                </Text>
+              </Box>
+              <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
+                No collections found
+              </Title>
+              <Text c="var(--color-text-500)" maw={320}>
+                This user hasn&apos;t created any collections yet.
+              </Text>
               {isOwner && (
-                <Button variant="outline" onClick={() => setIsModalOpen(true)} className="mt-6 font-bold">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(true)}
+                  style={{ marginTop: 24, fontWeight: 700 }}
+                >
                   Create your first collection
                 </Button>
               )}
-            </div>
+            </Stack>
           )}
-        </div>
-      </div>
+        </Box>
+      </Stack>
 
       {isModalOpen && <CreateCollectionModal onClose={() => setIsModalOpen(false)} />}
-    </div>
+    </Box>
   );
 }

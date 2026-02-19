@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { Box, Group, Text, Tooltip } from "@mantine/core";
 import { UserDetail } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 
@@ -9,35 +10,65 @@ interface UserFriendsListProps {
 
 export default function UserFriendsList({ userDetails }: Readonly<UserFriendsListProps>) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
-      <div className="bg-background-50 px-4 py-3 border-b border-background-200 flex justify-between items-center">
-        <p className="font-semibold text-text-900">Friends</p>
+    <Box
+      style={{
+        background: "white",
+        borderRadius: 12,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        border: "1px solid var(--color-background-200)",
+        overflow: "hidden",
+      }}
+    >
+      <Group
+        justify="space-between"
+        align="center"
+        style={{
+          background: "var(--color-background-50)",
+          padding: "12px 16px",
+          borderBottom: "1px solid var(--color-background-200)",
+        }}
+      >
+        <Text fw={600} c="var(--color-text-900)">
+          Friends
+        </Text>
         <Link
           to={userDetails ? `/profile/${userDetails.id}/friends` : "#"}
-          className="text-xs font-medium text-primary-600 hover:text-primary-700 hover:underline"
+          style={{ fontSize: 12, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
         >
           View All
         </Link>
-      </div>
-      <div className="p-4">
+      </Group>
+      <Box p={16}>
         {userDetails?.friends && userDetails.friends.length > 0 ? (
-          <div className="flex flex-row flex-wrap gap-3">
+          <Group gap={12} wrap="wrap">
             {userDetails.friends.map(friend => (
-              <Link key={friend.id} to={`/profile/${friend.id}`} className="tooltip" data-tip={friend.username}>
-                <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-background-300 hover:ring-primary-500 transition-all">
-                  <SafeImage
-                    className="w-full h-full"
-                    src={friend.gravatar_url || undefined}
-                    alt={`friend avatar ${friend.username}`}
-                  />
-                </div>
-              </Link>
+              <Tooltip key={friend.id} label={friend.username}>
+                <Link to={`/profile/${friend.id}`}>
+                  <Box
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      border: "2px solid var(--color-background-300)",
+                    }}
+                  >
+                    <SafeImage
+                      style={{ width: "100%", height: "100%" }}
+                      src={friend.gravatar_url || undefined}
+                      alt={`friend avatar ${friend.username}`}
+                    />
+                  </Box>
+                </Link>
+              </Tooltip>
             ))}
-          </div>
+          </Group>
         ) : (
-          <p className="text-sm text-text-500 italic">No friends yet.</p>
+          <Text size="sm" fs="italic" c="var(--color-text-500)">
+            No friends yet.
+          </Text>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

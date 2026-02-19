@@ -1,32 +1,27 @@
 import { useEffect } from "react";
-import { useInView, IntersectionOptions } from "react-intersection-observer";
+import { useIntersection } from "@mantine/hooks";
 
-interface UseInfiniteScrollOptions extends IntersectionOptions {
+interface UseInfiniteScrollOptions {
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
   isLoading?: boolean;
+  threshold?: number;
+  rootMargin?: string;
 }
 
 /**
-
  * Custom hook to abstract the logic for triggering the fetch of the next page
-
  * in an infinite scroll scenario.
-
  */
+export function useInfiniteScroll(fetchNextPage: () => void, options: UseInfiniteScrollOptions = {}) {
+  const { hasNextPage, isFetchingNextPage, isLoading, threshold = 0, rootMargin } = options;
 
-export function useInfiniteScroll(
-  fetchNextPage: () => void,
-
-  options: UseInfiniteScrollOptions = {},
-) {
-  const { hasNextPage, isFetchingNextPage, isLoading, ...intersectionOptions } = options;
-
-  const { ref, inView } = useInView({
-    threshold: 0,
-
-    ...intersectionOptions,
+  const { ref, entry } = useIntersection({
+    threshold,
+    rootMargin,
   });
+
+  const inView = !!entry?.isIntersecting;
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage && !isLoading) {
@@ -35,7 +30,6 @@ export function useInfiniteScroll(
   }, [inView, hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
   // Support for manual trigger based on virtual item index
-
   const checkTrigger = (currentIndex: number, totalCount: number) => {
     if (currentIndex >= totalCount - 5 && hasNextPage && !isFetchingNextPage && !isLoading) {
       fetchNextPage();

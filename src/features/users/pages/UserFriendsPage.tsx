@@ -6,7 +6,7 @@ import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import FriendCard from "../components/FriendCard";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
 
 export default function UserFriendsPage(): React.JSX.Element {
   const { id } = useParams();
@@ -35,26 +35,34 @@ export default function UserFriendsPage(): React.JSX.Element {
   const renderFriendsContent = () => {
     if (isFriendsLoading) {
       return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-6">
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 5, xl: 7 }} spacing="md">
           {Array.from({ length: 14 }).map((_, i) => {
             const skeletonKey = `friend-skeleton-${i}`;
-            return <Skeleton key={skeletonKey} className="h-55 w-full rounded-xl" />;
+            return <Skeleton key={skeletonKey} style={{ height: "220px", width: "100%", borderRadius: "12px" }} />;
           })}
-        </div>
+        </SimpleGrid>
       );
     }
 
     if (allFriendships.length === 0) {
       return (
-        <div className="text-center py-12 bg-background-50 rounded-xl border border-dashed border-background-300">
-          <p className="text-text-500">No friends found.</p>
-        </div>
+        <Box
+          style={{
+            textAlign: "center",
+            paddingBlock: "48px",
+            background: "var(--color-background-50)",
+            borderRadius: "12px",
+            border: "1px dashed var(--color-background-300)",
+          }}
+        >
+          <Text c="var(--color-text-500)">No friends found.</Text>
+        </Box>
       );
     }
 
     return (
       <VirtualGridList
-        className="h-full"
+        style={{ height: "100%" }}
         items={allFriendships}
         renderItem={friendship => <FriendCard friendship={friendship} />}
         hasNextPage={hasNextPage}
@@ -66,27 +74,46 @@ export default function UserFriendsPage(): React.JSX.Element {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 flex flex-col gap-6 h-[calc(100vh-4rem)]">
+    <Stack gap={24} maw={1152} mx="auto" p={16} style={{ height: "calc(100vh - 4rem)" }}>
       <PageMeta title={pageTitle} />
 
-      <div className="flex flex-col gap-2 shrink-0">
-        <h1 className="text-3xl font-bold text-text-900 flex items-center gap-3">
+      <Stack gap={8} style={{ flexShrink: 0 }}>
+        <Title
+          order={1}
+          fz={30}
+          fw={700}
+          c="var(--color-text-900)"
+          style={{ display: "flex", alignItems: "center", gap: "12px" }}
+        >
           {isUserLoading ? (
-            <Skeleton className="w-64 h-10" />
+            <Skeleton style={{ width: "256px", height: "40px" }} />
           ) : (
-            <span>
-              <span className="text-primary-600">{userDetails?.username}</span>&apos;s Friends
-            </span>
+            <Text component="span">
+              <Text component="span" c="var(--mantine-color-primary-6)">
+                {userDetails?.username}
+              </Text>
+              &apos;s Friends
+            </Text>
           )}
           {!isFriendsLoading && (
-            <span className="text-lg font-normal text-text-500 bg-background-100 px-3 py-1 rounded-full">
+            <Text
+              component="span"
+              style={{
+                fontSize: "18px",
+                fontWeight: 400,
+                color: "var(--color-text-500)",
+                background: "var(--color-background-100)",
+                padding: "4px 12px",
+                borderRadius: "9999px",
+              }}
+            >
               {totalFriends}
-            </span>
+            </Text>
           )}
-        </h1>
-      </div>
+        </Title>
+      </Stack>
 
-      <div className="grow min-h-0">{renderFriendsContent()}</div>
-    </div>
+      <Box style={{ flexGrow: 1, minHeight: 0 }}>{renderFriendsContent()}</Box>
+    </Stack>
   );
 }

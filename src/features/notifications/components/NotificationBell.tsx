@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { BellIcon } from "@heroicons/react/24/outline";
+import { IconBell } from "@tabler/icons-react";
 import { Notification } from "@/client";
 import {
   useGetNotifications,
@@ -9,7 +9,8 @@ import {
 } from "../hooks/notificationQueries";
 import { NotificationUnreadCount } from "@/types";
 import { notificationActorSchema } from "@/lib/validation";
-
+import { Popover, Box, Group, Text, Stack, UnstyledButton } from "@mantine/core";
+import bellStyles from "./NotificationBell.module.css";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function NotificationBell(): React.JSX.Element {
@@ -28,95 +29,184 @@ export default function NotificationBell(): React.JSX.Element {
   };
 
   return (
-    <div className="dropdown dropdown-end">
-      <button
-        type="button"
-        className="relative p-2 rounded-full hover:bg-white/10 transition-colors group flex items-center justify-center"
-      >
-        <div className="relative">
-          <BellIcon className="h-6 w-6 text-primary-200 group-hover:text-white transition-colors" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-error-500 text-[10px] font-bold text-white ring-2 ring-primary-950 animate-in fade-in zoom-in">
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
-          )}
-        </div>
-      </button>
+    <Popover width={384} position="bottom-end" shadow="xl" withArrow>
+      <Popover.Target>
+        <UnstyledButton className={bellStyles.topbarIconBtn}>
+          <Box style={{ position: "relative" }}>
+            <IconBell style={{ width: 24, height: 24, color: "var(--mantine-color-primary-2)" }} />
+            {unreadCount > 0 && (
+              <Text
+                component="span"
+                style={{
+                  position: "absolute",
+                  top: "-4px",
+                  right: "-4px",
+                  display: "flex",
+                  width: "16px",
+                  height: "16px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "9999px",
+                  background: "var(--color-error-500)",
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  color: "white",
+                  outline: "2px solid var(--mantine-color-primary-9)",
+                }}
+              >
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </Text>
+            )}
+          </Box>
+        </UnstyledButton>
+      </Popover.Target>
 
-      <div className="dropdown-content z-50 mt-4 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-background-200 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-        <div className="p-4 border-b border-background-100 flex justify-between items-center bg-background-50/50">
-          <h2 className="font-bold text-text-900">Notifications</h2>
+      <Popover.Dropdown style={{ padding: 0, borderRadius: "16px", overflow: "hidden" }}>
+        <Group
+          justify="space-between"
+          align="center"
+          p={16}
+          style={{ borderBottom: "1px solid var(--color-background-100)", background: "rgba(248,250,252,0.5)" }}
+        >
+          <Text fw={700} c="var(--color-text-900)">
+            Notifications
+          </Text>
           {unreadCount > 0 && (
-            <span className="text-[10px] font-bold px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full uppercase tracking-wider">
+            <Text
+              component="span"
+              style={{
+                fontSize: "10px",
+                fontWeight: 700,
+                padding: "2px 8px",
+                background: "var(--mantine-color-primary-0)",
+                color: "var(--mantine-color-primary-7)",
+                borderRadius: "9999px",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
               {unreadCount} New
-            </span>
+            </Text>
           )}
-        </div>
+        </Group>
 
-        <ul className="max-h-100 overflow-y-auto overflow-x-hidden flex flex-col gap-2 p-2">
+        <Box
+          component="ul"
+          style={{
+            maxHeight: "400px",
+            overflowY: "auto",
+            overflowX: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            padding: 8,
+          }}
+        >
           {unreadNotifications.length === 0 ? (
-            <li className="flex flex-col items-center justify-center py-12 px-4 text-center">
-              <BellIcon className="h-10 w-10 text-background-300 mb-2" />
-
-              <p className="text-sm text-text-500 font-medium">No unread notifications</p>
-            </li>
+            <Stack
+              component="li"
+              align="center"
+              justify="center"
+              style={{ paddingBlock: "48px", paddingInline: "16px", textAlign: "center" }}
+            >
+              <IconBell style={{ width: 40, height: 40, color: "var(--color-background-300)", marginBottom: 8 }} />
+              <Text size="sm" c="var(--color-text-500)" fw={500}>
+                No unread notifications
+              </Text>
+            </Stack>
           ) : (
             unreadNotifications.map((notification: Notification) => {
               const actorResult = notificationActorSchema.safeParse(notification.actor);
-
               const actor = actorResult.success ? actorResult.data : null;
 
               return (
-                <li
-                  key={notification.id}
-                  className="bg-background-200/50 border border-background-300/50 rounded-xl hover:bg-background-200 transition-all duration-200 group overflow-hidden shadow-xs hover:shadow-md"
-                >
+                <Box component="li" key={notification.id} className={bellStyles.notificationCard}>
                   <Link
                     to={actor?.type === "user" ? `/profile/${actor.id}` : "#"}
                     onClick={() => handleNotificationClick(notification)}
-                    className="flex gap-4 p-3"
+                    className={bellStyles.notificationItemLink}
                   >
-                    <div className="shrink-0 relative transition-transform duration-300 group-hover:scale-105">
+                    <Box style={{ flexShrink: 0, position: "relative" }}>
                       <SafeImage
-                        className="w-10 h-10 rounded-full ring-2 ring-white shadow-sm"
-                        src={undefined} // Fallback to placeholder for now, or use gravatar if available in actor
+                        containerStyle={{ width: "40px", height: "40px", borderRadius: "9999px" }}
+                        style={{ outline: "2px solid white", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
+                        src={undefined}
                         alt="Actor avatar"
                       />
+                      <Box
+                        style={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          width: 12,
+                          height: 12,
+                          background: "var(--mantine-color-primary-5)",
+                          border: "2px solid white",
+                          borderRadius: "9999px",
+                          boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                        }}
+                      />
+                    </Box>
 
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary-500 border-2 border-white rounded-full shadow-xs" />
-                    </div>
-
-                    <div className="flex flex-col min-w-0 flex-1">
-                      <div className="flex justify-between items-start gap-2">
-                        <span className="font-bold text-sm text-text-900 truncate group-hover:text-primary-600 transition-colors">
+                    <Stack gap={0} style={{ minWidth: 0, flex: 1 }}>
+                      <Group justify="space-between" align="flex-start" gap={8}>
+                        <Text
+                          component="span"
+                          fw={700}
+                          fz="sm"
+                          c="var(--color-text-900)"
+                          style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        >
                           {actor?.str || "Someone"}
-                        </span>
-
-                        <span className="text-[10px] font-medium text-text-400 whitespace-nowrap pt-0.5">
+                        </Text>
+                        <Text
+                          component="span"
+                          style={{
+                            fontSize: "10px",
+                            fontWeight: 500,
+                            color: "var(--color-text-400)",
+                            whiteSpace: "nowrap",
+                            paddingTop: "2px",
+                          }}
+                        >
                           {new Date(notification.timestamp).toLocaleDateString()}
-                        </span>
-                      </div>
-
-                      <p className="text-xs text-text-600 leading-snug line-clamp-2 mt-0.5 italic">
+                        </Text>
+                      </Group>
+                      <Text
+                        size="xs"
+                        c="var(--color-text-600)"
+                        style={{
+                          lineHeight: 1.4,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          marginTop: "2px",
+                          fontStyle: "italic",
+                        }}
+                      >
                         {notification.verb}
-                      </p>
-                    </div>
+                      </Text>
+                    </Stack>
                   </Link>
-                </li>
+                </Box>
               );
             })
           )}
-        </ul>
+        </Box>
 
-        <div className="p-3 bg-background-50/80 border-t border-background-100">
-          <Link
-            to="/notifications"
-            className="block text-center text-xs font-bold text-primary-600 hover:text-primary-700 py-1 uppercase tracking-widest transition-colors"
-          >
+        <Box
+          style={{
+            padding: 12,
+            background: "rgba(248,250,252,0.8)",
+            borderTop: "1px solid var(--color-background-100)",
+          }}
+        >
+          <Link to="/notifications" className={bellStyles.notificationsAllLink}>
             View all notifications
           </Link>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Popover.Dropdown>
+    </Popover>
   );
 }

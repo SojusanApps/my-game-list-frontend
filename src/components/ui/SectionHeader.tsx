@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { cn } from "@/utils/cn";
+import { Box, Group, Text, Title } from "@mantine/core";
+import styles from "./SectionHeader.module.css";
 
 interface SectionHeaderProps {
   title: string;
@@ -10,19 +11,35 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, viewMoreHref, className }: Readonly<SectionHeaderProps>) {
   return (
-    <div className={cn("flex items-end justify-between mb-6 border-b border-background-200 pb-2", className)}>
-      <div className="flex items-center gap-3">
-        <div className="w-1.5 h-8 bg-primary-600 rounded-full" />
-        <h2 className="font-bold text-2xl text-text-900 tracking-tight">{title}</h2>
-      </div>
+    <Group
+      justify="space-between"
+      align="flex-end"
+      mb={24}
+      pb={8}
+      style={{ borderBottom: "1px solid var(--color-background-400)" }}
+      className={className}
+    >
+      <Group gap={12}>
+        <Box
+          style={{
+            width: "6px",
+            height: "32px",
+            background: "var(--mantine-color-primary-6)",
+            borderRadius: "9999px",
+          }}
+        />
+        <Title order={2} fz={24} fw={700} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
+          {title}
+        </Title>
+      </Group>
       {viewMoreHref && (
-        <Link
-          to={viewMoreHref}
-          className="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1"
-        >
-          View More <span className="text-lg">→</span>
+        <Link to={viewMoreHref} className={styles.viewMoreLink}>
+          View More{" "}
+          <Text component="span" fz="lg">
+            →
+          </Text>
         </Link>
       )}
-    </div>
+    </Group>
   );
 }

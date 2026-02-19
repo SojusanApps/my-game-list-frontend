@@ -1,10 +1,11 @@
 import * as React from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
-import toast from "react-hot-toast";
+import { notifications } from "@mantine/notifications";
 import { Button } from "@/components/ui/Button";
-import XMarkIcon from "@/components/ui/Icons/XMark";
+import { ActionIcon, Modal, Stack, Group, Box, Title, Text } from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { useCollectionsInfiniteQuery, useAddCollectionItem } from "../hooks/useCollectionQueries";
 import { useAuth } from "@/features/auth/context/AuthProvider";
@@ -24,7 +25,6 @@ interface AddToCollectionModalProps {
 }
 
 export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddToCollectionModalProps>) {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
   const { user } = useAuth();
 
   const currentUserId = React.useMemo(() => {
@@ -39,25 +39,17 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
 
   const { mutateAsync: addCollectionItem, isPending } = useAddCollectionItem();
 
-  const methods = useForm<ValidationSchema>({
-    resolver: zodResolver(validationSchema),
-    defaultValues: {
+  const form = useForm<ValidationSchema>({
+    initialValues: {
       collections: [],
     },
+    validate: zod4Resolver(validationSchema),
   });
 
   // Wrapper hook for AsyncMultiSelectAutocomplete
   const useMyCollectionsSearch = (searchTerm: string) => {
-    // Assuming 'search' or 'name' filter exists. Passing 'name' as per verification.
     return useCollectionsInfiniteQuery(currentUserId, { name: searchTerm });
   };
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) {
-      dialog.showModal();
-    }
-  }, []);
 
   const onSubmit = async (data: ValidationSchema) => {
     try {
@@ -69,37 +61,55 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
           }),
         ),
       );
-      toast.success("Added to collections successfully");
+      notifications.show({ title: "Success", message: "Added to collections successfully", color: "green" });
       onClose();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to add to some collections";
-      toast.error(errorMessage);
+      notifications.show({ title: "Error", message: errorMessage, color: "red" });
     }
   };
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="bg-white rounded-3xl p-0 border-none shadow-2xl backdrop:bg-black/60 outline-none m-auto w-full max-w-lg overflow-visible animate-in fade-in zoom-in duration-300"
-      onCancel={onClose}
+    <Modal
+      opened={true}
+      onClose={onClose}
+      withCloseButton={false}
+      padding={0}
+      radius="xl"
+      size="lg"
+      overlayProps={{ backgroundOpacity: 0.6 }}
+      styles={{ content: { overflow: "visible" }, body: { overflow: "visible" } }}
     >
-      <div className="flex flex-col h-full overflow-visible">
+      <Stack gap={0} style={{ height: "100%", overflow: "visible" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-background-100 bg-background-50/50 rounded-t-3xl">
-          <h2 className="text-2xl font-black text-text-900 tracking-tight">
-            Add to <span className="text-primary-600">Collection</span>
-          </h2>
-          <button
+        <Group
+          justify="space-between"
+          style={{
+            padding: "24px 32px",
+            borderBottom: "1px solid var(--color-background-100)",
+            background: "rgba(248,250,252,0.5)",
+            borderRadius: "24px 24px 0 0",
+          }}
+        >
+          <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
+            Add to{" "}
+            <Text span c="var(--color-primary-600)">
+              Collection
+            </Text>
+          </Title>
+          <ActionIcon
             onClick={onClose}
-            className="p-2 hover:bg-background-200 rounded-full transition-colors text-text-400 hover:text-text-900"
+            variant="subtle"
+            size="lg"
+            style={{ borderRadius: "9999px", color: "var(--color-text-400)" }}
           >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
+            <IconX style={{ width: 24, height: 24 }} />
+          </ActionIcon>
+        </Group>
 
-        <div className="p-8 rounded-b-3xl">
-          <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <Box style={{ padding: "32px", borderRadius: "0 0 24px 24px" }}>
+          <form onSubmit={form.onSubmit(onSubmit)}>
+            <Stack gap="lg">
               <AsyncMultiSelectAutocomplete
                 id="collections"
                 name="collections"
@@ -109,17 +119,18 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
                 getOptionLabel={(collection: Collection) => collection.name}
                 getOptionValue={(collection: Collection) => collection.id}
                 required
+                {...form.getInputProps("collections")}
               />
 
-              <div className="flex justify-end pt-4">
-                <Button type="submit" disabled={isPending} className="w-full">
+              <Group justify="flex-end" pt={16}>
+                <Button type="submit" disabled={isPending} style={{ width: "100%" }}>
                   {isPending ? "Adding..." : "Add to Selected Collections"}
                 </Button>
-              </div>
-            </form>
-          </FormProvider>
-        </div>
-      </div>
-    </dialog>
+              </Group>
+            </Stack>
+          </form>
+        </Box>
+      </Stack>
+    </Modal>
   );
 }

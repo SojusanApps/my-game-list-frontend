@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "@dr.pogodin/react-helmet";
-import { Toaster } from "react-hot-toast";
 
 import "./index.css";
 import Layout from "./components/layout/Layout";
@@ -33,7 +32,6 @@ function App(): React.JSX.Element {
             </Route>
           </Routes>
         </BrowserRouter>
-        <Toaster position="bottom-right" reverseOrder={false} />
       </AuthProvider>
     </HelmetProvider>
   );

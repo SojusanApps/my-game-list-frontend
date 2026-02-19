@@ -2,7 +2,7 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import GameStatistics from "../components/GameStatistics";
 import GameReview from "../components/GameReview";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { Game, PaginatedGameReviewList } from "@/client";
 
 interface GameDetailsMainTabProps {
@@ -17,30 +17,65 @@ export default function GameDetailsMainTab({
   isGameReviewsLoading,
 }: Readonly<GameDetailsMainTabProps>) {
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-300">
-      <section className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-        <h2 className="text-xl font-bold text-text-900 mb-4">Statistics</h2>
+    <Stack gap={24} style={{ animation: "fadeIn 300ms ease" }}>
+      <Box
+        component="section"
+        style={{
+          background: "white",
+          borderRadius: "12px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          border: "1px solid var(--color-background-200)",
+          padding: "24px",
+        }}
+      >
+        <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={16}>
+          Statistics
+        </Title>
         <GameStatistics gameDetails={gameDetails} />
-      </section>
+      </Box>
 
-      <section className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-        <h2 className="text-xl font-bold text-text-900 mb-2">Summary</h2>
-        <div className="prose prose-slate prose-sm max-w-none text-text-700">
+      <Box
+        component="section"
+        style={{
+          background: "white",
+          borderRadius: "12px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          border: "1px solid var(--color-background-200)",
+          padding: "24px",
+        }}
+      >
+        <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={8}>
+          Summary
+        </Title>
+        <Box c="var(--color-text-700)">
           <ReactMarkdown>{gameDetails?.summary || ""}</ReactMarkdown>
-        </div>
-      </section>
+        </Box>
+      </Box>
 
-      <section className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-        <h2 className="text-xl font-bold text-text-900 mb-4">Reviews</h2>
-        <div className="flex flex-col gap-4">
-          {isGameReviewsLoading && <Skeleton className="w-full h-24 rounded-xl" />}
+      <Box
+        component="section"
+        style={{
+          background: "white",
+          borderRadius: "12px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          border: "1px solid var(--color-background-200)",
+          padding: "24px",
+        }}
+      >
+        <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={16}>
+          Reviews
+        </Title>
+        <Stack gap={16}>
+          {isGameReviewsLoading && <Skeleton h={96} radius="xl" />}
           {gameReviewItems?.results && gameReviewItems.results.length > 0 ? (
             gameReviewItems.results.map(gameReview => <GameReview key={gameReview.id} gameReview={gameReview} />)
           ) : (
-            <p className="text-text-500 italic">No reviews yet.</p>
+            <Text c="dimmed" fs="italic">
+              No reviews yet.
+            </Text>
           )}
-        </div>
-      </section>
-    </div>
+        </Stack>
+      </Box>
+    </Stack>
   );
 }

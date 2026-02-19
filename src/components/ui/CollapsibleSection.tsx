@@ -1,6 +1,5 @@
 import * as React from "react";
-import { cn } from "@/utils/cn";
-import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
+import { Accordion, Group, Text, Title } from "@mantine/core";
 
 export function CollapsibleSection({
   title,
@@ -13,34 +12,49 @@ export function CollapsibleSection({
   children: React.ReactNode;
   defaultOpen?: boolean;
 }>) {
-  const [isOpen, setIsOpen] = React.useState(defaultOpen);
-
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-white hover:bg-background-50 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-text-900">{title}</h2>
-          {count !== undefined && (
-            <span className="bg-primary-100 text-primary-700 text-xs font-bold px-2 py-0.5 rounded-full">{count}</span>
-          )}
-        </div>
-        <ChevronDownIcon
-          className={cn("w-5 h-5 text-text-400 transition-transform duration-300", isOpen && "rotate-180")}
-        />
-      </button>
-      <div
-        className={cn(
-          "grid transition-all duration-300 ease-in-out",
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
-        )}
-      >
-        <div className="overflow-hidden">
-          <div className="p-4 pt-0">{children}</div>
-        </div>
-      </div>
-    </div>
+    <Accordion
+      defaultValue={defaultOpen ? "section" : undefined}
+      styles={{
+        root: {
+          background: "white",
+          borderRadius: "16px",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          border: "1px solid var(--color-background-200)",
+          overflow: "hidden",
+        },
+        item: { border: "none" },
+        control: { padding: "16px 24px" },
+        chevron: { color: "var(--color-text-400)" },
+        label: { padding: 0 },
+        panel: { paddingTop: 0 },
+      }}
+    >
+      <Accordion.Item value="section">
+        <Accordion.Control>
+          <Group gap={8}>
+            <Title order={2} fz="lg" fw={700} c="var(--color-text-900)">
+              {title}
+            </Title>
+            {count !== undefined && (
+              <Text
+                component="span"
+                fz="xs"
+                fw={700}
+                style={{
+                  background: "var(--color-primary-100)",
+                  color: "var(--color-primary-700)",
+                  padding: "2px 8px",
+                  borderRadius: "9999px",
+                }}
+              >
+                {count}
+              </Text>
+            )}
+          </Group>
+        </Accordion.Control>
+        <Accordion.Panel>{children}</Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 }

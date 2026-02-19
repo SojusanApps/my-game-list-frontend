@@ -9,10 +9,9 @@ import SearchBar from "@/features/games/components/SearchBar";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
 import { useAuth } from "@/features/auth/context/AuthProvider";
-import ChevronDownIcon from "@/components/ui/Icons/ChevronDown";
-import ProfileIcon from "@/components/ui/Icons/Profile";
-import SettingsIcon from "@/components/ui/Icons/Settings";
-import LogoutIcon from "@/components/ui/Icons/Logout";
+import { IconChevronDown, IconUserCircle, IconSettings, IconLogout } from "@tabler/icons-react";
+import { Box, Group, Menu, Text, UnstyledButton } from "@mantine/core";
+import styles from "./TopBar.module.css";
 
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -30,69 +29,57 @@ function LoggedInView({
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <Group gap={16}>
       <NotificationBell />
-      <div className="dropdown dropdown-end">
-        <button tabIndex={0} className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-          <span className="text-sm font-medium text-primary-100 hidden md:block">{userDetails?.username}</span>
-          <div className="avatar">
+      <Menu shadow="xl" width={220} position="bottom-end" withArrow>
+        <Menu.Target>
+          <UnstyledButton className={styles.userMenuBtn}>
+            <Text component="span" fz="sm" fw={500} c="var(--color-primary-100)" visibleFrom="md">
+              {userDetails?.username}
+            </Text>
             <SafeImage
               src={userDetails?.gravatar_url || undefined}
               alt="User avatar"
-              className="w-9 h-9 rounded-full ring-2 ring-white/20"
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "9999px",
+                outline: "2px solid rgba(255,255,255,0.2)",
+                flexShrink: 0,
+              }}
             />
-          </div>
-          <ChevronDownIcon className="w-4 h-4 text-primary-300" />
-        </button>
-        <ul className="dropdown-content z-1 menu p-2 shadow-2xl bg-white border border-background-200 rounded-xl w-52 mt-4 gap-1">
-          <li>
-            <Link
-              to={`/profile/${userInfo?.user_id}`}
-              className="text-text-700 hover:text-primary-600 hover:bg-primary-50 active:bg-primary-100 rounded-lg py-2.5"
-            >
-              <ProfileIcon className="w-4 h-4" />
-              Profile
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/settings"
-              className="text-text-700 hover:text-primary-600 hover:bg-primary-50 active:bg-primary-100 rounded-lg py-2.5"
-            >
-              <SettingsIcon className="w-4 h-4" />
-              Account settings
-            </Link>
-          </li>
-          <li className="mt-1">
-            <button
-              type="button"
-              onClick={handleClick}
-              className="text-error-600 hover:bg-error-50 hover:text-error-700 rounded-lg py-2.5"
-            >
-              <LogoutIcon className="w-4 h-4" />
-              Logout
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+            <IconChevronDown size={16} style={{ color: "var(--color-primary-300)" }} />
+          </UnstyledButton>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item component={Link} to={`/profile/${userInfo?.user_id}`} leftSection={<IconUserCircle size={16} />}>
+            Profile
+          </Menu.Item>
+          <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
+            Account settings
+          </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item color="red" onClick={handleClick} leftSection={<IconLogout size={16} />}>
+            Logout
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    </Group>
   );
 }
 
 function NotLoggedInView(): React.JSX.Element {
   return (
-    <div className="flex items-center gap-3">
+    <Group gap={12}>
       <Link to="/register">
-        <Button variant="ghost" size="sm" className="text-primary-100 hover:text-white hover:bg-white/10">
+        <Button variant="ghost" size="sm">
           Register
         </Button>
       </Link>
       <Link to="/login">
-        <Button size="sm" className="bg-primary-500 hover:bg-primary-400">
-          Login
-        </Button>
+        <Button size="sm">Login</Button>
       </Link>
-    </div>
+    </Group>
   );
 }
 
@@ -106,56 +93,55 @@ function TopBar(): React.JSX.Element {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-primary-950 shadow-lg">
-      <div className="max-w-7xl flex p-3 justify-between items-center mx-auto">
-        <div className="flex items-center gap-8">
-          <Link
-            to="/home"
-            className="flex items-center gap-2 hover:opacity-90 transition-opacity"
-            aria-label="Game List logo"
-          >
-            <AppLogo classNameSojusan="text-primary-400 text-2xl" classNameGameList="text-white text-3xl" />
+    <Box
+      component="nav"
+      pos="sticky"
+      style={{
+        top: 0,
+        zIndex: 50,
+        width: "100%",
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        background: "var(--color-primary-950)",
+        boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)",
+      }}
+    >
+      <Group justify="space-between" align="center" maw={1280} mx="auto" p={12}>
+        <Group gap={32}>
+          <Link to="/home" className={styles.logoLink} aria-label="Game List logo">
+            <AppLogo size="md" onDark />
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-8">
-            <li>
-              <Link to="/search" className="text-sm font-semibold text-primary-200 transition-colors hover:text-white">
+          <Group component="ul" gap={32} visibleFrom="lg">
+            <Box component="li" className={styles.navItem}>
+              <Link to="/search" className={styles.navLink}>
                 Search Engine
               </Link>
-            </li>
+            </Box>
 
             {user && (
               <>
-                <li>
-                  <Link
-                    to={`/game-list/${userInfo?.user_id}`}
-                    className="text-sm font-semibold text-primary-200 transition-colors hover:text-white"
-                  >
+                <Box component="li" className={styles.navItem}>
+                  <Link to={`/game-list/${userInfo?.user_id}`} className={styles.navLink}>
                     Game List
                   </Link>
-                </li>
-                <li>
-                  <Link
-                    to={`/profile/${userInfo?.user_id}/collections`}
-                    className="text-sm font-semibold text-primary-200 transition-colors hover:text-white"
-                  >
+                </Box>
+                <Box component="li" className={styles.navItem}>
+                  <Link to={`/profile/${userInfo?.user_id}/collections`} className={styles.navLink}>
                     Collections
                   </Link>
-                </li>
+                </Box>
               </>
             )}
-          </ul>
-        </div>
+          </Group>
+        </Group>
 
-        <div className="flex-1 max-w-md mx-4 hidden md:block">
+        <Box visibleFrom="md" style={{ flex: 1, maxWidth: "448px", marginInline: "16px" }}>
           <SearchBar />
-        </div>
+        </Box>
 
-        <div className="flex items-center gap-4">
-          {user ? <LoggedInView user={user} logout={logout} /> : <NotLoggedInView />}
-        </div>
-      </div>
-    </nav>
+        <Group gap={16}>{user ? <LoggedInView user={user} logout={logout} /> : <NotLoggedInView />}</Group>
+      </Group>
+    </Box>
   );
 }
 

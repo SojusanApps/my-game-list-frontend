@@ -1,0 +1,33 @@
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  opacity: 1;
+  transition: opacity 150ms;
+}
+.logoLink:hover {
+  opacity: 0.9;
+}
+
+.footerLink {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  color: var(--color-text-500);
+  transition: color 150ms;
+}
+.footerLink:hover {
+  color: var(--mantine-color-primary-6);
+}
+
+.footerExtLink {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  transition: color 150ms;
+}
+.footerExtLink:hover {
+  color: var(--mantine-color-primary-6);
+}

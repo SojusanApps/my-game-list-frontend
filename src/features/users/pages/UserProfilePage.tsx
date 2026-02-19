@@ -10,7 +10,7 @@ import UserProfileInformation from "../components/UserProfileInformation";
 import UserFriendsList from "../components/UserFriendsList";
 import UserStatistics from "../components/UserStatistics";
 import GameListUpdate from "../components/GameListUpdate";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Box, Grid, Group, Skeleton, Stack, Title } from "@mantine/core";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -37,86 +37,127 @@ export default function UserProfilePage(): React.JSX.Element {
   const pageTitle = isUserDetailsLoading ? "Loading Profile..." : `${userDetails?.username}'s Profile`;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl mx-auto p-4">
-      <PageMeta title={pageTitle} />
+    <Box py={48} style={{ minHeight: "100vh" }}>
+      <Grid gutter={24} maw={1152} mx="auto" px={16}>
+        <PageMeta title={pageTitle} />
 
-      {isUserDetailsLoading ? (
-        <>
-          <div className="flex flex-col gap-4">
-            <Skeleton className="w-full h-48 mx-auto rounded-xl" />
-            <Skeleton className="w-full h-10 rounded-lg" />
-            <Skeleton className="w-full h-10 rounded-lg" />
-            <Skeleton className="w-full h-32 rounded-xl" />
-          </div>
-          <div className="col-span-3 flex flex-col gap-4">
-            <Skeleton className="w-1/3 h-8 rounded-lg" />
-            <Skeleton className="w-full h-48 rounded-xl" />
-            <Skeleton className="w-full h-64 rounded-xl" />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex flex-col gap-4">
-            <div className="rounded-xl overflow-hidden shadow-sm ring-1 ring-background-200">
-              <SafeImage
-                className="w-full aspect-square object-cover"
-                src={userDetails?.gravatar_url || undefined}
-                alt="User avatar"
-              />
-            </div>
-
-            <FriendshipButtons currentUser={currentUser} userId={validUserId} />
-
-            <Link to={`/game-list/${validUserId}`} className="w-full">
-              <Button fullWidth variant="default" className="shadow-sm">
-                Game List
-              </Button>
-            </Link>
-
-            <Link to={`/profile/${validUserId}/collections`} className="w-full">
-              <Button
-                fullWidth
-                variant="outline"
-                className="shadow-sm border-primary-200 text-primary-600 hover:bg-primary-50"
-              >
-                Collections
-              </Button>
-            </Link>
-
-            <UserProfileInformation userDetails={userDetails} />
-            <UserFriendsList userDetails={userDetails} />
-          </div>
-
-          <div className="col-span-3 flex flex-col gap-6">
-            <div>
-              <h1 className="text-3xl font-bold text-text-900">{userDetails?.username}</h1>
-            </div>
-
-            <section className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-              <h2 className="text-xl font-bold text-text-900 mb-4">Statistics</h2>
-              <UserStatistics userDetails={userDetails} />
-            </section>
-
-            <section className="bg-white rounded-xl shadow-sm border border-background-200 p-6">
-              <div className="flex items-center justify-between border-b border-background-200 pb-4 mb-4">
-                <h2 className="text-xl font-bold text-text-900">Last game updates</h2>
-                <Link
-                  to={`/game-list/${userDetails?.id}`}
-                  className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline"
+        {isUserDetailsLoading ? (
+          <>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Stack gap={16}>
+                <Skeleton w="100%" h={192} style={{ borderRadius: 12 }} />
+                <Skeleton w="100%" h={40} style={{ borderRadius: 8 }} />
+                <Skeleton w="100%" h={40} style={{ borderRadius: 8 }} />
+                <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
+              </Stack>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 9 }}>
+              <Stack gap={16}>
+                <Skeleton w="33%" h={32} style={{ borderRadius: 8 }} />
+                <Skeleton w="100%" h={192} style={{ borderRadius: 12 }} />
+                <Skeleton w="100%" h={256} style={{ borderRadius: 12 }} />
+              </Stack>
+            </Grid.Col>
+          </>
+        ) : (
+          <>
+            <Grid.Col span={{ base: 12, md: 3 }}>
+              <Stack gap={16}>
+                <Box
+                  style={{
+                    borderRadius: 12,
+                    overflow: "hidden",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                    border: "1px solid var(--color-background-200)",
+                  }}
                 >
-                  View History
-                </Link>
-              </div>
+                  <SafeImage
+                    style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", display: "block" }}
+                    src={userDetails?.gravatar_url || undefined}
+                    alt="User avatar"
+                  />
+                </Box>
 
-              <div className="flex flex-col gap-3">
-                {userDetails?.latest_game_list_updates.map(latestGameListUpdate => (
-                  <GameListUpdate key={latestGameListUpdate.id} latestGameListUpdate={latestGameListUpdate} />
-                ))}
-              </div>
-            </section>
-          </div>
-        </>
-      )}
-    </div>
+                <FriendshipButtons currentUser={currentUser} userId={validUserId} />
+
+                <Link to={`/game-list/${validUserId}`} style={{ width: "100%", textDecoration: "none" }}>
+                  <Button fullWidth variant="default">
+                    Game List
+                  </Button>
+                </Link>
+
+                <Link to={`/profile/${validUserId}/collections`} style={{ width: "100%", textDecoration: "none" }}>
+                  <Button fullWidth variant="outline">
+                    Collections
+                  </Button>
+                </Link>
+
+                <UserProfileInformation userDetails={userDetails} />
+                <UserFriendsList userDetails={userDetails} />
+              </Stack>
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, md: 9 }}>
+              <Stack gap={24}>
+                <Title order={1} fz={30} fw={700} c="var(--color-text-900)">
+                  {userDetails?.username}
+                </Title>
+
+                <Box
+                  component="section"
+                  style={{
+                    background: "white",
+                    borderRadius: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    border: "1px solid var(--color-background-200)",
+                    padding: 24,
+                  }}
+                >
+                  <Title order={2} fz={18} fw={700} c="var(--color-text-900)" mb={16}>
+                    Statistics
+                  </Title>
+                  <UserStatistics userDetails={userDetails} />
+                </Box>
+
+                <Box
+                  component="section"
+                  style={{
+                    background: "white",
+                    borderRadius: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    border: "1px solid var(--color-background-200)",
+                    padding: 24,
+                  }}
+                >
+                  <Group
+                    justify="space-between"
+                    align="center"
+                    pb={16}
+                    mb={16}
+                    style={{ borderBottom: "1px solid var(--color-background-200)" }}
+                  >
+                    <Title order={2} fz={18} fw={700} c="var(--color-text-900)">
+                      Last game updates
+                    </Title>
+                    <Link
+                      to={`/game-list/${userDetails?.id}`}
+                      style={{ fontSize: 13, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
+                    >
+                      View History
+                    </Link>
+                  </Group>
+
+                  <Stack gap={12}>
+                    {userDetails?.latest_game_list_updates.map(latestGameListUpdate => (
+                      <GameListUpdate key={latestGameListUpdate.id} latestGameListUpdate={latestGameListUpdate} />
+                    ))}
+                  </Stack>
+                </Box>
+              </Stack>
+            </Grid.Col>
+          </>
+        )}
+      </Grid>
+    </Box>
   );
 }

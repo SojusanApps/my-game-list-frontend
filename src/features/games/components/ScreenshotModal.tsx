@@ -1,7 +1,7 @@
 import * as React from "react";
-import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import XMarkIcon from "@/components/ui/Icons/XMark";
+import { IconX } from "@tabler/icons-react";
+import { Box, Loader, Modal, UnstyledButton } from "@mantine/core";
 
 interface ScreenshotModalProps {
   screenshot: string;
@@ -9,62 +9,87 @@ interface ScreenshotModalProps {
 }
 
 export default function ScreenshotModal({ screenshot, onClose }: Readonly<ScreenshotModalProps>) {
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) {
-      dialog.showModal();
-    }
-  }, []);
-
-  React.useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    const handleClick = (e: MouseEvent) => {
-      const rect = dialog.getBoundingClientRect();
-      const isInDialog =
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width;
-
-      if (!isInDialog) {
-        onClose();
-      }
-    };
-
-    dialog.addEventListener("click", handleClick);
-    return () => dialog.removeEventListener("click", handleClick);
-  }, [onClose]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="bg-transparent p-0 border-none shadow-none backdrop:bg-black/90 outline-none m-auto"
-      onCancel={onClose}
-      aria-label="Screenshot view"
+    <Modal
+      opened={true}
+      onClose={onClose}
+      withCloseButton={false}
+      padding={0}
+      size="auto"
+      radius="md"
+      overlayProps={{ backgroundOpacity: 0.9 }}
+      styles={{
+        content: { background: "transparent", boxShadow: "none", overflow: "visible" },
+        body: { background: "transparent", overflow: "visible" },
+      }}
     >
-      <div className="relative flex items-center justify-center p-4 outline-none">
-        <button
-          onClick={onClose}
-          className="fixed top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-50 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-white"
-          aria-label="Close screenshot"
-        >
-          <XMarkIcon className="w-8 h-8" />
-        </button>
-        <SafeImage
-          className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+      {/* Close button — fixed to viewport top-right, perfect circle */}
+      <UnstyledButton
+        onClick={onClose}
+        aria-label="Close screenshot"
+        style={{
+          position: "fixed",
+          top: 16,
+          right: 16,
+          width: 44,
+          height: 44,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          background: "rgba(0,0,0,0.6)",
+          border: "1.5px solid rgba(255,255,255,0.25)",
+          borderRadius: "50%",
+          color: "white",
+          zIndex: 9999,
+          cursor: "pointer",
+          backdropFilter: "blur(4px)",
+        }}
+      >
+        <IconX size={20} stroke={2.5} />
+      </UnstyledButton>
+
+      <Box
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* Spinner shown while image loads — sized so no scrollbars appear */}
+        {!isLoaded && (
+          <Box
+            style={{
+              width: 640,
+              height: 360,
+              maxWidth: "90vw",
+              maxHeight: "70vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Loader color="white" size="lg" />
+          </Box>
+        )}
+
+        <img
           src={getIGDBImageURL(screenshot, IGDBImageSize.SCREENSHOT_HUGE_1280_720)}
           alt="Enlarged screenshot"
-          loader={
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-white/10 border-t-white rounded-full animate-spin" />
-            </div>
-          }
+          onLoad={() => setIsLoaded(true)}
+          style={{
+            display: isLoaded ? "block" : "none",
+            maxWidth: "90vw",
+            maxHeight: "85vh",
+            objectFit: "contain",
+            borderRadius: 8,
+            boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+          }}
         />
-      </div>
-    </dialog>
+      </Box>
+    </Modal>
   );
 }

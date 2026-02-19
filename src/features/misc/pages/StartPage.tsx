@@ -1,30 +1,31 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { Box, Text } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 
 export default function StartPage(): React.JSX.Element {
   return (
-    <div className="container bg-slate-300 max-w-full">
+    <Box style={{ background: "#cbd5e1", maxWidth: "100%", padding: "16px" }}>
       <PageMeta title="Welcome" />
-      <h6>Welcome to MyGameList Temporary Start Page - Early access!</h6>
-      <h6>
+      <Text>Welcome to MyGameList Temporary Start Page - Early access!</Text>
+      <Text>
         Log in:{" "}
-        <Link to="/login" className="text-blue-500">
+        <Link to="/login" style={{ color: "#3b82f6" }}>
           here
         </Link>
-      </h6>
-      <h6>
+      </Text>
+      <Text>
         Register:{" "}
-        <Link to="/register" className="text-blue-500">
+        <Link to="/register" style={{ color: "#3b82f6" }}>
           here
         </Link>
-      </h6>
-      <h6>
+      </Text>
+      <Text>
         Home:{" "}
-        <Link to="/home" className="text-blue-500">
+        <Link to="/home" style={{ color: "#3b82f6" }}>
           here
         </Link>
-      </h6>
-    </div>
+      </Text>
+    </Box>
   );
 }

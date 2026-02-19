@@ -1,11 +1,10 @@
 import * as React from "react";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@mantine/form";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import CustomSelect from "@/components/ui/Form/CustomSelect";
-import YearSelect from "@/components/ui/Form/YearSelect";
-import TextFieldInput from "@/components/ui/Form/TextFieldInput";
+import { TextInput, Select, Box, Group, Stack } from "@mantine/core";
+import { YearPickerInput } from "@mantine/dates";
 import { Button } from "@/components/ui/Button";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import AsyncAutocomplete from "@/components/ui/Form/AsyncAutocomplete";
@@ -20,6 +19,7 @@ import {
   useGetPlayerPerspectivesInfiniteQuery,
 } from "../hooks/gameQueries";
 import { Company, Platform, Genre, GameEngine, GameMode, GameStatus, GameType, PlayerPerspective } from "@/client";
+
 const ORDERING_OPTIONS = [
   "-created_at",
   "created_at",
@@ -29,11 +29,19 @@ const ORDERING_OPTIONS = [
   "popularity",
 ] as const;
 
+const dateField = z
+  .preprocess(val => {
+    if (val === null || val === undefined || val === "") return null;
+    if (typeof val === "string") return new Date(val);
+    return val;
+  }, z.date().nullable())
+  .optional();
+
 const validationSchema = z
   .object({
     title: z.string().optional(),
-    release_date_after: z.coerce.date().optional().or(z.literal("")),
-    release_date_before: z.coerce.date().optional().or(z.literal("")),
+    release_date_after: dateField,
+    release_date_before: dateField,
     publisher: z.string().optional(),
     developer: z.string().optional(),
     platforms: z.string().array().optional(),
@@ -47,10 +55,10 @@ const validationSchema = z
   })
   .refine(
     data => {
-      if (data.release_date_after === undefined || data.release_date_after === "") {
+      if (data.release_date_after === undefined || data.release_date_after === null) {
         return true;
       }
-      if (data.release_date_before === undefined || data.release_date_before === "") {
+      if (data.release_date_before === undefined || data.release_date_before === null) {
         return true;
       }
       return data.release_date_before > data.release_date_after;
@@ -66,152 +74,194 @@ export type ValidationInput = z.input<typeof validationSchema>;
 
 function GameSearchFilter({
   onSubmitHandlerCallback,
-}: Readonly<{ onSubmitHandlerCallback: SubmitHandler<ValidationSchema> }>) {
-  const methods = useForm<ValidationInput, object, ValidationSchema>({
-    resolver: zodResolver(validationSchema),
+}: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void }>) {
+  const form = useForm<ValidationInput>({
+    initialValues: {
+      title: "",
+      release_date_after: null,
+      release_date_before: null,
+      publisher: "",
+      developer: "",
+      platforms: [],
+      genres: [],
+      game_engines: [],
+      game_modes: [],
+      game_status: [],
+      game_type: [],
+      player_perspectives: [],
+      ordering: "",
+    },
+    validate: zod4Resolver(validationSchema),
   });
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmitHandlerCallback)} noValidate className="flex flex-col gap-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-          {/* Group 1: Core Search & Ordering */}
-          <div className="flex flex-col gap-4">
-            <TextFieldInput id="title" name="title" type="text" label="Game Title" placeholder="Search by name..." />
-            <CustomSelect
-              placeholder="Select ordering ..."
-              id="ordering"
-              label="Sort Results By"
-              name="ordering"
-              options={[
-                { value: "created_at", label: "Created at" },
-                { value: "-created_at", label: "Created at (Descending)" },
-                { value: "rank_position", label: "Rank position" },
-                { value: "-rank_position", label: "Rank position (Descending)" },
-                { value: "popularity", label: "Popularity" },
-                { value: "-popularity", label: "Popularity (Descending)" },
-              ]}
+    <Box
+      component="form"
+      onSubmit={form.onSubmit(onSubmitHandlerCallback as (data: ValidationInput) => void)}
+      style={{ display: "flex", flexDirection: "column", gap: "32px" }}
+      noValidate
+    >
+      <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px 32px" }}>
+        {/* Group 1: Core Search & Ordering */}
+        <Stack gap={16}>
+          <TextInput
+            id="title"
+            name="title"
+            label="Game Title"
+            placeholder="Search by name..."
+            {...form.getInputProps("title")}
+          />
+          <Select
+            placeholder="Select ordering ..."
+            id="ordering"
+            label="Sort Results By"
+            name="ordering"
+            searchable
+            clearable
+            data={[
+              { value: "created_at", label: "Created at" },
+              { value: "-created_at", label: "Created at (Descending)" },
+              { value: "rank_position", label: "Rank position" },
+              { value: "-rank_position", label: "Rank position (Descending)" },
+              { value: "popularity", label: "Popularity" },
+              { value: "-popularity", label: "Popularity (Descending)" },
+            ]}
+            {...form.getInputProps("ordering")}
+          />
+          <Box style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
+            <YearPickerInput
+              id="release_date_after"
+              name="release_date_after"
+              label="Release After"
+              placeholder="Year..."
+              clearable
+              valueFormat="YYYY"
+              {...form.getInputProps("release_date_after")}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <YearSelect
-                id="release_date_after"
-                name="release_date_after"
-                label="Release After"
-                placeholder="Year..."
-              />
-              <YearSelect
-                id="release_date_before"
-                name="release_date_before"
-                label="Release Before"
-                placeholder="Year..."
-              />
-            </div>
-          </div>
+            <YearPickerInput
+              id="release_date_before"
+              name="release_date_before"
+              label="Release Before"
+              placeholder="Year..."
+              clearable
+              valueFormat="YYYY"
+              {...form.getInputProps("release_date_before")}
+            />
+          </Box>
+        </Stack>
 
-          {/* Group 2: Entities & Genres */}
-          <div className="flex flex-col gap-4">
-            <AsyncAutocomplete
-              id="developer"
-              name="developer"
-              label="Developer"
-              placeholder="Search developer..."
-              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
-              getOptionLabel={(company: Company) => company.name}
-              getOptionValue={(company: Company) => company.name}
-            />
+        {/* Group 2: Entities & Genres */}
+        <Stack gap={16}>
+          <AsyncAutocomplete
+            id="developer"
+            name="developer"
+            label="Developer"
+            placeholder="Search developer..."
+            useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+            getOptionLabel={(company: Company) => company.name}
+            getOptionValue={(company: Company) => company.name}
+            {...form.getInputProps("developer")}
+          />
 
-            <AsyncAutocomplete
-              id="publisher"
-              name="publisher"
-              label="Publisher"
-              placeholder="Search publisher..."
-              useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
-              getOptionLabel={(company: Company) => company.name}
-              getOptionValue={(company: Company) => company.name}
-            />
+          <AsyncAutocomplete
+            id="publisher"
+            name="publisher"
+            label="Publisher"
+            placeholder="Search publisher..."
+            useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
+            getOptionLabel={(company: Company) => company.name}
+            getOptionValue={(company: Company) => company.name}
+            {...form.getInputProps("publisher")}
+          />
 
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search genres..."
-              id="genres"
-              label="Genres"
-              name="genres"
-              useInfiniteQueryHook={useGetGenresInfiniteQuery}
-              getOptionLabel={(genre: Genre) => genre.name}
-              getOptionValue={(genre: Genre) => genre.name}
-            />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search genres..."
+            id="genres"
+            label="Genres"
+            name="genres"
+            useInfiniteQueryHook={useGetGenresInfiniteQuery}
+            getOptionLabel={(genre: Genre) => genre.name}
+            getOptionValue={(genre: Genre) => genre.name}
+            {...form.getInputProps("genres")}
+          />
 
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search platforms..."
-              id="platforms"
-              label="Platforms"
-              name="platforms"
-              useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
-              getOptionLabel={(platform: Platform) => platform.name}
-              getOptionValue={(platform: Platform) => platform.name}
-            />
-          </div>
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search platforms..."
+            id="platforms"
+            label="Platforms"
+            name="platforms"
+            useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
+            getOptionLabel={(platform: Platform) => platform.name}
+            getOptionValue={(platform: Platform) => platform.name}
+            {...form.getInputProps("platforms")}
+          />
+        </Stack>
 
-          {/* Group 3: Game Properties */}
-          <div className="flex flex-col gap-4">
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search game types..."
-              id="game_type"
-              label="Game Types"
-              name="game_type"
-              useInfiniteQueryHook={useGetGameTypesInfiniteQuery}
-              getOptionLabel={(type: GameType) => type.type}
-              getOptionValue={(type: GameType) => type.type}
-            />
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search game statuses..."
-              id="game_status"
-              label="Game Statuses"
-              name="game_status"
-              useInfiniteQueryHook={useGetGameStatusesInfiniteQuery}
-              getOptionLabel={(status: GameStatus) => status.status}
-              getOptionValue={(status: GameStatus) => status.status}
-            />
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search engines..."
-              id="game_engines"
-              label="Game Engines"
-              name="game_engines"
-              useInfiniteQueryHook={useGetGameEnginesInfiniteQuery}
-              getOptionLabel={(engine: GameEngine) => engine.name}
-              getOptionValue={(engine: GameEngine) => engine.name}
-            />
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search modes..."
-              id="game_modes"
-              label="Game Modes"
-              name="game_modes"
-              useInfiniteQueryHook={useGetGameModesInfiniteQuery}
-              getOptionLabel={(mode: GameMode) => mode.name}
-              getOptionValue={(mode: GameMode) => mode.name}
-            />
-            <AsyncMultiSelectAutocomplete
-              placeholder="Search perspectives..."
-              id="player_perspectives"
-              label="Player Perspectives"
-              name="player_perspectives"
-              useInfiniteQueryHook={useGetPlayerPerspectivesInfiniteQuery}
-              getOptionLabel={(perspective: PlayerPerspective) => perspective.name}
-              getOptionValue={(perspective: PlayerPerspective) => perspective.name}
-            />
-          </div>
-        </div>
+        {/* Group 3: Game Properties */}
+        <Stack gap={16}>
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search game types..."
+            id="game_type"
+            label="Game Types"
+            name="game_type"
+            useInfiniteQueryHook={useGetGameTypesInfiniteQuery}
+            getOptionLabel={(type: GameType) => type.type}
+            getOptionValue={(type: GameType) => type.type}
+            {...form.getInputProps("game_type")}
+          />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search game statuses..."
+            id="game_status"
+            label="Game Statuses"
+            name="game_status"
+            useInfiniteQueryHook={useGetGameStatusesInfiniteQuery}
+            getOptionLabel={(status: GameStatus) => status.status}
+            getOptionValue={(status: GameStatus) => status.status}
+            {...form.getInputProps("game_status")}
+          />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search engines..."
+            id="game_engines"
+            label="Game Engines"
+            name="game_engines"
+            useInfiniteQueryHook={useGetGameEnginesInfiniteQuery}
+            getOptionLabel={(engine: GameEngine) => engine.name}
+            getOptionValue={(engine: GameEngine) => engine.name}
+            {...form.getInputProps("game_engines")}
+          />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search modes..."
+            id="game_modes"
+            label="Game Modes"
+            name="game_modes"
+            useInfiniteQueryHook={useGetGameModesInfiniteQuery}
+            getOptionLabel={(mode: GameMode) => mode.name}
+            getOptionValue={(mode: GameMode) => mode.name}
+            {...form.getInputProps("game_modes")}
+          />
+          <AsyncMultiSelectAutocomplete
+            placeholder="Search perspectives..."
+            id="player_perspectives"
+            label="Player Perspectives"
+            name="player_perspectives"
+            useInfiniteQueryHook={useGetPlayerPerspectivesInfiniteQuery}
+            getOptionLabel={(perspective: PlayerPerspective) => perspective.name}
+            getOptionValue={(perspective: PlayerPerspective) => perspective.name}
+            {...form.getInputProps("player_perspectives")}
+          />
+        </Stack>
+      </Box>
 
-        <div className="flex justify-center pt-4 border-t border-background-100">
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full md:w-64 shadow-md hover:shadow-lg transition-all active:scale-95"
-          >
-            Apply Filters
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
+      <Group justify="center" pt={16} style={{ borderTop: "1px solid var(--color-background-100)" }}>
+        <Button
+          type="submit"
+          size="lg"
+          style={{ width: "100%", maxWidth: "256px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
+        >
+          Apply Filters
+        </Button>
+      </Group>
+    </Box>
   );
 }
 
