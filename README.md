@@ -16,7 +16,7 @@ A modern, responsive web application for gamers to track their game collections,
 ## 🛠️ Tech Stack
 
 - **Core:** [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/), [DaisyUI](https://daisyui.com/)
+- **Styling:** [Mantine UI](https://mantine.dev/)
 - **State Management & Data Fetching:** [TanStack Query (React Query)](https://tanstack.com/query/latest)
 - **Routing:** [React Router DOM](https://reactrouter.com/)
 - **Forms & Validation:** [React Hook Form](https://react-hook-form.com/), [Zod](https://zod.dev/)
@@ -131,11 +131,19 @@ To build and run the application using Docker:
 src/
 ├── assets/         # Static assets (images, logos)
 ├── client/         # Generated API client code (do not edit manually)
-├── components/     # Reusable UI components (Forms, Filters, Layouts)
-├── css/            # Global styles and color definitions
-├── helpers/        # Constants, Types, and helper functions
-├── hooks/          # Custom React hooks (Data fetching, logic)
-├── pages/          # Application page views (Home, Login, GameDetail, etc.)
-├── services/       # Service layer
-└── tests/          # Unit and integration tests
+├── components/     # Reusable UI components (layout, forms, shared UI)
+├── config/         # Environment configuration and validation
+├── css/            # Global styles and CSS variable definitions
+├── features/       # Feature modules (auth, games, collections, users, etc.)
+│   └── [feature]/
+│       ├── api/        # API wrapper functions
+│       ├── components/ # Feature-specific components
+│       ├── hooks/      # TanStack Query hooks
+│       ├── pages/      # Page components
+│       └── routes.tsx  # Route definitions
+├── hooks/          # Shared custom React hooks
+├── lib/            # Shared library configuration (query keys, validation)
+├── theme/          # Mantine theme configuration
+├── types/          # Global TypeScript type definitions
+└── utils/          # Utility functions and constants
 ```
