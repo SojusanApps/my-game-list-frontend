@@ -8,7 +8,7 @@ interface TierDropZoneProps {
   isEmpty: boolean;
   isOwner: boolean;
   children: React.ReactNode;
-  onItemMove?: (itemId: string, tierId: string) => void;
+  onItemMove?: (itemId: string, sourceTierId: string, targetTierId: string) => void;
 }
 
 export const TierDropZone = React.memo(function TierDropZone({
@@ -60,7 +60,7 @@ export const TierDropZone = React.memo(function TierDropZone({
         const droppedOnCard = location.current.dropTargets.length > 1;
 
         if (onItemMove && (isEmpty || sourceTierId !== tierId) && !droppedOnCard) {
-          onItemMove(sourceItemId, tierId);
+          onItemMove(sourceItemId, sourceTierId, tierId);
         }
       },
     });

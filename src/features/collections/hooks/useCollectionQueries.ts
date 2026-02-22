@@ -118,6 +118,14 @@ export const useCollectionItemsInfiniteQuery = (collectionId?: number, filters: 
   });
 };
 
+export const useCollectionItemsQuery = (collectionId?: number, page: number = 1, filters: object = {}) => {
+  return useQuery({
+    queryKey: [...collectionKeys.items(collectionId ?? -1, filters), page],
+    queryFn: () => fetchCollectionItems({ pageParam: page, queryKey: ["", "", collectionId ?? -1, filters] }),
+    enabled: !!collectionId,
+  });
+};
+
 export const useCollectionItemsByTierInfiniteQuery = (collectionId: number, tier: TierEnum | "UNRANKED") => {
   const filters = React.useMemo(() => {
     if (tier === "UNRANKED") {
@@ -127,6 +135,17 @@ export const useCollectionItemsByTierInfiniteQuery = (collectionId: number, tier
   }, [tier]);
 
   return useCollectionItemsInfiniteQuery(collectionId, filters);
+};
+
+export const useCollectionItemsByTierQuery = (collectionId: number, tier: TierEnum | "UNRANKED", page: number = 1) => {
+  const filters = React.useMemo(() => {
+    if (tier === "UNRANKED") {
+      return { has_tier: false };
+    }
+    return { tier: [tier] };
+  }, [tier]);
+
+  return useCollectionItemsQuery(collectionId, page, filters);
 };
 
 export const useAddCollectionItem = () => {
