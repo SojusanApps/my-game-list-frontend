@@ -22,7 +22,14 @@ interface SortableGameCardProps {
   onRemove?: () => void;
   onDescriptionChange?: (description: string) => void;
   isOwner: boolean;
-  onReorder?: (itemId: string, tierId: string, targetIndex: number, edge: Edge | null) => void;
+  onReorder?: (
+    itemId: string,
+    sourceTierId: string,
+    targetTierId: string,
+    sourceIndex: number,
+    targetIndex: number,
+    edge: Edge | null,
+  ) => void;
 }
 
 export const SortableGameCard = React.memo(function SortableGameCard(props: SortableGameCardProps) {
@@ -111,9 +118,11 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
           setClosestEdge(null);
 
           const sourceItemId = source.data.itemId as string;
+          const sourceTierId = source.data.tierId as string;
+          const sourceIndex = source.data.index as number;
 
           if (sourceItemId && onReorder) {
-            onReorder(sourceItemId, tierId, index, edge);
+            onReorder(sourceItemId, sourceTierId, tierId, sourceIndex, index, edge);
           }
         },
       }),
