@@ -78,6 +78,7 @@ export const TierListView = React.memo(function TierListView({
       sourceIndex: number,
       targetIndex: number,
       edge: Edge | null,
+      targetPage: number = 1,
     ) => {
       if (!isOwner) {
         return;
@@ -92,13 +93,19 @@ export const TierListView = React.memo(function TierListView({
       const targetTier = tierConfig.id === "UNRANKED" ? BlankEnum[""] : tierConfig.id;
 
       // Calculate insertion position (0-based for API)
-      let position = targetIndex;
+      // We need to account for the current page offset
+      // Assuming 25 items per page (standard DRF pagination)
+      const PAGE_SIZE = 25;
+      const pageOffset = (targetPage - 1) * PAGE_SIZE;
+
+      let position = pageOffset + targetIndex;
       if (edge === "right") {
         position += 1;
       }
 
       // If moving within the same tier, adjust for the item being removed first
       if (sourceTierId === targetTierId) {
+        // sourceIndex is already absolute (calculated in SortableGameCard)
         if (sourceIndex < position) {
           position -= 1;
         }

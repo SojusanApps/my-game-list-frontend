@@ -21,6 +21,7 @@ interface TierSectionProps {
     sourceIndex: number,
     targetIndex: number,
     edge: Edge | null,
+    targetPage: number,
   ) => void;
   onDescriptionChange: (itemId: number, newDescription: string) => void;
   onCountLoad: (tierId: TierEnum | "UNRANKED", count: number) => void;
@@ -59,17 +60,20 @@ export const TierSection = React.memo(function TierSection({
           id={String(item.id)}
           tierId={tier.id}
           index={index}
+          page={page}
           title={item.game.title}
           coverImageId={item.game.cover_image_id}
           description={item.description}
           isOwner={isOwner}
           onRemove={onRemove ? () => onRemove(item.id, item.game.title) : undefined}
-          onReorder={onReorder}
+          onReorder={(itemId, sourceTierId, targetTierId, sourceIndex, targetIndex, edge) =>
+            onReorder(itemId, sourceTierId, targetTierId, sourceIndex, targetIndex, edge, page)
+          }
           onDescriptionChange={newDesc => onDescriptionChange(item.id, newDesc)}
         />
       );
     },
-    [tier.id, isOwner, onRemove, onReorder, onDescriptionChange],
+    [tier.id, page, isOwner, onRemove, onReorder, onDescriptionChange],
   );
 
   return (

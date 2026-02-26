@@ -47,15 +47,27 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
   }, [onChoice, onSkip]);
 
   return (
-    <Stack align="center" gap={32} className="animate-in fade-in duration-300">
+    <Stack align="center" gap={32} style={{ animation: "fade-in 300ms ease-in-out" }}>
       {/* Cards */}
-      <Group align="center" gap={32} wrap="wrap" justify="center" className="w-full">
+      <Group align="center" gap={32} wrap="nowrap" justify="center" w="100%">
         <DuelGameCard item={duel.itemA} side="left" onClick={() => onChoice("A")} />
 
         {/* VS divider */}
-        <Group justify="center" align="center">
-          <Box className="flex items-center justify-center w-14 h-14 rounded-full bg-background-50 border-2 border-background-200 shadow-inner">
-            <Text component="span" className="text-xl font-black text-text-400 tracking-tighter">
+        <Group justify="center" align="center" style={{ flexShrink: 0 }}>
+          <Box
+            w={56}
+            h={56}
+            bg="var(--color-background-50)"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "9999px",
+              border: "2px solid var(--color-background-200)",
+              boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
+            }}
+          >
+            <Text component="span" fz="xl" fw={900} c="var(--color-text-400)" style={{ letterSpacing: "-0.05em" }}>
               VS
             </Text>
           </Box>
@@ -67,36 +79,46 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
       {/* Action buttons */}
       <Stack align="center" gap={16}>
         <Group gap={12}>
-          <Button onClick={() => onChoice("A")} className="font-bold uppercase tracking-wider px-8">
+          <Button
+            onClick={() => onChoice("A")}
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 32 }}
+          >
             <Text component="span">Choose Left</Text>{" "}
-            <Kbd size="xs" className="ml-2 opacity-60 bg-white/20">
+            <Kbd size="xs" ml={8} style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)" }}>
               ←
             </Kbd>
           </Button>
-          <Button onClick={() => onChoice("tie")} variant="outline" className="font-bold uppercase tracking-wider px-6">
+          <Button
+            onClick={() => onChoice("tie")}
+            variant="outline"
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 24 }}
+          >
             <Text component="span">Tie</Text>{" "}
-            <Kbd size="xs" className="ml-2 opacity-60">
+            <Kbd size="xs" ml={8} style={{ opacity: 0.6 }}>
               Enter
             </Kbd>
           </Button>
-          <Button onClick={() => onChoice("B")} className="font-bold uppercase tracking-wider px-8">
+          <Button
+            onClick={() => onChoice("B")}
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 32 }}
+          >
             <Text component="span">Choose Right</Text>{" "}
-            <Kbd size="xs" className="ml-2 opacity-60 bg-white/20">
+            <Kbd size="xs" ml={8} style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)" }}>
               →
             </Kbd>
           </Button>
         </Group>
 
-        <Button onClick={onSkip} variant="ghost" size="sm" className="text-text-400">
+        <Button onClick={onSkip} variant="ghost" size="sm" style={{ color: "var(--color-text-400)" }}>
           <Text component="span">Skip this pair</Text>{" "}
-          <Kbd size="xs" className="ml-1 opacity-60">
+          <Kbd size="xs" ml={4} style={{ opacity: 0.6 }}>
             S
           </Kbd>
         </Button>
       </Stack>
 
       {/* Keyboard hint */}
-      <Text size="xs" className="text-text-400 text-center">
+      <Text size="xs" style={{ color: "var(--color-text-400)" }} ta="center">
         Use keyboard:{" "}
         <Text component="span" fw={700}>
           ← / 1
