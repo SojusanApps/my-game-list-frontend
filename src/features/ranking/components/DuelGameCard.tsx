@@ -2,8 +2,8 @@ import * as React from "react";
 import { Box, Group, Text, UnstyledButton } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import { cn } from "@/utils/cn";
 import type { RankedItem } from "../types";
+import styles from "./DuelGameCard.module.css";
 
 interface DuelGameCardProps {
   item: RankedItem;
@@ -12,41 +12,42 @@ interface DuelGameCardProps {
 }
 
 export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onClick }: Readonly<DuelGameCardProps>) {
-  const hoverColor =
-    side === "left"
-      ? "hover:border-primary-400 hover:shadow-primary-200/50"
-      : "hover:border-secondary-400 hover:shadow-secondary-200/50";
-  const accentColor = side === "left" ? "bg-primary-500" : "bg-secondary-500";
+  const cardClass = side === "left" ? styles.cardLeft : styles.cardRight;
+  const accentColor = side === "left" ? "var(--color-primary-500)" : "var(--color-secondary-500)";
 
   return (
-    <UnstyledButton
-      onClick={onClick}
-      className={cn(
-        "group flex flex-col items-center gap-4 p-6 rounded-2xl border-2 border-background-200 bg-white shadow-sm cursor-pointer transition-all duration-200",
-        "hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:shadow-md",
-        hoverColor,
-      )}
-    >
-      <Box className="w-40 h-56 md:w-48 md:h-68 rounded-xl overflow-hidden shadow-md border border-background-100">
+    <UnstyledButton onClick={onClick} className={`${styles.card} ${cardClass}`}>
+      <Box className={styles.imageContainer}>
         <SafeImage
           src={getIGDBImageURL(item.coverImageId ?? "", IGDBImageSize.COVER_BIG_264_374)}
           alt={item.title}
-          className="w-full h-full object-cover"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </Box>
 
       <Text
         fw={900}
-        className="text-text-900 text-center line-clamp-2 uppercase tracking-tight text-sm md:text-base max-w-48"
+        c="var(--color-text-900)"
+        ta="center"
+        lineClamp={2}
+        style={{ textTransform: "uppercase", letterSpacing: "-0.025em", width: "100%" }}
+        fz={{ base: "sm", md: "base" }}
       >
         {item.title}
       </Text>
 
       <Group gap={8}>
-        <Text component="span" className={cn("text-xs font-bold text-white px-2 py-0.5 rounded-full", accentColor)}>
+        <Text
+          component="span"
+          fz="xs"
+          fw={700}
+          c="white"
+          bg={accentColor}
+          style={{ padding: "2px 8px", borderRadius: "9999px" }}
+        >
           {item.rating}
         </Text>
-        <Text component="span" className="text-xs text-text-400">
+        <Text component="span" fz="xs" c="var(--color-text-400)">
           {item.matchesPlayed} {item.matchesPlayed === 1 ? "match" : "matches"}
         </Text>
       </Group>

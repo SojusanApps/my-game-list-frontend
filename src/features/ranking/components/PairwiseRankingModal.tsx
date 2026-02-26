@@ -91,16 +91,27 @@ export default function PairwiseRankingModal({
   const renderBody = () => {
     if (tooFewItems) {
       return (
-        <Stack align="center" justify="center" className="h-full text-center">
-          <Box className="w-20 h-20 bg-background-50 rounded-full flex items-center justify-center mb-4">
-            <Text component="span" className="text-4xl">
+        <Stack align="center" justify="center" h="100%" style={{ textAlign: "center" }}>
+          <Box
+            w={80}
+            h={80}
+            bg="var(--color-background-50)"
+            style={{
+              borderRadius: "9999px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 16,
+            }}
+          >
+            <Text component="span" fz={36}>
               ⚖️
             </Text>
           </Box>
-          <Title order={3} className="text-lg font-bold text-text-900">
+          <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
             Not enough items
           </Title>
-          <Text className="text-text-500 max-w-xs mt-2">
+          <Text c="var(--color-text-500)" maw={320} mt={8}>
             You need at least 2 games in this collection to start pairwise ranking.
           </Text>
         </Stack>
@@ -109,21 +120,32 @@ export default function PairwiseRankingModal({
 
     if (state === "idle") {
       return (
-        <Stack align="center" justify="center" gap={24} className="h-full text-center">
-          <Box className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center">
-            <Text component="span" className="text-4xl">
+        <Stack align="center" justify="center" gap={24} h="100%" style={{ textAlign: "center" }}>
+          <Box
+            w={80}
+            h={80}
+            bg="var(--color-primary-50)"
+            style={{ borderRadius: "9999px", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            <Text component="span" fz={36}>
               ⚔️
             </Text>
           </Box>
           <Box>
-            <Title order={3} className="text-xl font-black text-text-900 uppercase tracking-tight">
+            <Title
+              order={3}
+              fz="xl"
+              fw={900}
+              c="var(--color-text-900)"
+              style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
+            >
               Rank by Head-to-Head Duels
             </Title>
-            <Text className="text-text-500 max-w-md mt-2 leading-relaxed">
+            <Text c="var(--color-text-500)" maw={448} mt={8} style={{ lineHeight: 1.625 }}>
               Compare games two at a time to build an accurate ranking using an Elo rating system. You can stop anytime
               and resume later.
             </Text>
-            <Text size="xs" className="text-text-400 mt-3">
+            <Text size="xs" c="var(--color-text-400)" mt={12}>
               {collectionItems.length} games &middot; {getTotalRounds(collectionItems.length)} rounds &middot; ~
               {getTotalDuels(collectionItems.length)} duels
             </Text>
@@ -134,14 +156,20 @@ export default function PairwiseRankingModal({
               <>
                 <Button
                   onClick={resume}
-                  className="font-bold uppercase tracking-wider px-8 shadow-lg shadow-primary-200"
+                  style={{
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    paddingInline: 32,
+                    boxShadow: "0 10px 15px -3px var(--color-primary-200), 0 4px 6px -4px var(--color-primary-200)",
+                  }}
                 >
                   Resume Session
                 </Button>
                 <Button
                   onClick={handleStartFresh}
                   variant="outline"
-                  className="font-bold uppercase tracking-wider px-6"
+                  style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 24 }}
                 >
                   Start Fresh
                 </Button>
@@ -149,7 +177,13 @@ export default function PairwiseRankingModal({
             ) : (
               <Button
                 onClick={startNew}
-                className="font-bold uppercase tracking-wider px-8 shadow-lg shadow-primary-200"
+                style={{
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  paddingInline: 32,
+                  boxShadow: "0 10px 15px -3px var(--color-primary-200), 0 4px 6px -4px var(--color-primary-200)",
+                }}
               >
                 Start Ranking
               </Button>
@@ -161,7 +195,7 @@ export default function PairwiseRankingModal({
 
     if (state === "dueling" && currentDuel) {
       return (
-        <Box className="flex items-center justify-center h-full">
+        <Box style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
           <DuelView duel={currentDuel} onChoice={submitChoice} onSkip={skipDuel} />
         </Box>
       );
@@ -188,21 +222,34 @@ export default function PairwiseRankingModal({
       withCloseButton={false}
       padding={0}
       radius="xl"
+      size="80rem"
       overlayProps={{ backgroundOpacity: 0.6 }}
       styles={{
-        content: { width: "95vw", maxWidth: "80rem", height: "85vh" },
+        content: { height: "85vh" },
         body: { height: "100%", padding: 0 },
       }}
     >
       <Stack gap={0} style={{ height: "100%" }}>
         {/* Header */}
-        <Group justify="space-between" align="center" className="p-6 pb-4 border-b border-background-100">
-          <Stack gap={4} className="flex-1 min-w-0">
-            <Title order={2} className="text-xl font-black text-text-900 uppercase tracking-tight">
+        <Group
+          justify="space-between"
+          align="center"
+          p={24}
+          pb={16}
+          style={{ borderBottom: "1px solid var(--color-background-100)" }}
+        >
+          <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
+            <Title
+              order={2}
+              fz="xl"
+              fw={900}
+              c="var(--color-text-900)"
+              style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
+            >
               Pairwise Ranking
             </Title>
             {state !== "idle" && (
-              <Box className="max-w-sm">
+              <Box w="100%" maw={384}>
                 <ProgressBar progress={progress} />
               </Box>
             )}
@@ -210,26 +257,39 @@ export default function PairwiseRankingModal({
 
           <Group gap={8}>
             {state === "dueling" && (
-              <Button onClick={viewResults} variant="outline" size="sm" className="font-bold uppercase tracking-wider">
+              <Button
+                onClick={viewResults}
+                variant="outline"
+                size="sm"
+                style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              >
                 View Results
               </Button>
             )}
             {state !== "idle" && (
-              <Button onClick={handleReset} variant="ghost" size="sm" className="text-error-500 hover:text-error-600">
+              <Button
+                onClick={handleReset}
+                variant="ghost"
+                size="sm"
+                style={{ fontWeight: 500, color: "var(--color-error-500)" }}
+              >
                 Reset
               </Button>
             )}
             <UnstyledButton
               onClick={handleClose}
-              className="p-2 rounded-xl bg-background-50 border border-background-100 text-text-400 hover:text-text-600 transition-colors"
+              p={8}
+              bg="var(--color-background-50)"
+              c="var(--color-text-400)"
+              style={{ borderRadius: 12, border: "1px solid var(--color-background-100)", transition: "color 200ms" }}
             >
-              <IconX className="w-5 h-5" />
+              <IconX size={20} />
             </UnstyledButton>
           </Group>
         </Group>
 
         {/* Body */}
-        <Box className="flex-1 overflow-y-auto p-6">{renderBody()}</Box>
+        <Box style={{ flex: 1, overflowY: "auto", padding: 24 }}>{renderBody()}</Box>
       </Stack>
     </Modal>
   );
