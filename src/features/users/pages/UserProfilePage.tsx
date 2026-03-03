@@ -1,10 +1,8 @@
 import * as React from "react";
-import { jwtDecode } from "jwt-decode";
 import { useParams, Link, Navigate } from "react-router-dom";
 
 import { useGetUserDetails } from "../hooks/userQueries";
-import { TokenInfoType } from "@/types";
-import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useCurrentUserId } from "@/features/auth";
 import FriendshipButtons from "../components/FriendshipButtons";
 import UserProfileInformation from "../components/UserProfileInformation";
 import UserFriendsList from "../components/UserFriendsList";
@@ -22,17 +20,13 @@ export default function UserProfilePage(): React.JSX.Element {
   const userId = parsedId.success ? parsedId.data : undefined;
 
   const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(userId);
-  const { user } = useAuth();
+  const currentUserId = useCurrentUserId();
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
   }
 
   const validUserId = parsedId.data;
-  let currentUser: TokenInfoType | null = null;
-  if (user) {
-    currentUser = jwtDecode<TokenInfoType>(user.token);
-  }
 
   const pageTitle = isUserDetailsLoading ? "Loading Profile..." : `${userDetails?.username}'s Profile`;
 
@@ -78,7 +72,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   />
                 </Box>
 
-                <FriendshipButtons currentUser={currentUser} userId={validUserId} />
+                <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />
 
                 <Link to={`/game-list/${validUserId}`} style={{ width: "100%", textDecoration: "none" }}>
                   <Button fullWidth variant="default">

@@ -8,9 +8,7 @@ import { ActionIcon, Modal, Stack, Group, Box, Title, Text } from "@mantine/core
 import { IconX } from "@tabler/icons-react";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { useCollectionsInfiniteQuery, useAddCollectionItem } from "../hooks/useCollectionQueries";
-import { useAuth } from "@/features/auth/context/AuthProvider";
-import { jwtDecode } from "jwt-decode";
-import { TokenInfoType } from "@/types";
+import { useCurrentUserId } from "@/features/auth";
 import { Collection } from "@/client";
 
 const validationSchema = z.object({
@@ -25,17 +23,7 @@ interface AddToCollectionModalProps {
 }
 
 export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddToCollectionModalProps>) {
-  const { user } = useAuth();
-
-  const currentUserId = React.useMemo(() => {
-    if (!user) return undefined;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      return decoded.user_id;
-    } catch {
-      return undefined;
-    }
-  }, [user]);
+  const currentUserId = useCurrentUserId();
 
   const { mutateAsync: addCollectionItem, isPending } = useAddCollectionItem();
 
@@ -48,7 +36,7 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
 
   // Wrapper hook for AsyncMultiSelectAutocomplete
   const useMyCollectionsSearch = (searchTerm: string) => {
-    return useCollectionsInfiniteQuery(currentUserId, { name: searchTerm });
+    return useCollectionsInfiniteQuery(currentUserId || undefined, { name: searchTerm });
   };
 
   const onSubmit = async (data: ValidationSchema) => {

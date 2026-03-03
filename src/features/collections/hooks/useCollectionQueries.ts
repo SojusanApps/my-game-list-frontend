@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { jwtDecode } from "jwt-decode";
+
 import {
   getCollectionsList,
   createCollection,
@@ -17,8 +17,7 @@ import {
 } from "../api/collection";
 import { collectionKeys } from "@/lib/queryKeys";
 import { useGetFriendshipsInfiniteQuery } from "@/features/users/hooks/friendshipQueries";
-import { useAuth } from "@/features/auth/context/AuthProvider";
-import { TokenInfoType } from "@/types";
+import { useCurrentUserId } from "@/features/auth";
 import { TierEnum } from "@/client";
 
 const fetchCollections = async ({ pageParam = 1, queryKey }: { pageParam?: number; queryKey: readonly unknown[] }) => {
@@ -253,21 +252,12 @@ export const useUpdateCollectionItemTier = () => {
 };
 
 export const useFriendSearch = (searchTerm: string) => {
-  const { user } = useAuth();
-  const currentUserId = React.useMemo(() => {
-    if (!user) return undefined;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      return decoded.user_id;
-    } catch {
-      return undefined;
-    }
-  }, [user]);
+  const currentUserId = useCurrentUserId();
 
   // Use a query object that always includes user to trigger initial load
   const query = React.useMemo(
     () => ({
-      user: currentUserId,
+      user: currentUserId || undefined,
       friend_username: searchTerm || undefined, // Keep as friend_username if that's what the user expected, or try friend__username
       search: searchTerm || undefined, // Also try standard search parameter
     }),

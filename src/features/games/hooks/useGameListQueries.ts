@@ -1,5 +1,5 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getGameListsList } from "../api/game";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getGameListsList, getRandomPtpGame } from "../api/game";
 import { gameListKeys } from "@/lib/queryKeys";
 import { StatusEnum } from "@/client";
 
@@ -31,5 +31,14 @@ export const useGameListInfiniteQuery = (userId?: number, status?: StatusEnum | 
       return null;
     },
     enabled: !!userId,
+  });
+};
+
+export const useRandomPtpGame = (userId?: number, enabled?: boolean) => {
+  return useQuery({
+    queryKey: gameListKeys.randomPtp(userId ?? -1),
+    queryFn: () => getRandomPtpGame(),
+    enabled: !!userId && enabled !== false,
+    retry: false, // Do not retry on 404
   });
 };

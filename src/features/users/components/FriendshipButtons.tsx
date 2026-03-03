@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Group } from "@mantine/core";
-import { TokenInfoType } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Friendship, FriendshipRequest } from "@/client";
 import {
@@ -13,11 +12,11 @@ import {
 } from "../hooks/friendshipQueries";
 
 interface FriendshipButtonsProps {
-  currentUser: TokenInfoType | null;
+  currentUserId: number | null;
   userId: number;
 }
 
-export default function FriendshipButtons({ currentUser, userId }: Readonly<FriendshipButtonsProps>) {
+export default function FriendshipButtons({ currentUserId, userId }: Readonly<FriendshipButtonsProps>) {
   const { mutate: sendRequest } = useSendFriendRequest();
   const { mutate: acceptRequest } = useAcceptFriendRequest();
   const { mutate: rejectRequest } = useRejectFriendRequest();
@@ -28,7 +27,7 @@ export default function FriendshipButtons({ currentUser, userId }: Readonly<Frie
   // Fetch requests sent BY this user. We will check if any are sent TO us.
   const { data: incomingRequestsData } = useGetFriendshipRequests({ sender: userId });
 
-  const isOwnProfile = Number(currentUser?.user_id) === Number(userId);
+  const isOwnProfile = Number(currentUserId) === Number(userId);
 
   // Find existing friendship object if any
   const friendship = friendshipsData?.results?.find((f: Friendship) => f.friend.id === userId || f.user.id === userId);
@@ -38,13 +37,13 @@ export default function FriendshipButtons({ currentUser, userId }: Readonly<Frie
   // Check if we sent a request to them
   const outgoingRequest = sentRequestsData?.results?.find((request: FriendshipRequest) => {
     const requestSenderId = request.sender.id;
-    return Number(requestSenderId) === Number(currentUser?.user_id);
+    return Number(requestSenderId) === Number(currentUserId);
   });
 
   // Check if they sent a request to us
   const incomingRequest = incomingRequestsData?.results?.find((request: FriendshipRequest) => {
     const requestReceiverId = request.receiver.id;
-    return Number(requestReceiverId) === Number(currentUser?.user_id);
+    return Number(requestReceiverId) === Number(currentUserId);
   });
 
   const isIncomingRejected = !!incomingRequest?.rejected_at;
@@ -52,8 +51,8 @@ export default function FriendshipButtons({ currentUser, userId }: Readonly<Frie
   const isOutgoingRejected = !!outgoingRequest?.rejected_at;
 
   const handleAddFriend = () => {
-    if (currentUser) {
-      sendRequest({ sender: currentUser.user_id, receiver: userId });
+    if (currentUserId) {
+      sendRequest({ sender: currentUserId, receiver: userId });
     }
   };
 

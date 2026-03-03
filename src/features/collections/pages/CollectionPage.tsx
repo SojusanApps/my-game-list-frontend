@@ -6,9 +6,7 @@ import {
   useCollectionItemsInfiniteQuery,
   useRemoveCollectionItem,
 } from "../hooks/useCollectionQueries";
-import { useAuth } from "@/features/auth/context/AuthProvider";
-import { jwtDecode } from "jwt-decode";
-import { TokenInfoType } from "@/types";
+import { useCurrentUserId, useIsOwner } from "@/features/auth";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Skeleton, Stack, Group, Box, Title, Text } from "@mantine/core";
@@ -36,7 +34,6 @@ export default function CollectionPage(): React.JSX.Element {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isAddGameModalOpen, setIsAddGameModalOpen] = React.useState(false);
   const [isPairwiseModalOpen, setIsPairwiseModalOpen] = React.useState(false);
-  const { user } = useAuth();
 
   const {
     data: collection,
@@ -57,28 +54,15 @@ export default function CollectionPage(): React.JSX.Element {
 
   const skeletonIds = React.useMemo(() => Array.from({ length: 12 }).map((_, i) => `skeleton-${i}`), []);
 
-  const isOwner = React.useMemo(() => {
-    if (!user || !collection) return false;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      return Number(decoded.user_id) === Number(collection.user.id);
-    } catch {
-      return false;
-    }
-  }, [user, collection]);
+  const isOwner = useIsOwner(collection?.user.id);
+  const currentUserId = useCurrentUserId();
 
   const canEdit = React.useMemo(() => {
     if (isOwner) return true;
-    if (!user || !collection) return false;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      const userId = Number(decoded.user_id);
+    if (!currentUserId || !collection) return false;
 
-      return collection.mode === ModeEnum.C && collection.collaborators.some(c => Number(c.id) === userId);
-    } catch {
-      return false;
-    }
-  }, [isOwner, user, collection]);
+    return collection.mode === ModeEnum.C && collection.collaborators.some(c => Number(c.id) === currentUserId);
+  }, [isOwner, currentUserId, collection]);
 
   const handleDeleteItem = React.useCallback(
     (itemId: number, gameTitle: string) => {

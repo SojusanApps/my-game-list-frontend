@@ -2,13 +2,12 @@ import React from "react";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
-import { jwtDecode } from "jwt-decode";
+
 import { notifications } from "@mantine/notifications";
 import { Tooltip, Select, Group, Stack, Text } from "@mantine/core";
 
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { Button } from "@/components/ui/Button";
-import { TokenInfoType } from "@/types";
 import { StatusEnum } from "@/client";
 import code_to_value_mapping from "../utils/GameListStatuses";
 import { idSchema } from "@/lib/validation";
@@ -19,7 +18,7 @@ import {
   useGetGameMediasInfiniteQuery,
   usePartialUpdateGameList,
 } from "../hooks/gameQueries";
-import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useCurrentUserId } from "@/features/auth";
 
 const validationSchema = z.object({
   status: z.enum(StatusEnum),
@@ -35,19 +34,14 @@ const validationSchema = z.object({
 type ValidationSchema = z.output<typeof validationSchema>;
 
 function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }>) {
-  const { user } = useAuth();
+  const currentUserId = useCurrentUserId();
   const [isCollapsed, setIsCollapsed] = React.useState(true);
 
   const parsedGameId = idSchema.safeParse(gameID);
 
-  let userInfo: TokenInfoType | undefined = undefined;
-  if (user) {
-    userInfo = jwtDecode<TokenInfoType>(user.token);
-  }
-
   const { data: gameListDetails } = useGetGameListByFilters(
-    parsedGameId.success && userInfo ? { game: parsedGameId.data, user: userInfo.user_id } : undefined,
-    { enabled: parsedGameId.success && !!userInfo },
+    parsedGameId.success && currentUserId ? { game: parsedGameId.data, user: currentUserId } : undefined,
+    { enabled: parsedGameId.success && !!currentUserId },
   );
 
   const { mutate: deleteGameListItem } = useDeleteGameList();
@@ -75,7 +69,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
   }, [gameListDetails]);
 
   const addGameListItem = async (data: ValidationSchema) => {
-    if (!parsedGameId.success || !userInfo) {
+    if (!parsedGameId.success || !currentUserId) {
       notifications.show({ title: "Error", message: "Error during creating the game list", color: "red" });
       return;
     }
@@ -84,7 +78,7 @@ function GameListActionsForm({ gameID }: Readonly<{ gameID: string | undefined }
         status: data.status,
         score: data.score,
         game: parsedGameId.data,
-        user: userInfo.user_id,
+        user: currentUserId,
         owned_on: data.owned_on?.map(Number) ?? [],
       },
       {

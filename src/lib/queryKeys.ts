@@ -35,6 +35,7 @@ export const gameListKeys = {
   list: (query: object | undefined) => [...gameListKeys.lists(), query] as const,
   byFilters: (query: object | undefined) => [...gameListKeys.all, "by-filters", query] as const,
   infinite: (userId: number, status: string | null) => [...gameListKeys.all, "infinite", userId, status] as const,
+  randomPtp: (userId: number) => [...gameListKeys.all, "random-ptp", userId] as const,
 };
 
 export const userKeys = {

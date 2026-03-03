@@ -5,17 +5,19 @@ import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { STATUS_CONFIG } from "../utils/statusConfig";
 import { GameList, StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
-import { useGameListInfiniteQuery } from "../hooks/useGameListQueries";
+import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameListQueries";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Box, Button, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
+import { useIsOwner } from "@/features/auth";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
   const parsedId = idSchema.safeParse(id);
   const userId = parsedId.success ? parsedId.data : undefined;
+  const isOwner = useIsOwner(userId);
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
@@ -28,6 +30,22 @@ export default function GameListPage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
   } = useGameListInfiniteQuery(userId, selectedGameStatus);
+
+  const [shouldFetchRandomPtp, setShouldFetchRandomPtp] = React.useState(false);
+
+  const {
+    data: randomPtpGame,
+    isLoading: isRandomPtpLoading,
+    refetch: refetchRandomPtpGame,
+  } = useRandomPtpGame(userId, shouldFetchRandomPtp);
+
+  const handlePickRandomPtp = () => {
+    if (shouldFetchRandomPtp) {
+      refetchRandomPtpGame();
+    } else {
+      setShouldFetchRandomPtp(true);
+    }
+  };
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
@@ -104,6 +122,51 @@ export default function GameListPage(): React.JSX.Element {
             ))}
           </Group>
         </Stack>
+
+        {isOwner && (
+          <Box
+            style={{
+              background: "var(--color-primary-50)",
+              borderRadius: "16px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              border: "1px solid var(--color-primary-200)",
+              padding: "24px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <Text fw={600} fz="lg" c="var(--color-text-900)" ta="center">
+              Don&apos;t know what to play next? Pick a random game from your Plan to play list!
+            </Text>
+            <Button
+              onClick={handlePickRandomPtp}
+              loading={isRandomPtpLoading}
+              variant="filled"
+              color="indigo"
+              size="md"
+            >
+              Pick Random Game
+            </Button>
+            {shouldFetchRandomPtp && randomPtpGame && (
+              <Box style={{ width: "264px", marginTop: "16px" }}>
+                <ItemOverlay
+                  name={randomPtpGame.title}
+                  itemPageUrl={`/game/${randomPtpGame.game_id}`}
+                  itemCoverUrl={getIGDBImageURL(randomPtpGame.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
+                  status={randomPtpGame.status_code}
+                  rating={randomPtpGame.score}
+                />
+              </Box>
+            )}
+            {shouldFetchRandomPtp && !isRandomPtpLoading && !randomPtpGame && (
+              <Text c="red" fw={500} ta="center">
+                You must add games to your Plan to play list first.
+              </Text>
+            )}
+          </Box>
+        )}
 
         <Box
           style={{
