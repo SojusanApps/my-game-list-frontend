@@ -1,14 +1,12 @@
 import * as React from "react";
-import { jwtDecode } from "jwt-decode";
 
 import { Link } from "react-router-dom";
 import AppLogo from "@/components/ui/AppLogo";
 import { Button } from "@/components/ui/Button";
-import { TokenInfoType, LocalStorageUserType } from "@/types";
 import SearchBar from "@/features/games/components/SearchBar";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
-import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useAuth, useCurrentUserId } from "@/features/auth";
 import { IconChevronDown, IconUserCircle, IconSettings, IconLogout } from "@tabler/icons-react";
 import { Box, Group, Menu, Text, UnstyledButton } from "@mantine/core";
 import styles from "./TopBar.module.css";
@@ -16,12 +14,9 @@ import styles from "./TopBar.module.css";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { SafeImage } from "@/components/ui/SafeImage";
 
-function LoggedInView({
-  user,
-  logout,
-}: Readonly<{ user: LocalStorageUserType | null; logout: () => void }>): React.JSX.Element {
-  const userInfo = jwtDecode<TokenInfoType>(user!.token);
-  const { data: userDetails } = useGetUserDetails(userInfo.user_id);
+function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.Element {
+  const currentUserId = useCurrentUserId();
+  const { data: userDetails } = useGetUserDetails(currentUserId || undefined);
 
   const handleClick = () => {
     logout();
@@ -52,7 +47,7 @@ function LoggedInView({
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item component={Link} to={`/profile/${userInfo?.user_id}`} leftSection={<IconUserCircle size={16} />}>
+          <Menu.Item component={Link} to={`/profile/${currentUserId}`} leftSection={<IconUserCircle size={16} />}>
             Profile
           </Menu.Item>
           <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
@@ -85,12 +80,7 @@ function NotLoggedInView(): React.JSX.Element {
 
 function TopBar(): React.JSX.Element {
   const { user, logout } = useAuth();
-
-  let userInfo: TokenInfoType | null = null;
-
-  if (user) {
-    userInfo = jwtDecode<TokenInfoType>(user.token);
-  }
+  const currentUserId = useCurrentUserId();
 
   return (
     <Box
@@ -121,12 +111,12 @@ function TopBar(): React.JSX.Element {
             {user && (
               <>
                 <Box component="li" className={styles.navItem}>
-                  <Link to={`/game-list/${userInfo?.user_id}`} className={styles.navLink}>
+                  <Link to={`/game-list/${currentUserId}`} className={styles.navLink}>
                     Game List
                   </Link>
                 </Box>
                 <Box component="li" className={styles.navItem}>
-                  <Link to={`/profile/${userInfo?.user_id}/collections`} className={styles.navLink}>
+                  <Link to={`/profile/${currentUserId}/collections`} className={styles.navLink}>
                     Collections
                   </Link>
                 </Box>
@@ -139,7 +129,7 @@ function TopBar(): React.JSX.Element {
           <SearchBar />
         </Box>
 
-        <Group gap={16}>{user ? <LoggedInView user={user} logout={logout} /> : <NotLoggedInView />}</Group>
+        <Group gap={16}>{user ? <LoggedInView logout={logout} /> : <NotLoggedInView />}</Group>
       </Group>
     </Box>
   );

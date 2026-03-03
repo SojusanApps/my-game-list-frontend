@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import { Collection, CollectionCollectionsListData } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useCollectionsInfiniteQuery } from "../hooks/useCollectionQueries";
@@ -12,8 +11,7 @@ import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { Button } from "@/components/ui/Button";
 import CollectionCard from "../components/CollectionCard";
 import CreateCollectionModal from "../components/CreateCollectionModal";
-import { useAuth } from "@/features/auth/context/AuthProvider";
-import { TokenInfoType } from "@/types";
+import { useIsOwner } from "@/features/auth";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
 export default function CollectionsPage(): React.JSX.Element {
@@ -21,26 +19,12 @@ export default function CollectionsPage(): React.JSX.Element {
   const parsedId = idSchema.safeParse(id);
   const userId = parsedId.success ? parsedId.data : undefined;
 
-  const { user } = useAuth();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
 
-  const currentUserId = React.useMemo(() => {
-    if (!user) return undefined;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      return decoded.user_id;
-    } catch {
-      return undefined;
-    }
-  }, [user]);
-
-  const isOwner = React.useMemo(() => {
-    const effectiveUserId = userId || userDetails?.id;
-    if (!currentUserId || !effectiveUserId) return false;
-    return Number(currentUserId) === Number(effectiveUserId);
-  }, [currentUserId, userId, userDetails]);
+  const effectiveUserId = userId || userDetails?.id;
+  const isOwner = useIsOwner(effectiveUserId);
 
   const skeletonIds = React.useMemo(() => Array.from({ length: 8 }).map((_, i) => `skeleton-${i}`), []);
 

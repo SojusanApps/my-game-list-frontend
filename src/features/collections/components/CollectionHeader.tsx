@@ -2,9 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { CollectionDetail, ModeEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
-import { useAuth } from "@/features/auth/context/AuthProvider";
-import { jwtDecode } from "jwt-decode";
-import { TokenInfoType } from "@/types";
+import { useCurrentUserId, useIsOwner } from "@/features/auth";
 import { Stack, Group, Title, Text, Flex } from "@mantine/core";
 
 interface CollectionHeaderProps {
@@ -15,29 +13,14 @@ interface CollectionHeaderProps {
 }
 
 export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank }: CollectionHeaderProps) => {
-  const { user } = useAuth();
-
-  const isOwner = React.useMemo(() => {
-    if (!user) return false;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      return Number(decoded.user_id) === Number(collection.user.id);
-    } catch {
-      return false;
-    }
-  }, [user, collection.user.id]);
+  const isOwner = useIsOwner(collection.user.id);
+  const currentUserId = useCurrentUserId();
 
   const canEdit = React.useMemo(() => {
     if (isOwner) return true;
-    if (!user) return false;
-    try {
-      const decoded = jwtDecode<TokenInfoType>(user.token);
-      const userId = Number(decoded.user_id);
-      return collection.mode === ModeEnum.C && collection.collaborators.some(c => Number(c.id) === userId);
-    } catch {
-      return false;
-    }
-  }, [isOwner, user, collection.mode, collection.collaborators]);
+    if (!currentUserId) return false;
+    return collection.mode === ModeEnum.C && collection.collaborators.some(c => Number(c.id) === currentUserId);
+  }, [isOwner, currentUserId, collection.mode, collection.collaborators]);
 
   return (
     <Stack gap="md" w="100%">
