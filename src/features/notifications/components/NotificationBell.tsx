@@ -8,7 +8,7 @@ import {
   useMarkNotificationAsRead,
 } from "../hooks/notificationQueries";
 import { NotificationUnreadCount } from "@/types";
-import { notificationActorSchema } from "@/lib/validation";
+import { notificationEntitySchema } from "@/lib/validation";
 import { Popover, Box, Group, Text, Stack, UnstyledButton } from "@mantine/core";
 import bellStyles from "./NotificationBell.module.css";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -116,35 +116,27 @@ export default function NotificationBell(): React.JSX.Element {
             </Stack>
           ) : (
             unreadNotifications.map((notification: Notification) => {
-              const actorResult = notificationActorSchema.safeParse(notification.actor);
+              const actorResult = notificationEntitySchema.safeParse(notification.actor);
               const actor = actorResult.success ? actorResult.data : null;
+
+              const targetResult = notificationEntitySchema.safeParse(notification.target);
+              const target = targetResult.success ? targetResult.data : null;
+
+              const targetOrActor = target?.type === "user" ? target : actor;
+              const displayEntity = actor?.type === "user" ? actor : targetOrActor;
 
               return (
                 <Box component="li" key={notification.id} className={bellStyles.notificationCard}>
                   <Link
-                    to={actor?.type === "user" ? `/profile/${actor.id}` : "#"}
+                    to={displayEntity?.type === "user" ? `/profile/${displayEntity.id}` : "#"}
                     onClick={() => handleNotificationClick(notification)}
                     className={bellStyles.notificationItemLink}
                   >
                     <Box style={{ flexShrink: 0, position: "relative" }}>
                       <SafeImage
                         containerStyle={{ width: "40px", height: "40px", borderRadius: "9999px" }}
-                        style={{ outline: "2px solid white", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
-                        src={undefined}
+                        src={displayEntity?.gravatar_url || undefined}
                         alt="Actor avatar"
-                      />
-                      <Box
-                        style={{
-                          position: "absolute",
-                          bottom: 0,
-                          right: 0,
-                          width: 12,
-                          height: 12,
-                          background: "var(--mantine-color-primary-5)",
-                          border: "2px solid white",
-                          borderRadius: "9999px",
-                          boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
-                        }}
                       />
                     </Box>
 
@@ -157,7 +149,7 @@ export default function NotificationBell(): React.JSX.Element {
                           c="var(--color-text-900)"
                           style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
                         >
-                          {actor?.str || "Someone"}
+                          {displayEntity?.str || "Someone"}
                         </Text>
                         <Text
                           component="span"

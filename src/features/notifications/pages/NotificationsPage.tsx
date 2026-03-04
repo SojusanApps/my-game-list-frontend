@@ -9,7 +9,7 @@ import {
   useDeleteAllReadNotifications,
 } from "../hooks/notificationQueries";
 import { IconTrash, IconCheck } from "@tabler/icons-react";
-import { notificationActorSchema } from "@/lib/validation";
+import { notificationEntitySchema } from "@/lib/validation";
 import pageStyles from "./NotificationsPage.module.css";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -114,8 +114,15 @@ export default function NotificationsPage(): React.JSX.Element {
               </Table.Tr>
             ) : (
               notifications.map((notification: Notification) => {
-                const actorResult = notificationActorSchema.safeParse(notification.actor);
+                const actorResult = notificationEntitySchema.safeParse(notification.actor);
                 const actor = actorResult.success ? actorResult.data : null;
+
+                const targetResult = notificationEntitySchema.safeParse(notification.target);
+                const target = targetResult.success ? targetResult.data : null;
+
+                const targetOrActor = target?.type === "user" ? target : actor;
+                const displayEntity = actor?.type === "user" ? actor : targetOrActor;
+
                 return (
                   <Table.Tr
                     key={notification.id}
@@ -136,16 +143,16 @@ export default function NotificationsPage(): React.JSX.Element {
                       <Group gap={12}>
                         <Box style={{ width: "40px", height: "40px", borderRadius: "9999px", overflow: "hidden" }}>
                           <SafeImage
-                            src={undefined}
+                            src={displayEntity?.gravatar_url || undefined}
                             alt="User avatar"
                             containerStyle={{ width: "40px", height: "40px" }}
                           />
                         </Box>
                         <Link
-                          to={actor?.type === "user" ? `/profile/${actor.id}` : "#"}
+                          to={displayEntity?.type === "user" ? `/profile/${displayEntity.id}` : "#"}
                           className={pageStyles.tableUserLink}
                         >
-                          {actor?.str || "Someone"}
+                          {displayEntity?.str || "Someone"}
                         </Link>
                       </Group>
                     </Table.Td>
