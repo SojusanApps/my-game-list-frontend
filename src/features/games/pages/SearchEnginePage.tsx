@@ -3,12 +3,6 @@ import ItemOverlay from "@/components/ui/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
 } from "@/features/games/components/GameSearchFilter";
-import CompanySearchFilter, {
-  ValidationSchema as CompanySearchFilterValidationSchema,
-} from "@/features/games/components/CompanySearchFilter";
-import UserSearchFilter, {
-  ValidationSchema as UserSearchFilterValidationSchema,
-} from "@/features/users/components/UserSearchFilter";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import {
   GameSimpleList,
@@ -21,17 +15,15 @@ import {
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { InfiniteData } from "@tanstack/react-query";
 import { PageMeta } from "@/components/ui/PageMeta";
-import { Accordion, Box, Group, Skeleton, Stack, Text, Title, UnstyledButton } from "@mantine/core";
+import { Box, Group, Skeleton, Stack, Text, Title, UnstyledButton, TextInput, Drawer } from "@mantine/core";
 import { GridList } from "@/components/ui/GridList";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconFilter } from "@tabler/icons-react";
+import { Button } from "@/components/ui/Button";
 
 type searchResultsType = PaginatedCompanyList | PaginatedGameSimpleListList | PaginatedUserList | undefined;
 
-type SearchFilterValidatorsType =
-  | GameSearchFilterValidationSchema
-  | CompanySearchFilterValidationSchema
-  | UserSearchFilterValidationSchema;
+type SearchFilterValidatorsType = GameSearchFilterValidationSchema;
 
 function DisplaySearchResults({
   selectedCategory,
@@ -121,8 +113,9 @@ function DisplaySearchResults({
 
 export default function SearchEnginePage(): React.JSX.Element {
   const [selectedCategory, setSelectedCategory] = React.useState<SearchCategory | null>("games");
-  const [filters, setFilters] = React.useState<object>({});
-  const [filtersOpen, setFiltersOpen] = React.useState<string | null>("filters");
+  const [filters, setFilters] = React.useState<Record<string, unknown>>({});
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [hasSearched, setHasSearched] = React.useState(false);
 
   const {
@@ -134,21 +127,52 @@ export default function SearchEnginePage(): React.JSX.Element {
     isFetchingNextPage,
   } = useSearchInfiniteQuery(selectedCategory, filters, { enabled: hasSearched });
 
+  const getQueryKey = (category: SearchCategory | null) => {
+    if (category === "users") return "username";
+    if (category === "companies") return "name";
+    return "title";
+  };
+
+  const handleHeroSearch = (e?: React.SyntheticEvent) => {
+    if (e) e.preventDefault();
+    const queryKey = getQueryKey(selectedCategory);
+    const newFilters = { ...filters };
+
+    if (searchQuery.trim()) {
+      newFilters[queryKey] = searchQuery.trim();
+    } else {
+      delete newFilters[queryKey];
+    }
+
+    setFilters(newFilters);
+    setHasSearched(true);
+  };
+
+  const handleCategoryChange = (catId: SearchCategory) => {
+    setSelectedCategory(catId);
+    setHasSearched(false);
+    setFilters({});
+    setSearchQuery("");
+  };
+
   const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
-    let filterData = {};
+    let filterData: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(data)) {
       if (value === "" || value === undefined || (Array.isArray(value) && value.length === 0)) {
         continue;
       }
-
       filterData = { ...filterData, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
+    }
+
+    const queryKey = getQueryKey(selectedCategory);
+    if (searchQuery.trim()) {
+      filterData[queryKey] = searchQuery.trim();
     }
 
     setFilters(filterData);
     setHasSearched(true);
-    // Collapse filters on search to show more results
-    setFiltersOpen(null);
+    setDrawerOpen(false);
   };
 
   const categories = [
@@ -248,11 +272,7 @@ export default function SearchEnginePage(): React.JSX.Element {
             {categories.map(cat => (
               <UnstyledButton
                 key={cat.id}
-                onClick={() => {
-                  setSelectedCategory(cat.id);
-                  setHasSearched(false);
-                  setFiltersOpen("filters");
-                }}
+                onClick={() => handleCategoryChange(cat.id as SearchCategory)}
                 style={{
                   padding: "10px 32px",
                   fontSize: "14px",
@@ -272,53 +292,61 @@ export default function SearchEnginePage(): React.JSX.Element {
               </UnstyledButton>
             ))}
           </Group>
+
+          <Box
+            component="form"
+            onSubmit={handleHeroSearch}
+            style={{ width: "100%", maxWidth: "768px", display: "flex", gap: "12px" }}
+          >
+            <TextInput
+              size="lg"
+              placeholder={`Search ${selectedCategory}...`}
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.currentTarget.value)}
+              leftSection={<IconSearch size={20} color="var(--color-text-400)" />}
+              style={{ flex: 1 }}
+              styles={{
+                input: {
+                  background: "white",
+                  border: "1px solid var(--color-background-300)",
+                  borderRadius: "12px",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
+                },
+              }}
+            />
+            {selectedCategory === "games" && (
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setDrawerOpen(true)}
+                style={{ borderRadius: "12px", padding: "0 24px", background: "white" }}
+                leftSection={<IconFilter size={20} />}
+              >
+                Filters
+              </Button>
+            )}
+            <Button type="submit" size="lg" style={{ borderRadius: "12px", padding: "0 32px" }}>
+              Search
+            </Button>
+          </Box>
         </Stack>
 
-        <Accordion
-          value={filtersOpen}
-          onChange={setFiltersOpen}
-          styles={{
-            root: {
-              background: "white",
-              borderRadius: "16px",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-              border: "1px solid var(--color-background-200)",
-            },
-            item: { border: "none" },
-            control: { padding: "16px 24px" },
-            chevron: { color: "var(--color-text-400)" },
-            label: { padding: 0 },
-          }}
+        <Drawer
+          opened={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          position="right"
+          size="md"
+          title={
+            <Text fw={700} fz="xl" c="var(--color-text-900)">
+              Filters
+            </Text>
+          }
+          padding="xl"
         >
-          <Accordion.Item value="filters">
-            <Accordion.Control>
-              <Group gap={12}>
-                <Box
-                  style={{
-                    width: "4px",
-                    height: "24px",
-                    background: "var(--mantine-color-primary-6)",
-                    borderRadius: "9999px",
-                  }}
-                />
-                <Text fw={700} fz="xl" c="var(--color-text-900)">
-                  Filters
-                </Text>
-              </Group>
-            </Accordion.Control>
-            <Accordion.Panel px="lg" pb="lg">
-              {selectedCategory === "games" && (
-                <GameSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-              )}
-              {selectedCategory === "companies" && (
-                <CompanySearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-              )}
-              {selectedCategory === "users" && (
-                <UserSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
-              )}
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
+          {selectedCategory === "games" && (
+            <GameSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
+          )}
+        </Drawer>
 
         <Box
           style={{

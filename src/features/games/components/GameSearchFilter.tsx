@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
 
-import { TextInput, Select, Box, Group, Stack } from "@mantine/core";
+import { Select, Box, Group, Stack } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
 import { Button } from "@/components/ui/Button";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
@@ -39,7 +39,6 @@ const dateField = z
 
 const validationSchema = z
   .object({
-    title: z.string().optional(),
     release_date_after: dateField,
     release_date_before: dateField,
     publisher: z.string().optional(),
@@ -77,7 +76,6 @@ function GameSearchFilter({
 }: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void }>) {
   const form = useForm<ValidationInput>({
     initialValues: {
-      title: "",
       release_date_after: null,
       release_date_before: null,
       publisher: "",
@@ -104,13 +102,6 @@ function GameSearchFilter({
       <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px 32px" }}>
         {/* Group 1: Core Search & Ordering */}
         <Stack gap={16}>
-          <TextInput
-            id="title"
-            name="title"
-            label="Game Title"
-            placeholder="Search by name..."
-            {...form.getInputProps("title")}
-          />
           <Select
             placeholder="Select ordering ..."
             id="ordering"

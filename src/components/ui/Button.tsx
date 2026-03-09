@@ -10,6 +10,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   fullWidth?: boolean;
   uppercase?: boolean;
   isLoading?: boolean;
+  leftSection?: React.ReactNode;
+  rightSection?: React.ReactNode;
 }
 
 const variantMap: Record<ButtonVariant, { variant: string; color?: string }> = {
@@ -31,7 +33,19 @@ const sizeMap: Record<ButtonSize, string> = {
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant = "default", size = "default", fullWidth, uppercase, isLoading, disabled, children, ...props },
+    {
+      className,
+      variant = "default",
+      size = "default",
+      fullWidth,
+      uppercase,
+      isLoading,
+      disabled,
+      children,
+      leftSection,
+      rightSection,
+      ...props
+    },
     ref,
   ) => {
     const mapped = variantMap[variant];
@@ -46,6 +60,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         fullWidth={fullWidth}
         loading={isLoading}
         disabled={disabled}
+        leftSection={leftSection}
+        rightSection={rightSection}
         styles={{
           root: {
             ...(uppercase && { textTransform: "uppercase" as const, letterSpacing: "0.05em" }),
