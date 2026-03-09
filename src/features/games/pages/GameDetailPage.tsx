@@ -153,8 +153,12 @@ export default function GameDetailPage(): React.JSX.Element {
           </>
         )}
 
-        {selectedScreenshot && (
-          <ScreenshotModal screenshot={selectedScreenshot} onClose={() => setSelectedScreenshot(null)} />
+        {selectedScreenshot && gameDetails?.screenshots && (
+          <ScreenshotModal
+            initialScreenshot={selectedScreenshot}
+            screenshots={gameDetails.screenshots}
+            onClose={() => setSelectedScreenshot(null)}
+          />
         )}
 
         {isCollectionModalOpen && gameId && (
