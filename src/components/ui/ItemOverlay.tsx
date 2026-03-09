@@ -5,6 +5,8 @@ import { useHover } from "@mantine/hooks";
 import { SafeImage } from "./SafeImage";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
 import { getRatingColor } from "@/utils/ratingUtils";
+import { cn } from "@/utils/cn";
+import styles from "./ItemOverlay.module.css";
 
 type ItemOverlayProps = {
   className?: string;
@@ -52,31 +54,20 @@ function ItemOverlay({
     <Box
       ref={ref}
       style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        borderRadius: "16px",
-        transition: "all 500ms cubic-bezier(0.23,1,0.32,1)",
-        background: "var(--color-background-900)",
-        boxShadow: hovered ? "0 25px 50px -12px rgba(0,0,0,0.8)" : "0 10px 15px -3px rgba(0,0,0,0.3)",
-        outline: "1px solid rgba(255,255,255,0.05)",
         aspectRatio: isLogo ? "3/2" : "264/374",
         ...style,
       }}
-      className={className}
+      className={cn(styles.card, className)}
     >
       <Link
         to={itemPageUrl}
         style={{ display: "block", width: "100%", height: "100%", position: "relative", overflow: "hidden" }}
       >
-        {/* Poster Image with Parallax Shift */}
+        {/* Poster Image */}
         <Box
           style={{
             position: "absolute",
             inset: 0,
-            transition: "transform 700ms cubic-bezier(0.23,1,0.32,1)",
-            transform: hovered ? "scale(1.1) translateY(-16px)" : "scale(1) translateY(0)",
           }}
         >
           <SafeImage
@@ -171,7 +162,6 @@ function ItemOverlay({
             right: 0,
             bottom: 0,
             zIndex: 10,
-            transition: "all 500ms cubic-bezier(0.23,1,0.32,1)",
             background: "linear-gradient(to top, #000 0%, rgba(0,0,0,0.8) 60%, transparent 100%)",
             padding: "16px",
             paddingTop: "64px",
@@ -180,14 +170,13 @@ function ItemOverlay({
           <Stack gap={6}>
             <Title
               order={2}
-              lineClamp={hovered ? 4 : 2}
+              lineClamp={2}
               style={{
                 fontSize: "11px",
                 fontWeight: 700,
                 lineHeight: 1.2,
-                color: hovered ? "var(--mantine-color-primary-3)" : "white",
+                color: "white",
                 letterSpacing: "-0.025em",
-                transition: "color 300ms",
                 textShadow: "0 2px 4px rgba(0,0,0,0.5)",
               }}
             >
@@ -213,8 +202,7 @@ function ItemOverlay({
                 style={{
                   height: "1px",
                   flex: 1,
-                  background: hovered ? "rgba(99,102,241,0.3)" : "rgba(255,255,255,0.1)",
-                  transition: "background-color 300ms",
+                  background: "rgba(255,255,255,0.1)",
                 }}
               />
             </Group>
@@ -226,8 +214,7 @@ function ItemOverlay({
           style={{
             position: "absolute",
             inset: 0,
-            background: hovered ? "rgba(30,27,75,0.1)" : "transparent",
-            transition: "background-color 500ms",
+            background: "transparent",
             pointerEvents: "none",
           }}
         />

@@ -1,0 +1,18 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  transition: all 0.4s;
+  background: var(--color-background-900);
+  outline: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1;
+}
+
+.card:hover {
+  border-radius: 15px;
+  cursor: pointer;
+  transform: scale(1.2);
+  z-index: 10;
+}
