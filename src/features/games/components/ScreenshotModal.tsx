@@ -1,15 +1,53 @@
 import * as React from "react";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import { IconX } from "@tabler/icons-react";
+import { IconX, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { Box, Loader, Modal, UnstyledButton } from "@mantine/core";
 
 interface ScreenshotModalProps {
-  screenshot: string;
+  initialScreenshot: string;
+  screenshots: string[];
   onClose: () => void;
 }
 
-export default function ScreenshotModal({ screenshot, onClose }: Readonly<ScreenshotModalProps>) {
+export default function ScreenshotModal({ initialScreenshot, screenshots, onClose }: Readonly<ScreenshotModalProps>) {
+  const [currentIndex, setCurrentIndex] = React.useState(() => {
+    const idx = screenshots.indexOf(initialScreenshot);
+    return idx === -1 ? 0 : idx;
+  });
   const [isLoaded, setIsLoaded] = React.useState(false);
+
+  const handleNext = React.useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      setIsLoaded(false);
+      setCurrentIndex(prev => (prev + 1) % screenshots.length);
+    },
+    [screenshots.length],
+  );
+
+  const handlePrevious = React.useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      setIsLoaded(false);
+      setCurrentIndex(prev => (prev - 1 + screenshots.length) % screenshots.length);
+    },
+    [screenshots.length],
+  );
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        handlePrevious();
+      }
+    };
+
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
+  }, [handleNext, handlePrevious]);
+
+  const currentScreenshot = screenshots[currentIndex];
 
   return (
     <Modal
@@ -18,6 +56,7 @@ export default function ScreenshotModal({ screenshot, onClose }: Readonly<Screen
       withCloseButton={false}
       padding={0}
       size="auto"
+      centered
       radius="md"
       overlayProps={{ backgroundOpacity: 0.9 }}
       styles={{
@@ -52,43 +91,116 @@ export default function ScreenshotModal({ screenshot, onClose }: Readonly<Screen
       </UnstyledButton>
 
       <Box
+        onClick={onClose}
         style={{
           position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          width: "100%",
+          height: "100%",
         }}
       >
-        {/* Spinner shown while image loads — sized so no scrollbars appear */}
-        {!isLoaded && (
-          <Box
+        {screenshots.length > 1 && (
+          <UnstyledButton
+            onClick={handlePrevious}
+            aria-label="Previous screenshot"
             style={{
-              width: 640,
-              height: 360,
-              maxWidth: "90vw",
-              maxHeight: "70vh",
+              position: "fixed",
+              left: 16,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 48,
+              height: 48,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              background: "rgba(0,0,0,0.4)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "50%",
+              color: "white",
+              zIndex: 9999,
+              cursor: "pointer",
+              backdropFilter: "blur(4px)",
+              transition: "background 0.2s",
             }}
+            onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,0,0,0.7)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "rgba(0,0,0,0.4)")}
           >
-            <Loader color="white" size="lg" />
-          </Box>
+            <IconChevronLeft size={28} stroke={2} />
+          </UnstyledButton>
         )}
 
-        <img
-          src={getIGDBImageURL(screenshot, IGDBImageSize.SCREENSHOT_HUGE_1280_720)}
-          alt="Enlarged screenshot"
-          onLoad={() => setIsLoaded(true)}
+        <Box
+          onClick={e => e.stopPropagation()}
           style={{
-            display: isLoaded ? "block" : "none",
-            maxWidth: "90vw",
-            maxHeight: "85vh",
-            objectFit: "contain",
-            borderRadius: 8,
-            boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
+        >
+          {/* Spinner shown while image loads — sized so no scrollbars appear */}
+          {!isLoaded && (
+            <Box
+              style={{
+                width: 640,
+                height: 360,
+                maxWidth: "90vw",
+                maxHeight: "85vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Loader color="white" size="lg" />
+            </Box>
+          )}
+
+          <img
+            src={getIGDBImageURL(currentScreenshot, IGDBImageSize.SCREENSHOT_HUGE_1280_720)}
+            alt="Enlarged screenshot"
+            onLoad={() => setIsLoaded(true)}
+            style={{
+              display: isLoaded ? "block" : "none",
+              maxWidth: "90vw",
+              maxHeight: "85vh",
+              objectFit: "contain",
+              borderRadius: 8,
+              boxShadow: "0 25px 50px rgba(0,0,0,0.6)",
+            }}
+          />
+        </Box>
+
+        {screenshots.length > 1 && (
+          <UnstyledButton
+            onClick={handleNext}
+            aria-label="Next screenshot"
+            style={{
+              position: "fixed",
+              right: 16,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 48,
+              height: 48,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(0,0,0,0.4)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "50%",
+              color: "white",
+              zIndex: 9999,
+              cursor: "pointer",
+              backdropFilter: "blur(4px)",
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,0,0,0.7)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "rgba(0,0,0,0.4)")}
+          >
+            <IconChevronRight size={28} stroke={2} />
+          </UnstyledButton>
+        )}
       </Box>
     </Modal>
   );

@@ -8,6 +8,7 @@ import { GameSimpleList } from "@/client";
 import { Box, SimpleGrid, Skeleton, Stack } from "@mantine/core";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import ItemOverlay from "@/components/ui/ItemOverlay";
+import styles from "./HomePage.module.css";
 
 export default function HomePage(): React.JSX.Element {
   const { data: highestRatedGames, isLoading: isHighestRatedLoading } = useGetGamesList({
@@ -40,9 +41,13 @@ export default function HomePage(): React.JSX.Element {
         slideSize={{ base: "50%", sm: "33.333%", md: "25%", lg: "20%", xl: "14.285%" }}
         slideGap="md"
         plugins={[autoplayPlugin()]}
+        styles={{
+          viewport: { overflowY: "visible", overflowX: "clip" },
+          container: { zIndex: 2 },
+        }}
       >
         {items.map((game: GameSimpleList) => (
-          <Carousel.Slide key={game.id}>
+          <Carousel.Slide key={game.id} className={styles.slide}>
             <ItemOverlay
               style={{ width: "100%" }}
               name={game.title}

@@ -342,6 +342,7 @@ export const RankingListView = React.memo(function RankingListView({
       <SortableRankingRow
         key={item.id}
         id={String(item.id)}
+        gameId={item.game.id}
         rank={index + 1}
         totalItems={totalCount}
         title={item.game.title}
@@ -378,57 +379,23 @@ export const RankingListView = React.memo(function RankingListView({
 
   return (
     <Stack gap={24} style={{ height: "calc(100vh - 200px)" }}>
-      {/* Collection Stats */}
+      {/* Collection Stats - Clean minimalist header */}
       <Group
         justify="space-between"
         align="center"
         style={{
-          position: "sticky",
-          top: 16,
-          zIndex: 30,
-          background: "linear-gradient(to right, var(--color-primary-50), var(--color-secondary-50))",
-          padding: 16,
-          borderRadius: 16,
-          border: "1px solid var(--color-primary-100)",
-          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+          padding: "8px 16px",
+          borderBottom: "2px solid var(--color-background-200)",
         }}
       >
-        <Group gap={12}>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 40,
-              height: 40,
-              borderRadius: 12,
-              background: "var(--color-primary-500)",
-              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              style={{ width: 20, height: 20, color: "white" }}
-            >
-              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
-            </svg>
-          </Box>
-          <Box>
-            <Text fw={900} fz={24} c="var(--color-primary-600)" style={{ lineHeight: 1 }}>
-              {totalCount}
-            </Text>
-            <Text
-              size="xs"
-              fw={600}
-              c="var(--color-text-500)"
-              style={{ textTransform: "uppercase", letterSpacing: "0.05em", marginTop: 2 }}
-            >
-              Total Games
-            </Text>
-          </Box>
-        </Group>
+        <Box>
+          <Text fw={900} fz={28} c="var(--color-text-900)" style={{ letterSpacing: "-0.02em" }}>
+            Ranking
+          </Text>
+          <Text size="sm" c="var(--color-text-500)">
+            {totalCount} {totalCount === 1 ? "game" : "games"} in this list
+          </Text>
+        </Box>
       </Group>
 
       <VirtualList
@@ -438,7 +405,7 @@ export const RankingListView = React.memo(function RankingListView({
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
         fetchNextPage={fetchNextPage}
-        itemHeight={120}
+        itemHeight={110}
         overscan={5}
         getItemKey={item => item.id}
         style={{ flex: 1 }}

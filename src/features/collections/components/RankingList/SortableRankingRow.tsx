@@ -14,6 +14,7 @@ import { RankingRow } from "./RankingRow";
 
 interface SortableRankingRowProps {
   id: string;
+  gameId: number;
   rank: number;
   totalItems: number;
   title: string;
@@ -31,6 +32,7 @@ interface SortableRankingRowProps {
 
 export const SortableRankingRow = React.memo(function SortableRankingRow({
   id,
+  gameId,
   rank,
   totalItems,
   title,
@@ -67,9 +69,10 @@ export const SortableRankingRow = React.memo(function SortableRankingRow({
               preview.style.cssText = `
                 width: ${element.offsetWidth}px;
                 height: ${element.offsetHeight}px;
-                border: 2px solid #3b82f6;
+                border: 2px solid var(--color-primary-500);
                 border-radius: 16px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+                background: white;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
                 transform: rotate(2deg);
                 opacity: 0.95;
                 pointer-events: none;
@@ -146,6 +149,7 @@ export const SortableRankingRow = React.memo(function SortableRankingRow({
     >
       <RankingRow
         isDragging={isDragging}
+        gameId={gameId}
         rank={rank}
         totalItems={totalItems}
         title={title}

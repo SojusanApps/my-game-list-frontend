@@ -1,9 +1,9 @@
 import * as React from "react";
 import { useParams, Navigate } from "react-router-dom";
-import GameListActionsForm from "../components/GameListActionsForm";
+import { GameListModal } from "../components/GameListModal";
 import GameInformation from "../components/GameInformation";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import { useGetGameReviewsList, useGetGamesDetails } from "../hooks/gameQueries";
+import { useGetGameReviewsList, useGetGamesDetails, useGetGameListByFilters } from "../hooks/gameQueries";
 import { Box, Grid, Group, Skeleton, Stack, Tabs, Title } from "@mantine/core";
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
@@ -14,6 +14,7 @@ import GameDetailsScreenshotsTab from "../components/GameDetailsScreenshotsTab";
 import ScreenshotModal from "../components/ScreenshotModal";
 import AddToCollectionModal from "@/features/collections/components/AddToCollectionModal";
 import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useCurrentUserId } from "@/features/auth";
 import { Button } from "@/components/ui/Button";
 
 export default function GameDetailPage(): React.JSX.Element {
@@ -27,7 +28,16 @@ export default function GameDetailPage(): React.JSX.Element {
   const [activeTab, setActiveTab] = React.useState<"main" | "related" | "screenshots">("main");
   const [selectedScreenshot, setSelectedScreenshot] = React.useState<string | null>(null);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = React.useState(false);
+  const [isListModalOpen, setIsListModalOpen] = React.useState(false);
   const { user } = useAuth();
+  const currentUserId = useCurrentUserId();
+
+  const { data: userGameList, isPending: isUserGameListPending } = useGetGameListByFilters(
+    gameId && currentUserId ? { game: gameId, user: currentUserId } : undefined,
+    { enabled: !!gameId && !!currentUserId },
+  );
+
+  const listButtonText = userGameList?.id ? "Edit List Entry" : "Add List Entry";
 
   if (!parsedId.success) {
     return <Navigate to="/404" replace />;
@@ -80,9 +90,18 @@ export default function GameDetailPage(): React.JSX.Element {
                 </Box>
 
                 {user && (
-                  <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
-                    Add to Collection
-                  </Button>
+                  <Stack gap={8}>
+                    {isUserGameListPending ? (
+                      <Skeleton h={36} w="100%" style={{ borderRadius: 8 }} />
+                    ) : (
+                      <Button onClick={() => setIsListModalOpen(true)} fullWidth>
+                        {listButtonText}
+                      </Button>
+                    )}
+                    <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
+                      Add to Collection
+                    </Button>
+                  </Stack>
                 )}
 
                 <GameInformation gameDetails={gameDetails} />
@@ -102,18 +121,6 @@ export default function GameDetailPage(): React.JSX.Element {
                     {gameDetails?.title}
                   </Title>
                 </Group>
-
-                <Box
-                  style={{
-                    background: "white",
-                    borderRadius: 12,
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-                    border: "1px solid var(--color-background-200)",
-                    padding: 24,
-                  }}
-                >
-                  <GameListActionsForm gameID={id} />
-                </Box>
 
                 <Tabs
                   value={activeTab}
@@ -146,13 +153,19 @@ export default function GameDetailPage(): React.JSX.Element {
           </>
         )}
 
-        {selectedScreenshot && (
-          <ScreenshotModal screenshot={selectedScreenshot} onClose={() => setSelectedScreenshot(null)} />
+        {selectedScreenshot && gameDetails?.screenshots && (
+          <ScreenshotModal
+            initialScreenshot={selectedScreenshot}
+            screenshots={gameDetails.screenshots}
+            onClose={() => setSelectedScreenshot(null)}
+          />
         )}
 
         {isCollectionModalOpen && gameId && (
           <AddToCollectionModal gameId={gameId} onClose={() => setIsCollectionModalOpen(false)} />
         )}
+
+        {gameId && <GameListModal gameId={gameId} opened={isListModalOpen} onClose={() => setIsListModalOpen(false)} />}
       </Grid>
     </Box>
   );

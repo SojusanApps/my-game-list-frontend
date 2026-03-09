@@ -70,8 +70,8 @@ export const TierDropZone = React.memo(function TierDropZone({
     <Box
       ref={dropRef}
       className={cn(
-        "bg-background-50 rounded-xl border border-background-200 overflow-hidden transition-colors",
-        isDraggedOver && "border-primary-400 bg-primary-50 border-2",
+        "rounded-2xl border border-background-200 overflow-hidden transition-all duration-300 min-h-[140px]",
+        isDraggedOver ? "border-primary-400 bg-primary-50 border-2 shadow-inner" : "bg-background-50/50",
       )}
     >
       {children}

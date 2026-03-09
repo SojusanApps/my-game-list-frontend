@@ -1,14 +1,70 @@
+.rankingRow {
+  transition: all 0.2s ease;
+}
+
+.rankingRow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  border-color: var(--color-primary-200) !important;
+}
+
+.rankingRowControls,
+.rankingRowActions {
+  transition: opacity 0.2s ease;
+}
+
 .rankingRow .rankingRowRemove {
   opacity: 0;
   transition: opacity 200ms;
 }
+
 .rankingRow:hover .rankingRowRemove {
   opacity: 1;
 }
+
 .rankingRow .rankingRowDrag {
-  opacity: 0.3;
+  opacity: 0;
+  transition:
+    opacity 200ms,
+    color 200ms;
+}
+
+.rankingRow:hover .rankingRowDrag {
+  opacity: 1;
+}
+
+.rankingRowDrag:hover {
+  color: var(--color-primary-600) !important;
+}
+
+.rankingRow .rankingRowArrow {
+  opacity: 0;
   transition: opacity 200ms;
 }
-.rankingRow:hover .rankingRowDrag {
+
+.rankingRow:hover .rankingRowArrow {
+  opacity: 1;
+}
+
+.rankingRowRankHover:hover {
+  background: var(--color-primary-50) !important;
+  color: var(--color-primary-600) !important;
+}
+
+.addNotePrompt {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.rankingRow:hover .addNotePrompt {
+  opacity: 1;
+}
+
+.rankingRow .rankingRowAddNoteBtn {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.rankingRow:hover .rankingRowAddNoteBtn {
   opacity: 1;
 }

@@ -1,0 +1,6 @@
+.slide {
+  z-index: 1;
+}
+.slide:has(:hover) {
+  z-index: 100;
+}

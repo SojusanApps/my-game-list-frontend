@@ -62,7 +62,8 @@ export function VirtualGridList<T>({
       style={{
         height: "800px",
         overflow: "auto",
-        paddingInline: "8px",
+        padding: "32px",
+        margin: "-32px -24px",
         contain: "strict",
         ...style,
       }}
