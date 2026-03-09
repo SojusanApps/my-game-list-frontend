@@ -14,6 +14,7 @@ import { GameCard } from "./GameCard";
 
 interface SortableGameCardProps {
   id: string;
+  gameId: number;
   tierId: string;
   index: number;
   page?: number;
@@ -36,6 +37,7 @@ interface SortableGameCardProps {
 export const SortableGameCard = React.memo(function SortableGameCard(props: SortableGameCardProps) {
   const {
     id,
+    gameId,
     tierId,
     index,
     page = 1,
@@ -158,9 +160,13 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
         cursor: isOwner ? draggingCursor : "default",
         opacity: isDragging ? 0.3 : 1,
         position: "relative",
+        width: "100%",
+        maxWidth: 140,
+        aspectRatio: "3/4",
       }}
     >
       <GameCard
+        gameId={gameId}
         title={title}
         coverImageId={coverImageId}
         description={description}
@@ -170,13 +176,31 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
       />
       {/* Show placeholder box at destination */}
       {closestEdge && (
-        <Box className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px dashed var(--color-primary-400)",
+            borderRadius: 12,
+            pointerEvents: "none",
+            zIndex: 10,
+          }}
+        />
       )}
       {/* Show drop indicator line at destination */}
       {closestEdge && <DropIndicator edge={closestEdge} gap="4px" />}
       {/* Show dashed border at source when dragging */}
       {isDragging && (
-        <Box className="absolute inset-0 border-2 border-dashed border-primary-400 rounded-lg pointer-events-none" />
+        <Box
+          style={{
+            position: "absolute",
+            inset: 0,
+            border: "2px dashed var(--color-primary-400)",
+            borderRadius: 12,
+            pointerEvents: "none",
+            zIndex: 10,
+          }}
+        />
       )}
     </Box>
   );

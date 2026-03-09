@@ -44,6 +44,7 @@ export const TierSection = React.memo(function TierSection({
   const totalCount = data?.count ?? 0;
   const hasNext = !!data?.next;
   const hasPrevious = !!data?.previous;
+  const totalPages = Math.ceil(totalCount / 25);
 
   React.useEffect(() => {
     if (data?.count !== undefined) {
@@ -58,6 +59,7 @@ export const TierSection = React.memo(function TierSection({
         <SortableGameCard
           key={item.id}
           id={String(item.id)}
+          gameId={item.game.id}
           tierId={tier.id}
           index={index}
           page={page}
@@ -77,90 +79,150 @@ export const TierSection = React.memo(function TierSection({
   );
 
   return (
-    <Stack gap={8}>
+    <Stack gap={16}>
       <Group justify="space-between" align="center" style={{ paddingInline: 16 }}>
-        <Group gap={12} style={{ flex: 1 }}>
+        <Group gap={16} style={{ flex: 1 }}>
           <Box
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 48,
-              height: 48,
-              borderRadius: 12,
-              background: tier.color,
-              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              border: "2px solid white",
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              background: `linear-gradient(135deg, ${tier.color} 0%, rgba(255,255,255,0.2) 100%)`,
+              backgroundColor: tier.color, // Fallback
+              boxShadow: `0 8px 16px ${tier.color}40, inset 0 2px 4px rgba(255,255,255,0.3)`,
+              border: "1px solid rgba(255,255,255,0.4)",
             }}
           >
-            <Text component="span" fz="xl" fw={900} c="white">
+            <Text component="span" fz="h2" fw={900} c="white" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.2)" }}>
               {tier.label}
             </Text>
           </Box>
-          <Box style={{ flex: 1, height: 4, background: "var(--color-background-200)", borderRadius: 9999 }} />
-          <Text fw={700} size="sm" c="var(--color-text-600)">
-            {totalCount} games
-          </Text>
-        </Group>
-
-        {(hasNext || hasPrevious) && (
           <Group gap={8}>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={!hasPrevious || isFetching}
-            >
-              <IconChevronLeft size={20} />
-            </ActionIcon>
-            <Text size="sm" fw={500} c="var(--color-text-600)">
-              Page {page}
+            <Text fw={800} size="lg" c="var(--color-text-800)">
+              {tier.label} Tier
             </Text>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              onClick={() => setPage(p => p + 1)}
-              disabled={!hasNext || isFetching}
+            <Box
+              style={{
+                background: "var(--color-background-200)",
+                padding: "2px 8px",
+                borderRadius: 12,
+                fontSize: 12,
+                fontWeight: 600,
+                color: "var(--color-text-600)",
+              }}
             >
-              <IconChevronRight size={20} />
-            </ActionIcon>
+              {totalCount} item{totalCount !== 1 && "s"}
+            </Box>
           </Group>
-        )}
+          <Box
+            style={{ flex: 1, height: 2, background: "var(--color-background-200)", borderRadius: 9999, opacity: 0.5 }}
+          />
+        </Group>
       </Group>
 
-      <TierDropZone tierId={tier.id} isEmpty={items.length === 0} isOwner={isOwner} onItemMove={onItemMove}>
-        {(() => {
-          if (isLoading) {
-            return (
-              <Group justify="center" align="center" style={{ height: 256 }}>
-                <Box
-                  style={{
-                    animation: "spin 1s linear infinite",
-                    borderRadius: "9999px",
-                    width: 32,
-                    height: 32,
-                    borderBottom: "2px solid var(--color-primary-600)",
-                  }}
-                />
-              </Group>
-            );
-          }
+      <Box style={{ position: "relative" }}>
+        <TierDropZone tierId={tier.id} isEmpty={items.length === 0} isOwner={isOwner} onItemMove={onItemMove}>
+          {(() => {
+            if (isLoading) {
+              return (
+                <Group justify="center" align="center" style={{ height: 256 }}>
+                  <Box
+                    style={{
+                      animation: "spin 1s linear infinite",
+                      borderRadius: "9999px",
+                      width: 32,
+                      height: 32,
+                      borderBottom: "2px solid var(--color-primary-600)",
+                    }}
+                  />
+                </Group>
+              );
+            }
 
-          if (items.length === 0) {
-            return (
-              <Group justify="center" align="center" style={{ height: 128 }} c="var(--color-text-400)" fz="sm">
-                No games in this tier
-              </Group>
-            );
-          }
+            if (items.length === 0) {
+              return (
+                <Group justify="center" align="center" style={{ height: 128 }} c="var(--color-text-400)" fz="sm">
+                  Drag and drop games here
+                </Group>
+              );
+            }
 
-          return (
-            <Box p="md">
-              <GridList columnCount={7}>{items.map((item, index) => renderGameCard(item, index))}</GridList>
-            </Box>
-          );
-        })()}
-      </TierDropZone>
+            return (
+              <Box p="md" style={{ position: "relative" }}>
+                <GridList columnCount={7}>{items.map((item, index) => renderGameCard(item, index))}</GridList>
+              </Box>
+            );
+          })()}
+        </TierDropZone>
+
+        {/* Overlay Navigation Chevrons inside the Drop Zone Area */}
+        {hasPrevious && !isLoading && (
+          <Box style={{ position: "absolute", left: -8, top: "50%", transform: "translateY(-50%)", zIndex: 10 }}>
+            <ActionIcon
+              variant="filled"
+              radius="xl"
+              size="lg"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={isFetching}
+              style={{
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                background: "var(--color-background-100)",
+                color: "var(--color-text-800)",
+                border: "1px solid var(--color-background-200)",
+              }}
+            >
+              <IconChevronLeft size={24} />
+            </ActionIcon>
+          </Box>
+        )}
+
+        {hasNext && !isLoading && (
+          <Box style={{ position: "absolute", right: -8, top: "50%", transform: "translateY(-50%)", zIndex: 10 }}>
+            <ActionIcon
+              variant="filled"
+              radius="xl"
+              size="lg"
+              onClick={() => setPage(p => p + 1)}
+              disabled={isFetching}
+              style={{
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                background: "var(--color-background-100)",
+                color: "var(--color-text-800)",
+                border: "1px solid var(--color-background-200)",
+              }}
+            >
+              <IconChevronRight size={24} />
+            </ActionIcon>
+          </Box>
+        )}
+      </Box>
+
+      {/* Subtle Dot Pagination */}
+      {totalPages > 1 && !isLoading && (
+        <Group justify="center" gap={8} style={{ marginTop: -8 }}>
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const pageNum = i + 1;
+            return (
+              <Box
+                key={`page-dot-${pageNum}`}
+                onClick={() => !isFetching && setPage(pageNum)}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: page === pageNum ? "var(--color-primary-500)" : "var(--color-background-300)",
+                  transition: "all 200ms ease",
+                  cursor: isFetching ? "default" : "pointer",
+                  transform: page === pageNum ? "scale(1.2)" : "scale(1)",
+                }}
+              />
+            );
+          })}
+        </Group>
+      )}
     </Stack>
   );
 });

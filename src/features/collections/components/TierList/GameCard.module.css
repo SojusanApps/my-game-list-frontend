@@ -1,50 +1,115 @@
 .tierGameCard {
   position: relative;
   flex-shrink: 0;
+  transition: transform 200ms ease;
+  border-radius: 12px;
 }
-.tierGameCard .tierGameCardBorder {
-  border: 2px solid transparent;
-  border-radius: 8px;
+
+.tierGameCard:hover {
+  transform: translateY(-4px);
+}
+
+.tierGameCardBorder {
+  border: 1px solid var(--color-background-200);
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   cursor: grab;
-  transition: border-color 200ms;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+  background: var(--color-background-100);
+  transform: translateZ(0); /* Forcing clip for rounded corners */
 }
-.tierGameCard .tierGameCardBorder:active {
+
+.tierGameCardBorder:active {
   cursor: grabbing;
 }
+
 .tierGameCard:hover .tierGameCardBorder {
   border-color: var(--color-primary-500);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
 }
-.tierGameCard .tierGameCardOverlay {
+
+.tierGameCardOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 30%, rgba(0, 0, 0, 0.1) 100%);
+  opacity: 0.8;
   transition: opacity 200ms;
   display: flex;
-  align-items: flex-end;
-  padding: 4px;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px 8px;
   pointer-events: none;
+  border-radius: 12px;
 }
+
 .tierGameCard:hover .tierGameCardOverlay {
   opacity: 1;
 }
-.tierGameCard .tierGameCardPencil {
+
+.tierGameCardActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   opacity: 0;
   transition:
-    opacity 200ms,
-    transform 200ms;
+    opacity 200ms ease,
+    transform 200ms ease;
+  transform: translateX(4px);
+  z-index: 30;
 }
-.tierGameCard:hover .tierGameCardPencil {
+
+.tierGameCard:hover .tierGameCardActions {
   opacity: 1;
+  transform: translateX(0);
 }
-.tierGameCard .tierGameCardRemove {
-  opacity: 0;
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   transition:
-    opacity 200ms,
-    transform 200ms;
+    transform 150ms ease,
+    background-color 150ms ease;
 }
-.tierGameCard:hover .tierGameCardRemove {
-  opacity: 1;
+
+.actionButton:hover {
+  transform: scale(1.1);
+}
+
+.editButton {
+  background-color: var(--color-primary-500) !important;
+  border: 1px solid var(--color-primary-600);
+}
+
+.editButton:hover {
+  background-color: var(--color-primary-600) !important;
+}
+
+.detailsButton {
+  background-color: var(--mantine-color-gray-8) !important;
+  border: 1px solid var(--mantine-color-gray-9);
+}
+
+.detailsButton:hover {
+  background-color: var(--mantine-color-gray-9) !important;
+}
+
+.removeButton {
+  background-color: var(--color-error-500) !important;
+  border: 1px solid var(--color-error-600);
+}
+
+.removeButton:hover {
+  background-color: var(--color-error-600) !important;
 }
