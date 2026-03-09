@@ -79,80 +79,30 @@ function ItemOverlay({
           />
         </Box>
 
-        {/* Top Badges (Floating Chips) */}
-        <Box
-          style={{
-            position: "absolute",
-            top: "12px",
-            left: "12px",
-            right: "12px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            zIndex: 20,
-            pointerEvents: "none",
-          }}
-        >
-          <Stack gap={6}>
-            {gameType && (
-              <Box
-                component="span"
-                style={{
-                  background: "rgba(79,70,229,0.9)",
-                  color: "white",
-                  fontSize: "8px",
-                  padding: "2px 8px",
-                  borderRadius: "6px",
-                  textTransform: "uppercase",
-                  fontWeight: 900,
-                  letterSpacing: "-0.05em",
-                  backdropFilter: "blur(8px)",
-                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  width: "fit-content",
-                }}
-              >
-                {gameType}
-              </Box>
-            )}
-          </Stack>
+        {/* Top Badges (Floating Chips) & Right Ribbon */}
+        {rating !== null && rating !== undefined && (
+          <Box
+            className={styles.scoreBadge}
+            style={{
+              background: ratingBg,
+            }}
+          >
+            {rating.toFixed(1)}
+          </Box>
+        )}
 
-          {rating !== null && rating !== undefined && (
-            <Box
-              style={{
-                background: ratingBg,
-                color: "black",
-                fontSize: "10px",
-                fontWeight: 900,
-                padding: "2px 6px",
-                borderRadius: "6px",
-                backdropFilter: "blur(8px)",
-                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
-                border: "1px solid rgba(255,255,255,0.3)",
-              }}
-            >
-              {rating.toFixed(1)}
-            </Box>
-          )}
-
-          {status && (
-            <Box
-              style={{
-                fontSize: "10px",
-                fontWeight: 900,
-                padding: "2px 6px",
-                borderRadius: "6px",
-                backdropFilter: "blur(8px)",
-                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.3)",
-                ...(getStatusConfig(status)?.badgeStyle
-                  ? { border: "1px solid transparent", ...getStatusConfig(status)!.badgeStyle }
-                  : { background: "rgba(30,30,40,0.9)", color: "white", border: "1px solid rgba(255,255,255,0.1)" }),
-              }}
-            >
-              {getStatusConfig(status)?.emoji}
-            </Box>
-          )}
-        </Box>
+        {status && getStatusConfig(status) && (
+          <Box
+            className={styles.statusRibbon}
+            style={{
+              background: getStatusConfig(status)?.badgeStyle.background,
+              color: getStatusConfig(status)?.badgeStyle.color,
+              border: `1px solid ${getStatusConfig(status)?.badgeStyle.borderColor || "transparent"}`,
+            }}
+          >
+            {getStatusConfig(status)?.label}
+          </Box>
+        )}
 
         {/* Dynamic Info Anchor (Bottom) */}
         <Box
@@ -168,6 +118,26 @@ function ItemOverlay({
           }}
         >
           <Stack gap={6}>
+            {gameType && (
+              <Box
+                component="span"
+                style={{
+                  background: "rgba(79,70,229,0.9)",
+                  color: "white",
+                  fontSize: "8px",
+                  padding: "2px 8px",
+                  borderRadius: "6px",
+                  textTransform: "uppercase",
+                  fontWeight: 900,
+                  letterSpacing: "-0.05em",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  width: "fit-content",
+                  marginBottom: "2px",
+                }}
+              >
+                {gameType}
+              </Box>
+            )}
             <Title
               order={2}
               lineClamp={2}

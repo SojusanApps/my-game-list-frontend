@@ -4,11 +4,12 @@
 
 .rankingRow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
   border-color: var(--color-primary-200) !important;
 }
 
-.rankingRowControls, .rankingRowActions {
+.rankingRowControls,
+.rankingRowActions {
   transition: opacity 0.2s ease;
 }
 
@@ -23,7 +24,9 @@
 
 .rankingRow .rankingRowDrag {
   opacity: 0;
-  transition: opacity 200ms, color 200ms;
+  transition:
+    opacity 200ms,
+    color 200ms;
 }
 
 .rankingRow:hover .rankingRowDrag {
