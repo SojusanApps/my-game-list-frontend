@@ -10,10 +10,12 @@ import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Box, Button, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
-import { IconEdit } from "@tabler/icons-react";
+import { IconEdit, IconGridDots, IconList } from "@tabler/icons-react";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
+import { VirtualList } from "@/components/ui/VirtualList";
 import { useIsOwner } from "@/features/auth";
 import { GameListModal } from "../components/GameListModal";
+import { GameListRow } from "../components/GameListRow";
 
 interface GameListItemProps {
   gameListItem: GameList;
@@ -77,6 +79,7 @@ export default function GameListPage(): React.JSX.Element {
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
+  const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
 
   const {
     data: gameListResults,
@@ -146,6 +149,69 @@ export default function GameListPage(): React.JSX.Element {
     },
   ];
 
+  const renderContent = () => {
+    if (isLoading && !isFetchingNextPage) {
+      if (viewMode === "grid") {
+        return (
+          <GridList>
+            {Array.from({ length: 21 }).map((_, i) => {
+              const skeletonKey = `game-skeleton-${i}`;
+              return (
+                <Skeleton key={skeletonKey} style={{ aspectRatio: "264/374", width: "100%", borderRadius: "12px" }} />
+              );
+            })}
+          </GridList>
+        );
+      } else {
+        return (
+          <Stack gap={12}>
+            {Array.from({ length: 10 }).map((_, i) => {
+              const skeletonKey = `list-skeleton-${i}`;
+              return <Skeleton key={skeletonKey} height={90} width="100%" radius="12px" />;
+            })}
+          </Stack>
+        );
+      }
+    }
+
+    if (viewMode === "grid") {
+      return (
+        <VirtualGridList
+          items={allItems}
+          hasNextPage={!!hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+          renderItem={(gameListItem: GameList) => (
+            <GameListGridItem
+              key={gameListItem.id}
+              gameListItem={gameListItem}
+              isOwner={isOwner}
+              onEdit={setEditingGameId}
+            />
+          )}
+        />
+      );
+    }
+
+    return (
+      <VirtualList
+        items={allItems}
+        hasNextPage={!!hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+        itemHeight={106}
+        className="custom-scrollbar"
+        style={{
+          height: "800px",
+          paddingRight: "8px",
+        }}
+        renderItem={(gameListItem: GameList) => (
+          <GameListRow key={gameListItem.id} gameListItem={gameListItem} isOwner={isOwner} onEdit={setEditingGameId} />
+        )}
+      />
+    );
+  };
+
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
       <PageMeta title={pageTitle} />
@@ -163,24 +229,71 @@ export default function GameListPage(): React.JSX.Element {
             {"'s Game List"}
           </Title>
 
-          <Group justify="center" wrap="wrap" gap={8}>
-            {statuses.map(status => (
-              <Button
-                key={String(status.id)}
-                variant={selectedGameStatus === status.id ? "filled" : "light"}
-                color={status.color}
-                size="md"
-                radius="xl"
-                onClick={() => setSelectedGameStatus(status.id)}
-                leftSection={<span>{status.emoji}</span>}
+          <Box
+            w="100%"
+            pos="relative"
+            display={{ base: "flex", sm: "block" }}
+            style={{ flexDirection: "column", alignItems: "center" }}
+          >
+            <Group justify="center" wrap="wrap" gap={8}>
+              {statuses.map(status => (
+                <Button
+                  key={String(status.id)}
+                  variant={selectedGameStatus === status.id ? "filled" : "light"}
+                  color={status.color}
+                  size="md"
+                  radius="xl"
+                  onClick={() => setSelectedGameStatus(status.id)}
+                  leftSection={<span>{status.emoji}</span>}
+                  style={{
+                    border: `2px solid var(--mantine-color-${status.color}-${selectedGameStatus === status.id ? "7" : "4"})`,
+                    transition: "border-color 0.2s ease",
+                  }}
+                >
+                  {status.label}
+                </Button>
+              ))}
+            </Group>
+
+            <Group
+              gap={8}
+              mt={{ base: 16, sm: 0 }}
+              pos={{ base: "static", sm: "absolute" }}
+              right={{ sm: 0 }}
+              top={{ sm: "50%" }}
+              style={{ transform: "translateY(var(--y-translate, 0))" }}
+              className="view-toggle-group"
+            >
+              <style>{`
+                @media (min-width: 48em) {
+                  .view-toggle-group {
+                    --y-translate: -50%;
+                  }
+                }
+              `}</style>
+              <ActionIcon
+                variant={viewMode === "grid" ? "filled" : "light"}
+                color={viewMode === "grid" ? "indigo" : "gray"}
+                size="lg"
+                radius="md"
+                onClick={() => setViewMode("grid")}
               >
-                {status.label}
-              </Button>
-            ))}
-          </Group>
+                <IconGridDots size={20} />
+              </ActionIcon>
+              <ActionIcon
+                variant={viewMode === "list" ? "filled" : "light"}
+                color={viewMode === "list" ? "indigo" : "gray"}
+                size="lg"
+                radius="md"
+                onClick={() => setViewMode("list")}
+              >
+                <IconList size={20} />
+              </ActionIcon>
+            </Group>
+          </Box>
         </Stack>
 
-        {isOwner && (
+        {isOwner && selectedGameStatus === StatusEnum.PTP && (
           <Box
             style={{
               background: "var(--color-primary-50)",
@@ -235,31 +348,7 @@ export default function GameListPage(): React.JSX.Element {
             minHeight: "850px",
           }}
         >
-          {isLoading && !isFetchingNextPage ? (
-            <GridList>
-              {Array.from({ length: 21 }).map((_, i) => {
-                const skeletonKey = `game-skeleton-${i}`;
-                return (
-                  <Skeleton key={skeletonKey} style={{ aspectRatio: "264/374", width: "100%", borderRadius: "12px" }} />
-                );
-              })}
-            </GridList>
-          ) : (
-            <VirtualGridList
-              items={allItems}
-              hasNextPage={!!hasNextPage}
-              isFetchingNextPage={isFetchingNextPage}
-              fetchNextPage={fetchNextPage}
-              renderItem={(gameListItem: GameList) => (
-                <GameListGridItem
-                  key={gameListItem.id}
-                  gameListItem={gameListItem}
-                  isOwner={isOwner}
-                  onEdit={setEditingGameId}
-                />
-              )}
-            />
-          )}
+          {renderContent()}
           {errorFetchingData && (
             <Box
               style={{
