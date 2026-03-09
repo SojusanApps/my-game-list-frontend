@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Box, Group, Stack, Title } from "@mantine/core";
+import { Group, Stack, Title, Box } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { SafeImage } from "./SafeImage";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
+import { getRatingColor } from "@/utils/ratingUtils";
 
 type ItemOverlayProps = {
   className?: string;
@@ -16,6 +17,7 @@ type ItemOverlayProps = {
   releaseDate?: string | null;
   rating?: number | null;
   status?: string | null;
+  actionSlot?: React.ReactNode | ((hovered: boolean) => React.ReactNode);
 };
 
 function ItemOverlay({
@@ -29,6 +31,7 @@ function ItemOverlay({
   releaseDate,
   rating,
   status,
+  actionSlot,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
   const { hovered, ref } = useHover<HTMLDivElement>();
@@ -43,12 +46,7 @@ function ItemOverlay({
     }
   }, [releaseDate]);
 
-  const ratingBg = React.useMemo(() => {
-    if (rating === null || rating === undefined) return "transparent";
-    if (rating < 5) return "rgba(252,165,165,0.9)";
-    if (rating < 8) return "rgba(253,224,71,0.9)";
-    return "rgba(110,231,183,0.9)";
-  }, [rating]);
+  const ratingBg = React.useMemo(() => getRatingColor(rating), [rating]);
 
   return (
     <Box
@@ -234,6 +232,7 @@ function ItemOverlay({
           }}
         />
       </Link>
+      {typeof actionSlot === "function" ? actionSlot(hovered) : actionSlot}
     </Box>
   );
 }

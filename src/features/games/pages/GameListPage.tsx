@@ -9,9 +9,65 @@ import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameList
 import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
-import { Box, Button, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
+import { IconEdit } from "@tabler/icons-react";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { useIsOwner } from "@/features/auth";
+import { GameListModal } from "../components/GameListModal";
+
+interface GameListItemProps {
+  gameListItem: GameList;
+  isOwner: boolean;
+  onEdit: (gameId: number) => void;
+}
+
+interface EditActionProps {
+  gameId: number;
+  onEdit: (gameId: number) => void;
+}
+
+function EditAction({ gameId, onEdit }: Readonly<EditActionProps>) {
+  return (
+    <ActionIcon
+      variant="filled"
+      color="var(--mantine-color-primary-6)"
+      size="md"
+      radius="xl"
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        onEdit(gameId);
+      }}
+      style={{
+        position: "absolute",
+        bottom: "16px",
+        right: "16px",
+        zIndex: 20,
+        boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
+      }}
+    >
+      <IconEdit size={16} />
+    </ActionIcon>
+  );
+}
+
+function renderEditActionSlot(hovered: boolean, gameId: number, onEdit: (id: number) => void) {
+  return hovered ? <EditAction gameId={gameId} onEdit={onEdit} /> : null;
+}
+
+const GameListGridItem = React.memo(({ gameListItem, isOwner, onEdit }: GameListItemProps) => {
+  return (
+    <ItemOverlay
+      name={gameListItem.title}
+      itemPageUrl={`/game/${gameListItem.game_id}`}
+      itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
+      status={gameListItem.status_code}
+      rating={gameListItem.score}
+      actionSlot={isOwner ? hovered => renderEditActionSlot(hovered, gameListItem.game_id, onEdit) : undefined}
+    />
+  );
+});
+GameListGridItem.displayName = "GameListGridItem";
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = useParams();
@@ -32,6 +88,7 @@ export default function GameListPage(): React.JSX.Element {
   } = useGameListInfiniteQuery(userId, selectedGameStatus);
 
   const [shouldFetchRandomPtp, setShouldFetchRandomPtp] = React.useState(false);
+  const [editingGameId, setEditingGameId] = React.useState<number | null>(null);
 
   const {
     data: randomPtpGame,
@@ -194,13 +251,11 @@ export default function GameListPage(): React.JSX.Element {
               isFetchingNextPage={isFetchingNextPage}
               fetchNextPage={fetchNextPage}
               renderItem={(gameListItem: GameList) => (
-                <ItemOverlay
+                <GameListGridItem
                   key={gameListItem.id}
-                  name={gameListItem.title}
-                  itemPageUrl={`/game/${gameListItem.game_id}`}
-                  itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
-                  status={gameListItem.status_code}
-                  rating={gameListItem.score}
+                  gameListItem={gameListItem}
+                  isOwner={isOwner}
+                  onEdit={setEditingGameId}
                 />
               )}
             />
@@ -222,6 +277,8 @@ export default function GameListPage(): React.JSX.Element {
           )}
         </Box>
       </Stack>
+
+      {editingGameId && <GameListModal gameId={editingGameId} opened={true} onClose={() => setEditingGameId(null)} />}
     </Box>
   );
 }
