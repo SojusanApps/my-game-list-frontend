@@ -10,6 +10,7 @@ import { useRankingSession } from "../hooks/useRankingSession";
 import { DuelView } from "./DuelView";
 import { PairwiseRankingResults } from "./PairwiseRankingResults";
 import { ProgressBar } from "./ProgressBar";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 interface PairwiseRankingModalProps {
   collectionId: number;
@@ -23,6 +24,21 @@ export default function PairwiseRankingModal({
   onClose,
 }: Readonly<PairwiseRankingModalProps>) {
   const [isApplying, setIsApplying] = React.useState(false);
+  const [confirmConfig, setConfirmConfig] = React.useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    action: () => void;
+    isDestructive?: boolean;
+    confirmLabel?: string;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    action: () => {},
+  });
+
+  const closeConfirm = () => setConfirmConfig(prev => ({ ...prev, isOpen: false }));
 
   const {
     state,
@@ -62,25 +78,48 @@ export default function PairwiseRankingModal({
   // Handle "Start Fresh" with confirmation if existing profile
   const handleStartFresh = React.useCallback(() => {
     if (hasExistingProfile) {
-      if (confirm("This will discard your previous ranking data. Continue?")) {
-        startNew();
-      }
+      setConfirmConfig({
+        isOpen: true,
+        title: "Start Fresh?",
+        message: "This will discard your previous ranking data. Continue?",
+        confirmLabel: "Discard & Start Fresh",
+        isDestructive: true,
+        action: () => {
+          startNew();
+          closeConfirm();
+        },
+      });
     } else {
       startNew();
     }
   }, [hasExistingProfile, startNew]);
 
   const handleReset = React.useCallback(() => {
-    if (confirm("This will permanently delete all ranking data for this collection. Continue?")) {
-      reset();
-    }
+    setConfirmConfig({
+      isOpen: true,
+      title: "Reset Progress?",
+      message: "This will permanently delete all ranking data for this collection. Continue?",
+      confirmLabel: "Reset",
+      isDestructive: true,
+      action: () => {
+        reset();
+        closeConfirm();
+      },
+    });
   }, [reset]);
 
   const handleClose = React.useCallback(() => {
     if (state === "dueling" && progress.duelsCompleted > 0) {
-      if (confirm("Your progress is saved automatically. Close the ranking session?")) {
-        onClose();
-      }
+      setConfirmConfig({
+        isOpen: true,
+        title: "Close Session?",
+        message: "Your progress is saved automatically. Are you sure you want to close the ranking session?",
+        confirmLabel: "Close Session",
+        action: () => {
+          onClose();
+          closeConfirm();
+        },
+      });
     } else {
       onClose();
     }
@@ -216,81 +255,94 @@ export default function PairwiseRankingModal({
   };
 
   return (
-    <Modal
-      opened={true}
-      onClose={handleClose}
-      withCloseButton={false}
-      padding={0}
-      radius="xl"
-      size="80rem"
-      overlayProps={{ backgroundOpacity: 0.6 }}
-      styles={{
-        content: { height: "85vh" },
-        body: { height: "100%", padding: 0 },
-      }}
-    >
-      <Stack gap={0} style={{ height: "100%" }}>
-        {/* Header */}
-        <Group
-          justify="space-between"
-          align="center"
-          p={24}
-          pb={16}
-          style={{ borderBottom: "1px solid var(--color-background-100)" }}
-        >
-          <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-            <Title
-              order={2}
-              fz="xl"
-              fw={900}
-              c="var(--color-text-900)"
-              style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
-            >
-              Pairwise Ranking
-            </Title>
-            {state !== "idle" && (
-              <Box w="100%" maw={384}>
-                <ProgressBar progress={progress} />
-              </Box>
-            )}
-          </Stack>
+    <>
+      <Modal
+        opened={true}
+        onClose={handleClose}
+        withCloseButton={false}
+        padding={0}
+        radius="xl"
+        size="80rem"
+        overlayProps={{ backgroundOpacity: 0.6 }}
+        styles={{
+          content: { height: "85vh" },
+          body: { height: "100%", padding: 0 },
+        }}
+      >
+        <Stack gap={0} style={{ height: "100%" }}>
+          {/* Header */}
+          <Group
+            justify="space-between"
+            align="center"
+            p={24}
+            pb={16}
+            style={{ borderBottom: "1px solid var(--color-background-100)" }}
+          >
+            <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
+              <Title
+                order={2}
+                fz="xl"
+                fw={900}
+                c="var(--color-text-900)"
+                style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
+              >
+                Pairwise Ranking
+              </Title>
+              {state !== "idle" && (
+                <Box w="100%" maw={384}>
+                  <ProgressBar progress={progress} />
+                </Box>
+              )}
+            </Stack>
 
-          <Group gap={8}>
-            {state === "dueling" && (
-              <Button
-                onClick={viewResults}
-                variant="outline"
-                size="sm"
-                style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            <Group gap={8}>
+              {state === "dueling" && (
+                <Button
+                  onClick={viewResults}
+                  variant="outline"
+                  size="sm"
+                  style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                >
+                  View Results
+                </Button>
+              )}
+              {state !== "idle" && (
+                <Button
+                  onClick={handleReset}
+                  variant="ghost"
+                  size="sm"
+                  style={{ fontWeight: 500, color: "var(--color-error-500)" }}
+                >
+                  Reset
+                </Button>
+              )}
+              <UnstyledButton
+                onClick={handleClose}
+                p={8}
+                bg="var(--color-background-50)"
+                c="var(--color-text-400)"
+                style={{ borderRadius: 12, border: "1px solid var(--color-background-100)", transition: "color 200ms" }}
               >
-                View Results
-              </Button>
-            )}
-            {state !== "idle" && (
-              <Button
-                onClick={handleReset}
-                variant="ghost"
-                size="sm"
-                style={{ fontWeight: 500, color: "var(--color-error-500)" }}
-              >
-                Reset
-              </Button>
-            )}
-            <UnstyledButton
-              onClick={handleClose}
-              p={8}
-              bg="var(--color-background-50)"
-              c="var(--color-text-400)"
-              style={{ borderRadius: 12, border: "1px solid var(--color-background-100)", transition: "color 200ms" }}
-            >
-              <IconX size={20} />
-            </UnstyledButton>
+                <IconX size={20} />
+              </UnstyledButton>
+            </Group>
           </Group>
-        </Group>
 
-        {/* Body */}
-        <Box style={{ flex: 1, overflowY: "auto", padding: 24 }}>{renderBody()}</Box>
-      </Stack>
-    </Modal>
+          {/* Body */}
+          <Box style={{ flex: 1, overflowY: "auto", padding: 24 }}>{renderBody()}</Box>
+        </Stack>
+      </Modal>
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        opened={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        onConfirm={confirmConfig.action}
+        onClose={closeConfirm}
+        isDestructive={confirmConfig.isDestructive}
+        confirmLabel={confirmConfig.confirmLabel}
+      />
+    </>
   );
 }
