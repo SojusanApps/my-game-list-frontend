@@ -1,5 +1,12 @@
 import { Route } from "react-router-dom";
-import { HomePage, GameDetailPage, GameListPage, SearchEnginePage, CompanyDetailPage } from "./index";
+import {
+  HomePage,
+  GameDetailPage,
+  GameListPage,
+  SearchEnginePage,
+  CompanyDetailPage,
+  ReleaseCalendarPage,
+} from "./index";
 import RequireAuth from "@/features/auth/components/RequireAuth";
 
 export const GamesRoutes = (
@@ -11,5 +18,6 @@ export const GamesRoutes = (
     <Route path="company/:id" element={<CompanyDetailPage />} />
     <Route path="game-list/:id" element={<GameListPage />} />
     <Route path="search" element={<SearchEnginePage />} />
+    <Route path="release-calendar" element={<ReleaseCalendarPage />} />
   </>
 );

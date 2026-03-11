@@ -19,6 +19,7 @@ type ItemOverlayProps = {
   releaseDate?: string | null;
   rating?: number | null;
   status?: string | null;
+  showFullReleaseDate?: boolean;
   actionSlot?: React.ReactNode | ((hovered: boolean) => React.ReactNode);
 };
 
@@ -33,20 +34,28 @@ function ItemOverlay({
   releaseDate,
   rating,
   status,
+  showFullReleaseDate = false,
   actionSlot,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
   const isLogo = variant === "logo";
   const { hovered, ref } = useHover<HTMLDivElement>();
 
-  const releaseYear = React.useMemo(() => {
-    if (!releaseDate) return null;
+  const releaseDisplay = React.useMemo(() => {
+    if (!releaseDate) {
+      return null;
+    }
     try {
       const date = new Date(releaseDate);
-      return Number.isNaN(date.getTime()) ? null : date.getFullYear();
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+      return showFullReleaseDate
+        ? date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+        : date.getFullYear().toString();
     } catch {
       return null;
     }
-  }, [releaseDate]);
+  }, [releaseDate, showFullReleaseDate]);
 
   const ratingBg = React.useMemo(() => getRatingColor(rating), [rating]);
 
@@ -154,7 +163,7 @@ function ItemOverlay({
             </Title>
 
             <Group gap={8}>
-              {releaseYear && (
+              {releaseDisplay && (
                 <Box
                   component="span"
                   style={{
@@ -165,7 +174,7 @@ function ItemOverlay({
                     textTransform: "uppercase",
                   }}
                 >
-                  {releaseYear}
+                  {releaseDisplay}
                 </Box>
               )}
               <Box

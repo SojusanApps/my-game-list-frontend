@@ -4,6 +4,7 @@ export const gameKeys = {
   list: (query: object | undefined) => [...gameKeys.lists(), query] as const,
   details: () => [...gameKeys.all, "detail"] as const,
   detail: (id: number) => [...gameKeys.details(), id] as const,
+  releaseCalendar: (params: object) => [...gameKeys.all, "release-calendar", params] as const,
   genres: ["genres", "all-values"] as const,
   genresInfinite: (name?: string) => ["genres", "infinite", name] as const,
   medias: ["game-medias", "all-values"] as const,

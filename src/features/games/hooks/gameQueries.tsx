@@ -24,8 +24,16 @@ import {
   getGameStatusesList,
   getGameTypesList,
   getPlayerPerspectivesList,
+  getReleaseCalendar,
 } from "../api/game";
-import { useInfiniteQuery, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+  UseInfiniteQueryOptions,
+  InfiniteData,
+} from "@tanstack/react-query";
 import { GameList, PaginatedGameSimpleListList, PaginatedGameListList } from "@/client";
 import { gameKeys, gameListKeys, gameReviewKeys, userKeys } from "@/lib/queryKeys";
 
@@ -142,6 +150,35 @@ export const useGetGameMediasInfiniteQuery = (name?: string) => {
   });
 };
 
+export const useGetGamesInfinite = (
+  query?: GameGamesListDataQuery,
+  options?: Omit<
+    UseInfiniteQueryOptions<
+      PaginatedGameSimpleListList,
+      Error,
+      InfiniteData<PaginatedGameSimpleListList, unknown>,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      any
+    >,
+    "queryKey" | "queryFn" | "initialPageParam" | "getNextPageParam"
+  >,
+) => {
+  return useInfiniteQuery({
+    queryKey: [...gameKeys.lists(), "infinite", query],
+    queryFn: ({ pageParam = 1 }) => getGamesList({ ...query, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage?.next) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    ...options,
+  });
+};
+
 export const useGetGamesList = (
   query?: GameGamesListDataQuery,
   options?: Omit<UseQueryOptions<unknown, Error, PaginatedGameSimpleListList>, "queryKey" | "queryFn">,
@@ -161,6 +198,13 @@ export const useGetGamesDetails = (id?: number) => {
     queryKey: gameKeys.detail(id ?? -1),
     queryFn: () => getGamesDetail(id as number),
     enabled: !!id,
+  });
+};
+
+export const useGetReleaseCalendar = (params: { start_date: string; end_date: string }) => {
+  return useQuery({
+    queryKey: gameKeys.releaseCalendar(params),
+    queryFn: () => getReleaseCalendar(params),
   });
 };
 

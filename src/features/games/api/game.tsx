@@ -16,6 +16,7 @@ import {
   GameGameStatusesListData,
   GameGameTypesListData,
   GamePlayerPerspectivesListData,
+  GameGamesReleaseCalendarListData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
@@ -29,6 +30,7 @@ export type GameGameModesListDataQuery = GameGameModesListData["query"];
 export type GameGameStatusesListDataQuery = GameGameStatusesListData["query"];
 export type GameGameTypesListDataQuery = GameGameTypesListData["query"];
 export type GamePlayerPerspectivesListDataQuery = GamePlayerPerspectivesListData["query"];
+export type GameGamesReleaseCalendarListDataQuery = GameGamesReleaseCalendarListData["query"];
 
 export const getGenresList = async (query?: GameGenresListDataQuery) => {
   const { data, response } = await GameService.gameGenresList({ query });
@@ -117,6 +119,14 @@ export const getGamesDetail = async (id: number) => {
   const { data, response } = await GameService.gameGamesRetrieve({ path: { id } });
   if (response?.status !== StatusCode.OK || !data) {
     return await handleApiError(response, "Error fetching game details");
+  }
+  return data;
+};
+
+export const getReleaseCalendar = async (query: GameGamesReleaseCalendarListDataQuery) => {
+  const { data, response } = await GameService.gameGamesReleaseCalendarList({ query });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching release calendar");
   }
   return data;
 };

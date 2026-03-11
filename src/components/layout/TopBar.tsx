@@ -8,7 +8,8 @@ import SearchBar from "@/features/games/components/SearchBar";
 import NotificationBell from "@/features/notifications/components/NotificationBell";
 import { useAuth, useCurrentUserId } from "@/features/auth";
 import { IconChevronDown, IconUserCircle, IconSettings, IconLogout } from "@tabler/icons-react";
-import { Box, Group, Menu, Text, UnstyledButton } from "@mantine/core";
+import { Box, Group, Menu, Text, UnstyledButton, Burger, Drawer, Stack } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import styles from "./TopBar.module.css";
 
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
@@ -81,6 +82,7 @@ function NotLoggedInView(): React.JSX.Element {
 function TopBar(): React.JSX.Element {
   const { user, logout } = useAuth();
   const currentUserId = useCurrentUserId();
+  const [opened, { toggle, close }] = useDisclosure();
 
   return (
     <Box
@@ -97,6 +99,7 @@ function TopBar(): React.JSX.Element {
     >
       <Group justify="space-between" align="center" maw={1280} mx="auto" p={12}>
         <Group gap={32}>
+          <Burger opened={opened} onClick={toggle} hiddenFrom="lg" size="sm" color="var(--color-primary-100)" />
           <Link to="/home" className={styles.logoLink} aria-label="Game List logo">
             <AppLogo size="md" onDark />
           </Link>
@@ -105,6 +108,11 @@ function TopBar(): React.JSX.Element {
             <Box component="li" className={styles.navItem}>
               <Link to="/search" className={styles.navLink}>
                 Search Engine
+              </Link>
+            </Box>
+            <Box component="li" className={styles.navItem}>
+              <Link to="/release-calendar" className={styles.navLink}>
+                Release Calendar
               </Link>
             </Box>
 
@@ -131,6 +139,64 @@ function TopBar(): React.JSX.Element {
 
         <Group gap={16}>{user ? <LoggedInView logout={logout} /> : <NotLoggedInView />}</Group>
       </Group>
+
+      <Drawer
+        opened={opened}
+        onClose={close}
+        size="100%"
+        padding="md"
+        title="Navigation"
+        hiddenFrom="lg"
+        zIndex={1000000}
+      >
+        <Stack gap="md" mt="md" component="ul" style={{ listStyle: "none", padding: 0 }}>
+          <Box component="li">
+            <Link
+              to="/search"
+              className={styles.navLink}
+              onClick={close}
+              style={{ display: "block", padding: "8px 0" }}
+            >
+              Search Engine
+            </Link>
+          </Box>
+          <Box component="li">
+            <Link
+              to="/release-calendar"
+              className={styles.navLink}
+              onClick={close}
+              style={{ display: "block", padding: "8px 0" }}
+            >
+              Release Calendar
+            </Link>
+          </Box>
+
+          {user && (
+            <>
+              <Box component="li">
+                <Link
+                  to={`/game-list/${currentUserId}`}
+                  className={styles.navLink}
+                  onClick={close}
+                  style={{ display: "block", padding: "8px 0" }}
+                >
+                  Game List
+                </Link>
+              </Box>
+              <Box component="li">
+                <Link
+                  to={`/profile/${currentUserId}/collections`}
+                  className={styles.navLink}
+                  onClick={close}
+                  style={{ display: "block", padding: "8px 0" }}
+                >
+                  Collections
+                </Link>
+              </Box>
+            </>
+          )}
+        </Stack>
+      </Drawer>
     </Box>
   );
 }
