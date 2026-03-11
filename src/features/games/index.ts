@@ -6,3 +6,4 @@ export { default as GameListPage } from "./pages/GameListPage";
 export { default as HomePage } from "./pages/HomePage";
 export { default as SearchEnginePage } from "./pages/SearchEnginePage";
 export { default as CompanyDetailPage } from "./pages/CompanyDetailPage";
+export { default as ReleaseCalendarPage } from "./pages/ReleaseCalendarPage";

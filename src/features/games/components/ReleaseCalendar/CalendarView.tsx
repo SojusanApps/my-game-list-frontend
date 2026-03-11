@@ -1,0 +1,244 @@
+import * as React from "react";
+import { useState, useMemo } from "react";
+import { Box, Group, ActionIcon, Title, SegmentedControl, Text, Loader, Center, Stack, Button } from "@mantine/core";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useGetReleaseCalendar } from "../../hooks/gameQueries";
+import {
+  getStartOfMonth,
+  getEndOfMonth,
+  addDays,
+  addMonths,
+  formatISODate,
+  getCalendarGridDays,
+  getWeekGridDays,
+} from "../../utils/calendarUtils";
+import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
+import DayDetailModal from "./DayDetailModal";
+import styles from "./CalendarView.module.css";
+import { cn } from "@/utils/cn";
+import ItemOverlay from "@/components/ui/ItemOverlay";
+import { GameSimpleList } from "@/client";
+
+export default function CalendarView(): React.JSX.Element {
+  const [viewMode, setViewMode] = useState<"week" | "month">("week");
+  const [currentDate, setCurrentDate] = useState(() => new Date());
+
+  const [selectedDayObj, setSelectedDayObj] = useState<{ opened: boolean; dateStr: string }>({
+    opened: false,
+    dateStr: "",
+  });
+
+  const { startDate, endDate, daysGrid } = useMemo(() => {
+    let grid: Date[];
+    let start: Date;
+    let end: Date;
+
+    if (viewMode === "month") {
+      start = getStartOfMonth(currentDate);
+      end = getEndOfMonth(currentDate);
+      grid = getCalendarGridDays(start.getFullYear(), start.getMonth());
+    } else {
+      grid = getWeekGridDays(currentDate);
+      start = grid[0];
+      end = grid.at(-1)!;
+    }
+
+    return {
+      startDate: formatISODate(start),
+      endDate: formatISODate(end),
+      daysGrid: grid,
+    };
+  }, [viewMode, currentDate]);
+
+  const {
+    data: items,
+    isLoading,
+    isError,
+  } = useGetReleaseCalendar({
+    start_date: startDate,
+    end_date: endDate,
+  });
+
+  const gamesByDate = useMemo(() => {
+    const map = new Map<string, GameSimpleList[]>();
+
+    if (!items || items.length === 0) {
+      return map;
+    }
+
+    for (const game of items) {
+      if (!game.release_date) {
+        continue;
+      }
+      // Expecting release_date to be at least YYYY-MM-DD
+      const dStr = game.release_date.split("T")[0];
+      if (!map.has(dStr)) {
+        map.set(dStr, []);
+      }
+      map.get(dStr)?.push(game);
+    }
+    return map;
+  }, [items]);
+
+  const handlePrev = () => {
+    if (viewMode === "month") {
+      setCurrentDate(addMonths(currentDate, -1));
+    } else {
+      setCurrentDate(addDays(currentDate, -7));
+    }
+  };
+
+  const handleNext = () => {
+    if (viewMode === "month") {
+      setCurrentDate(addMonths(currentDate, 1));
+    } else {
+      setCurrentDate(addDays(currentDate, 7));
+    }
+  };
+
+  const currentMonthName = currentDate.toLocaleString("default", { month: "long" });
+  const currentYear = currentDate.getFullYear();
+
+  const getHeaderTitle = () => {
+    if (viewMode === "month") {
+      return `${currentMonthName} ${currentYear}`;
+    }
+    const startObj = daysGrid[0];
+    const endObj = daysGrid.at(-1);
+    if (!startObj || !endObj) {
+      return "";
+    }
+    return `${startObj.toLocaleString("default", { month: "short" })} ${startObj.getDate()} - ${endObj.toLocaleString("default", { month: "short" })} ${endObj.getDate()}, ${currentYear}`;
+  };
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <Center py="xl" style={{ minHeight: "400px" }}>
+          <Loader size="lg" variant="dots" />
+        </Center>
+      );
+    }
+    if (isError) {
+      return (
+        <Center py="xl" style={{ minHeight: "400px" }}>
+          <Text c="red" fw={500}>
+            Failed to load calendar data.
+          </Text>
+        </Center>
+      );
+    }
+
+    const isWeekView = viewMode === "week";
+    const maxVisible = isWeekView ? 3 : 2;
+
+    return (
+      <Box className={styles.calendarContainer}>
+        <Box className={styles.calendarGridHeader}>
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
+            <Text key={day} fw={700} ta="center" c="dimmed" size="sm" tt="uppercase">
+              {day}
+            </Text>
+          ))}
+        </Box>
+        <Box className={styles.calendarGrid} data-view={viewMode}>
+          {daysGrid.map(dayObj => {
+            const dStr = formatISODate(dayObj);
+            const games = gamesByDate.get(dStr) || [];
+            const isToday = formatISODate(new Date()) === dStr;
+            const isCurrentMonth = dayObj.getMonth() === currentDate.getMonth();
+
+            return (
+              <Box
+                key={dStr}
+                className={cn(
+                  styles.dayCell,
+                  !isCurrentMonth && !isWeekView && styles.dayCellOut,
+                  isToday && styles.dayCellToday,
+                )}
+              >
+                <Box className={styles.dayHeader}>
+                  <Text size="sm">{dayObj.getDate()}</Text>
+                </Box>
+                <Box className={styles.gameList} mt={8}>
+                  {games.slice(0, maxVisible).map(game => (
+                    <ItemOverlay
+                      key={game.id}
+                      itemPageUrl={`/game/${game.id}`}
+                      itemCoverUrl={
+                        game.cover_image_id
+                          ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                          : undefined
+                      }
+                      name={game.title}
+                      status={undefined}
+                      rating={undefined}
+                      releaseDate={game.release_date}
+                      className={styles.overlayItem}
+                    />
+                  ))}
+                  {games.length > maxVisible && (
+                    <Text size="xs" ta="center" c="dimmed" mt={4}>
+                      +{games.length - maxVisible} more
+                    </Text>
+                  )}
+                </Box>
+
+                {games.length > 0 && (
+                  <Button
+                    className={styles.seeAllButton}
+                    onClick={() => setSelectedDayObj({ opened: true, dateStr: dStr })}
+                  >
+                    See all
+                  </Button>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+    );
+  };
+
+  return (
+    <Stack gap={24}>
+      <Group justify="space-between" align="center" wrap="wrap">
+        <Group>
+          <ActionIcon variant="default" size="lg" radius="md" onClick={handlePrev}>
+            <IconChevronLeft size={20} />
+          </ActionIcon>
+          <Title order={3} w={240} ta="center" fw={800}>
+            {getHeaderTitle()}
+          </Title>
+          <ActionIcon variant="default" size="lg" radius="md" onClick={handleNext}>
+            <IconChevronRight size={20} />
+          </ActionIcon>
+          <Button variant="light" size="sm" radius="md" onClick={() => setCurrentDate(new Date())}>
+            Today
+          </Button>
+        </Group>
+
+        <SegmentedControl
+          size="md"
+          radius="md"
+          value={viewMode}
+          onChange={val => setViewMode(val as "week" | "month")}
+          data={[
+            { label: "Month", value: "month" },
+            { label: "Week", value: "week" },
+          ]}
+        />
+      </Group>
+
+      {renderContent()}
+
+      {selectedDayObj.opened && (
+        <DayDetailModal
+          opened={selectedDayObj.opened}
+          onClose={() => setSelectedDayObj({ ...selectedDayObj, opened: false })}
+          dateStr={selectedDayObj.dateStr}
+        />
+      )}
+    </Stack>
+  );
+}
