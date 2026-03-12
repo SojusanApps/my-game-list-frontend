@@ -9,7 +9,6 @@ import {
   useDeleteAllReadNotifications,
 } from "../hooks/notificationQueries";
 import { IconTrash, IconCheck } from "@tabler/icons-react";
-import { notificationEntitySchema } from "@/lib/validation";
 import pageStyles from "./NotificationsPage.module.css";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -114,14 +113,15 @@ export default function NotificationsPage(): React.JSX.Element {
               </Table.Tr>
             ) : (
               notifications.map((notification: Notification) => {
-                const actorResult = notificationEntitySchema.safeParse(notification.actor);
-                const actor = actorResult.success ? actorResult.data : null;
+                const actor = notification.actor;
+                const target = notification.target;
 
-                const targetResult = notificationEntitySchema.safeParse(notification.target);
-                const target = targetResult.success ? targetResult.data : null;
-
-                const targetOrActor = target?.type === "user" ? target : actor;
-                const displayEntity = actor?.type === "user" ? actor : targetOrActor;
+                let displayEntity = undefined;
+                if (actor?.type === "user") {
+                  displayEntity = actor;
+                } else if (target?.type === "user") {
+                  displayEntity = target;
+                }
 
                 return (
                   <Table.Tr
