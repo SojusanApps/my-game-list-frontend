@@ -18,7 +18,7 @@ import {
 import { collectionKeys } from "@/lib/queryKeys";
 import { useGetFriendshipsInfiniteQuery } from "@/features/users/hooks/friendshipQueries";
 import { useCurrentUserId } from "@/features/auth";
-import { TierEnum } from "@/client";
+import { BlankEnum, TierEnum } from "@/client";
 
 const fetchCollections = async ({ pageParam = 1, queryKey }: { pageParam?: number; queryKey: readonly unknown[] }) => {
   const [, , userId, filters] = queryKey as [string, string, number, object];
@@ -222,7 +222,7 @@ export const useUpdateCollectionItemTier = () => {
     }: {
       collectionId: number;
       itemId: number;
-      tier: string;
+      tier: TierEnum | BlankEnum;
       position?: number;
       oldTier?: TierEnum | "UNRANKED" | null;
     }) => updateCollectionItemTier(collectionId, itemId, tier, position),
@@ -231,7 +231,7 @@ export const useUpdateCollectionItemTier = () => {
         const { collectionId, tier, oldTier } = variables;
 
         // Convert tier values to match filter formats
-        const newTierFilter = tier === "" ? "UNRANKED" : (tier as TierEnum);
+        const newTierFilter = tier === "" ? "UNRANKED" : tier;
 
         // Invalidate the old tier query if provided
         if (oldTier) {

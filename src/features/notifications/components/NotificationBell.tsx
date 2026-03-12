@@ -7,8 +7,6 @@ import {
   useGetUnreadNotificationCount,
   useMarkNotificationAsRead,
 } from "../hooks/notificationQueries";
-import { NotificationUnreadCount } from "@/types";
-import { notificationEntitySchema } from "@/lib/validation";
 import { Popover, Box, Group, Text, Stack, UnstyledButton } from "@mantine/core";
 import bellStyles from "./NotificationBell.module.css";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -18,7 +16,7 @@ export default function NotificationBell(): React.JSX.Element {
   const { data: notificationsData } = useGetNotifications();
   const { mutate: markAsRead } = useMarkNotificationAsRead();
 
-  const unreadCount = (unreadData as unknown as NotificationUnreadCount)?.unread_count ?? 0;
+  const unreadCount = unreadData?.unread_count ?? 0;
   const notifications = notificationsData?.results ?? [];
   const unreadNotifications = notifications.filter((n: Notification) => n.unread);
 
@@ -116,14 +114,15 @@ export default function NotificationBell(): React.JSX.Element {
             </Stack>
           ) : (
             unreadNotifications.map((notification: Notification) => {
-              const actorResult = notificationEntitySchema.safeParse(notification.actor);
-              const actor = actorResult.success ? actorResult.data : null;
+              const actor = notification.actor;
+              const target = notification.target;
 
-              const targetResult = notificationEntitySchema.safeParse(notification.target);
-              const target = targetResult.success ? targetResult.data : null;
-
-              const targetOrActor = target?.type === "user" ? target : actor;
-              const displayEntity = actor?.type === "user" ? actor : targetOrActor;
+              let displayEntity = undefined;
+              if (actor?.type === "user") {
+                displayEntity = actor;
+              } else if (target?.type === "user") {
+                displayEntity = target;
+              }
 
               return (
                 <Box component="li" key={notification.id} className={bellStyles.notificationCard}>

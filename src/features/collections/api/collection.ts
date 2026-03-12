@@ -8,7 +8,10 @@ import {
   CollectionCollectionItemsListData,
   CollectionCollectionItemsCreateData,
   CollectionCollectionItemsPartialUpdateData,
-  CollectionWritable,
+  CollectionItemPosition,
+  CollectionItemTierUpdate,
+  TierEnum,
+  BlankEnum,
 } from "@/client";
 
 export type CollectionCollectionsListDataQuery = CollectionCollectionsListData["query"];
@@ -93,18 +96,13 @@ export const updateCollectionItem = async (id: number, body: CollectionCollectio
   return data;
 };
 
-export interface BulkReorderItem {
-  id: number;
-  position: number;
-}
-
-export const bulkReorderCollectionItems = async (collectionId: number, items: BulkReorderItem[]) => {
+export const bulkReorderCollectionItems = async (collectionId: number, items: CollectionItemPosition[]) => {
   const { data, response } = await CollectionService.collectionCollectionsBulkReorderCreate({
     path: { id: collectionId },
-    body: { items } as unknown as CollectionWritable,
+    body: { items },
   });
 
-  if (response?.status !== StatusCode.OK) {
+  if (response?.status !== StatusCode.NO_CONTENT) {
     return await handleApiError(response, "Error bulk-reordering collection items");
   }
 
@@ -114,7 +112,7 @@ export const bulkReorderCollectionItems = async (collectionId: number, items: Bu
 export const reorderCollectionItem = async (collectionId: number, itemId: number, position: number) => {
   const { data, response } = await CollectionService.collectionCollectionsItemsReorderCreate({
     path: { id: collectionId, item_id: String(itemId) },
-    body: { position } as unknown as CollectionWritable,
+    body: { position },
   });
 
   if (response?.status !== StatusCode.OK) {
@@ -127,17 +125,17 @@ export const reorderCollectionItem = async (collectionId: number, itemId: number
 export const updateCollectionItemTier = async (
   collectionId: number,
   itemId: number,
-  tier: string,
+  tier: TierEnum | BlankEnum,
   position?: number,
 ) => {
-  const body: { tier: string; position?: number } = { tier };
+  const body: CollectionItemTierUpdate = { tier };
   if (position !== undefined) {
     body.position = position;
   }
 
   const { data, response } = await CollectionService.collectionCollectionsItemsUpdateTierCreate({
     path: { id: collectionId, item_id: String(itemId) },
-    body: body as unknown as CollectionWritable,
+    body: body,
   });
 
   if (response?.status !== StatusCode.OK) {
