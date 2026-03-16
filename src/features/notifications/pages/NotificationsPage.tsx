@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Notification } from "@/client";
+import { NotificationListDataQuery } from "../api/notification";
 import {
   useGetNotifications,
   useMarkNotificationAsRead,
@@ -12,12 +13,47 @@ import { IconTrash, IconCheck } from "@tabler/icons-react";
 import pageStyles from "./NotificationsPage.module.css";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { Table, Badge, Loader, Tooltip, ActionIcon, Group, Pagination, Box, Text, Title } from "@mantine/core";
+import {
+  Table,
+  Badge,
+  Loader,
+  Tooltip,
+  ActionIcon,
+  Group,
+  Pagination,
+  Box,
+  Text,
+  Title,
+  SegmentedControl,
+  Select,
+} from "@mantine/core";
 import { Button } from "@/components/ui/Button";
 
 export default function NotificationsPage(): React.JSX.Element {
   const [page, setPage] = React.useState(1);
-  const { data: notificationsData, isLoading, isFetching } = useGetNotifications({ page });
+  const [unreadFilter, setUnreadFilter] = React.useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = React.useState<string | null>(null);
+  const [levelFilter, setLevelFilter] = React.useState<string | null>(null);
+
+  const queryParams: Record<string, boolean | string | undefined | number> = { page };
+  if (unreadFilter === "unread") {
+    queryParams.unread = true;
+  }
+  if (unreadFilter === "read") {
+    queryParams.unread = false;
+  }
+  if (categoryFilter) {
+    queryParams.category = categoryFilter;
+  }
+  if (levelFilter) {
+    queryParams.level = levelFilter;
+  }
+
+  const {
+    data: notificationsData,
+    isLoading,
+    isFetching,
+  } = useGetNotifications(queryParams as NotificationListDataQuery);
   const { mutate: markAsRead } = useMarkNotificationAsRead();
   const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: deleteOne } = useDeleteNotification();
@@ -59,8 +95,44 @@ export default function NotificationsPage(): React.JSX.Element {
     );
   }
 
-  const hasUnread = notifications.some(n => n.unread);
-  const hasRead = notifications.some(n => !n.unread);
+  const hasUnread = notifications.some((n: Notification) => n.unread);
+  const hasRead = notifications.some((n: Notification) => !n.unread);
+
+  const getLevelColor = (level?: string) => {
+    switch (level) {
+      case "info":
+        return "blue";
+      case "warning":
+        return "yellow";
+      case "success":
+        return "green";
+      case "error":
+        return "red";
+      default:
+        return "gray";
+    }
+  };
+
+  const getCategoryColor = (category?: string) => {
+    switch (category) {
+      case "system":
+        return "gray";
+      case "friendship":
+        return "violet";
+      case "game_release":
+        return "orange";
+      default:
+        return "blue";
+    }
+  };
+
+  const formatText = (text?: string) => {
+    if (!text) return "Unknown";
+    return text
+      .split("_")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   return (
     <Box maw={1024} mx="auto" p={16}>
@@ -88,6 +160,65 @@ export default function NotificationsPage(): React.JSX.Element {
         </Group>
       </Group>
 
+      <Group mb={16} gap={16} align="flex-end">
+        <SegmentedControl
+          value={unreadFilter}
+          onChange={val => {
+            setUnreadFilter(val);
+            setPage(1);
+          }}
+          data={[
+            { label: "All", value: "all" },
+            { label: "Unread", value: "unread" },
+            { label: "Read", value: "read" },
+          ]}
+        />
+        <Select
+          placeholder="Filter by category"
+          value={categoryFilter}
+          onChange={val => {
+            setCategoryFilter(val);
+            setPage(1);
+          }}
+          data={[
+            { label: "System", value: "system" },
+            { label: "Friendship", value: "friendship" },
+            { label: "Game Release", value: "game_release" },
+          ]}
+          clearable
+          style={{ width: 200 }}
+        />
+        <Select
+          placeholder="Filter by level"
+          value={levelFilter}
+          onChange={val => {
+            setLevelFilter(val);
+            setPage(1);
+          }}
+          data={[
+            { label: "Info", value: "info" },
+            { label: "Success", value: "success" },
+            { label: "Warning", value: "warning" },
+            { label: "Error", value: "error" },
+          ]}
+          clearable
+          style={{ width: 200 }}
+        />
+        {(unreadFilter !== "all" || categoryFilter !== null || levelFilter !== null) && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setUnreadFilter("all");
+              setCategoryFilter(null);
+              setLevelFilter(null);
+              setPage(1);
+            }}
+          >
+            Clear filters
+          </Button>
+        )}
+      </Group>
+
       <Box
         style={{ overflowX: "auto", background: "white", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}
       >
@@ -97,6 +228,8 @@ export default function NotificationsPage(): React.JSX.Element {
               <Table.Th>Status</Table.Th>
               <Table.Th>User</Table.Th>
               <Table.Th>Action</Table.Th>
+              <Table.Th>Category</Table.Th>
+              <Table.Th>Level</Table.Th>
               <Table.Th>Date</Table.Th>
               <Table.Th>Actions</Table.Th>
             </Table.Tr>
@@ -105,7 +238,7 @@ export default function NotificationsPage(): React.JSX.Element {
             {notifications.length === 0 ? (
               <Table.Tr>
                 <Table.Td
-                  colSpan={5}
+                  colSpan={7}
                   style={{ textAlign: "center", paddingBlock: "32px", color: "var(--color-text-400)" }}
                 >
                   No notifications found.
@@ -157,6 +290,16 @@ export default function NotificationsPage(): React.JSX.Element {
                       </Group>
                     </Table.Td>
                     <Table.Td>{notification.verb}</Table.Td>
+                    <Table.Td>
+                      <Badge size="sm" variant="light" color={getCategoryColor(notification.category)}>
+                        {formatText(notification.category)}
+                      </Badge>
+                    </Table.Td>
+                    <Table.Td>
+                      <Badge size="sm" variant="dot" color={getLevelColor(notification.level)}>
+                        {formatText(notification.level)}
+                      </Badge>
+                    </Table.Td>
                     <Table.Td>
                       <Text component="span" fz="sm" style={{ opacity: 0.7 }}>
                         {new Date(notification.timestamp).toLocaleString()}
