@@ -34,3 +34,33 @@ export function formatDate(date?: Date | null, format = "YYYY-MM-DD"): string | 
 
   return result;
 }
+
+const TIME_INTERVALS = [
+  { seconds: 31536000, label: "year" },
+  { seconds: 2592000, label: "month" },
+  { seconds: 86400, label: "day" },
+  { seconds: 3600, label: "hour" },
+  { seconds: 60, label: "minute" },
+];
+
+/**
+ * Returns a relative time string (e.g., "5 minutes ago", "just now").
+ */
+export function timeAgo(dateInput?: Date | string | number | null): string | null {
+  if (!dateInput) return null;
+  const date = new Date(dateInput);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+  if (seconds < 60) return "just now";
+
+  for (const { seconds: intervalSeconds, label } of TIME_INTERVALS) {
+    const count = Math.floor(seconds / intervalSeconds);
+    if (count >= 1) {
+      return `${count} ${label}${count === 1 ? "" : "s"} ago`;
+    }
+  }
+
+  return "just now";
+}
