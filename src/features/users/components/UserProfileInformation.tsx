@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Box, Group, Stack, Text } from "@mantine/core";
 import { UserDetail } from "@/client";
+import { timeAgo } from "@/utils/dateUtils";
 
 interface UserProfileInformationProps {
   userDetails?: UserDetail;
@@ -45,11 +46,9 @@ export default function UserProfileInformation({ userDetails }: Readonly<UserPro
         </Group>
         <Group justify="space-between" fz="sm">
           <Text fw={500} c="var(--color-text-600)">
-            Last login:
+            Last active:
           </Text>
-          <Text c="var(--color-text-900)">
-            {new Date(userDetails?.last_login ? userDetails.last_login : "").toLocaleDateString()}
-          </Text>
+          <Text c="var(--color-text-900)">{timeAgo(userDetails?.last_active) || "Never"}</Text>
         </Group>
       </Stack>
     </Box>
