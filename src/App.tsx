@@ -11,7 +11,7 @@ import { PageMeta } from "./components/ui/PageMeta";
 import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: {
     queryClient: undefined!,
