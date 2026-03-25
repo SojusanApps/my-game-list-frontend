@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Notification } from "@/client";
 import { NotificationListDataQuery } from "../api/notification";
 import {
@@ -281,12 +281,15 @@ export default function NotificationsPage(): React.JSX.Element {
                             containerStyle={{ width: "40px", height: "40px" }}
                           />
                         </Box>
-                        <Link
-                          to={displayEntity?.type === "user" ? `/profile/${displayEntity.id}` : "#"}
-                          className={pageStyles.tableUserLink}
-                        >
-                          {displayEntity?.str || "Someone"}
-                        </Link>
+                        {displayEntity?.type === "user" && (
+                          <Link
+                            to={"/profile/$id"}
+                            params={{ id: displayEntity?.id.toString() || "" }}
+                            className={pageStyles.tableUserLink}
+                          >
+                            {displayEntity?.str || "Someone"}
+                          </Link>
+                        )}
                       </Group>
                     </Table.Td>
                     <Table.Td>{notification.verb}</Table.Td>

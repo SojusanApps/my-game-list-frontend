@@ -2,13 +2,12 @@ import * as React from "react";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearch } from "@tanstack/react-router";
 import { notifications } from "@mantine/notifications";
 
 import { Button } from "@/components/ui/Button";
 import { TextInput, PasswordInput, Stack, Text } from "@mantine/core";
 import authStyles from "./auth.module.css";
-import Constants from "@/utils/Constants";
 import { useCreateUser } from "@/features/users/hooks/userQueries";
 
 const validationSchema = z
@@ -31,6 +30,7 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 
 function RegisterForm() {
   const navigate = useNavigate();
+  const search: { redirect?: string } = useSearch({ strict: false });
   const { mutate: createUser } = useCreateUser();
 
   const form = useForm<ValidationSchema>({
@@ -53,7 +53,11 @@ function RegisterForm() {
       {
         onSuccess: () => {
           notifications.show({ title: "Success", message: "User created successfully", color: "green" });
-          navigate("/login", { replace: true });
+          navigate({
+            to: "/login",
+            replace: true,
+            search: search.redirect ? { redirect: search.redirect } : undefined,
+          });
         },
         onError: error => {
           notifications.show({
@@ -67,7 +71,7 @@ function RegisterForm() {
   };
 
   const onCancelHandler: React.MouseEventHandler = () => {
-    navigate(Constants.NAVIGATE_PREVIOUS_PAGE);
+    navigate({ to: ".." });
   };
 
   return (
@@ -114,7 +118,11 @@ function RegisterForm() {
       </Stack>
       <Text ta="center" size="sm" mt="md" c="var(--color-text-600)">
         Already have an account?&nbsp;
-        <Link to="/login" className={authStyles.authLink}>
+        <Link
+          to="/login"
+          search={search.redirect ? { redirect: search.redirect } : undefined}
+          className={authStyles.authLink}
+        >
           Login
         </Link>
       </Text>

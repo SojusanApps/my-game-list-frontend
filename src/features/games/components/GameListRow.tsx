@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Group, Text, Badge, ActionIcon, Stack } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
 import { GameList, StatusEnum } from "@/client";

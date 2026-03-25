@@ -1,17 +1,17 @@
 import * as React from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import { useGetUserDetails } from "../hooks/userQueries";
 import { useGetFriendshipsInfiniteQuery } from "../hooks/friendshipQueries";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import FriendCard from "../components/FriendCard";
 import { Box, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
 
+const routeApi = getRouteApi("/profile_/$id/friends");
+
 export default function UserFriendsPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const userId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const userId = Number(id);
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
 
@@ -22,10 +22,6 @@ export default function UserFriendsPage(): React.JSX.Element {
     isFetchingNextPage,
     isLoading: isFriendsLoading,
   } = useGetFriendshipsInfiniteQuery({ user: userId });
-
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
 
   const allFriendships = data?.pages.flatMap(page => page.results) || [];
   const totalFriends = data?.pages[0]?.count ?? 0;

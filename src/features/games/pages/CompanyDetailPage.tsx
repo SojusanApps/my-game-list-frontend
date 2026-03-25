@@ -1,8 +1,7 @@
 import * as React from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import { useGetCompanyDetail } from "../hooks/gameQueries";
 import { Box, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import ItemOverlay from "@/components/ui/ItemOverlay";
@@ -10,15 +9,12 @@ import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
-export default function CompanyDetailPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const companyId = parsedId.success ? parsedId.data : undefined;
-  const { data: companyDetails, isLoading: isCompanyLoading } = useGetCompanyDetail(companyId);
+const routeApi = getRouteApi("/company/$id");
 
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
+export default function CompanyDetailPage(): React.JSX.Element {
+  const { id } = routeApi.useParams();
+  const companyId = Number(id);
+  const { data: companyDetails, isLoading: isCompanyLoading } = useGetCompanyDetail(companyId);
 
   const developedGamesList = companyDetails?.games_developed || [];
   const publishedGamesList = companyDetails?.games_published || [];

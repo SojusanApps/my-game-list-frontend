@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Stack, Text } from "@mantine/core";
 import { Friendship } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -13,7 +13,7 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
   return (
     <Box className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden hover:shadow-md transition-shadow">
       <Stack align="center" gap={12} className="p-4">
-        <Link to={`/profile/${friend.id}`} className="block relative group">
+        <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className="block relative group">
           <Box className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-background-100 group-hover:ring-primary-100 transition-all">
             <SafeImage
               className="w-full h-full object-cover"
@@ -25,7 +25,8 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
 
         <Box className="text-center">
           <Link
-            to={`/profile/${friend.id}`}
+            to={"/profile/$id"}
+            params={{ id: friend.id.toString() }}
             className="text-lg font-bold text-text-900 hover:text-primary-600 transition-colors block mb-1"
           >
             {friend.username}

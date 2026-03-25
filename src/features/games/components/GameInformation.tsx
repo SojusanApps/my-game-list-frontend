@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { Game } from "@/client";
 
@@ -69,7 +69,8 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
             {gameDetails?.publisher ? (
               <Link
-                to={`/company/${gameDetails.publisher.id}`}
+                to={"/company/$id"}
+                params={{ id: gameDetails.publisher.id.toString() }}
                 style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
               >
                 {gameDetails.publisher.name}
@@ -86,7 +87,8 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           <Text size="sm" ta="right" c="var(--color-text-900)" style={{ flex: 1 }}>
             {gameDetails?.developer ? (
               <Link
-                to={`/company/${gameDetails.developer.id}`}
+                to={"/company/$id"}
+                params={{ id: gameDetails.developer.id.toString() }}
                 style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
               >
                 {gameDetails.developer.name}

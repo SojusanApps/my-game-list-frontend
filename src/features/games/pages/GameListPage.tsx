@@ -1,12 +1,11 @@
 import * as React from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { STATUS_CONFIG } from "../utils/statusConfig";
 import { GameList, StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameListQueries";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Box, Button, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
@@ -71,10 +70,11 @@ const GameListGridItem = React.memo(({ gameListItem, isOwner, onEdit }: GameList
 });
 GameListGridItem.displayName = "GameListGridItem";
 
+const routeApi = getRouteApi("/game-list/$id");
+
 export default function GameListPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const userId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const userId = Number(id);
   const isOwner = useIsOwner(userId);
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
@@ -106,10 +106,6 @@ export default function GameListPage(): React.JSX.Element {
       setShouldFetchRandomPtp(true);
     }
   };
-
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
 
   const pageTitle = isUserLoading ? "Loading Game List..." : `${userDetails?.username}'s Game List`;
 

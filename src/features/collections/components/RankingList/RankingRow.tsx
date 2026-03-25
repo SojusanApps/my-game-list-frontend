@@ -9,7 +9,7 @@ import {
   IconExternalLink,
 } from "@tabler/icons-react";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import rowStyles from "./RankingRow.module.css";

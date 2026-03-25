@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Group, Text, Title } from "@mantine/core";
 import styles from "./SectionHeader.module.css";
 

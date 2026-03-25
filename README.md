@@ -18,8 +18,8 @@ A modern, responsive web application for gamers to track their game collections,
 - **Core:** [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
 - **Styling:** [Mantine UI](https://mantine.dev/)
 - **State Management & Data Fetching:** [TanStack Query (React Query)](https://tanstack.com/query/latest)
-- **Routing:** [React Router DOM](https://reactrouter.com/)
-- **Forms & Validation:** [React Hook Form](https://react-hook-form.com/), [Zod](https://zod.dev/)
+- **Routing:** [TanStack Router](https://tanstack.com/router)
+- **Forms & Validation:** [Mantine Form](https://mantine.dev/form/use-form/), [Zod](https://zod.dev/)
 - **API Client Generation:** [OpenAPI-TS](https://hey-api.dev/openapi-ts)
 - **Testing:** [Vitest](https://vitest.dev/)
 - **Linting & Formatting:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
@@ -140,10 +140,10 @@ src/
 │       ├── api/        # API wrapper functions
 │       ├── components/ # Feature-specific components
 │       ├── hooks/      # TanStack Query hooks
-│       ├── pages/      # Page components
-│       └── routes.tsx  # Route definitions
+│       └── pages/      # Page components
 ├── hooks/          # Shared custom React hooks
 ├── lib/            # Shared library configuration (query keys, validation)
+├── routes/         # TanStack Router route definitions (file-based routing)
 ├── theme/          # Mantine theme configuration
 ├── types/          # Global TypeScript type definitions
 └── utils/          # Utility functions and constants

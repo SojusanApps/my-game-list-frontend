@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Group, Text, Tooltip } from "@mantine/core";
 import { UserDetail } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -32,7 +32,8 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
           Friends
         </Text>
         <Link
-          to={userDetails ? `/profile/${userDetails.id}/friends` : "#"}
+          to={"/profile/$id/friends"}
+          params={{ id: userDetails?.id.toString() || "" }}
           style={{ fontSize: 12, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
         >
           View All
@@ -43,7 +44,7 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
           <Group gap={12} wrap="wrap">
             {userDetails.friends.map(friend => (
               <Tooltip key={friend.id} label={friend.username}>
-                <Link to={`/profile/${friend.id}`}>
+                <Link to={`/profile/$id`} params={{ id: friend.id.toString() }}>
                   <Box
                     style={{
                       width: 48,
