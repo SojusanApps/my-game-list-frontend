@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import {
   useCollectionDetail,
@@ -7,7 +7,6 @@ import {
   useRemoveCollectionItem,
 } from "../hooks/useCollectionQueries";
 import { useCurrentUserId, useIsOwner } from "@/features/auth";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Skeleton, Stack, Group, Box, Title, Text } from "@mantine/core";
 import { CollectionHeader } from "../components/CollectionHeader";
@@ -26,10 +25,11 @@ import { RankingListView } from "../components/RankingList/RankingListView";
 import { PairwiseRankingModal } from "@/features/ranking";
 import pageStyles from "./CollectionPage.module.css";
 
+const routeApi = getRouteApi("/collection/$id");
+
 export default function CollectionPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const collectionId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const collectionId = Number(id);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isAddGameModalOpen, setIsAddGameModalOpen] = React.useState(false);
@@ -92,9 +92,9 @@ export default function CollectionPage(): React.JSX.Element {
 
     switch (collection.type) {
       case TypeEnum.TIE:
-        return <TierListView collectionId={collectionId!} isOwner={canEdit} onRemove={handleDeleteItem} />;
+        return <TierListView collectionId={collectionId} isOwner={canEdit} onRemove={handleDeleteItem} />;
       case TypeEnum.RNK:
-        return <RankingListView collectionId={collectionId!} isOwner={canEdit} onRemove={handleDeleteItem} />;
+        return <RankingListView collectionId={collectionId} isOwner={canEdit} onRemove={handleDeleteItem} />;
       case TypeEnum.NOR:
       default:
         return isItemsLoading && !isFetchingNextPage ? (

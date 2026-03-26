@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Box, Group, Text } from "@mantine/core";
 import AppLogo from "@/components/ui/AppLogo";
 import styles from "./Footer.module.css";

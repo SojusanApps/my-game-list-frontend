@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Group, Stack, Title, Box } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { SafeImage } from "./SafeImage";

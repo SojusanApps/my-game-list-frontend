@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "@tanstack/react-router";
 import { Box } from "@mantine/core";
 import TopBar from "@/components/layout/TopBar";
 import Footer from "@/components/layout/Footer";

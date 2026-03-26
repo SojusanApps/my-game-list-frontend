@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { LocalStorageUserType } from "@/types";
 import { getStoredUser, setStoredUser, clearStoredUser } from "../utils/authUtils";
 
-interface AuthContextType {
+export interface AuthContextType {
   user: LocalStorageUserType | null;
   login: (user: LocalStorageUserType) => void;
   logout: () => void;

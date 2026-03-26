@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { IconBell } from "@tabler/icons-react";
 import { Notification } from "@/client";
 import {
@@ -127,7 +127,8 @@ export default function NotificationBell(): React.JSX.Element {
               return (
                 <Box component="li" key={notification.id} className={bellStyles.notificationCard}>
                   <Link
-                    to={displayEntity?.type === "user" ? `/profile/${displayEntity.id}` : "#"}
+                    to={displayEntity?.type === "user" ? "/profile/$id" : "/notifications"}
+                    params={{ id: displayEntity?.id.toString() || "" }}
                     onClick={() => handleNotificationClick(notification)}
                     className={bellStyles.notificationItemLink}
                   >

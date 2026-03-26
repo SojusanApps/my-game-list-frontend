@@ -2,7 +2,7 @@ import * as React from "react";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useSearch, Link } from "@tanstack/react-router";
 import { notifications } from "@mantine/notifications";
 
 import { Button } from "@/components/ui/Button";
@@ -29,8 +29,8 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 
 function LoginForm() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const searchParams = useSearch({ from: "/login" }) as { redirect?: string };
+  const from = searchParams.redirect || "/";
   const { login } = useAuth();
 
   const form = useForm<ValidationSchema>({
@@ -57,7 +57,7 @@ function LoginForm() {
         login({ email: data.email, token, refreshToken });
         notifications.show({ title: "Success", message: "Logged in successfully", color: "green" });
       }
-      navigate(from, { replace: true });
+      navigate({ to: from, replace: true });
     } catch (error) {
       notifications.show({
         title: "Error",

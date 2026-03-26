@@ -1,11 +1,10 @@
 import * as React from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import { GameListModal } from "../components/GameListModal";
 import GameInformation from "../components/GameInformation";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { useGetGameReviewsList, useGetGamesDetails, useGetGameListByFilters } from "../hooks/gameQueries";
 import { Box, Grid, Group, Skeleton, Stack, Tabs, Title } from "@mantine/core";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import GameDetailsMainTab from "../components/GameDetailsMainTab";
@@ -17,10 +16,11 @@ import { useAuth } from "@/features/auth/context/AuthProvider";
 import { useCurrentUserId } from "@/features/auth";
 import { Button } from "@/components/ui/Button";
 
+const routeApi = getRouteApi("/game/$id");
+
 export default function GameDetailPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const gameId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const gameId = Number(id);
 
   const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(gameId);
   const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList({ game: gameId });
@@ -38,10 +38,6 @@ export default function GameDetailPage(): React.JSX.Element {
   );
 
   const listButtonText = userGameList?.id ? "Edit List Entry" : "Add List Entry";
-
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
 
   const pageTitle = isGameDetailsLoading ? "Loading Game..." : gameDetails?.title;
 
@@ -161,11 +157,13 @@ export default function GameDetailPage(): React.JSX.Element {
           />
         )}
 
-        {isCollectionModalOpen && gameId && (
+        {isCollectionModalOpen && !!gameId && (
           <AddToCollectionModal gameId={gameId} onClose={() => setIsCollectionModalOpen(false)} />
         )}
 
-        {gameId && <GameListModal gameId={gameId} opened={isListModalOpen} onClose={() => setIsListModalOpen(false)} />}
+        {!!gameId && (
+          <GameListModal gameId={gameId} opened={isListModalOpen} onClose={() => setIsListModalOpen(false)} />
+        )}
       </Grid>
     </Box>
   );

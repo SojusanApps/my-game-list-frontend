@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { CollectionDetail, ModeEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
 import { useCurrentUserId, useIsOwner } from "@/features/auth";
@@ -33,7 +33,8 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
         <Stack gap={8}>
           <Group gap={12} fz="sm" fw={700} c="var(--color-text-500)" tt="uppercase" style={{ letterSpacing: "0.1em" }}>
             <Link
-              to={`/profile/${collection.user.id}/collections`}
+              to={"/profile/$id/collections"}
+              params={{ id: collection.user.id.toString() }}
               className="hover:text-primary-600 transition-colors"
             >
               {collection.user.username}&apos;s Collections

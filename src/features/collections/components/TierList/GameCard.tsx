@@ -5,7 +5,7 @@ import { IconPencil, IconX, IconQuestionMark, IconInfoCircle } from "@tabler/ico
 import { Box, Text, UnstyledButton, Tooltip } from "@mantine/core";
 import { EditDescriptionModal } from "./EditDescriptionModal";
 import { cn } from "@/utils/cn";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import cardStyles from "./GameCard.module.css";
 
 interface GameCardProps {

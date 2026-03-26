@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { getRouteApi, Link } from "@tanstack/react-router";
 
 import { useGetUserDetails } from "../hooks/userQueries";
 import { useCurrentUserId } from "@/features/auth";
@@ -9,24 +9,18 @@ import UserFriendsList from "../components/UserFriendsList";
 import UserStatistics from "../components/UserStatistics";
 import GameListUpdate from "../components/GameListUpdate";
 import { Box, Grid, Group, Skeleton, Stack, Title } from "@mantine/core";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
 
+const routeApi = getRouteApi("/profile/$id");
+
 export default function UserProfilePage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const userId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const validUserId = Number(id);
 
-  const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(userId);
+  const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(validUserId);
   const currentUserId = useCurrentUserId();
-
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
-
-  const validUserId = parsedId.data;
 
   const pageTitle = isUserDetailsLoading ? "Loading Profile..." : `${userDetails?.username}'s Profile`;
 
@@ -74,13 +68,13 @@ export default function UserProfilePage(): React.JSX.Element {
 
                 <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />
 
-                <Link to={`/game-list/${validUserId}`} style={{ width: "100%", textDecoration: "none" }}>
+                <Link to={`/game-list/$id`} params={{ id }} style={{ width: "100%", textDecoration: "none" }}>
                   <Button fullWidth variant="default">
                     Game List
                   </Button>
                 </Link>
 
-                <Link to={`/profile/${validUserId}/collections`} style={{ width: "100%", textDecoration: "none" }}>
+                <Link to={`/profile/$id/collections`} params={{ id }} style={{ width: "100%", textDecoration: "none" }}>
                   <Button fullWidth variant="outline">
                     Collections
                   </Button>
@@ -134,7 +128,8 @@ export default function UserProfilePage(): React.JSX.Element {
                       Last game updates
                     </Title>
                     <Link
-                      to={`/game-list/${userDetails?.id}`}
+                      to={`/game-list/$id`}
+                      params={{ id }}
                       style={{ fontSize: 13, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
                     >
                       View History

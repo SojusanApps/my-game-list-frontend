@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Box, Stack, Text, UnstyledButton } from "@mantine/core";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -68,7 +68,8 @@ export default function SearchBar(): React.JSX.Element {
       return gamesDetails.results.map((game: GameSimpleList) => (
         <Box component="li" key={game.id} style={{ width: "100%" }}>
           <Link
-            to={`/game/${game.id}`}
+            to={"/game/$id"}
+            params={{ id: game.id.toString() }}
             style={{
               display: "flex",
               alignItems: "center",

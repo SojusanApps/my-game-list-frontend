@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import AppLogo from "@/components/ui/AppLogo";
 import { Button } from "@/components/ui/Button";
 import SearchBar from "@/features/games/components/SearchBar";
@@ -119,12 +119,20 @@ function TopBar(): React.JSX.Element {
             {user && (
               <>
                 <Box component="li" className={styles.navItem}>
-                  <Link to={`/game-list/${currentUserId}`} className={styles.navLink}>
+                  <Link
+                    to={"/game-list/$id"}
+                    params={{ id: currentUserId?.toString() || "" }}
+                    className={styles.navLink}
+                  >
                     Game List
                   </Link>
                 </Box>
                 <Box component="li" className={styles.navItem}>
-                  <Link to={`/profile/${currentUserId}/collections`} className={styles.navLink}>
+                  <Link
+                    to={"/profile/$id/collections"}
+                    params={{ id: currentUserId?.toString() || "" }}
+                    className={styles.navLink}
+                  >
                     Collections
                   </Link>
                 </Box>
@@ -175,7 +183,8 @@ function TopBar(): React.JSX.Element {
             <>
               <Box component="li">
                 <Link
-                  to={`/game-list/${currentUserId}`}
+                  to={"/game-list/$id"}
+                  params={{ id: currentUserId?.toString() || "" }}
                   className={styles.navLink}
                   onClick={close}
                   style={{ display: "block", padding: "8px 0" }}
@@ -185,7 +194,8 @@ function TopBar(): React.JSX.Element {
               </Box>
               <Box component="li">
                 <Link
-                  to={`/profile/${currentUserId}/collections`}
+                  to={"/profile/$id/collections"}
+                  params={{ id: currentUserId?.toString() || "" }}
                   className={styles.navLink}
                   onClick={close}
                   style={{ display: "block", padding: "8px 0" }}

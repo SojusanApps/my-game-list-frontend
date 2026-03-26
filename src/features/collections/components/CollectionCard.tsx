@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { Collection, TypeEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -97,7 +97,8 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
     <Stack ref={ref} align="center" pt={32} style={{ position: "relative" }}>
       {/* Deck View (Sits on top) */}
       <Link
-        to={`/collection/${collection.id}`}
+        to={"/collection/$id"}
+        params={{ id: collection.id.toString() }}
         style={{
           position: "relative",
           width: "75%",
@@ -198,7 +199,7 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
         }}
       >
         <Stack align="center" gap={6} style={{ textAlign: "center" }}>
-          <Link to={`/collection/${collection.id}`} style={{ display: "block" }}>
+          <Link to={"/collection/$id"} params={{ id: collection.id.toString() }} style={{ display: "block" }}>
             <Title
               order={3}
               fz="lg"
@@ -220,7 +221,11 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
           <Stack align="center" justify="center" gap={8}>
             <Text size="xs" fw={500} c="var(--color-text-500)">
               by{" "}
-              <Link to={`/profile/${collection.user.id}`} style={{ fontWeight: 700, color: "var(--color-text-700)" }}>
+              <Link
+                to={"/profile/$id"}
+                params={{ id: collection.user.id.toString() }}
+                style={{ fontWeight: 700, color: "var(--color-text-700)" }}
+              >
                 {collection.user.username}
               </Link>
             </Text>

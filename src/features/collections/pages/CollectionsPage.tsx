@@ -1,9 +1,8 @@
 import * as React from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { getRouteApi } from "@tanstack/react-router";
 import { Collection, CollectionCollectionsListData } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useCollectionsInfiniteQuery } from "../hooks/useCollectionQueries";
-import { idSchema } from "@/lib/validation";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Skeleton, Stack, Group, Box, Title, Text, Select, UnstyledButton } from "@mantine/core";
@@ -14,10 +13,11 @@ import CreateCollectionModal from "../components/CreateCollectionModal";
 import { useIsOwner } from "@/features/auth";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
+const routeApi = getRouteApi("/profile_/$id/collections");
+
 export default function CollectionsPage(): React.JSX.Element {
-  const { id } = useParams();
-  const parsedId = idSchema.safeParse(id);
-  const userId = parsedId.success ? parsedId.data : undefined;
+  const { id } = routeApi.useParams();
+  const userId = Number(id);
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -50,10 +50,6 @@ export default function CollectionsPage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
   } = useCollectionsInfiniteQuery(userId, queryFilters);
-
-  if (!parsedId.success) {
-    return <Navigate to="/404" replace />;
-  }
 
   const pageTitle = isUserLoading ? "Loading Collections..." : `${userDetails?.username}'s Collections`;
 

@@ -1,37 +1,45 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { HelmetProvider } from "@dr.pogodin/react-helmet";
+import { useQueryClient } from "@tanstack/react-query";
 
 import "./index.css";
-import Layout from "./components/layout/Layout";
-import { AuthProvider } from "./features/auth";
+import { AuthProvider, useAuth } from "./features/auth";
 import { PageMeta } from "./components/ui/PageMeta";
 
-// Feature Routes
-import { AuthRoutes } from "./features/auth/routes";
-import { GamesRoutes } from "./features/games/routes";
-import { UserRoutes } from "./features/users/routes";
-import { NotificationRoutes } from "./features/notifications/routes";
-import { CollectionsRoutes } from "./features/collections/routes";
-import { MiscRoutes } from "./features/misc/routes";
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+
+// Create a new router instance
+export const router = createRouter({
+  routeTree,
+  context: {
+    queryClient: undefined!,
+    auth: undefined!,
+  },
+  defaultPreload: "intent",
+});
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
+function InnerApp() {
+  const auth = useAuth();
+  const queryClient = useQueryClient();
+
+  return <RouterProvider router={router} context={{ auth, queryClient }} />;
+}
 
 function App(): React.JSX.Element {
   return (
     <HelmetProvider>
       <PageMeta />
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Layout />}>
-              {AuthRoutes}
-              {GamesRoutes}
-              {UserRoutes}
-              {NotificationRoutes}
-              {CollectionsRoutes}
-              {MiscRoutes}
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <InnerApp />
       </AuthProvider>
     </HelmetProvider>
   );
