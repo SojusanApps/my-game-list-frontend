@@ -72,17 +72,26 @@ export default function HomePage(): React.JSX.Element {
       <PageMeta title="Home" />
       <Stack gap={64} maw={1280} mx="auto" px={16}>
         <Box component="section">
-          <SectionHeader title="Highest Rated Games" viewMoreHref="/search" />
+          <SectionHeader
+            title="Highest Rated Games"
+            viewMoreHref={{ to: "/search", search: { ordering: "rank_position", category: "games" } }}
+          />
           {renderGameCarousel(highestRatedGames?.results, isHighestRatedLoading)}
         </Box>
 
         <Box component="section">
-          <SectionHeader title="Most Popular Games" viewMoreHref="/search" />
+          <SectionHeader
+            title="Most Popular Games"
+            viewMoreHref={{ to: "/search", search: { ordering: "popularity", category: "games" } }}
+          />
           {renderGameCarousel(mostPopularGames?.results, isMostPopularLoading)}
         </Box>
 
         <Box component="section">
-          <SectionHeader title="Recently Added Games" viewMoreHref="/search" />
+          <SectionHeader
+            title="Recently Added Games"
+            viewMoreHref={{ to: "/search", search: { ordering: "-created_at", category: "games" } }}
+          />
           {renderGameCarousel(recentlyAddedGames?.results, isRecentlyAddedLoading)}
         </Box>
       </Stack>

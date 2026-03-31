@@ -1,15 +1,18 @@
 import React from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, LinkComponentProps } from "@tanstack/react-router";
 import { Box, Group, Text, Title } from "@mantine/core";
 import styles from "./SectionHeader.module.css";
 
 interface SectionHeaderProps {
   title: string;
-  viewMoreHref?: string;
+  viewMoreHref?: string | LinkComponentProps<"a">;
   className?: string;
 }
 
 export function SectionHeader({ title, viewMoreHref, className }: Readonly<SectionHeaderProps>) {
+  const isObj = typeof viewMoreHref === "object" && viewMoreHref !== null;
+  const linkProps = isObj ? viewMoreHref : { to: viewMoreHref };
+
   return (
     <Group
       justify="space-between"
@@ -33,7 +36,11 @@ export function SectionHeader({ title, viewMoreHref, className }: Readonly<Secti
         </Title>
       </Group>
       {viewMoreHref && (
-        <Link to={viewMoreHref} className={styles.viewMoreLink}>
+        <Link
+          to={linkProps.to as "/"}
+          search={"search" in linkProps ? linkProps.search : undefined}
+          className={styles.viewMoreLink}
+        >
           View More{" "}
           <Text component="span" fz="lg">
             →

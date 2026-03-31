@@ -14,6 +14,8 @@ import {
 } from "@/client";
 import { useSearchInfiniteQuery, SearchCategory } from "@/features/games/hooks/useSearchQueries";
 import { InfiniteData } from "@tanstack/react-query";
+import { Route } from "@/routes/search";
+import { useNavigate } from "@tanstack/react-router";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Box, Group, Skeleton, Stack, Text, Title, UnstyledButton, TextInput, Drawer } from "@mantine/core";
 import { GridList } from "@/components/ui/GridList";
@@ -112,11 +114,36 @@ function DisplaySearchResults({
 }
 
 export default function SearchEnginePage(): React.JSX.Element {
-  const [selectedCategory, setSelectedCategory] = React.useState<SearchCategory | null>("games");
-  const [filters, setFilters] = React.useState<Record<string, unknown>>({});
+  const searchParams = Route.useSearch();
+  const navigate = useNavigate({ from: Route.id });
+
+  const selectedCategory = searchParams.category ?? "games";
+
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [hasSearched, setHasSearched] = React.useState(false);
+  const [searchInput, setSearchInput] = React.useState(searchParams.q ?? "");
+
+  React.useEffect(() => {
+    setSearchInput(searchParams.q ?? "");
+  }, [searchParams.q]);
+
+  const { q, ...otherFilters } = searchParams;
+
+  const getQueryKey = (cat: SearchCategory | null) => {
+    if (cat === "users") return "username";
+    if (cat === "companies") return "name";
+    return "title";
+  };
+
+  const queryKey = getQueryKey(selectedCategory);
+
+  const filters: Record<string, unknown> = { ...otherFilters };
+  delete filters.category; // prevent category from leaking into query object
+
+  if (q?.trim()) {
+    filters[queryKey] = q.trim();
+  }
+
+  const hasSearched = Boolean(q?.trim()) || Object.keys(otherFilters).length > 0;
 
   const {
     data: searchResults,
@@ -127,51 +154,45 @@ export default function SearchEnginePage(): React.JSX.Element {
     isFetchingNextPage,
   } = useSearchInfiniteQuery(selectedCategory, filters, { enabled: hasSearched });
 
-  const getQueryKey = (category: SearchCategory | null) => {
-    if (category === "users") return "username";
-    if (category === "companies") return "name";
-    return "title";
-  };
-
   const handleHeroSearch = (e?: React.SyntheticEvent) => {
     if (e) e.preventDefault();
-    const queryKey = getQueryKey(selectedCategory);
-    const newFilters = { ...filters };
 
-    if (searchQuery.trim()) {
-      newFilters[queryKey] = searchQuery.trim();
-    } else {
-      delete newFilters[queryKey];
-    }
-
-    setFilters(newFilters);
-    setHasSearched(true);
+    navigate({
+      search: prev => ({
+        ...prev,
+        q: searchInput.trim() || undefined,
+        category: selectedCategory,
+      }),
+      replace: true,
+    });
   };
 
   const handleCategoryChange = (catId: SearchCategory) => {
-    setSelectedCategory(catId);
-    setHasSearched(false);
-    setFilters({});
-    setSearchQuery("");
+    navigate({
+      search: { category: catId },
+      replace: true,
+    });
+    setSearchInput("");
   };
 
   const prepareFiltersForRequest = (data: SearchFilterValidatorsType) => {
     let filterData: Record<string, unknown> = {};
 
     for (const [key, value] of Object.entries(data)) {
-      if (value === "" || value === undefined || (Array.isArray(value) && value.length === 0)) {
+      if (value === "" || value === undefined || value === null || (Array.isArray(value) && value.length === 0)) {
         continue;
       }
       filterData = { ...filterData, [key]: value instanceof Date ? value.toISOString().split("T")[0] : value };
     }
 
-    const queryKey = getQueryKey(selectedCategory);
-    if (searchQuery.trim()) {
-      filterData[queryKey] = searchQuery.trim();
-    }
-
-    setFilters(filterData);
-    setHasSearched(true);
+    navigate({
+      search: prev => ({
+        ...filterData,
+        q: prev.q,
+        category: prev.category,
+      }),
+      replace: true,
+    });
     setDrawerOpen(false);
   };
 
@@ -301,8 +322,8 @@ export default function SearchEnginePage(): React.JSX.Element {
             <TextInput
               size="lg"
               placeholder={`Search ${selectedCategory}...`}
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.currentTarget.value)}
+              value={searchInput}
+              onChange={e => setSearchInput(e.currentTarget.value)}
               leftSection={<IconSearch size={20} color="var(--color-text-400)" />}
               style={{ flex: 1 }}
               styles={{
@@ -344,7 +365,10 @@ export default function SearchEnginePage(): React.JSX.Element {
           padding="xl"
         >
           {selectedCategory === "games" && (
-            <GameSearchFilter onSubmitHandlerCallback={data => prepareFiltersForRequest(data)} />
+            <GameSearchFilter
+              initialFilters={otherFilters}
+              onSubmitHandlerCallback={data => prepareFiltersForRequest(data)}
+            />
           )}
         </Drawer>
 

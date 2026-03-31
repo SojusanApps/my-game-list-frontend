@@ -73,21 +73,34 @@ export type ValidationInput = z.input<typeof validationSchema>;
 
 function GameSearchFilter({
   onSubmitHandlerCallback,
-}: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void }>) {
+  initialFilters,
+}: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void; initialFilters?: Record<string, unknown> }>) {
   const form = useForm<ValidationInput>({
     initialValues: {
-      release_date_after: null,
-      release_date_before: null,
-      publisher: "",
-      developer: "",
-      platforms: [],
-      genres: [],
-      game_engines: [],
-      game_modes: [],
-      game_status: [],
-      game_type: [],
-      player_perspectives: [],
-      ordering: "",
+      release_date_after: initialFilters?.release_date_after
+        ? new Date(initialFilters.release_date_after as string)
+        : null,
+      release_date_before: initialFilters?.release_date_before
+        ? new Date(initialFilters.release_date_before as string)
+        : null,
+      publisher: (initialFilters?.publisher as string) ?? "",
+      developer: (initialFilters?.developer as string) ?? "",
+      platforms: (initialFilters?.platforms as string[]) ?? [],
+      genres: (initialFilters?.genres as string[]) ?? [],
+      game_engines: (initialFilters?.game_engines as string[]) ?? [],
+      game_modes: (initialFilters?.game_modes as string[]) ?? [],
+      game_status: (initialFilters?.game_status as string[]) ?? [],
+      game_type: (initialFilters?.game_type as string[]) ?? [],
+      player_perspectives: (initialFilters?.player_perspectives as string[]) ?? [],
+      ordering:
+        (initialFilters?.ordering as
+          | "-created_at"
+          | "created_at"
+          | "-rank_position"
+          | "rank_position"
+          | "-popularity"
+          | "popularity"
+          | "") ?? "",
     },
     validate: zod4Resolver(validationSchema),
   });
