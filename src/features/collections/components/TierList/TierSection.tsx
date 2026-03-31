@@ -72,10 +72,11 @@ export const TierSection = React.memo(function TierSection({
             onReorder(itemId, sourceTierId, targetTierId, sourceIndex, targetIndex, edge, page)
           }
           onDescriptionChange={newDesc => onDescriptionChange(item.id, newDesc)}
+          onMoveToTier={targetTierId => onItemMove(String(item.id), tier.id, targetTierId)}
         />
       );
     },
-    [tier.id, page, isOwner, onRemove, onReorder, onDescriptionChange],
+    [tier.id, page, isOwner, onRemove, onReorder, onDescriptionChange, onItemMove],
   );
 
   return (

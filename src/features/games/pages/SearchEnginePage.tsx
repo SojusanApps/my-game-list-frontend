@@ -363,6 +363,7 @@ export default function SearchEnginePage(): React.JSX.Element {
             </Text>
           }
           padding="xl"
+          styles={{ body: { paddingBottom: "120px" } }}
         >
           {selectedCategory === "games" && (
             <GameSearchFilter

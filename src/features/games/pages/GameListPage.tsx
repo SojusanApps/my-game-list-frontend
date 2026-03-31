@@ -198,7 +198,8 @@ export default function GameListPage(): React.JSX.Element {
         itemHeight={106}
         className="custom-scrollbar"
         style={{
-          height: "800px",
+          height: "calc(100vh - 300px)",
+          minHeight: "500px",
           paddingRight: "8px",
         }}
         renderItem={(gameListItem: GameList) => (

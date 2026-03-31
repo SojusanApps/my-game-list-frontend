@@ -3,7 +3,7 @@ import type { CollectionItem } from "@/client";
 import { Button } from "@/components/ui/Button";
 import { IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { Box, Group, Modal, Stack, Text, Title, UnstyledButton } from "@mantine/core";
+import { Box, Flex, Group, Modal, Stack, Text, Title, UnstyledButton } from "@mantine/core";
 import { useBulkReorderCollectionItems } from "@/features/collections/hooks/useCollectionQueries";
 import { getTotalRounds, getTotalDuels } from "../utils/swissTournament";
 import { useRankingSession } from "../hooks/useRankingSession";
@@ -234,8 +234,10 @@ export default function PairwiseRankingModal({
 
     if (state === "dueling" && currentDuel) {
       return (
-        <Box style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-          <DuelView duel={currentDuel} onChoice={submitChoice} onSkip={skipDuel} />
+        <Box style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
+          <Box style={{ margin: "auto", width: "100%", paddingBlock: "8px" }}>
+            <DuelView duel={currentDuel} onChoice={submitChoice} onSkip={skipDuel} />
+          </Box>
         </Box>
       );
     }
@@ -271,23 +273,37 @@ export default function PairwiseRankingModal({
       >
         <Stack gap={0} style={{ height: "100%" }}>
           {/* Header */}
-          <Group
+          <Flex
+            direction={{ base: "column", sm: "row" }}
             justify="space-between"
-            align="center"
-            p={24}
-            pb={16}
+            align={{ base: "stretch", sm: "center" }}
+            gap={{ base: 12, sm: 16 }}
+            p={{ base: 16, sm: 24 }}
+            pb={{ base: 12, sm: 16 }}
             style={{ borderBottom: "1px solid var(--color-background-100)" }}
           >
-            <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-              <Title
-                order={2}
-                fz="xl"
-                fw={900}
-                c="var(--color-text-900)"
-                style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
-              >
-                Pairwise Ranking
-              </Title>
+            <Stack gap={12} style={{ flex: 1, minWidth: 0 }}>
+              <Group justify="space-between" wrap="nowrap">
+                <Title
+                  order={2}
+                  fz={{ base: "lg", sm: "xl" }}
+                  fw={900}
+                  c="var(--color-text-900)"
+                  style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
+                >
+                  Pairwise Ranking
+                </Title>
+                <UnstyledButton
+                  hiddenFrom="sm"
+                  onClick={handleClose}
+                  p={6}
+                  bg="var(--color-background-50)"
+                  c="var(--color-text-400)"
+                  style={{ borderRadius: 12, border: "1px solid var(--color-background-100)" }}
+                >
+                  <IconX size={18} />
+                </UnstyledButton>
+              </Group>
               {state !== "idle" && (
                 <Box w="100%" maw={384}>
                   <ProgressBar progress={progress} />
@@ -295,7 +311,7 @@ export default function PairwiseRankingModal({
               )}
             </Stack>
 
-            <Group gap={8}>
+            <Flex gap={8} justify={{ base: "flex-start", sm: "flex-end" }} align="center">
               {state === "dueling" && (
                 <Button
                   onClick={viewResults}
@@ -317,6 +333,7 @@ export default function PairwiseRankingModal({
                 </Button>
               )}
               <UnstyledButton
+                visibleFrom="sm"
                 onClick={handleClose}
                 p={8}
                 bg="var(--color-background-50)"
@@ -325,11 +342,11 @@ export default function PairwiseRankingModal({
               >
                 <IconX size={20} />
               </UnstyledButton>
-            </Group>
-          </Group>
+            </Flex>
+          </Flex>
 
           {/* Body */}
-          <Box style={{ flex: 1, overflowY: "auto", padding: 24 }}>{renderBody()}</Box>
+          <Box style={{ flex: 1, overflowY: "auto", padding: "16px" }}>{renderBody()}</Box>
         </Stack>
       </Modal>
 

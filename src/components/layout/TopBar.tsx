@@ -151,30 +151,27 @@ function TopBar(): React.JSX.Element {
       <Drawer
         opened={opened}
         onClose={close}
-        size="100%"
+        size="xs"
         padding="md"
-        title="Navigation"
+        title={
+          <Text fw={700} fz="lg" c="var(--color-text-900)">
+            Menu
+          </Text>
+        }
         hiddenFrom="lg"
         zIndex={1000000}
       >
-        <Stack gap="md" mt="md" component="ul" style={{ listStyle: "none", padding: 0 }}>
+        <Stack gap="sm" mt="md" component="ul" style={{ listStyle: "none", padding: 0 }}>
+          <Box component="li" mb="md">
+            <SearchBar variant="light" />
+          </Box>
           <Box component="li">
-            <Link
-              to="/search"
-              className={styles.navLink}
-              onClick={close}
-              style={{ display: "block", padding: "8px 0" }}
-            >
+            <Link to="/search" className={styles.mobileNavLink} onClick={close}>
               Search Engine
             </Link>
           </Box>
           <Box component="li">
-            <Link
-              to="/release-calendar"
-              className={styles.navLink}
-              onClick={close}
-              style={{ display: "block", padding: "8px 0" }}
-            >
+            <Link to="/release-calendar" className={styles.mobileNavLink} onClick={close}>
               Release Calendar
             </Link>
           </Box>
@@ -185,9 +182,8 @@ function TopBar(): React.JSX.Element {
                 <Link
                   to={"/game-list/$id"}
                   params={{ id: currentUserId?.toString() || "" }}
-                  className={styles.navLink}
+                  className={styles.mobileNavLink}
                   onClick={close}
-                  style={{ display: "block", padding: "8px 0" }}
                 >
                   Game List
                 </Link>
@@ -196,9 +192,8 @@ function TopBar(): React.JSX.Element {
                 <Link
                   to={"/profile/$id/collections"}
                   params={{ id: currentUserId?.toString() || "" }}
-                  className={styles.navLink}
+                  className={styles.mobileNavLink}
                   onClick={close}
-                  style={{ display: "block", padding: "8px 0" }}
                 >
                   Collections
                 </Link>

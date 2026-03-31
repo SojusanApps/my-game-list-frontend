@@ -1,4 +1,4 @@
-import { Box, Group, NumberInput, Stack, Text, UnstyledButton, ActionIcon, Tooltip } from "@mantine/core";
+import { Box, Group, NumberInput, Stack, Text, UnstyledButton, ActionIcon, Tooltip, Menu } from "@mantine/core";
 import {
   IconGripVertical,
   IconChevronUp,
@@ -7,6 +7,7 @@ import {
   IconTrash,
   IconNoteOff,
   IconExternalLink,
+  IconDotsVertical,
 } from "@tabler/icons-react";
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
@@ -97,47 +98,88 @@ function ActionButtons({
   onRemove?: () => void;
 }>) {
   return (
-    <Group gap={8} className={rowStyles.rankingRowActions} wrap="nowrap">
-      <Tooltip label="View details" withArrow position="top">
-        <ActionIcon component={Link} to={`/game/${gameId}`} variant="light" color="indigo" size="lg" radius="md">
-          <IconExternalLink size={18} stroke={1.5} />
-        </ActionIcon>
-      </Tooltip>
+    <>
+      <Group gap={8} className={rowStyles.rankingRowActionsDesktop} wrap="nowrap" visibleFrom="sm">
+        <Tooltip label="View details" withArrow position="top">
+          <ActionIcon component={Link} to={`/game/${gameId}`} variant="light" color="indigo" size="lg" radius="md">
+            <IconExternalLink size={18} stroke={1.5} />
+          </ActionIcon>
+        </Tooltip>
 
-      <Tooltip label={hasDescription ? "Edit Note" : "Add Note"} withArrow position="top">
-        <ActionIcon
-          variant="light"
-          color={hasDescription ? "blue" : "gray"}
-          onClick={onDescriptionClick}
-          size="lg"
-          radius="md"
-          display={isOwner ? "inline-flex" : "none"}
-          className={hasDescription ? undefined : rowStyles.rankingRowAddNoteBtn}
-        >
-          {hasDescription ? <IconNote size={18} stroke={1.5} /> : <IconNoteOff size={18} stroke={1.5} />}
-        </ActionIcon>
-      </Tooltip>
-
-      {onRemove && (
-        <Tooltip label="Remove game" withArrow position="top">
+        <Tooltip label={hasDescription ? "Edit Note" : "Add Note"} withArrow position="top">
           <ActionIcon
             variant="light"
-            color="red"
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
-              onRemove();
-            }}
+            color={hasDescription ? "blue" : "gray"}
+            onClick={onDescriptionClick}
             size="lg"
             radius="md"
             display={isOwner ? "inline-flex" : "none"}
-            className={rowStyles.rankingRowRemove}
+            className={hasDescription ? undefined : rowStyles.rankingRowAddNoteBtn}
           >
-            <IconTrash size={18} stroke={1.5} />
+            {hasDescription ? <IconNote size={18} stroke={1.5} /> : <IconNoteOff size={18} stroke={1.5} />}
           </ActionIcon>
         </Tooltip>
-      )}
-    </Group>
+
+        {onRemove && (
+          <Tooltip label="Remove game" withArrow position="top">
+            <ActionIcon
+              variant="light"
+              color="red"
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                onRemove();
+              }}
+              size="lg"
+              radius="md"
+              display={isOwner ? "inline-flex" : "none"}
+              className={rowStyles.rankingRowRemove}
+            >
+              <IconTrash size={18} stroke={1.5} />
+            </ActionIcon>
+          </Tooltip>
+        )}
+      </Group>
+
+      <Box hiddenFrom="sm" className={rowStyles.rankingRowActionsMobile}>
+        <Menu position="bottom-end" withArrow shadow="md">
+          <Menu.Target>
+            <ActionIcon variant="subtle" color="gray" size="lg" radius="md">
+              <IconDotsVertical size={18} stroke={1.5} />
+            </ActionIcon>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item component={Link} to={`/game/${gameId}`} leftSection={<IconExternalLink size={16} />}>
+              View details
+            </Menu.Item>
+
+            {isOwner && (
+              <Menu.Item
+                leftSection={hasDescription ? <IconNote size={16} /> : <IconNoteOff size={16} />}
+                onClick={onDescriptionClick}
+              >
+                {hasDescription ? "Edit Note" : "Add Note"}
+              </Menu.Item>
+            )}
+
+            {isOwner && onRemove && (
+              <Menu.Item
+                color="red"
+                leftSection={<IconTrash size={16} />}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onRemove();
+                }}
+              >
+                Remove game
+              </Menu.Item>
+            )}
+          </Menu.Dropdown>
+        </Menu>
+      </Box>
+    </>
   );
 }
 
@@ -195,12 +237,12 @@ export const RankingRow = React.memo(
           position: "relative",
           opacity: isDragging ? 0.4 : 1,
           transition: "all 0.2s ease",
-          padding: "12px 16px",
+          padding: "12px",
         }}
       >
-        <Group gap={16} align="center" wrap="nowrap">
+        <div className={rowStyles.rankingRowInner}>
           {/* Controls: Drag, Up/Down, Rank */}
-          <Group gap={12} align="center" wrap="nowrap">
+          <div className={rowStyles.rankingRowControlsGroup}>
             <RankControls
               isOwner={isOwner}
               rank={rank}
@@ -220,8 +262,8 @@ export const RankingRow = React.memo(
                 hideControls
                 styles={{
                   input: {
-                    width: 54,
-                    height: 40,
+                    width: 50,
+                    height: 36,
                     borderRadius: 12,
                     background: "var(--color-primary-50)",
                     border: "2px solid var(--color-primary-300)",
@@ -229,6 +271,7 @@ export const RankingRow = React.memo(
                     fontWeight: 800,
                     color: "var(--color-primary-600)",
                     textAlign: "center",
+                    padding: 0,
                   },
                 }}
               />
@@ -240,11 +283,11 @@ export const RankingRow = React.memo(
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: 54,
-                  height: 44,
+                  width: 48,
+                  height: 36,
                   borderRadius: 12,
                   background: isOwner ? "var(--color-background-50)" : "transparent",
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: 900,
                   color: "var(--color-text-900)",
                   flexShrink: 0,
@@ -257,71 +300,73 @@ export const RankingRow = React.memo(
                 #{rank}
               </UnstyledButton>
             )}
-          </Group>
+          </div>
 
-          {/* Game Image */}
-          <Box
-            style={{
-              width: 56,
-              height: 74,
-              borderRadius: 10,
-              overflow: "hidden",
-              flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              border: "1px solid var(--color-background-100)",
-            }}
-          >
-            <SafeImage
-              src={getIGDBImageURL(coverImageId ?? "", IGDBImageSize.COVER_SMALL_90_128)}
-              alt={title}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </Box>
-
-          {/* Title and Inline Description */}
-          <Stack gap={2} style={{ flex: 1, minWidth: 0, justifyContent: "center" }}>
-            <Text
-              fw={800}
-              fz="lg"
+          <div className={rowStyles.rankingRowContent}>
+            {/* Game Image */}
+            <Box
               style={{
+                width: 48,
+                height: 64,
+                borderRadius: 8,
                 overflow: "hidden",
-                display: "-webkit-box",
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: "vertical",
-                color: "var(--color-text-900)",
-                lineHeight: 1.2,
+                flexShrink: 0,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                border: "1px solid var(--color-background-100)",
               }}
             >
-              {title}
-            </Text>
-            {hasDescription && (
+              <SafeImage
+                src={getIGDBImageURL(coverImageId ?? "", IGDBImageSize.COVER_SMALL_90_128)}
+                alt={title}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </Box>
+
+            {/* Title and Inline Description */}
+            <Stack gap={2} style={{ flex: 1, minWidth: 0, justifyContent: "center" }}>
               <Text
-                size="sm"
-                c="var(--color-text-500)"
+                fw={800}
+                fz="sm"
                 style={{
                   overflow: "hidden",
                   display: "-webkit-box",
                   WebkitLineClamp: 1,
                   WebkitBoxOrient: "vertical",
-                  fontStyle: "italic",
-                  lineHeight: 1.4,
+                  color: "var(--color-text-900)",
+                  lineHeight: 1.2,
                 }}
               >
-                “{description}”
+                {title}
               </Text>
-            )}
-            {!hasDescription && isOwner && (
-              <Text
-                size="sm"
-                c="var(--color-text-300)"
-                style={{ cursor: "pointer" }}
-                onClick={onDescriptionClick}
-                className={rowStyles.addNotePrompt}
-              >
-                + Add a note
-              </Text>
-            )}
-          </Stack>
+              {hasDescription && (
+                <Text
+                  size="xs"
+                  c="var(--color-text-500)"
+                  style={{
+                    overflow: "hidden",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 1,
+                    WebkitBoxOrient: "vertical",
+                    fontStyle: "italic",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  “{description}”
+                </Text>
+              )}
+              {!hasDescription && isOwner && (
+                <Text
+                  size="xs"
+                  c="var(--color-text-300)"
+                  style={{ cursor: "pointer" }}
+                  onClick={onDescriptionClick}
+                  className={rowStyles.addNotePrompt}
+                >
+                  + Add a note
+                </Text>
+              )}
+            </Stack>
+          </div>
 
           {/* Actions */}
           <ActionButtons
@@ -331,7 +376,7 @@ export const RankingRow = React.memo(
             onDescriptionClick={onDescriptionClick}
             onRemove={onRemove}
           />
-        </Group>
+        </div>
       </Box>
     );
   },

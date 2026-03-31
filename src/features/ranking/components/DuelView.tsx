@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Group, Kbd, Stack, Text } from "@mantine/core";
+import { Box, Flex, Group, Kbd, Stack, Text } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
 import { DuelGameCard } from "./DuelGameCard";
 import type { CurrentDuel, DuelChoice } from "../types";
@@ -47,16 +47,22 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
   }, [onChoice, onSkip]);
 
   return (
-    <Stack align="center" gap={32} style={{ animation: "fade-in 300ms ease-in-out" }}>
+    <Stack align="center" gap={16} style={{ animation: "fade-in 300ms ease-in-out" }}>
       {/* Cards */}
-      <Group align="center" gap={32} wrap="nowrap" justify="center" w="100%">
+      <Flex
+        align="center"
+        gap={{ base: 16, sm: 32 }}
+        direction={{ base: "column", sm: "row" }}
+        justify="center"
+        w="100%"
+      >
         <DuelGameCard item={duel.itemA} side="left" onClick={() => onChoice("A")} />
 
         {/* VS divider */}
         <Group justify="center" align="center" style={{ flexShrink: 0 }}>
           <Box
-            w={56}
-            h={56}
+            w={{ base: 40, sm: 56 }}
+            h={{ base: 40, sm: 56 }}
             bg="var(--color-background-50)"
             style={{
               display: "flex",
@@ -67,58 +73,89 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
               boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)",
             }}
           >
-            <Text component="span" fz="xl" fw={900} c="var(--color-text-400)" style={{ letterSpacing: "-0.05em" }}>
+            <Text
+              component="span"
+              fz={{ base: "sm", sm: "xl" }}
+              fw={900}
+              c="var(--color-text-400)"
+              style={{ letterSpacing: "-0.05em" }}
+            >
               VS
             </Text>
           </Box>
         </Group>
 
         <DuelGameCard item={duel.itemB} side="right" onClick={() => onChoice("B")} />
-      </Group>
+      </Flex>
 
       {/* Action buttons */}
-      <Stack align="center" gap={16}>
-        <Group gap={12}>
+      <Stack align="center" gap={16} w="100%">
+        <Flex gap={12} justify="center" direction={{ base: "column", xs: "row" }} w="100%">
           <Button
             onClick={() => onChoice("A")}
-            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 32 }}
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 8 }}
+            fullWidth
           >
-            <Text component="span">Choose Left</Text>{" "}
-            <Kbd size="xs" ml={8} style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)" }}>
-              ←
-            </Kbd>
+            <Text component="span" hiddenFrom="sm">
+              Choose Top
+            </Text>
+            <Text component="span" visibleFrom="sm" lh={1} style={{ display: "flex", alignItems: "center" }}>
+              Choose Left
+              <Kbd
+                size="xs"
+                ml={6}
+                style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)", verticalAlign: "middle" }}
+              >
+                ←
+              </Kbd>
+            </Text>
           </Button>
           <Button
             onClick={() => onChoice("tie")}
             variant="outline"
-            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 24 }}
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 8 }}
+            fullWidth
           >
-            <Text component="span">Tie</Text>{" "}
-            <Kbd size="xs" ml={8} style={{ opacity: 0.6 }}>
-              Enter
-            </Kbd>
+            <Text component="span" lh={1} style={{ display: "flex", alignItems: "center" }}>
+              Tie
+              <Kbd size="xs" ml={6} style={{ opacity: 0.6, verticalAlign: "middle" }} visibleFrom="sm">
+                Enter
+              </Kbd>
+            </Text>
           </Button>
           <Button
             onClick={() => onChoice("B")}
-            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 32 }}
+            style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 8 }}
+            fullWidth
           >
-            <Text component="span">Choose Right</Text>{" "}
-            <Kbd size="xs" ml={8} style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)" }}>
-              →
-            </Kbd>
+            <Text component="span" hiddenFrom="sm">
+              Choose Bottom
+            </Text>
+            <Text component="span" visibleFrom="sm" lh={1} style={{ display: "flex", alignItems: "center" }}>
+              Choose Right
+              <Kbd
+                size="xs"
+                ml={6}
+                style={{ opacity: 0.6, background: "rgba(255,255,255,0.2)", verticalAlign: "middle" }}
+              >
+                →
+              </Kbd>
+            </Text>
           </Button>
-        </Group>
+        </Flex>
 
         <Button onClick={onSkip} variant="ghost" size="sm" style={{ color: "var(--color-text-400)" }}>
-          <Text component="span">Skip this pair</Text>{" "}
-          <Kbd size="xs" ml={4} style={{ opacity: 0.6 }}>
-            S
-          </Kbd>
+          <Text component="span" style={{ display: "flex", alignItems: "center" }}>
+            Skip this pair
+            <Kbd size="xs" ml={6} style={{ opacity: 0.6, verticalAlign: "middle" }} visibleFrom="sm">
+              S
+            </Kbd>
+          </Text>
         </Button>
       </Stack>
 
       {/* Keyboard hint */}
-      <Text size="xs" style={{ color: "var(--color-text-400)" }} ta="center">
+      <Text size="xs" style={{ color: "var(--color-text-400)" }} ta="center" visibleFrom="sm">
         Use keyboard:{" "}
         <Text component="span" fw={700}>
           ← / 1

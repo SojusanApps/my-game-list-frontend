@@ -8,7 +8,11 @@ import { IconSearch, IconX } from "@tabler/icons-react";
 import { useDebounce } from "@/utils/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 
-export default function SearchBar(): React.JSX.Element {
+interface SearchBarProps {
+  variant?: "light" | "dark";
+}
+
+export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -133,11 +137,7 @@ export default function SearchBar(): React.JSX.Element {
   };
 
   return (
-    <Box
-      component="section"
-      ref={containerRef}
-      style={{ position: "relative", width: "100%", maxWidth: "448px", margin: "0 16px" }}
-    >
+    <Box component="section" ref={containerRef} style={{ position: "relative", width: "100%", maxWidth: "448px" }}>
       <Box style={{ position: "relative" }}>
         <Box
           component="input"
@@ -145,9 +145,9 @@ export default function SearchBar(): React.JSX.Element {
           placeholder="Search for a game..."
           style={{
             width: "100%",
-            background: "rgba(255,255,255,0.1)",
-            border: "1px solid rgba(255,255,255,0.2)",
-            color: "white",
+            background: variant === "dark" ? "rgba(255,255,255,0.1)" : "var(--color-background-200)",
+            border: variant === "dark" ? "1px solid rgba(255,255,255,0.2)" : "1px solid var(--color-background-300)",
+            color: variant === "dark" ? "white" : "var(--color-text-900)",
             borderRadius: "9999px",
             padding: "8px 40px 8px 16px",
             fontSize: "14px",
@@ -169,11 +169,20 @@ export default function SearchBar(): React.JSX.Element {
           }}
         >
           {search.length > 0 ? (
-            <UnstyledButton onClick={handleClose} style={{ color: "var(--color-primary-300)" }}>
+            <UnstyledButton
+              onClick={handleClose}
+              style={{ color: variant === "dark" ? "var(--color-primary-300)" : "var(--color-text-500)" }}
+            >
               <IconX style={{ width: 20, height: 20 }} />
             </UnstyledButton>
           ) : (
-            <IconSearch style={{ width: 20, height: 20, color: "var(--color-primary-400)" }} />
+            <IconSearch
+              style={{
+                width: 20,
+                height: 20,
+                color: variant === "dark" ? "var(--color-primary-400)" : "var(--color-text-500)",
+              }}
+            />
           )}
         </Box>
       </Box>

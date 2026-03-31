@@ -130,6 +130,11 @@ function GameSearchFilter({
               { value: "popularity", label: "Popularity" },
               { value: "-popularity", label: "Popularity (Descending)" },
             ]}
+            comboboxProps={{
+              withinPortal: false,
+              position: "bottom",
+              middlewares: { flip: false, shift: false },
+            }}
             {...form.getInputProps("ordering")}
           />
           <Box style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
@@ -140,6 +145,11 @@ function GameSearchFilter({
               placeholder="Year..."
               clearable
               valueFormat="YYYY"
+              popoverProps={{
+                withinPortal: false,
+                position: "bottom",
+                middlewares: { flip: false, shift: false },
+              }}
               {...form.getInputProps("release_date_after")}
             />
             <YearPickerInput
@@ -149,6 +159,11 @@ function GameSearchFilter({
               placeholder="Year..."
               clearable
               valueFormat="YYYY"
+              popoverProps={{
+                withinPortal: false,
+                position: "bottom",
+                middlewares: { flip: false, shift: false },
+              }}
               {...form.getInputProps("release_date_before")}
             />
           </Box>
