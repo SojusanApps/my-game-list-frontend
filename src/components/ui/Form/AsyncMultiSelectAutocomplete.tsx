@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MultiSelect, Loader } from "@mantine/core";
+import { MultiSelect, Loader, ComboboxProps } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { InfiniteData } from "@tanstack/react-query";
 
@@ -33,6 +33,7 @@ type AsyncMultiSelectAutocompleteProps<T> = {
   value?: string[];
   onChange?: (value: string[]) => void;
   error?: React.ReactNode;
+  comboboxProps?: ComboboxProps;
 };
 
 export default function AsyncMultiSelectAutocomplete<T>({
@@ -49,6 +50,7 @@ export default function AsyncMultiSelectAutocomplete<T>({
   value,
   onChange,
   error,
+  comboboxProps,
 }: Readonly<AsyncMultiSelectAutocompleteProps<T>>) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [debouncedSearch] = useDebouncedValue(searchTerm, 300);
@@ -106,6 +108,12 @@ export default function AsyncMultiSelectAutocomplete<T>({
       scrollAreaProps={{ viewportRef: dropdownRef, onScrollPositionChange: handleDropdownScroll }}
       rightSection={isLoading || isFetchingNextPage ? <Loader size="xs" /> : undefined}
       nothingFoundMessage={isLoading ? "Searching..." : "No results found"}
+      comboboxProps={{
+        withinPortal: false,
+        position: "bottom",
+        middlewares: { flip: false, shift: false },
+        ...comboboxProps,
+      }}
     />
   );
 }

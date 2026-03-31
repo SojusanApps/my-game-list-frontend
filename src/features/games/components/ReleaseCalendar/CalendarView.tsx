@@ -133,75 +133,77 @@ export default function CalendarView(): React.JSX.Element {
     const maxVisible = isWeekView ? 3 : 2;
 
     return (
-      <Box className={styles.calendarContainer}>
-        <Box className={styles.calendarGridHeader}>
-          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
-            <Text key={day} fw={700} ta="center" c="dimmed" size="sm" tt="uppercase">
-              {day}
-            </Text>
-          ))}
-        </Box>
-        <Box className={styles.calendarGrid} data-view={viewMode}>
-          {daysGrid.map(dayObj => {
-            const dStr = formatISODate(dayObj);
-            const games = gamesByDate.get(dStr) || [];
-            const isToday = formatISODate(new Date()) === dStr;
-            const isCurrentMonth = dayObj.getMonth() === currentDate.getMonth();
+      <Box className={styles.calendarGridWrapper}>
+        <Box className={styles.calendarGridInner}>
+          <Box className={styles.calendarGridHeader}>
+            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
+              <Text key={day} fw={700} ta="center" c="dimmed" size="sm" tt="uppercase">
+                {day}
+              </Text>
+            ))}
+          </Box>
+          <Box className={styles.calendarGrid} data-view={viewMode}>
+            {daysGrid.map(dayObj => {
+              const dStr = formatISODate(dayObj);
+              const games = gamesByDate.get(dStr) || [];
+              const isToday = formatISODate(new Date()) === dStr;
+              const isCurrentMonth = dayObj.getMonth() === currentDate.getMonth();
 
-            return (
-              <Box
-                key={dStr}
-                className={cn(
-                  styles.dayCell,
-                  !isCurrentMonth && !isWeekView && styles.dayCellOut,
-                  isToday && styles.dayCellToday,
-                )}
-              >
-                <Box className={styles.dayHeader}>
-                  <Text size="sm">{dayObj.getDate()}</Text>
-                </Box>
-                <Box className={styles.gameList} mt={8}>
-                  {games.slice(0, maxVisible).map(game => (
-                    <ItemOverlay
-                      key={game.id}
-                      itemPageUrl={`/game/${game.id}`}
-                      itemCoverUrl={
-                        game.cover_image_id
-                          ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
-                          : undefined
-                      }
-                      name={game.title}
-                      status={undefined}
-                      rating={undefined}
-                      releaseDate={game.release_date}
-                      className={styles.overlayItem}
-                    />
-                  ))}
-                  {games.length > maxVisible && (
-                    <Text size="xs" ta="center" c="dimmed" mt={4}>
-                      +{games.length - maxVisible} more
-                    </Text>
+              return (
+                <Box
+                  key={dStr}
+                  className={cn(
+                    styles.dayCell,
+                    !isCurrentMonth && !isWeekView && styles.dayCellOut,
+                    isToday && styles.dayCellToday,
+                  )}
+                >
+                  <Box className={styles.dayHeader}>
+                    <Text size="sm">{dayObj.getDate()}</Text>
+                  </Box>
+                  <Box className={styles.gameList} mt={8}>
+                    {games.slice(0, maxVisible).map(game => (
+                      <ItemOverlay
+                        key={game.id}
+                        itemPageUrl={`/game/${game.id}`}
+                        itemCoverUrl={
+                          game.cover_image_id
+                            ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
+                            : undefined
+                        }
+                        name={game.title}
+                        status={undefined}
+                        rating={undefined}
+                        releaseDate={game.release_date}
+                        className={styles.overlayItem}
+                      />
+                    ))}
+                    {games.length > maxVisible && (
+                      <Text size="xs" ta="center" c="dimmed" mt={4}>
+                        +{games.length - maxVisible} more
+                      </Text>
+                    )}
+                  </Box>
+
+                  {games.length > 0 && (
+                    <Button
+                      className={styles.seeAllButton}
+                      onClick={() => setSelectedDayObj({ opened: true, dateStr: dStr })}
+                    >
+                      See all
+                    </Button>
                   )}
                 </Box>
-
-                {games.length > 0 && (
-                  <Button
-                    className={styles.seeAllButton}
-                    onClick={() => setSelectedDayObj({ opened: true, dateStr: dStr })}
-                  >
-                    See all
-                  </Button>
-                )}
-              </Box>
-            );
-          })}
+              );
+            })}
+          </Box>
         </Box>
       </Box>
     );
   };
 
   return (
-    <Stack gap={24}>
+    <Stack gap={24} className={styles.calendarContainer}>
       <Group justify="space-between" align="center" wrap="wrap">
         <Group>
           <ActionIcon variant="default" size="lg" radius="md" onClick={handlePrev}>

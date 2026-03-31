@@ -32,6 +32,7 @@ interface SortableGameCardProps {
     targetIndex: number,
     edge: Edge | null,
   ) => void;
+  onMoveToTier?: (targetTierId: string) => void;
 }
 
 export const SortableGameCard = React.memo(function SortableGameCard(props: SortableGameCardProps) {
@@ -48,6 +49,7 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
     onDescriptionChange,
     isOwner,
     onReorder,
+    onMoveToTier,
   } = props;
   const dragRef = React.useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -173,6 +175,8 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
         isOwner={isOwner}
         onRemove={onRemove}
         onDescriptionChange={onDescriptionChange}
+        onMoveToTier={onMoveToTier}
+        currentTier={tierId}
       />
       {/* Show placeholder box at destination */}
       {closestEdge && (

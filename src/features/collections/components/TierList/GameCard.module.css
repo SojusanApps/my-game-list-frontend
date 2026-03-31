@@ -69,6 +69,31 @@
   transform: translateX(0);
 }
 
+.desktopActions {
+  display: flex;
+}
+
+.mobileActions {
+  display: none;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .desktopActions {
+    display: none !important;
+  }
+
+  .mobileActions {
+    display: flex !important;
+  }
+
+  .tierGameCardActions {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .actionButton {
   width: 28px;
   height: 28px;

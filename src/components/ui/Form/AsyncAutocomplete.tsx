@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Select, Loader } from "@mantine/core";
+import { Select, Loader, ComboboxProps } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { InfiniteData } from "@tanstack/react-query";
 
@@ -28,6 +28,7 @@ type AsyncAutocompleteProps<T> = {
   value?: string | null;
   onChange?: (value: string | null) => void;
   error?: React.ReactNode;
+  comboboxProps?: ComboboxProps;
 };
 
 export default function AsyncAutocomplete<T>({
@@ -43,6 +44,7 @@ export default function AsyncAutocomplete<T>({
   value,
   onChange,
   error,
+  comboboxProps,
 }: Readonly<AsyncAutocompleteProps<T>>) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [debouncedSearch] = useDebouncedValue(searchTerm, 300);
@@ -99,6 +101,12 @@ export default function AsyncAutocomplete<T>({
       scrollAreaProps={{ viewportRef: dropdownRef, onScrollPositionChange: handleDropdownScroll }}
       rightSection={isLoading || isFetchingNextPage ? <Loader size="xs" /> : undefined}
       nothingFoundMessage={isLoading ? "Searching..." : "No results found"}
+      comboboxProps={{
+        withinPortal: false,
+        position: "bottom",
+        middlewares: { flip: false, shift: false },
+        ...comboboxProps,
+      }}
     />
   );
 }

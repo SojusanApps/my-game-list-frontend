@@ -9,7 +9,7 @@
 }
 
 .rankingRowControls,
-.rankingRowActions {
+.rankingRowActionsDesktop {
   transition: opacity 0.2s ease;
 }
 
@@ -67,4 +67,60 @@
 
 .rankingRow:hover .rankingRowAddNoteBtn {
   opacity: 1;
+}
+
+.rankingRowInner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.rankingRowControlsGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.rankingRowContent {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .rankingRow {
+    padding: 8px !important;
+  }
+
+  .rankingRowInner {
+    gap: 8px;
+  }
+
+  .rankingRowControlsGroup {
+    gap: 4px;
+  }
+
+  .rankingRowContent {
+    gap: 8px;
+  }
+
+  .rankingRow .rankingRowRemove,
+  .rankingRow .rankingRowDrag,
+  .rankingRow .rankingRowArrow,
+  .rankingRow .addNotePrompt,
+  .rankingRow .rankingRowAddNoteBtn {
+    opacity: 1 !important;
+  }
+
+  .rankingRowActionsDesktop {
+    display: none !important;
+  }
+
+  .rankingRowActionsMobile {
+    display: block !important;
+  }
 }

@@ -23,8 +23,8 @@ export const ProgressBar = React.memo(function ProgressBar({ progress }: Readonl
   return (
     <Stack gap={6} style={{ width: "100%" }}>
       {/* Round label */}
-      <Group justify="space-between" align="center" fz="xs">
-        <Text component="span" fw={600} c="var(--color-text-600)">
+      <Group justify="space-between" align="center" fz="xs" wrap="nowrap">
+        <Text component="span" fw={600} c="var(--color-text-600)" style={{ whiteSpace: "nowrap" }}>
           {isBonus ? `Bonus round ${currentRound - totalRounds}` : `Round ${currentRound} of ${totalRounds}`}
           <Text component="span" c="var(--color-text-400)" fw={400} style={{ marginLeft: "6px" }}>
             · duel {duelInRound + 1} of {duelsInRound}
@@ -36,6 +36,7 @@ export const ProgressBar = React.memo(function ProgressBar({ progress }: Readonl
           style={{
             fontVariantNumeric: "tabular-nums",
             color: completionPercent >= 100 ? "var(--color-success-600)" : "var(--color-primary-500)",
+            whiteSpace: "nowrap",
           }}
         >
           {duelsCompleted}/{totalDuels}

@@ -1,12 +1,13 @@
 import * as React from "react";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import { IconPencil, IconX, IconQuestionMark, IconInfoCircle } from "@tabler/icons-react";
-import { Box, Text, UnstyledButton, Tooltip } from "@mantine/core";
+import { IconPencil, IconX, IconQuestionMark, IconInfoCircle, IconDotsVertical } from "@tabler/icons-react";
+import { Box, Text, UnstyledButton, Tooltip, Menu, ActionIcon, Group } from "@mantine/core";
 import { EditDescriptionModal } from "./EditDescriptionModal";
 import { cn } from "@/utils/cn";
 import { Link } from "@tanstack/react-router";
 import cardStyles from "./GameCard.module.css";
+import { TIERS } from "./TierListView";
 
 interface GameCardProps {
   gameId: number;
@@ -17,10 +18,23 @@ interface GameCardProps {
   isOwner?: boolean;
   onRemove?: () => void;
   onDescriptionChange?: (description: string) => void;
+  onMoveToTier?: (tierId: string) => void;
+  currentTier?: string;
 }
 
 export const GameCard = (props: GameCardProps) => {
-  const { gameId, title, coverImageId, className, description, isOwner, onRemove, onDescriptionChange } = props;
+  const {
+    gameId,
+    title,
+    coverImageId,
+    className,
+    description,
+    isOwner,
+    onRemove,
+    onDescriptionChange,
+    onMoveToTier,
+    currentTier,
+  } = props;
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleSaveDescription = (newDescription: string) => {
@@ -85,8 +99,8 @@ export const GameCard = (props: GameCardProps) => {
           </Box>
         )}
 
-        {/* Action Buttons - Top Right Hover Reveal */}
-        <Box className={cardStyles.tierGameCardActions}>
+        {/* Action Buttons - Desktop Hover Reveal */}
+        <Box className={cn(cardStyles.tierGameCardActions, cardStyles.desktopActions)}>
           <Tooltip label="View Details" position="left">
             <UnstyledButton
               component={Link}
@@ -126,6 +140,88 @@ export const GameCard = (props: GameCardProps) => {
               </UnstyledButton>
             </Tooltip>
           )}
+        </Box>
+
+        {/* Action Buttons - Mobile */}
+        <Box className={cn(cardStyles.tierGameCardActions, cardStyles.mobileActions)}>
+          <Menu shadow="md" width={220} position="bottom-end">
+            <Menu.Target>
+              <ActionIcon
+                variant="filled"
+                color="dark"
+                radius="xl"
+                size="md"
+                style={{ boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)" }}
+              >
+                <IconDotsVertical size={16} />
+              </ActionIcon>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item leftSection={<IconInfoCircle size={14} />} component={Link} to={`/game/${gameId}`}>
+                View Details
+              </Menu.Item>
+
+              {isOwner && onDescriptionChange && (
+                <Menu.Item
+                  leftSection={<IconPencil size={14} />}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsModalOpen(true);
+                  }}
+                >
+                  Edit Description
+                </Menu.Item>
+              )}
+
+              {isOwner && onMoveToTier && (
+                <>
+                  <Menu.Divider />
+                  <Menu.Label>Move to Tier</Menu.Label>
+                  {TIERS.filter(t => t.id !== (currentTier || "UNRANKED")).map(t => (
+                    <Menu.Item
+                      key={t.id}
+                      onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onMoveToTier(t.id);
+                      }}
+                    >
+                      <Group gap={8}>
+                        <Box
+                          style={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: "50%",
+                            background: t.color,
+                            border: "1px solid var(--color-background-200)",
+                          }}
+                        />
+                        <Text size="sm">Tier {t.label}</Text>
+                      </Group>
+                    </Menu.Item>
+                  ))}
+                </>
+              )}
+
+              {onRemove && (
+                <>
+                  <Menu.Divider />
+                  <Menu.Item
+                    color="red"
+                    leftSection={<IconX size={14} />}
+                    onClick={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onRemove();
+                    }}
+                  >
+                    Remove
+                  </Menu.Item>
+                </>
+              )}
+            </Menu.Dropdown>
+          </Menu>
         </Box>
       </Box>
 

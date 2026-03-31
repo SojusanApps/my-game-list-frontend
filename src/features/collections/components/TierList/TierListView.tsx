@@ -12,7 +12,7 @@ interface TierListViewProps {
   onRemove?: (itemId: number, gameTitle: string) => void;
 }
 
-const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[] = [
+export const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[] = [
   { id: TierEnum.S, label: "S", color: "#ef4444" },
   { id: TierEnum.A, label: "A", color: "#f97316" },
   { id: TierEnum.B, label: "B", color: "#eab308" },
