@@ -1,6 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SearchEnginePage } from "@/features/games";
+import { z } from "zod";
+
+const ORDERING_OPTIONS = [
+  "-created_at",
+  "created_at",
+  "-rank_position",
+  "rank_position",
+  "-popularity",
+  "popularity",
+] as const;
+
+const searchSchema = z.object({
+  category: z.enum(["games", "companies", "users"]).optional().catch("games"), // NOSONAR
+  q: z.string().optional(),
+  release_date_after: z.string().optional(),
+  release_date_before: z.string().optional(),
+  publisher: z.string().optional(),
+  developer: z.string().optional(),
+  platforms: z.string().array().optional(),
+  genres: z.string().array().optional(),
+  game_engines: z.string().array().optional(),
+  game_modes: z.string().array().optional(),
+  game_status: z.string().array().optional(),
+  game_type: z.string().array().optional(),
+  player_perspectives: z.string().array().optional(),
+  ordering: z.enum(ORDERING_OPTIONS).optional().or(z.literal("")),
+});
 
 export const Route = createFileRoute("/search")({
+  validateSearch: searchSchema,
   component: SearchEnginePage,
 });
