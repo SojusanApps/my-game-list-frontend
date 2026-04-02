@@ -42,7 +42,7 @@ export default function HomePage(): React.JSX.Element {
         slideGap="md"
         plugins={[autoplayPlugin()]}
         styles={{
-          viewport: { overflowY: "visible", overflowX: "clip" },
+          viewport: { overflowY: "visible", overflowX: "clip", padding: "0 16px" },
           container: { zIndex: 2 },
         }}
       >
