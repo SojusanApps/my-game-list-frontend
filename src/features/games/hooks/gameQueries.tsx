@@ -25,6 +25,11 @@ import {
   getGameTypesList,
   getPlayerPerspectivesList,
   getReleaseCalendar,
+  GameGameFollowsListDataQuery,
+  GameFollowCreateDataBody,
+  getGameFollowsList,
+  createGameFollow,
+  deleteGameFollow,
 } from "../api/game";
 import {
   useInfiniteQuery,
@@ -35,7 +40,7 @@ import {
   InfiniteData,
 } from "@tanstack/react-query";
 import { GameList, PaginatedGameSimpleListList, PaginatedGameListList } from "@/client";
-import { gameKeys, gameListKeys, gameReviewKeys, userKeys } from "@/lib/queryKeys";
+import { gameKeys, gameListKeys, gameReviewKeys, userKeys, gameFollowKeys } from "@/lib/queryKeys";
 
 export const useGetPlatformsInfiniteQuery = (name?: string) => {
   return useInfiniteQuery({
@@ -321,5 +326,38 @@ export const useGetCompanyDetail = (id?: number) => {
     queryKey: gameKeys.companyDetail(id ?? -1),
     queryFn: () => getCompanyDetail(id as number),
     enabled: !!id,
+  });
+};
+
+export const useGetGameFollowsList = (query?: GameGameFollowsListDataQuery) => {
+  return useQuery({
+    queryKey: gameFollowKeys.list(query),
+    queryFn: () => getGameFollowsList(query),
+  });
+};
+
+export const useCreateGameFollow = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (body: GameFollowCreateDataBody) => createGameFollow(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: gameFollowKeys.all,
+      });
+    },
+  });
+};
+
+export const useDeleteGameFollow = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (id: number) => deleteGameFollow(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: gameFollowKeys.all,
+      });
+    },
   });
 };

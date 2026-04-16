@@ -39,6 +39,12 @@ export const gameListKeys = {
   randomPtp: (userId: number) => [...gameListKeys.all, "random-ptp", userId] as const,
 };
 
+export const gameFollowKeys = {
+  all: ["game-follows"] as const,
+  lists: () => [...gameFollowKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...gameFollowKeys.lists(), query] as const,
+};
+
 export const userKeys = {
   all: ["users"] as const,
   details: () => [...userKeys.all, "detail"] as const,
