@@ -17,12 +17,15 @@ import {
   GameGameTypesListData,
   GamePlayerPerspectivesListData,
   GameGamesReleaseCalendarListData,
+  GameGameFollowsListData,
+  GameGameFollowsCreateData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
 export type GameGamesListDataQuery = GameGamesListData["query"];
 export type GameGameListsListDataQuery = GameGameListsListData["query"];
 export type GameGameReviewsListDataQuery = GameGameReviewsListData["query"];
+export type GameGameFollowsListDataQuery = GameGameFollowsListData["query"];
 export type GamePlatformsListDataQuery = GamePlatformsListData["query"];
 export type GameGenresListDataQuery = GameGenresListData["query"];
 export type GameGameEnginesListDataQuery = GameGameEnginesListData["query"];
@@ -206,4 +209,29 @@ export const getGameMediaList = async (query?: GameGameMediasListDataQuery) => {
     return await handleApiError(response, "Error fetching game medias");
   }
   return data;
+};
+
+export const getGameFollowsList = async (query?: GameGameFollowsListDataQuery) => {
+  const { data, response } = await GameService.gameGameFollowsList({ query });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error fetching game follows");
+  }
+  return data;
+};
+
+export type GameFollowCreateDataBody = GameGameFollowsCreateData["body"];
+export const createGameFollow = async (body: GameFollowCreateDataBody) => {
+  const { data, response } = await GameService.gameGameFollowsCreate({ body });
+  if (response?.status !== StatusCode.CREATED || !data) {
+    return await handleApiError(response, "Error following game");
+  }
+  return data;
+};
+
+export const deleteGameFollow = async (id: number) => {
+  const { response } = await GameService.gameGameFollowsDestroy({ path: { id } });
+  if (response?.status !== StatusCode.NO_CONTENT) {
+    return await handleApiError(response, "Error unfollowing game");
+  }
+  return true;
 };

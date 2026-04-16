@@ -3,8 +3,15 @@ import { getRouteApi } from "@tanstack/react-router";
 import { GameListModal } from "../components/GameListModal";
 import GameInformation from "../components/GameInformation";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
-import { useGetGameReviewsList, useGetGamesDetails, useGetGameListByFilters } from "../hooks/gameQueries";
-import { Box, Grid, Group, Skeleton, Stack, Tabs, Title } from "@mantine/core";
+import {
+  useGetGameReviewsList,
+  useGetGamesDetails,
+  useGetGameListByFilters,
+  useGetGameFollowsList,
+  useCreateGameFollow,
+  useDeleteGameFollow,
+} from "../hooks/gameQueries";
+import { ActionIcon, Box, Grid, Group, Skeleton, Stack, Tabs, Title, Tooltip } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import GameDetailsMainTab from "../components/GameDetailsMainTab";
@@ -15,8 +22,100 @@ import AddToCollectionModal from "@/features/collections/components/AddToCollect
 import { useAuth } from "@/features/auth/context/AuthProvider";
 import { useCurrentUserId } from "@/features/auth";
 import { Button } from "@/components/ui/Button";
+import { IconBell, IconBellFilled } from "@tabler/icons-react";
 
 const routeApi = getRouteApi("/game/$id");
+
+function GameFollowButton({ gameId, userId }: Readonly<{ gameId: number; userId: number }>) {
+  const { data: userGameFollows, isPending: isGameFollowsPending } = useGetGameFollowsList({
+    game: gameId,
+    user: userId,
+  });
+
+  const isFollowing = userGameFollows?.count !== undefined && userGameFollows.count > 0;
+  const gameFollowId = userGameFollows?.results?.[0]?.id;
+
+  const { mutate: createGameFollow, isPending: isCreatingGameFollow } = useCreateGameFollow();
+  const { mutate: deleteGameFollow, isPending: isDeletingGameFollow } = useDeleteGameFollow();
+
+  const handleToggleFollow = () => {
+    if (isFollowing && gameFollowId) {
+      deleteGameFollow(gameFollowId);
+    } else {
+      createGameFollow({ game: gameId, user: userId });
+    }
+  };
+
+  return (
+    <Tooltip label={isFollowing ? "Unfollow game" : "Follow game to get notifications"}>
+      <ActionIcon
+        size="xl"
+        variant="subtle"
+        color={isFollowing ? "primary" : "gray"}
+        onClick={handleToggleFollow}
+        loading={isGameFollowsPending || isCreatingGameFollow || isDeletingGameFollow}
+        radius="xl"
+      >
+        {isFollowing ? <IconBellFilled size={24} /> : <IconBell size={24} />}
+      </ActionIcon>
+    </Tooltip>
+  );
+}
+
+function UserGameActions({
+  gameId,
+  userId,
+  setIsListModalOpen,
+  setIsCollectionModalOpen,
+}: Readonly<{
+  gameId: number;
+  userId: number;
+  setIsListModalOpen: (val: boolean) => void;
+  setIsCollectionModalOpen: (val: boolean) => void;
+}>) {
+  const { data: userGameList, isPending: isUserGameListPending } = useGetGameListByFilters(
+    { game: gameId, user: userId },
+    { enabled: !!gameId && !!userId },
+  );
+
+  const listButtonText = userGameList?.id ? "Edit List Entry" : "Add List Entry";
+
+  return (
+    <Stack gap={8}>
+      {isUserGameListPending ? (
+        <Skeleton h={36} w="100%" style={{ borderRadius: 8 }} />
+      ) : (
+        <Button onClick={() => setIsListModalOpen(true)} fullWidth>
+          {listButtonText}
+        </Button>
+      )}
+      <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
+        Add to Collection
+      </Button>
+    </Stack>
+  );
+}
+
+function GameDetailSkeleton() {
+  return (
+    <>
+      <Grid.Col span={{ base: 12, md: 3 }}>
+        <Stack gap={16}>
+          <Skeleton w="100%" h={256} style={{ borderRadius: 12 }} />
+          <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
+          <Skeleton w="100%" h={192} style={{ borderRadius: 12 }} />
+        </Stack>
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 9 }}>
+        <Stack gap={16}>
+          <Skeleton w="50%" h={32} style={{ borderRadius: 8 }} />
+          <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
+          <Skeleton w="100%" h={96} style={{ borderRadius: 12 }} />
+        </Stack>
+      </Grid.Col>
+    </>
+  );
+}
 
 export default function GameDetailPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -32,13 +131,6 @@ export default function GameDetailPage(): React.JSX.Element {
   const { user } = useAuth();
   const currentUserId = useCurrentUserId();
 
-  const { data: userGameList, isPending: isUserGameListPending } = useGetGameListByFilters(
-    gameId && currentUserId ? { game: gameId, user: currentUserId } : undefined,
-    { enabled: !!gameId && !!currentUserId },
-  );
-
-  const listButtonText = userGameList?.id ? "Edit List Entry" : "Add List Entry";
-
   const pageTitle = isGameDetailsLoading ? "Loading Game..." : gameDetails?.title;
 
   return (
@@ -47,22 +139,7 @@ export default function GameDetailPage(): React.JSX.Element {
         <PageMeta title={pageTitle} description={gameDetails?.summary} />
 
         {isGameDetailsLoading ? (
-          <>
-            <Grid.Col span={{ base: 12, md: 3 }}>
-              <Stack gap={16}>
-                <Skeleton w="100%" h={256} style={{ borderRadius: 12 }} />
-                <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
-                <Skeleton w="100%" h={192} style={{ borderRadius: 12 }} />
-              </Stack>
-            </Grid.Col>
-            <Grid.Col span={{ base: 12, md: 9 }}>
-              <Stack gap={16}>
-                <Skeleton w="50%" h={32} style={{ borderRadius: 8 }} />
-                <Skeleton w="100%" h={128} style={{ borderRadius: 12 }} />
-                <Skeleton w="100%" h={96} style={{ borderRadius: 12 }} />
-              </Stack>
-            </Grid.Col>
-          </>
+          <GameDetailSkeleton />
         ) : (
           <>
             <Grid.Col span={{ base: 12, md: 3 }}>
@@ -85,19 +162,13 @@ export default function GameDetailPage(): React.JSX.Element {
                   />
                 </Box>
 
-                {user && (
-                  <Stack gap={8}>
-                    {isUserGameListPending ? (
-                      <Skeleton h={36} w="100%" style={{ borderRadius: 8 }} />
-                    ) : (
-                      <Button onClick={() => setIsListModalOpen(true)} fullWidth>
-                        {listButtonText}
-                      </Button>
-                    )}
-                    <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
-                      Add to Collection
-                    </Button>
-                  </Stack>
+                {user && currentUserId && (
+                  <UserGameActions
+                    gameId={gameId}
+                    userId={currentUserId}
+                    setIsListModalOpen={setIsListModalOpen}
+                    setIsCollectionModalOpen={setIsCollectionModalOpen}
+                  />
                 )}
 
                 <GameInformation gameDetails={gameDetails} />
@@ -107,15 +178,18 @@ export default function GameDetailPage(): React.JSX.Element {
             <Grid.Col span={{ base: 12, md: 9 }}>
               <Stack gap={24}>
                 <Group justify="space-between" align="center">
-                  <Title
-                    order={1}
-                    fz={{ base: 28, md: 36 }}
-                    fw={700}
-                    c="var(--color-text-900)"
-                    style={{ letterSpacing: "-0.025em" }}
-                  >
-                    {gameDetails?.title}
-                  </Title>
+                  <Group gap={16} align="center">
+                    <Title
+                      order={1}
+                      fz={{ base: 28, md: 36 }}
+                      fw={700}
+                      c="var(--color-text-900)"
+                      style={{ letterSpacing: "-0.025em" }}
+                    >
+                      {gameDetails?.title}
+                    </Title>
+                    {user && currentUserId && <GameFollowButton gameId={gameId} userId={currentUserId} />}
+                  </Group>
                 </Group>
 
                 <Tabs
