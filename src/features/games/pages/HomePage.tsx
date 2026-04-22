@@ -11,13 +11,18 @@ import ItemOverlay from "@/components/ui/ItemOverlay";
 import styles from "./HomePage.module.css";
 
 export default function HomePage(): React.JSX.Element {
-  const { data: highestRatedGames, isLoading: isHighestRatedLoading } = useGetGamesList({
-    ordering: ["rank_position"],
-  });
-  const { data: mostPopularGames, isLoading: isMostPopularLoading } = useGetGamesList({ ordering: ["popularity"] });
-  const { data: recentlyAddedGames, isLoading: isRecentlyAddedLoading } = useGetGamesList({
-    ordering: ["-created_at"],
-  });
+  const { data: highestRatedGames, isLoading: isHighestRatedLoading } = useGetGamesList(
+    { ordering: ["rank_position"] },
+    { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
+  );
+  const { data: mostPopularGames, isLoading: isMostPopularLoading } = useGetGamesList(
+    { ordering: ["popularity"] },
+    { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
+  );
+  const { data: recentlyAddedGames, isLoading: isRecentlyAddedLoading } = useGetGamesList(
+    { ordering: ["-created_at"] },
+    { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
+  );
 
   const autoplayPlugin = () => Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true });
 
