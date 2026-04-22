@@ -58,7 +58,6 @@ export default function UserFriendsPage(): React.JSX.Element {
 
     return (
       <VirtualGridList
-        style={{ height: "100%" }}
         items={allFriendships}
         renderItem={friendship => <FriendCard friendship={friendship} />}
         hasNextPage={hasNextPage}
@@ -70,46 +69,51 @@ export default function UserFriendsPage(): React.JSX.Element {
   };
 
   return (
-    <Stack gap={24} maw={1152} mx="auto" p={16} style={{ height: "calc(100vh - 4rem)" }}>
+    <Box py={48} style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <PageMeta title={pageTitle} />
-
-      <Stack gap={8} style={{ flexShrink: 0 }}>
-        <Title
-          order={1}
-          fz={30}
-          fw={700}
-          c="var(--color-text-900)"
-          style={{ display: "flex", alignItems: "center", gap: "12px" }}
-        >
-          {isUserLoading ? (
-            <Skeleton style={{ width: "256px", height: "40px" }} />
-          ) : (
-            <Text component="span">
-              <Text component="span" c="var(--mantine-color-primary-6)">
-                {userDetails?.username}
-              </Text>
-              &apos;s Friends
-            </Text>
-          )}
-          {!isFriendsLoading && (
-            <Text
-              component="span"
-              style={{
-                fontSize: "18px",
-                fontWeight: 400,
-                color: "var(--color-text-500)",
-                background: "var(--color-background-100)",
-                padding: "4px 12px",
-                borderRadius: "9999px",
-              }}
+      <Stack gap={40} maw={1280} mx="auto" px={16} w="100%" style={{ flexGrow: 1 }}>
+        <Stack align="center" gap={32}>
+          <Stack align="center">
+            <Title
+              order={1}
+              fz={{ base: 30, md: 36 }}
+              fw={900}
+              c="var(--color-text-900)"
+              ta="center"
+              style={{ letterSpacing: "-0.025em" }}
             >
-              {totalFriends}
-            </Text>
-          )}
-        </Title>
-      </Stack>
+              {isUserLoading ? (
+                <Skeleton style={{ width: "256px", height: "40px" }} />
+              ) : (
+                <>
+                  <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
+                  {"'s Friends"}
+                </>
+              )}
+            </Title>
+            {!isFriendsLoading && (
+              <Box
+                style={{
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  color: "var(--mantine-color-primary-6)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  marginTop: "8px",
+                  padding: "4px 12px",
+                  background: "var(--mantine-color-primary-0)",
+                  borderRadius: "9999px",
+                  border: "1px solid var(--mantine-color-primary-1)",
+                }}
+              >
+                {totalFriends} {totalFriends === 1 ? "Friend" : "Friends"}
+              </Box>
+            )}
+          </Stack>
+        </Stack>
 
-      <Box style={{ flexGrow: 1, minHeight: 0 }}>{renderFriendsContent()}</Box>
-    </Stack>
+        <Box style={{ flexGrow: 1, minHeight: 600 }}>{renderFriendsContent()}</Box>
+      </Stack>
+    </Box>
   );
 }
