@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Box, Stack, Text } from "@mantine/core";
 import { Friendship } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
+import styles from "./FriendCard.module.css";
 
 interface FriendCardProps {
   friendship: Friendship;
@@ -11,27 +12,23 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
   const { friend, created_at } = friendship;
 
   return (
-    <Box className="bg-white rounded-xl shadow-sm border border-background-200 overflow-hidden hover:shadow-md transition-shadow">
-      <Stack align="center" gap={12} className="p-4">
-        <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className="block relative group">
-          <Box className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-background-100 group-hover:ring-primary-100 transition-all">
+    <Box className={styles.card}>
+      <Stack align="center" gap={12} p={16}>
+        <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className={styles.avatarLink}>
+          <Box className={styles.avatarWrapper}>
             <SafeImage
-              className="w-full h-full object-cover"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
               src={friend.gravatar_url || undefined}
               alt={`${friend.username}'s avatar`}
             />
           </Box>
         </Link>
 
-        <Box className="text-center">
-          <Link
-            to={"/profile/$id"}
-            params={{ id: friend.id.toString() }}
-            className="text-lg font-bold text-text-900 hover:text-primary-600 transition-colors block mb-1"
-          >
+        <Box style={{ textAlign: "center" }}>
+          <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className={styles.usernameLink}>
             {friend.username}
           </Link>
-          <Text size="xs" className="text-text-500">
+          <Text size="xs" c="var(--color-text-500)">
             Friends since {new Date(created_at).toLocaleDateString()}
           </Text>
         </Box>

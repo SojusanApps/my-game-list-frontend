@@ -22,7 +22,7 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   const { mutate: rejectRequest } = useRejectFriendRequest();
   const { mutate: deleteFriendship } = useDeleteFriendship();
 
-  const { data: friendshipsData } = useGetFriendships();
+  const { data: friendshipsData } = useGetFriendships(currentUserId ? { user: currentUserId } : undefined);
   const { data: sentRequestsData } = useGetFriendshipRequests({ receiver: userId });
   // Fetch requests sent BY this user. We will check if any are sent TO us.
   const { data: incomingRequestsData } = useGetFriendshipRequests({ sender: userId });
@@ -30,7 +30,11 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   const isOwnProfile = Number(currentUserId) === Number(userId);
 
   // Find existing friendship object if any
-  const friendship = friendshipsData?.results?.find((f: Friendship) => f.friend.id === userId || f.user.id === userId);
+  const friendship = friendshipsData?.results?.find((f: Friendship) => {
+    const isCurrentUserInvolved = f.user.id === currentUserId || f.friend.id === currentUserId;
+    const isTargetUserInvolved = f.user.id === userId || f.friend.id === userId;
+    return isCurrentUserInvolved && isTargetUserInvolved;
+  });
 
   const isFriend = !!friendship;
 
