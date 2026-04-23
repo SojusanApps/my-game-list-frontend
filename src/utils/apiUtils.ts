@@ -1,3 +1,15 @@
+export class ApiError extends Error {
+  status: number;
+  response: Response;
+
+  constructor(message: string, status: number, response: Response) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.response = response;
+  }
+}
+
 /**
  * Utility to handle API errors consistently across the application.
  * Parses backend error responses (e.g. from Django REST Framework)
@@ -33,5 +45,5 @@ export async function handleApiError(response: Response | undefined, defaultMess
     errorMessage = response.statusText || defaultMessage;
   }
 
-  throw new Error(errorMessage);
+  throw new ApiError(errorMessage, response.status, response);
 }
