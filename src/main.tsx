@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { ApiError } from "./utils/apiUtils";
 
 clientSetup();
 
@@ -22,7 +23,13 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1_000 * 60 * 5, // 5 minutes
       gcTime: 1_000 * 60 * 10, // 10 minutes
-      retry: 1,
+      retry: (failureCount, error) => {
+        // Don't retry if it's a 4xx or 5xx error
+        if (error instanceof Response || error instanceof ApiError) {
+          return error.status >= 400 ? false : failureCount < 3;
+        }
+        return failureCount < 3;
+      },
       refetchOnWindowFocus: false,
     },
   },
