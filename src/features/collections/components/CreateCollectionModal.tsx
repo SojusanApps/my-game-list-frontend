@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 import { notifications } from "@mantine/notifications";
 import { VisibilityEnum, ModeEnum, TypeEnum, Friendship, CollectionDetail } from "@/client";
@@ -64,7 +63,7 @@ export default function CreateCollectionModal({
       type: initialData?.type ?? TypeEnum.NOR,
       collaborators: initialData?.collaborators?.map(u => u.id.toString()) ?? [],
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   const selectedMode = form.values.mode;

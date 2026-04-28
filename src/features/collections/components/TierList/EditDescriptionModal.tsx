@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Box, Group, Modal, Stack, Text, Title, Textarea, UnstyledButton } from "@mantine/core";
@@ -31,7 +30,7 @@ export const EditDescriptionModal = ({
     initialValues: {
       description: initialDescription,
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   const onSubmit = (data: ValidationSchema) => {

@@ -1,6 +1,5 @@
 import React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 
 import { notifications } from "@mantine/notifications";
@@ -71,7 +70,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
       completed_at: null,
       playtime: null,
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   // Populate form when data arrives or modal opens

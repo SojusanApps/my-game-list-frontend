@@ -25,7 +25,7 @@ Instructions for AI coding agents working on the **My Game List Frontend**.
 ## Components & Forms
 
 - **Buttons**: Use our custom wrapper at `src/components/ui/Button.tsx`.
-- **Forms**: Use `@mantine/form` + `mantine-form-zod-resolver` (NOT React Hook Form).
+- **Forms**: Use `@mantine/form` + `schemaResolver from @mantine/form` (NOT React Hook Form).
 - **Inputs**: Spread `getInputProps('field')` directly onto Mantine inputs. Errors display automatically.
 - **Pages**: Must default export and include `<PageMeta title="..." />`.
 

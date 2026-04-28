@@ -26,7 +26,7 @@ export default function UserProfilePage(): React.JSX.Element {
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
-      <Grid gutter={24} maw={1152} mx="auto" px={16}>
+      <Grid gap={24} maw={1152} mx="auto" px={16}>
         <PageMeta title={pageTitle} />
 
         {isUserDetailsLoading ? (

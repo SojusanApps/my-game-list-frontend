@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 import { notifications } from "@mantine/notifications";
 import { Button } from "@/components/ui/Button";
@@ -31,7 +30,7 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
     initialValues: {
       collections: [],
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   // Wrapper hook for AsyncMultiSelectAutocomplete

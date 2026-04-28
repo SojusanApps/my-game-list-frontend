@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 import { useNavigate, Link, useSearch } from "@tanstack/react-router";
 import { notifications } from "@mantine/notifications";
@@ -40,7 +39,7 @@ function RegisterForm() {
       password: "",
       confirmPassword: "",
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   const onSubmitHandler = async (data: ValidationSchema) => {

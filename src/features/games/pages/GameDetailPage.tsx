@@ -135,7 +135,7 @@ export default function GameDetailPage(): React.JSX.Element {
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
-      <Grid gutter="md" maw={1152} mx="auto" px={16}>
+      <Grid gap="md" maw={1152} mx="auto" px={16}>
         <PageMeta title={pageTitle} description={gameDetails?.summary} />
 
         {isGameDetailsLoading ? (

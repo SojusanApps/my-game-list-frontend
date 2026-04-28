@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useForm } from "@mantine/form";
-import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 
 import { Select, Box, Group, Stack } from "@mantine/core";
@@ -102,7 +101,7 @@ function GameSearchFilter({
           | "popularity"
           | "") ?? "",
     },
-    validate: zod4Resolver(validationSchema),
+    validate: schemaResolver(validationSchema),
   });
 
   return (
