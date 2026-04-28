@@ -18,7 +18,12 @@
 }
 
 body {
-  background: linear-gradient(to top left, var(--color-primary-100), var(--color-background-200));
+  background-image:
+    url("./assets/gaming-background.svg"),
+    linear-gradient(to top left, var(--color-primary-100), var(--color-background-200));
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
   color: var(--color-text-700);
   min-height: 100vh;
 }
