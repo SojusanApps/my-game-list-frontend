@@ -201,13 +201,14 @@ export const RankingRow = React.memo(
   }: Readonly<RankingRowProps>) => {
     const [isEditingPosition, setIsEditingPosition] = React.useState(false);
     const [positionInput, setPositionInput] = React.useState<number | string>(rank);
+    const [prevRank, setPrevRank] = React.useState<number>(rank);
+
+    if (rank !== prevRank) {
+      setPrevRank(rank);
+      setPositionInput(rank);
+    }
 
     const hasDescription = description && description.trim().length > 0;
-
-    // Update position input when rank changes
-    React.useEffect(() => {
-      setPositionInput(rank);
-    }, [rank]);
 
     const handlePositionSubmit = () => {
       const newPosition = resolvePositionInput(positionInput);

@@ -121,10 +121,12 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [searchInput, setSearchInput] = React.useState(searchParams.q ?? "");
+  const [prevQ, setPrevQ] = React.useState(searchParams.q);
 
-  React.useEffect(() => {
+  if (searchParams.q !== prevQ) {
+    setPrevQ(searchParams.q);
     setSearchInput(searchParams.q ?? "");
-  }, [searchParams.q]);
+  }
 
   const { q, ...otherFilters } = searchParams;
 

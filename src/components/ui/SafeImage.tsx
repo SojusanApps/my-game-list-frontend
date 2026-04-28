@@ -19,25 +19,22 @@ export function SafeImage({
   containerStyle,
   ...props
 }: Readonly<SafeImageProps>) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!!src);
   const [isError, setIsError] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    if (!src) {
-      setIsLoading(false);
-      setIsError(false);
-      return;
-    }
-
-    // Reset state for new image
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setIsLoading(!!src);
     setIsError(false);
+  }
 
-    // Check if the image is already complete (cached) immediately
-    if (imgRef.current?.complete) {
+  useEffect(() => {
+    const img = imgRef.current;
+    if (src && img?.complete) {
+      // Check if image is already cached
       setIsLoading(false);
-    } else {
-      setIsLoading(true);
     }
   }, [src]);
 

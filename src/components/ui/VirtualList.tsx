@@ -40,7 +40,6 @@ export const VirtualList = React.forwardRef(function VirtualList<T>(
 
   const itemCount = items.length + (hasNextPage ? 1 : 0);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: itemCount,
     getScrollElement: () => parentRef.current,

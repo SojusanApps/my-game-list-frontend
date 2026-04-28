@@ -39,9 +39,12 @@ export default function CreateCollectionModal({
   const isPending = isCreatePending || isUpdatePending;
 
   const [selectedCollaboratorObjects, setSelectedCollaboratorObjects] = React.useState<Friendship[]>([]);
+  const [prevMode, setPrevMode] = React.useState(mode);
+  const [prevInitialData, setPrevInitialData] = React.useState(initialData);
 
-  // When editing, populate selectedCollaboratorObjects based on initialData.collaborators
-  React.useEffect(() => {
+  if (mode !== prevMode || initialData !== prevInitialData) {
+    setPrevMode(mode);
+    setPrevInitialData(initialData);
     if (mode === "edit" && initialData?.collaborators) {
       const initialCollaborators = initialData.collaborators.map(user => ({
         friend: user,
@@ -51,7 +54,7 @@ export default function CreateCollectionModal({
       }));
       setSelectedCollaboratorObjects(initialCollaborators as Friendship[]);
     }
-  }, [mode, initialData]);
+  }
 
   const form = useForm<ValidationSchema>({
     initialValues: {
@@ -67,14 +70,15 @@ export default function CreateCollectionModal({
   });
 
   const selectedMode = form.values.mode;
+  const [prevSelectedMode, setPrevSelectedMode] = React.useState(form.values.mode);
 
-  React.useEffect(() => {
+  if (selectedMode !== prevSelectedMode) {
+    setPrevSelectedMode(selectedMode);
     if (selectedMode === ModeEnum.S) {
       form.setFieldValue("collaborators", []);
       setSelectedCollaboratorObjects([]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMode]);
+  }
 
   const handleAddCollaborator = (friendship: Friendship) => {
     setSelectedCollaboratorObjects(prev => [...prev, friendship]);
