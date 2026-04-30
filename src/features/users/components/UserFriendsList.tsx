@@ -32,8 +32,8 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
           Friends
         </Text>
         <Link
-          to={"/profile/$id/friends"}
-          params={{ id: userDetails?.id.toString() || "" }}
+          to={"/profile/$id/$slug/friends"}
+          params={{ id: userDetails?.id?.toString() || "", slug: userDetails?.slug || "" }}
           style={{ fontSize: 12, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
         >
           View All
@@ -44,7 +44,7 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
           <Group gap={12} wrap="wrap">
             {userDetails.friends.map(friend => (
               <Tooltip key={friend.id} label={friend.username}>
-                <Link to={`/profile/$id`} params={{ id: friend.id.toString() }}>
+                <Link to={"/profile/$id/$slug"} params={{ id: friend.id?.toString() || "", slug: friend.slug || "" }}>
                   <Box
                     style={{
                       width: 48,

@@ -60,7 +60,7 @@ const GameListGridItem = React.memo(({ gameListItem, isOwner, onEdit }: GameList
   return (
     <ItemOverlay
       name={gameListItem.title}
-      itemPageUrl={`/game/${gameListItem.game_id}`}
+      itemPageUrl={`/game/${gameListItem.game_id}/${gameListItem.game_slug}`}
       itemCoverUrl={getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
       status={gameListItem.status_code}
       rating={gameListItem.score}
@@ -70,7 +70,7 @@ const GameListGridItem = React.memo(({ gameListItem, isOwner, onEdit }: GameList
 });
 GameListGridItem.displayName = "GameListGridItem";
 
-const routeApi = getRouteApi("/game-list/$id");
+const routeApi = getRouteApi("/game-list/$id/$slug");
 
 export default function GameListPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -320,7 +320,7 @@ export default function GameListPage(): React.JSX.Element {
               <Box style={{ width: "264px", marginTop: "16px" }}>
                 <ItemOverlay
                   name={randomPtpGame.title}
-                  itemPageUrl={`/game/${randomPtpGame.game_id}`}
+                  itemPageUrl={`/game/${randomPtpGame.game_id}/${randomPtpGame.game_slug}`}
                   itemCoverUrl={getIGDBImageURL(randomPtpGame.game_cover_image, IGDBImageSize.COVER_BIG_264_374)}
                   status={randomPtpGame.status_code}
                   rating={randomPtpGame.score}

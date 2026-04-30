@@ -2,7 +2,7 @@ import * as React from "react";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { IconPencil, IconX, IconQuestionMark, IconInfoCircle, IconDotsVertical } from "@tabler/icons-react";
-import { Box, Text, UnstyledButton, Tooltip, Menu, ActionIcon, Group } from "@mantine/core";
+import { Box, Text, Tooltip, Menu, ActionIcon, Group } from "@mantine/core";
 import { EditDescriptionModal } from "./EditDescriptionModal";
 import { cn } from "@/utils/cn";
 import { Link } from "@tanstack/react-router";
@@ -11,6 +11,7 @@ import { TIERS } from "./TierListView";
 
 interface GameCardProps {
   gameId: number;
+  gameSlug: string;
   title: string;
   coverImageId?: string | null;
   className?: string;
@@ -25,6 +26,7 @@ interface GameCardProps {
 export const GameCard = (props: GameCardProps) => {
   const {
     gameId,
+    gameSlug,
     title,
     coverImageId,
     className,
@@ -99,51 +101,8 @@ export const GameCard = (props: GameCardProps) => {
           </Box>
         )}
 
-        {/* Action Buttons - Desktop Hover Reveal */}
-        <Box className={cn(cardStyles.tierGameCardActions, cardStyles.desktopActions)}>
-          <Tooltip label="View Details" position="left">
-            <UnstyledButton
-              component={Link}
-              to={`/game/${gameId}`}
-              className={cn(cardStyles.actionButton, cardStyles.detailsButton)}
-            >
-              <IconInfoCircle style={{ width: 14, height: 14 }} stroke={2.5} />
-            </UnstyledButton>
-          </Tooltip>
-
-          {isOwner && onDescriptionChange && (
-            <Tooltip label="Edit description" position="left">
-              <UnstyledButton
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIsModalOpen(true);
-                }}
-                className={cn(cardStyles.actionButton, cardStyles.editButton)}
-              >
-                <IconPencil style={{ width: 14, height: 14 }} stroke={2.5} />
-              </UnstyledButton>
-            </Tooltip>
-          )}
-
-          {onRemove && (
-            <Tooltip label="Remove from collection" position="left">
-              <UnstyledButton
-                onClick={e => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onRemove();
-                }}
-                className={cn(cardStyles.actionButton, cardStyles.removeButton)}
-              >
-                <IconX style={{ width: 14, height: 14 }} stroke={3} />
-              </UnstyledButton>
-            </Tooltip>
-          )}
-        </Box>
-
         {/* Action Buttons - Mobile */}
-        <Box className={cn(cardStyles.tierGameCardActions, cardStyles.mobileActions)}>
+        <Box className={cn(cardStyles.tierGameCardActions)}>
           <Menu shadow="md" width={220} position="bottom-end">
             <Menu.Target>
               <ActionIcon
@@ -157,7 +116,7 @@ export const GameCard = (props: GameCardProps) => {
               </ActionIcon>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item leftSection={<IconInfoCircle size={14} />} component={Link} to={`/game/${gameId}`}>
+              <Menu.Item leftSection={<IconInfoCircle size={14} />} component={Link} to={`/game/${gameId}/${gameSlug}`}>
                 View Details
               </Menu.Item>
 

@@ -97,8 +97,8 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
     <Stack ref={ref} align="center" pt={32} style={{ position: "relative" }}>
       {/* Deck View (Sits on top) */}
       <Link
-        to={"/collection/$id"}
-        params={{ id: collection.id.toString() }}
+        to={"/collection/$id/$slug"}
+        params={{ id: collection.id.toString(), slug: collection.slug || "" }}
         style={{
           position: "relative",
           width: "75%",
@@ -199,7 +199,11 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
         }}
       >
         <Stack align="center" gap={6} style={{ textAlign: "center" }}>
-          <Link to={"/collection/$id"} params={{ id: collection.id.toString() }} style={{ display: "block" }}>
+          <Link
+            to={"/collection/$id/$slug"}
+            params={{ id: collection.id.toString(), slug: collection.slug || "" }}
+            style={{ display: "block" }}
+          >
             <Title
               order={3}
               fz="lg"
@@ -222,8 +226,8 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
             <Text size="xs" fw={500} c="var(--color-text-500)">
               by{" "}
               <Link
-                to={"/profile/$id"}
-                params={{ id: collection.user.id.toString() }}
+                to={"/profile/$id/$slug"}
+                params={{ id: collection.user.id.toString(), slug: collection.user.slug || "" }}
                 style={{ fontWeight: 700, color: "var(--color-text-700)" }}
               >
                 {collection.user.username}

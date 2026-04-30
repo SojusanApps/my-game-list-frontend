@@ -13,7 +13,7 @@ import CreateCollectionModal from "../components/CreateCollectionModal";
 import { useIsOwner } from "@/features/auth";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
-const routeApi = getRouteApi("/profile_/$id/collections");
+const routeApi = getRouteApi("/profile_/$id/$slug/collections");
 
 export default function CollectionsPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -23,8 +23,7 @@ export default function CollectionsPage(): React.JSX.Element {
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
 
-  const effectiveUserId = userId || userDetails?.id;
-  const isOwner = useIsOwner(effectiveUserId);
+  const isOwner = useIsOwner(userId);
 
   const skeletonIds = React.useMemo(() => Array.from({ length: 8 }).map((_, i) => `skeleton-${i}`), []);
 

@@ -18,6 +18,7 @@ import rowStyles from "./RankingRow.module.css";
 interface RankingRowProps {
   rank: number;
   gameId: number;
+  gameSlug: string;
   totalItems: number;
   title: string;
   coverImageId?: string | null;
@@ -86,12 +87,14 @@ function RankControls({
 
 function ActionButtons({
   gameId,
+  gameSlug,
   isOwner,
   hasDescription,
   onDescriptionClick,
   onRemove,
 }: Readonly<{
   gameId: number;
+  gameSlug: string;
   isOwner: boolean;
   hasDescription: boolean | "" | undefined;
   onDescriptionClick?: () => void;
@@ -101,7 +104,14 @@ function ActionButtons({
     <>
       <Group gap={8} className={rowStyles.rankingRowActionsDesktop} wrap="nowrap" visibleFrom="sm">
         <Tooltip label="View details" withArrow position="top">
-          <ActionIcon component={Link} to={`/game/${gameId}`} variant="light" color="indigo" size="lg" radius="md">
+          <ActionIcon
+            component={Link}
+            to={`/game/${gameId}/${gameSlug}`}
+            variant="light"
+            color="indigo"
+            size="lg"
+            radius="md"
+          >
             <IconExternalLink size={18} stroke={1.5} />
           </ActionIcon>
         </Tooltip>
@@ -187,6 +197,7 @@ export const RankingRow = React.memo(
   ({
     rank,
     gameId,
+    gameSlug,
     totalItems,
     title,
     coverImageId,
@@ -372,6 +383,7 @@ export const RankingRow = React.memo(
           {/* Actions */}
           <ActionButtons
             gameId={gameId}
+            gameSlug={gameSlug}
             isOwner={isOwner}
             hasDescription={hasDescription}
             onDescriptionClick={onDescriptionClick}

@@ -24,7 +24,7 @@ import { useCurrentUserId } from "@/features/auth";
 import { Button } from "@/components/ui/Button";
 import { IconBell, IconBellFilled } from "@tabler/icons-react";
 
-const routeApi = getRouteApi("/game/$id");
+const routeApi = getRouteApi("/game/$id/$slug");
 
 function GameFollowButton({ gameId, userId }: Readonly<{ gameId: number; userId: number }>) {
   const { data: userGameFollows, isPending: isGameFollowsPending } = useGetGameFollowsList({
@@ -122,7 +122,10 @@ export default function GameDetailPage(): React.JSX.Element {
   const gameId = Number(id);
 
   const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(gameId);
-  const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList({ game: gameId });
+  const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList(
+    { game: gameId },
+    { enabled: !!gameId },
+  );
 
   const [activeTab, setActiveTab] = React.useState<"main" | "related" | "screenshots">("main");
   const [selectedScreenshot, setSelectedScreenshot] = React.useState<string | null>(null);

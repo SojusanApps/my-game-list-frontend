@@ -23,7 +23,7 @@ export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameLi
     <Box className={styles.rowWrapper}>
       <Box
         component={Link}
-        to={`/game/${gameListItem.game_id}`}
+        to={`/game/${gameListItem.game_id}/${gameListItem.game_slug}`}
         className={styles.rowContent}
         style={{ display: "flex", alignItems: "stretch", flexWrap: "nowrap" }}
       >

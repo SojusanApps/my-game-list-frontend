@@ -9,7 +9,7 @@ import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 
-const routeApi = getRouteApi("/company/$id");
+const routeApi = getRouteApi("/company/$id/$slug");
 
 export default function CompanyDetailPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -131,7 +131,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
                   style={{ height: 600 }}
                   renderItem={game => (
                     <ItemOverlay
-                      itemPageUrl={`/game/${game.id}`}
+                      itemPageUrl={`/game/${game.id}/${game.slug}`}
                       itemCoverUrl={
                         game.cover_image_id
                           ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
@@ -158,7 +158,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
                   style={{ height: 600 }}
                   renderItem={game => (
                     <ItemOverlay
-                      itemPageUrl={`/game/${game.id}`}
+                      itemPageUrl={`/game/${game.id}/${game.slug}`}
                       itemCoverUrl={
                         game.cover_image_id
                           ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)

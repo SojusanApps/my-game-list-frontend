@@ -1,13 +1,14 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { GameDetailPage } from "@/features/games";
-import { idSchema } from "@/lib/validation";
+import { slugSchema, idSchema } from "@/lib/validation";
 import { gameKeys } from "@/lib/queryKeys";
 import { getGamesDetail } from "@/features/games/api/game";
 
-export const Route = createFileRoute("/game/$id")({
+export const Route = createFileRoute("/game/$id/$slug")({
   beforeLoad: ({ params }) => {
+    const parsedSlug = slugSchema.safeParse(params.slug);
     const parsedId = idSchema.safeParse(params.id);
-    if (!parsedId.success) {
+    if (!parsedSlug.success || !parsedId.success) {
       throw notFound();
     }
   },

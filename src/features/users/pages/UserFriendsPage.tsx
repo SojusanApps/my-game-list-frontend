@@ -7,7 +7,7 @@ import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import FriendCard from "../components/FriendCard";
 import { Box, SimpleGrid, Skeleton, Stack, Text, Title } from "@mantine/core";
 
-const routeApi = getRouteApi("/profile_/$id/friends");
+const routeApi = getRouteApi("/profile_/$id/$slug/friends");
 
 export default function UserFriendsPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -20,8 +20,10 @@ export default function UserFriendsPage(): React.JSX.Element {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading: isFriendsLoading,
+    isLoading: isFriendsQueryLoading,
   } = useGetFriendshipsInfiniteQuery({ user: userId });
+
+  const isFriendsLoading = isFriendsQueryLoading || isUserLoading;
 
   const allFriendships = data?.pages.flatMap(page => page.results) || [];
   const totalFriends = data?.pages[0]?.count ?? 0;

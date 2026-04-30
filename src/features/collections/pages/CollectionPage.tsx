@@ -25,7 +25,7 @@ import { RankingListView } from "../components/RankingList/RankingListView";
 import { PairwiseRankingModal } from "@/features/ranking";
 import pageStyles from "./CollectionPage.module.css";
 
-const routeApi = getRouteApi("/collection/$id");
+const routeApi = getRouteApi("/collection/$id/$slug");
 
 export default function CollectionPage(): React.JSX.Element {
   const { id } = routeApi.useParams();
@@ -160,7 +160,7 @@ export default function CollectionPage(): React.JSX.Element {
                 <Box key={item.id} className={pageStyles.collectionItem}>
                   <ItemOverlay
                     name={item.game.title}
-                    itemPageUrl={`/game/${item.game.id}`}
+                    itemPageUrl={`/game/${item.game.id}/${item.game.slug}`}
                     itemCoverUrl={getIGDBImageURL(item.game.cover_image_id ?? "", IGDBImageSize.COVER_BIG_264_374)}
                   />
 

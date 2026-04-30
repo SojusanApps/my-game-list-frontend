@@ -283,8 +283,11 @@ export default function NotificationsPage(): React.JSX.Element {
                         </Box>
                         {displayEntity?.type === "user" && (
                           <Link
-                            to={"/profile/$id"}
-                            params={{ id: displayEntity?.id.toString() || "" }}
+                            to={"/profile/$id/$slug"}
+                            params={{
+                              id: displayEntity?.id?.toString() || "",
+                              slug: displayEntity?.slug || "",
+                            }}
                             className={pageStyles.tableUserLink}
                           >
                             {displayEntity?.str || "Someone"}

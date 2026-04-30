@@ -24,6 +24,9 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
     globalThis.location.reload();
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profileParams: any = { id: currentUserId?.toString() || "", slug: userDetails?.slug || "" };
+
   return (
     <Group gap={16}>
       <NotificationBell />
@@ -48,7 +51,12 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item component={Link} to={`/profile/${currentUserId}`} leftSection={<IconUserCircle size={16} />}>
+          <Menu.Item
+            component={Link}
+            to={"/profile/$id/$slug"}
+            params={profileParams}
+            leftSection={<IconUserCircle size={16} />}
+          >
             Profile
           </Menu.Item>
           <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
@@ -82,6 +90,8 @@ function NotLoggedInView(): React.JSX.Element {
 function TopBar(): React.JSX.Element {
   const { user, logout } = useAuth();
   const currentUserId = useCurrentUserId();
+  const { data: userDetails } = useGetUserDetails(currentUserId || undefined);
+  const userSlug = userDetails?.slug || currentUserId?.toString() || "";
   const [opened, { toggle, close }] = useDisclosure();
 
   return (
@@ -120,8 +130,8 @@ function TopBar(): React.JSX.Element {
               <>
                 <Box component="li" className={styles.navItem}>
                   <Link
-                    to={"/game-list/$id"}
-                    params={{ id: currentUserId?.toString() || "" }}
+                    to={"/game-list/$id/$slug"}
+                    params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                     className={styles.navLink}
                   >
                     Game List
@@ -129,8 +139,8 @@ function TopBar(): React.JSX.Element {
                 </Box>
                 <Box component="li" className={styles.navItem}>
                   <Link
-                    to={"/profile/$id/collections"}
-                    params={{ id: currentUserId?.toString() || "" }}
+                    to={"/profile/$id/$slug/collections"}
+                    params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                     className={styles.navLink}
                   >
                     Collections
@@ -180,8 +190,8 @@ function TopBar(): React.JSX.Element {
             <>
               <Box component="li">
                 <Link
-                  to={"/game-list/$id"}
-                  params={{ id: currentUserId?.toString() || "" }}
+                  to={"/game-list/$id/$slug"}
+                  params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                   className={styles.mobileNavLink}
                   onClick={close}
                 >
@@ -190,8 +200,8 @@ function TopBar(): React.JSX.Element {
               </Box>
               <Box component="li">
                 <Link
-                  to={"/profile/$id/collections"}
-                  params={{ id: currentUserId?.toString() || "" }}
+                  to={"/profile/$id/$slug/collections"}
+                  params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                   className={styles.mobileNavLink}
                   onClick={close}
                 >
