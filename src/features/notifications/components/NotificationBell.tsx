@@ -127,8 +127,8 @@ export default function NotificationBell(): React.JSX.Element {
               return (
                 <Box component="li" key={notification.id} className={bellStyles.notificationCard}>
                   <Link
-                    to={displayEntity?.type === "user" ? "/profile/$id" : "/notifications"}
-                    params={{ id: displayEntity?.id.toString() || "" }}
+                    to={displayEntity?.type === "user" ? "/profile/$id/$slug" : "/notifications"}
+                    params={{ id: displayEntity?.id.toString() || "", slug: displayEntity?.slug || "" }}
                     onClick={() => handleNotificationClick(notification)}
                     className={bellStyles.notificationItemLink}
                   >

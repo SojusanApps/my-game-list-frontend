@@ -72,8 +72,8 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
       return gamesDetails.results.map((game: GameSimpleList) => (
         <Box component="li" key={game.id} style={{ width: "100%" }}>
           <Link
-            to={"/game/$id"}
-            params={{ id: game.id.toString() }}
+            to={"/game/$id/$slug"}
+            params={{ id: game.id.toString(), slug: game.slug || "" }}
             style={{
               display: "flex",
               alignItems: "center",

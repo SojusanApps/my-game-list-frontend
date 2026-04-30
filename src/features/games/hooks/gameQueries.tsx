@@ -213,10 +213,11 @@ export const useGetReleaseCalendar = (params: { start_date: string; end_date: st
   });
 };
 
-export const useGetGameReviewsList = (query?: GameGameReviewsListDataQuery) => {
+export const useGetGameReviewsList = (query?: GameGameReviewsListDataQuery, options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: gameReviewKeys.list(query),
     queryFn: () => getGameReviewsList(query),
+    ...options,
   });
 };
 

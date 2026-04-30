@@ -15,6 +15,7 @@ import { GameCard } from "./GameCard";
 interface SortableGameCardProps {
   id: string;
   gameId: number;
+  gameSlug: string;
   tierId: string;
   index: number;
   page?: number;
@@ -39,6 +40,7 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
   const {
     id,
     gameId,
+    gameSlug,
     tierId,
     index,
     page = 1,
@@ -169,6 +171,7 @@ export const SortableGameCard = React.memo(function SortableGameCard(props: Sort
     >
       <GameCard
         gameId={gameId}
+        gameSlug={gameSlug}
         title={title}
         coverImageId={coverImageId}
         description={description}

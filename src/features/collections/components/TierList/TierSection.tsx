@@ -60,6 +60,7 @@ export const TierSection = React.memo(function TierSection({
           key={item.id}
           id={String(item.id)}
           gameId={item.game.id}
+          gameSlug={item.game.slug || ""}
           tierId={tier.id}
           index={index}
           page={page}

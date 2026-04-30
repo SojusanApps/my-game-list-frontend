@@ -343,6 +343,7 @@ export const RankingListView = React.memo(function RankingListView({
         key={item.id}
         id={String(item.id)}
         gameId={item.game.id}
+        gameSlug={item.game.slug || ""}
         rank={index + 1}
         totalItems={totalCount}
         title={item.game.title}

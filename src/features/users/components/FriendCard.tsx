@@ -14,7 +14,11 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
   return (
     <Box className={styles.card}>
       <Stack align="center" gap={12} p={16}>
-        <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className={styles.avatarLink}>
+        <Link
+          to={"/profile/$id/$slug"}
+          params={{ id: friend.id.toString(), slug: friend.slug || "" }}
+          className={styles.avatarLink}
+        >
           <Box className={styles.avatarWrapper}>
             <SafeImage
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -25,7 +29,11 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
         </Link>
 
         <Box style={{ textAlign: "center" }}>
-          <Link to={"/profile/$id"} params={{ id: friend.id.toString() }} className={styles.usernameLink}>
+          <Link
+            to={"/profile/$id/$slug"}
+            params={{ id: friend.id.toString(), slug: friend.slug || "" }}
+            className={styles.usernameLink}
+          >
             {friend.username}
           </Link>
           <Text size="xs" c="var(--color-text-500)">

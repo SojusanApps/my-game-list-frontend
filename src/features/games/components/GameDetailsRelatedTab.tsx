@@ -23,7 +23,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
           style={{ height: "400px" }}
           renderItem={(game: CompanyGame) => (
             <ItemOverlay
-              itemPageUrl={`/game/${game.id}`}
+              itemPageUrl={`/game/${game.id}/${game.slug}`}
               itemCoverUrl={
                 game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
               }
@@ -41,7 +41,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
         <CollapsibleSection title="Parent Game" defaultOpen={true}>
           <Box maw={200}>
             <ItemOverlay
-              itemPageUrl={`/game/${gameDetails.parent_game.id}`}
+              itemPageUrl={`/game/${gameDetails.parent_game.id}/${gameDetails.parent_game.slug}`}
               itemCoverUrl={
                 gameDetails.parent_game.cover_image_id
                   ? getIGDBImageURL(gameDetails.parent_game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)

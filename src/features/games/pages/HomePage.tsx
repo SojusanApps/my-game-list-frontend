@@ -56,7 +56,7 @@ export default function HomePage(): React.JSX.Element {
             <ItemOverlay
               style={{ width: "100%" }}
               name={game.title}
-              itemPageUrl={`/game/${game.id}`}
+              itemPageUrl={`/game/${game.id}/${game.slug}`}
               itemCoverUrl={
                 game.cover_image_id === undefined
                   ? null

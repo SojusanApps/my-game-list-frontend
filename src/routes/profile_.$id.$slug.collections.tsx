@@ -1,13 +1,14 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import CollectionsPage from "@/features/collections/pages/CollectionsPage";
-import { idSchema } from "@/lib/validation";
+import { slugSchema, idSchema } from "@/lib/validation";
 import { userKeys } from "@/lib/queryKeys";
 import { getUserDetails } from "@/features/users/api/user";
 
-export const Route = createFileRoute("/profile_/$id/collections")({
+export const Route = createFileRoute("/profile_/$id/$slug/collections")({
   beforeLoad: ({ params }) => {
+    const parsedSlug = slugSchema.safeParse(params.slug);
     const parsedId = idSchema.safeParse(params.id);
-    if (!parsedId.success) {
+    if (!parsedSlug.success || !parsedId.success) {
       throw notFound();
     }
   },

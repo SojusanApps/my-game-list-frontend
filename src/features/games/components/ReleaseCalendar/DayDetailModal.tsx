@@ -61,7 +61,7 @@ export default function DayDetailModal({ opened, onClose, dateStr }: Readonly<Da
         renderItem={(game: GameSimpleList) => (
           <ItemOverlay
             key={game.id}
-            itemPageUrl={`/game/${game.id}`}
+            itemPageUrl={`/game/${game.id}/${game.slug}`}
             itemCoverUrl={
               game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
             }

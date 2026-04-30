@@ -165,7 +165,7 @@ export default function CalendarView(): React.JSX.Element {
                     {games.slice(0, maxVisible).map(game => (
                       <ItemOverlay
                         key={game.id}
-                        itemPageUrl={`/game/${game.id}`}
+                        itemPageUrl={`/game/${game.id}/${game.slug}`}
                         itemCoverUrl={
                           game.cover_image_id
                             ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374)
@@ -224,7 +224,7 @@ export default function CalendarView(): React.JSX.Element {
           size="md"
           radius="md"
           value={viewMode}
-          onChange={val => setViewMode(val as "week" | "month")}
+          onChange={val => setViewMode(val)}
           data={[
             { label: "Month", value: "month" },
             { label: "Week", value: "week" },

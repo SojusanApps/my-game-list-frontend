@@ -56,6 +56,14 @@ function GameTags<T>({
   );
 }
 
+function IgdbLink({ id, slug }: Readonly<{ id: string; slug: string }>) {
+  return (
+    <a href={`https://www.igdb.com/games/${slug}`} target="_blank" rel="noopener noreferrer">
+      {id}
+    </a>
+  );
+}
+
 function ExternalLinksSection({ externalGames }: Readonly<{ externalGames: ExternalGame[] }>) {
   const [showAllExternalLinks, setShowAllExternalLinks] = React.useState(false);
   const displayedExternalGames = showAllExternalLinks ? externalGames : externalGames.slice(0, 4);
@@ -167,7 +175,9 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         </Text>
       </Box>
       <Stack gap={12} p="md">
-        <GameInfoRow label="IGDB ID:" value={gameDetails?.igdb_id} />
+        <GameInfoRow label="IGDB ID:">
+          <IgdbLink id={gameDetails?.id.toString() || ""} slug={gameDetails?.slug || ""} />
+        </GameInfoRow>
         <GameInfoRow
           label="Release date:"
           value={gameDetails?.release_date ? gameDetails.release_date.toString() : undefined}
@@ -177,8 +187,8 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         <GameInfoRow label="Publisher:">
           {gameDetails?.publisher ? (
             <Link
-              to={"/company/$id"}
-              params={{ id: gameDetails.publisher.id.toString() }}
+              to={"/company/$id/$slug"}
+              params={{ id: gameDetails.publisher.id.toString(), slug: gameDetails.publisher.slug || "" }}
               style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
             >
               {gameDetails.publisher.name}
@@ -188,8 +198,8 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         <GameInfoRow label="Developer:">
           {gameDetails?.developer ? (
             <Link
-              to={"/company/$id"}
-              params={{ id: gameDetails.developer.id.toString() }}
+              to={"/company/$id/$slug"}
+              params={{ id: gameDetails.developer.id.toString(), slug: gameDetails.developer.slug || "" }}
               style={{ color: "var(--mantine-color-primary-6)", fontWeight: 600 }}
             >
               {gameDetails.developer.name}

@@ -57,7 +57,7 @@ function DisplaySearchResults({
           <ItemOverlay
             key={game.id}
             name={game.title}
-            itemPageUrl={`/game/${game.id}`}
+            itemPageUrl={`/game/${game.id}/${game.slug}`}
             itemCoverUrl={
               game.cover_image_id ? getIGDBImageURL(game.cover_image_id, IGDBImageSize.COVER_BIG_264_374) : null
             }
@@ -74,7 +74,7 @@ function DisplaySearchResults({
             key={company.id}
             variant="logo"
             name={company.name}
-            itemPageUrl={`/company/${company.id}`}
+            itemPageUrl={`/company/${company.id}/${company.slug}`}
             itemCoverUrl={
               company.company_logo_id ? getIGDBImageURL(company.company_logo_id, IGDBImageSize.COVER_BIG_264_374) : null
             }
@@ -87,7 +87,7 @@ function DisplaySearchResults({
           <ItemOverlay
             key={user.id}
             name={user.username}
-            itemPageUrl={`/profile/${user.id}`}
+            itemPageUrl={`/profile/${user.id}/${user.slug}`}
             itemCoverUrl={user.gravatar_url}
           />
         );

@@ -13,10 +13,10 @@ import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
 
-const routeApi = getRouteApi("/profile/$id");
+const routeApi = getRouteApi("/profile/$id/$slug");
 
 export default function UserProfilePage(): React.JSX.Element {
-  const { id } = routeApi.useParams();
+  const { id, slug } = routeApi.useParams();
   const validUserId = Number(id);
 
   const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(validUserId);
@@ -68,13 +68,21 @@ export default function UserProfilePage(): React.JSX.Element {
 
                 <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />
 
-                <Link to={`/game-list/$id`} params={{ id }} style={{ width: "100%", textDecoration: "none" }}>
+                <Link
+                  to={"/game-list/$id/$slug"}
+                  params={{ id, slug }}
+                  style={{ width: "100%", textDecoration: "none" }}
+                >
                   <Button fullWidth variant="default">
                     Game List
                   </Button>
                 </Link>
 
-                <Link to={`/profile/$id/collections`} params={{ id }} style={{ width: "100%", textDecoration: "none" }}>
+                <Link
+                  to={"/profile/$id/$slug/collections"}
+                  params={{ id, slug }}
+                  style={{ width: "100%", textDecoration: "none" }}
+                >
                   <Button fullWidth variant="outline">
                     Collections
                   </Button>
@@ -128,8 +136,8 @@ export default function UserProfilePage(): React.JSX.Element {
                       Last game updates
                     </Title>
                     <Link
-                      to={`/game-list/$id`}
-                      params={{ id }}
+                      to={"/game-list/$id/$slug"}
+                      params={{ id, slug }}
                       style={{ fontSize: 13, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
                     >
                       View History

@@ -18,13 +18,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIdRouteImport } from './routes/profile.$id'
-import { Route as GameIdRouteImport } from './routes/game.$id'
-import { Route as GameListIdRouteImport } from './routes/game-list.$id'
-import { Route as CompanyIdRouteImport } from './routes/company.$id'
-import { Route as CollectionIdRouteImport } from './routes/collection.$id'
-import { Route as ProfileIdFriendsRouteImport } from './routes/profile_.$id.friends'
-import { Route as ProfileIdCollectionsRouteImport } from './routes/profile_.$id.collections'
+import { Route as ProfileIdSlugRouteImport } from './routes/profile.$id.$slug'
+import { Route as GameIdSlugRouteImport } from './routes/game.$id.$slug'
+import { Route as GameListIdSlugRouteImport } from './routes/game-list.$id.$slug'
+import { Route as CompanyIdSlugRouteImport } from './routes/company.$id.$slug'
+import { Route as CollectionIdSlugRouteImport } from './routes/collection.$id.$slug'
+import { Route as ProfileIdSlugFriendsRouteImport } from './routes/profile_.$id.$slug.friends'
+import { Route as ProfileIdSlugCollectionsRouteImport } from './routes/profile_.$id.$slug.collections'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -71,41 +71,42 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIdRoute = ProfileIdRouteImport.update({
-  id: '/profile/$id',
-  path: '/profile/$id',
+const ProfileIdSlugRoute = ProfileIdSlugRouteImport.update({
+  id: '/profile/$id/$slug',
+  path: '/profile/$id/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GameIdRoute = GameIdRouteImport.update({
-  id: '/game/$id',
-  path: '/game/$id',
+const GameIdSlugRoute = GameIdSlugRouteImport.update({
+  id: '/game/$id/$slug',
+  path: '/game/$id/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GameListIdRoute = GameListIdRouteImport.update({
-  id: '/game-list/$id',
-  path: '/game-list/$id',
+const GameListIdSlugRoute = GameListIdSlugRouteImport.update({
+  id: '/game-list/$id/$slug',
+  path: '/game-list/$id/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CompanyIdRoute = CompanyIdRouteImport.update({
-  id: '/company/$id',
-  path: '/company/$id',
+const CompanyIdSlugRoute = CompanyIdSlugRouteImport.update({
+  id: '/company/$id/$slug',
+  path: '/company/$id/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionIdRoute = CollectionIdRouteImport.update({
-  id: '/collection/$id',
-  path: '/collection/$id',
+const CollectionIdSlugRoute = CollectionIdSlugRouteImport.update({
+  id: '/collection/$id/$slug',
+  path: '/collection/$id/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIdFriendsRoute = ProfileIdFriendsRouteImport.update({
-  id: '/profile_/$id/friends',
-  path: '/profile/$id/friends',
+const ProfileIdSlugFriendsRoute = ProfileIdSlugFriendsRouteImport.update({
+  id: '/profile_/$id/$slug/friends',
+  path: '/profile/$id/$slug/friends',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIdCollectionsRoute = ProfileIdCollectionsRouteImport.update({
-  id: '/profile_/$id/collections',
-  path: '/profile/$id/collections',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ProfileIdSlugCollectionsRoute =
+  ProfileIdSlugCollectionsRouteImport.update({
+    id: '/profile_/$id/$slug/collections',
+    path: '/profile/$id/$slug/collections',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,13 +118,13 @@ export interface FileRoutesByFullPath {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
-  '/collection/$id': typeof CollectionIdRoute
-  '/company/$id': typeof CompanyIdRoute
-  '/game-list/$id': typeof GameListIdRoute
-  '/game/$id': typeof GameIdRoute
-  '/profile/$id': typeof ProfileIdRoute
-  '/profile/$id/collections': typeof ProfileIdCollectionsRoute
-  '/profile/$id/friends': typeof ProfileIdFriendsRoute
+  '/collection/$id/$slug': typeof CollectionIdSlugRoute
+  '/company/$id/$slug': typeof CompanyIdSlugRoute
+  '/game-list/$id/$slug': typeof GameListIdSlugRoute
+  '/game/$id/$slug': typeof GameIdSlugRoute
+  '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
+  '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -135,13 +136,13 @@ export interface FileRoutesByTo {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
-  '/collection/$id': typeof CollectionIdRoute
-  '/company/$id': typeof CompanyIdRoute
-  '/game-list/$id': typeof GameListIdRoute
-  '/game/$id': typeof GameIdRoute
-  '/profile/$id': typeof ProfileIdRoute
-  '/profile/$id/collections': typeof ProfileIdCollectionsRoute
-  '/profile/$id/friends': typeof ProfileIdFriendsRoute
+  '/collection/$id/$slug': typeof CollectionIdSlugRoute
+  '/company/$id/$slug': typeof CompanyIdSlugRoute
+  '/game-list/$id/$slug': typeof GameListIdSlugRoute
+  '/game/$id/$slug': typeof GameIdSlugRoute
+  '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
+  '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,13 +155,13 @@ export interface FileRoutesById {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
-  '/collection/$id': typeof CollectionIdRoute
-  '/company/$id': typeof CompanyIdRoute
-  '/game-list/$id': typeof GameListIdRoute
-  '/game/$id': typeof GameIdRoute
-  '/profile/$id': typeof ProfileIdRoute
-  '/profile_/$id/collections': typeof ProfileIdCollectionsRoute
-  '/profile_/$id/friends': typeof ProfileIdFriendsRoute
+  '/collection/$id/$slug': typeof CollectionIdSlugRoute
+  '/company/$id/$slug': typeof CompanyIdSlugRoute
+  '/game-list/$id/$slug': typeof GameListIdSlugRoute
+  '/game/$id/$slug': typeof GameIdSlugRoute
+  '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/profile_/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
+  '/profile_/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,13 +175,13 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
-    | '/collection/$id'
-    | '/company/$id'
-    | '/game-list/$id'
-    | '/game/$id'
-    | '/profile/$id'
-    | '/profile/$id/collections'
-    | '/profile/$id/friends'
+    | '/collection/$id/$slug'
+    | '/company/$id/$slug'
+    | '/game-list/$id/$slug'
+    | '/game/$id/$slug'
+    | '/profile/$id/$slug'
+    | '/profile/$id/$slug/collections'
+    | '/profile/$id/$slug/friends'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -192,13 +193,13 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
-    | '/collection/$id'
-    | '/company/$id'
-    | '/game-list/$id'
-    | '/game/$id'
-    | '/profile/$id'
-    | '/profile/$id/collections'
-    | '/profile/$id/friends'
+    | '/collection/$id/$slug'
+    | '/company/$id/$slug'
+    | '/game-list/$id/$slug'
+    | '/game/$id/$slug'
+    | '/profile/$id/$slug'
+    | '/profile/$id/$slug/collections'
+    | '/profile/$id/$slug/friends'
   id:
     | '__root__'
     | '/'
@@ -210,13 +211,13 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
-    | '/collection/$id'
-    | '/company/$id'
-    | '/game-list/$id'
-    | '/game/$id'
-    | '/profile/$id'
-    | '/profile_/$id/collections'
-    | '/profile_/$id/friends'
+    | '/collection/$id/$slug'
+    | '/company/$id/$slug'
+    | '/game-list/$id/$slug'
+    | '/game/$id/$slug'
+    | '/profile/$id/$slug'
+    | '/profile_/$id/$slug/collections'
+    | '/profile_/$id/$slug/friends'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,13 +230,13 @@ export interface RootRouteChildren {
   ReleaseCalendarRoute: typeof ReleaseCalendarRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
-  CollectionIdRoute: typeof CollectionIdRoute
-  CompanyIdRoute: typeof CompanyIdRoute
-  GameListIdRoute: typeof GameListIdRoute
-  GameIdRoute: typeof GameIdRoute
-  ProfileIdRoute: typeof ProfileIdRoute
-  ProfileIdCollectionsRoute: typeof ProfileIdCollectionsRoute
-  ProfileIdFriendsRoute: typeof ProfileIdFriendsRoute
+  CollectionIdSlugRoute: typeof CollectionIdSlugRoute
+  CompanyIdSlugRoute: typeof CompanyIdSlugRoute
+  GameListIdSlugRoute: typeof GameListIdSlugRoute
+  GameIdSlugRoute: typeof GameIdSlugRoute
+  ProfileIdSlugRoute: typeof ProfileIdSlugRoute
+  ProfileIdSlugCollectionsRoute: typeof ProfileIdSlugCollectionsRoute
+  ProfileIdSlugFriendsRoute: typeof ProfileIdSlugFriendsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,53 +304,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/$id': {
-      id: '/profile/$id'
-      path: '/profile/$id'
-      fullPath: '/profile/$id'
-      preLoaderRoute: typeof ProfileIdRouteImport
+    '/profile/$id/$slug': {
+      id: '/profile/$id/$slug'
+      path: '/profile/$id/$slug'
+      fullPath: '/profile/$id/$slug'
+      preLoaderRoute: typeof ProfileIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/game/$id': {
-      id: '/game/$id'
-      path: '/game/$id'
-      fullPath: '/game/$id'
-      preLoaderRoute: typeof GameIdRouteImport
+    '/game/$id/$slug': {
+      id: '/game/$id/$slug'
+      path: '/game/$id/$slug'
+      fullPath: '/game/$id/$slug'
+      preLoaderRoute: typeof GameIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/game-list/$id': {
-      id: '/game-list/$id'
-      path: '/game-list/$id'
-      fullPath: '/game-list/$id'
-      preLoaderRoute: typeof GameListIdRouteImport
+    '/game-list/$id/$slug': {
+      id: '/game-list/$id/$slug'
+      path: '/game-list/$id/$slug'
+      fullPath: '/game-list/$id/$slug'
+      preLoaderRoute: typeof GameListIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/company/$id': {
-      id: '/company/$id'
-      path: '/company/$id'
-      fullPath: '/company/$id'
-      preLoaderRoute: typeof CompanyIdRouteImport
+    '/company/$id/$slug': {
+      id: '/company/$id/$slug'
+      path: '/company/$id/$slug'
+      fullPath: '/company/$id/$slug'
+      preLoaderRoute: typeof CompanyIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collection/$id': {
-      id: '/collection/$id'
-      path: '/collection/$id'
-      fullPath: '/collection/$id'
-      preLoaderRoute: typeof CollectionIdRouteImport
+    '/collection/$id/$slug': {
+      id: '/collection/$id/$slug'
+      path: '/collection/$id/$slug'
+      fullPath: '/collection/$id/$slug'
+      preLoaderRoute: typeof CollectionIdSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile_/$id/friends': {
-      id: '/profile_/$id/friends'
-      path: '/profile/$id/friends'
-      fullPath: '/profile/$id/friends'
-      preLoaderRoute: typeof ProfileIdFriendsRouteImport
+    '/profile_/$id/$slug/friends': {
+      id: '/profile_/$id/$slug/friends'
+      path: '/profile/$id/$slug/friends'
+      fullPath: '/profile/$id/$slug/friends'
+      preLoaderRoute: typeof ProfileIdSlugFriendsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile_/$id/collections': {
-      id: '/profile_/$id/collections'
-      path: '/profile/$id/collections'
-      fullPath: '/profile/$id/collections'
-      preLoaderRoute: typeof ProfileIdCollectionsRouteImport
+    '/profile_/$id/$slug/collections': {
+      id: '/profile_/$id/$slug/collections'
+      path: '/profile/$id/$slug/collections'
+      fullPath: '/profile/$id/$slug/collections'
+      preLoaderRoute: typeof ProfileIdSlugCollectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -365,13 +366,13 @@ const rootRouteChildren: RootRouteChildren = {
   ReleaseCalendarRoute: ReleaseCalendarRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
-  CollectionIdRoute: CollectionIdRoute,
-  CompanyIdRoute: CompanyIdRoute,
-  GameListIdRoute: GameListIdRoute,
-  GameIdRoute: GameIdRoute,
-  ProfileIdRoute: ProfileIdRoute,
-  ProfileIdCollectionsRoute: ProfileIdCollectionsRoute,
-  ProfileIdFriendsRoute: ProfileIdFriendsRoute,
+  CollectionIdSlugRoute: CollectionIdSlugRoute,
+  CompanyIdSlugRoute: CompanyIdSlugRoute,
+  GameListIdSlugRoute: GameListIdSlugRoute,
+  GameIdSlugRoute: GameIdSlugRoute,
+  ProfileIdSlugRoute: ProfileIdSlugRoute,
+  ProfileIdSlugCollectionsRoute: ProfileIdSlugCollectionsRoute,
+  ProfileIdSlugFriendsRoute: ProfileIdSlugFriendsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

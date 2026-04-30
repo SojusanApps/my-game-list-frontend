@@ -33,8 +33,8 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
         <Stack gap={8}>
           <Group gap={12} fz="sm" fw={700} c="var(--color-text-500)" tt="uppercase" style={{ letterSpacing: "0.1em" }}>
             <Link
-              to={"/profile/$id/collections"}
-              params={{ id: collection.user.id.toString() }}
+              to={"/profile/$id/$slug/collections"}
+              params={{ id: collection.user.id.toString(), slug: collection.user.slug || "" }}
               className="hover:text-primary-600 transition-colors"
             >
               {collection.user.username}&apos;s Collections
