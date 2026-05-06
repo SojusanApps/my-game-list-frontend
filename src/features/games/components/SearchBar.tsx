@@ -5,7 +5,7 @@ import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { IconSearch, IconX } from "@tabler/icons-react";
-import { useDebounce } from "@/utils/hooks";
+import { useDebouncedValue } from "@mantine/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 interface SearchBarProps {
@@ -16,7 +16,7 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
   const [search, setSearch] = React.useState<string>("");
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const debouncedSearch = useDebounce(search, 300);
+  const [debouncedSearch] = useDebouncedValue(search, 300);
 
   const { data: gamesDetails, isLoading } = useGetGamesList(
     { title: debouncedSearch },
