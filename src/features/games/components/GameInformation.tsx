@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons-react";
-import { ExternalGame, Game, GameEngine, GameMode, Genre, Platform, PlayerPerspective } from "@/client";
+import { Game, GameEngine, GameMode, Genre, Platform, PlayerPerspective } from "@/client";
+import { ExternalLinksSection } from "./ExternalLinksSection";
 
 interface GameInformationProps {
   gameDetails?: Game;
@@ -61,93 +61,6 @@ function IgdbLink({ id, slug }: Readonly<{ id: string; slug: string }>) {
     <a href={`https://www.igdb.com/games/${slug}`} target="_blank" rel="noopener noreferrer">
       {id}
     </a>
-  );
-}
-
-function ExternalLinksSection({ externalGames }: Readonly<{ externalGames: ExternalGame[] }>) {
-  const [showAllExternalLinks, setShowAllExternalLinks] = React.useState(false);
-  const displayedExternalGames = showAllExternalLinks ? externalGames : externalGames.slice(0, 4);
-  const hasMoreExternalGames = externalGames.length > 4;
-
-  return (
-    <Stack gap={4}>
-      <Text size="sm" fw={500} c="var(--color-text-600)">
-        External Links:
-      </Text>
-      <Group gap={8} wrap="wrap">
-        {externalGames.length > 0 ? (
-          <>
-            {displayedExternalGames.map((extGame: ExternalGame) =>
-              extGame.url ? (
-                <Text
-                  component="a"
-                  href={extGame.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={extGame.id}
-                  size="xs"
-                  fw={500}
-                  style={{
-                    background: "var(--mantine-color-primary-0)",
-                    color: "var(--mantine-color-primary-7)",
-                    border: "1px solid var(--mantine-color-primary-2)",
-                    borderRadius: 6,
-                    padding: "2px 8px",
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 4,
-                  }}
-                >
-                  {extGame.external_game_source}
-                  <IconExternalLink size={12} />
-                </Text>
-              ) : (
-                <Text
-                  component="span"
-                  key={extGame.id}
-                  size="xs"
-                  fw={500}
-                  style={{
-                    background: "var(--color-background-100)",
-                    color: "var(--color-text-700)",
-                    border: "1px solid var(--color-background-300)",
-                    borderRadius: 6,
-                    padding: "2px 8px",
-                  }}
-                >
-                  {extGame.external_game_source}
-                </Text>
-              ),
-            )}
-            {hasMoreExternalGames && (
-              <Text
-                component="button"
-                onClick={() => setShowAllExternalLinks(prev => !prev)}
-                size="xs"
-                fw={500}
-                style={{
-                  background: "transparent",
-                  color: "var(--mantine-color-primary-7)",
-                  border: "none",
-                  padding: "2px 4px",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                  display: "inline-block",
-                  outline: "none",
-                }}
-              >
-                {showAllExternalLinks ? "Show less" : `+${externalGames.length - 4} more`}
-              </Text>
-            )}
-          </>
-        ) : (
-          <Text size="sm" c="var(--color-text-900)">
-            ---
-          </Text>
-        )}
-      </Group>
-    </Stack>
   );
 }
 
