@@ -4,7 +4,7 @@ import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { IconSearch, IconX } from "@tabler/icons-react";
 import { ActionIcon, Modal, Stack, Group, Box, Title, Text, TextInput, UnstyledButton } from "@mantine/core";
-import { useDebounce } from "@/utils/hooks";
+import { useDebouncedValue } from "@mantine/hooks";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { useAddCollectionItem } from "../hooks/useCollectionQueries";
 import { notifications } from "@mantine/notifications";
@@ -19,7 +19,7 @@ export default function AddGameToCollectionModal({
   collectionId,
 }: Readonly<AddGameToCollectionModalProps>): React.JSX.Element {
   const [search, setSearch] = React.useState<string>("");
-  const debouncedSearch = useDebounce(search, 300);
+  const [debouncedSearch] = useDebouncedValue(search, 300);
 
   const { data: gamesDetails, isLoading: isSearchLoading } = useGetGamesList(
     { title: debouncedSearch },
