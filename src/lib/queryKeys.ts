@@ -79,3 +79,7 @@ export const searchKeys = {
   all: ["search-results"] as const,
   results: (category: string | null, filters: object) => [...searchKeys.all, category, filters] as const,
 };
+
+export const versionKeys = {
+  apiVersion: ["version", "api"] as const,
+};

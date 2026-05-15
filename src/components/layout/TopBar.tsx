@@ -7,7 +7,7 @@ import SearchBar from "@/features/games/components/SearchBar";
 
 import NotificationBell from "@/features/notifications/components/NotificationBell";
 import { useAuth, useCurrentUserId } from "@/features/auth";
-import { IconChevronDown, IconUserCircle, IconSettings, IconLogout } from "@tabler/icons-react";
+import { IconChevronDown, IconUserCircle, IconSettings, IconLogout, IconShield } from "@tabler/icons-react";
 import { Box, Group, Menu, Text, UnstyledButton, Burger, Drawer, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./TopBar.module.css";
@@ -62,6 +62,14 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
           <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
             Account settings
           </Menu.Item>
+          {userDetails?.is_staff && (
+            <>
+              <Menu.Divider />
+              <Menu.Item component={Link} to="/admin" leftSection={<IconShield size={16} />}>
+                Admin Panel
+              </Menu.Item>
+            </>
+          )}
           <Menu.Divider />
           <Menu.Item color="red" onClick={handleClick} leftSection={<IconLogout size={16} />}>
             Logout
