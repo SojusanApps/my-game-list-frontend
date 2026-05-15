@@ -16,6 +16,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIdSlugRouteImport } from './routes/profile.$id.$slug'
@@ -59,6 +60,11 @@ const LoginRoute = LoginRouteImport.update({
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -111,6 +117,7 @@ const ProfileIdSlugCollectionsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
+  '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$'
+    | '/admin'
     | '/home'
     | '/login'
     | '/notifications'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$'
+    | '/admin'
     | '/home'
     | '/login'
     | '/notifications'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/$'
+    | '/admin'
     | '/home'
     | '/login'
     | '/notifications'
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
+  AdminRoute: typeof AdminRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -288,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/$': {
@@ -359,6 +379,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
+  AdminRoute: AdminRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
