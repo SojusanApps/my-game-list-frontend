@@ -103,6 +103,7 @@ export default function AsyncMultiSelectAutocomplete<T>({
       error={error}
       searchable
       clearable
+      filter={({ options }) => options}
       searchValue={searchTerm}
       onSearchChange={setSearchTerm}
       scrollAreaProps={{ viewportRef: dropdownRef, onScrollPositionChange: handleDropdownScroll }}

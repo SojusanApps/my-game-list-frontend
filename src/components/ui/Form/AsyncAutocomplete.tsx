@@ -96,6 +96,7 @@ export default function AsyncAutocomplete<T>({
       error={error}
       searchable
       clearable
+      filter={({ options }) => options}
       searchValue={searchTerm}
       onSearchChange={setSearchTerm}
       scrollAreaProps={{ viewportRef: dropdownRef, onScrollPositionChange: handleDropdownScroll }}

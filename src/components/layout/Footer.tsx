@@ -1,11 +1,19 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { Box, Text } from "@mantine/core";
+import { Box, Text, SegmentedControl } from "@mantine/core";
 import AppLogo from "@/components/ui/AppLogo";
+import { getStoredLanguage, setStoredLanguage, type Language } from "@/utils/languageUtils";
 import styles from "./Footer.module.css";
 
 const Footer = (): React.JSX.Element => {
   const currentYear = new Date().getFullYear();
+  const [language, setLanguage] = React.useState<Language>(() => getStoredLanguage());
+
+  const handleLanguageChange = (value: string) => {
+    setStoredLanguage(value as Language);
+    setLanguage(value as Language);
+    globalThis.location.reload();
+  };
 
   return (
     <Box
@@ -30,25 +38,36 @@ const Footer = (): React.JSX.Element => {
           </Text>
         </div>
 
-        <nav>
-          <ul className={styles.navGroup}>
-            <li>
-              <Link to="/home" className={styles.footerLink}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/search" className={styles.footerLink}>
-                Search
-              </Link>
-            </li>
-            <li>
-              <Link to="/home" className={styles.footerLink}>
-                Privacy
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <div className={styles.rightSection}>
+          <nav>
+            <ul className={styles.navGroup}>
+              <li>
+                <Link to="/home" className={styles.footerLink}>
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/search" className={styles.footerLink}>
+                  Search
+                </Link>
+              </li>
+              <li>
+                <Link to="/home" className={styles.footerLink}>
+                  Privacy
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <SegmentedControl
+            value={language}
+            onChange={handleLanguageChange}
+            size="xs"
+            data={[
+              { label: "EN", value: "en" },
+              { label: "PL", value: "pl" },
+            ]}
+          />
+        </div>
       </div>
     </Box>
   );

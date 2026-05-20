@@ -12,6 +12,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   if (user?.token && !request.url.includes("token/refresh")) {
     request.headers.set("Authorization", `Bearer ${user.token}`);
   }
+  request.headers.set("Accept-Language", localStorage.getItem("language") ?? "en");
 
   // Clone the request before fetching so we can retry it if needed
   // (fetch consumes the body)
