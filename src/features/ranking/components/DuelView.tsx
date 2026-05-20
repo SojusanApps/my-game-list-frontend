@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Flex, Group, Kbd, Stack, Text } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
 import { DuelGameCard } from "./DuelGameCard";
@@ -11,6 +12,7 @@ interface DuelViewProps {
 }
 
 export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }: Readonly<DuelViewProps>) {
+  const { t } = useTranslation("ranking");
   // Keyboard shortcuts
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -97,10 +99,10 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
             fullWidth
           >
             <Text component="span" hiddenFrom="sm">
-              Choose Top
+              {t("duel.chooseTop")}
             </Text>
             <Text component="span" visibleFrom="sm" lh={1} style={{ display: "flex", alignItems: "center" }}>
-              Choose Left
+              {t("duel.chooseLeft")}
               <Kbd
                 size="xs"
                 ml={6}
@@ -117,7 +119,7 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
             fullWidth
           >
             <Text component="span" lh={1} style={{ display: "flex", alignItems: "center" }}>
-              Tie
+              {t("duel.tie")}
               <Kbd size="xs" ml={6} style={{ opacity: 0.6, verticalAlign: "middle" }} visibleFrom="sm">
                 Enter
               </Kbd>
@@ -129,10 +131,10 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
             fullWidth
           >
             <Text component="span" hiddenFrom="sm">
-              Choose Bottom
+              {t("duel.chooseBottom")}
             </Text>
             <Text component="span" visibleFrom="sm" lh={1} style={{ display: "flex", alignItems: "center" }}>
-              Choose Right
+              {t("duel.chooseRight")}
               <Kbd
                 size="xs"
                 ml={6}
@@ -146,7 +148,7 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
 
         <Button onClick={onSkip} variant="ghost" size="sm" style={{ color: "var(--color-text-400)" }}>
           <Text component="span" style={{ display: "flex", alignItems: "center" }}>
-            Skip this pair
+            {t("duel.skipPair")}
             <Kbd size="xs" ml={6} style={{ opacity: 0.6, verticalAlign: "middle" }} visibleFrom="sm">
               S
             </Kbd>
@@ -156,23 +158,23 @@ export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }:
 
       {/* Keyboard hint */}
       <Text size="xs" style={{ color: "var(--color-text-400)" }} ta="center" visibleFrom="sm">
-        Use keyboard:{" "}
+        {t("duel.useKeyboard")}{" "}
         <Text component="span" fw={700}>
           ← / 1
         </Text>{" "}
-        left &middot;{" "}
+        {t("duel.left")} &middot;{" "}
         <Text component="span" fw={700}>
           → / 2
         </Text>{" "}
-        right &middot;{" "}
+        {t("duel.right")} &middot;{" "}
         <Text component="span" fw={700}>
           Enter / 3
         </Text>{" "}
-        tie &middot;{" "}
+        {t("duel.tie")} &middot;{" "}
         <Text component="span" fw={700}>
           S
         </Text>{" "}
-        skip
+        {t("duel.skip")}
       </Text>
     </Stack>
   );

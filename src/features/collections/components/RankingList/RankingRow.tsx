@@ -1,4 +1,5 @@
 import { Box, Group, NumberInput, Stack, Text, UnstyledButton, ActionIcon, Tooltip, Menu } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import {
   IconGripVertical,
   IconChevronUp,
@@ -100,10 +101,11 @@ function ActionButtons({
   onDescriptionClick?: () => void;
   onRemove?: () => void;
 }>) {
+  const { t } = useTranslation("collections");
   return (
     <>
       <Group gap={8} className={rowStyles.rankingRowActionsDesktop} wrap="nowrap" visibleFrom="sm">
-        <Tooltip label="View details" withArrow position="top">
+        <Tooltip label={t("rankingRow.viewDetails")} withArrow position="top">
           <ActionIcon
             component={Link}
             to={`/game/${gameId}/${gameSlug}`}
@@ -116,7 +118,7 @@ function ActionButtons({
           </ActionIcon>
         </Tooltip>
 
-        <Tooltip label={hasDescription ? "Edit Note" : "Add Note"} withArrow position="top">
+        <Tooltip label={hasDescription ? t("rankingRow.editNote") : t("rankingRow.addNote")} withArrow position="top">
           <ActionIcon
             variant="light"
             color={hasDescription ? "blue" : "gray"}
@@ -131,7 +133,7 @@ function ActionButtons({
         </Tooltip>
 
         {onRemove && (
-          <Tooltip label="Remove game" withArrow position="top">
+          <Tooltip label={t("rankingRow.removeGame")} withArrow position="top">
             <ActionIcon
               variant="light"
               color="red"
@@ -161,7 +163,7 @@ function ActionButtons({
 
           <Menu.Dropdown>
             <Menu.Item component={Link} to={`/game/${gameId}`} leftSection={<IconExternalLink size={16} />}>
-              View details
+              {t("rankingRow.viewDetails")}
             </Menu.Item>
 
             {isOwner && (
@@ -169,7 +171,7 @@ function ActionButtons({
                 leftSection={hasDescription ? <IconNote size={16} /> : <IconNoteOff size={16} />}
                 onClick={onDescriptionClick}
               >
-                {hasDescription ? "Edit Note" : "Add Note"}
+                {hasDescription ? t("rankingRow.editNote") : t("rankingRow.addNote")}
               </Menu.Item>
             )}
 
@@ -183,7 +185,7 @@ function ActionButtons({
                   onRemove();
                 }}
               >
-                Remove game
+                {t("rankingRow.removeGame")}
               </Menu.Item>
             )}
           </Menu.Dropdown>
@@ -210,6 +212,7 @@ export const RankingRow = React.memo(
     onMoveDown,
     onPositionChange,
   }: Readonly<RankingRowProps>) => {
+    const { t } = useTranslation("collections");
     const [isEditingPosition, setIsEditingPosition] = React.useState(false);
     const [positionInput, setPositionInput] = React.useState<number | string>(rank);
     const [prevRank, setPrevRank] = React.useState<number>(rank);
@@ -307,7 +310,7 @@ export const RankingRow = React.memo(
                   cursor: isOwner ? "pointer" : "default",
                 }}
                 className={isOwner ? rowStyles.rankingRowRankHover : ""}
-                title={isOwner ? "Click to edit rank" : undefined}
+                title={isOwner ? t("rankingRow.clickToEditRank") : undefined}
               >
                 #{rank}
               </UnstyledButton>
@@ -374,7 +377,7 @@ export const RankingRow = React.memo(
                   onClick={onDescriptionClick}
                   className={rowStyles.addNotePrompt}
                 >
-                  + Add a note
+                  {t("rankingRow.addNotePrompt")}
                 </Text>
               )}
             </Stack>

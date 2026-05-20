@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Loader, Center, Text } from "@mantine/core";
 import { useGetGamesInfinite } from "../../hooks/gameQueries";
 import IGDBImageSize, { getIGDBImageURL } from "../../utils/IGDBIntegration";
@@ -13,6 +14,7 @@ interface DayDetailModalProps {
 }
 
 export default function DayDetailModal({ opened, onClose, dateStr }: Readonly<DayDetailModalProps>): React.JSX.Element {
+  const { t } = useTranslation("games");
   const { data, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useGetGamesInfinite(
     {
       release_date_after: dateStr,
@@ -34,12 +36,12 @@ export default function DayDetailModal({ opened, onClose, dateStr }: Readonly<Da
       );
     }
     if (isError) {
-      return <Text c="red">Failed to load games.</Text>;
+      return <Text c="red">{t("calendar.dayFailedToLoad")}</Text>;
     }
     if (games.length === 0) {
       return (
         <Text c="dimmed" ta="center" py="xl">
-          No releases for this day.
+          {t("calendar.dayNoReleases")}
         </Text>
       );
     }
@@ -83,7 +85,7 @@ export default function DayDetailModal({ opened, onClose, dateStr }: Readonly<Da
       onClose={onClose}
       title={
         <Text size="xl" fw={600}>
-          Releases for{" "}
+          {t("calendar.releasesFor")}{" "}
           <Text span c="var(--color-primary-500)" fw={800}>
             {dateStr}
           </Text>

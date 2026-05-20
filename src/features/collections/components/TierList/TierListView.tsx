@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, Stack, Text } from "@mantine/core";
 import { TierEnum, BlankEnum } from "@/client";
 import { TierSection } from "./TierSection";
@@ -27,6 +28,7 @@ export const TierListView = React.memo(function TierListView({
   isOwner,
   onRemove,
 }: Readonly<TierListViewProps>) {
+  const { t } = useTranslation("collections");
   const { mutateAsync: updateItemTier } = useUpdateCollectionItemTier();
   const { mutateAsync: updateItem } = useUpdateCollectionItem();
 
@@ -46,7 +48,7 @@ export const TierListView = React.memo(function TierListView({
       }
 
       const numericItemId = Number.parseInt(itemId, 10);
-      const tierConfig = TIERS.find(t => t.id === targetTierId);
+      const tierConfig = TIERS.find(tier => tier.id === targetTierId);
       if (!tierConfig) {
         return;
       }
@@ -61,13 +63,13 @@ export const TierListView = React.memo(function TierListView({
           oldTier: sourceTierId as TierEnum | "UNRANKED",
         });
 
-        notifications.show({ title: "Success", message: "Item moved successfully", color: "green" });
+        notifications.show({ title: t("tierList.successTitle"), message: t("tierList.itemMoved"), color: "green" });
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to move item", color: "red" });
+        notifications.show({ title: t("tierList.errorTitle"), message: t("tierList.failedToMove"), color: "red" });
         console.error(error);
       }
     },
-    [isOwner, collectionId, updateItemTier],
+    [isOwner, collectionId, updateItemTier, t],
   );
 
   const handleReorder = React.useCallback(
@@ -85,7 +87,7 @@ export const TierListView = React.memo(function TierListView({
       }
 
       const numericItemId = Number.parseInt(itemId, 10);
-      const tierConfig = TIERS.find(t => t.id === targetTierId);
+      const tierConfig = TIERS.find(tier => tier.id === targetTierId);
       if (!tierConfig) {
         return;
       }
@@ -120,13 +122,13 @@ export const TierListView = React.memo(function TierListView({
           oldTier: sourceTierId as TierEnum | "UNRANKED",
         });
 
-        notifications.show({ title: "Success", message: "Item reordered successfully", color: "green" });
+        notifications.show({ title: t("tierList.successTitle"), message: t("tierList.itemReordered"), color: "green" });
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
+        notifications.show({ title: t("tierList.errorTitle"), message: t("tierList.failedToReorder"), color: "red" });
         console.error(error);
       }
     },
-    [isOwner, collectionId, updateItemTier],
+    [isOwner, collectionId, updateItemTier, t],
   );
 
   const handleDescriptionChange = React.useCallback(
@@ -135,13 +137,21 @@ export const TierListView = React.memo(function TierListView({
 
       try {
         await updateItem({ id: itemId, body: { description: newDescription } });
-        notifications.show({ title: "Success", message: "Description updated", color: "green" });
+        notifications.show({
+          title: t("tierList.successTitle"),
+          message: t("tierList.descriptionUpdated"),
+          color: "green",
+        });
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to update description", color: "red" });
+        notifications.show({
+          title: t("tierList.errorTitle"),
+          message: t("tierList.failedToUpdateDescription"),
+          color: "red",
+        });
         console.error(error);
       }
     },
-    [isOwner, updateItem],
+    [isOwner, updateItem, t],
   );
 
   // Calculate total items from API count
@@ -201,7 +211,7 @@ export const TierListView = React.memo(function TierListView({
               c="var(--color-text-500)"
               style={{ textTransform: "uppercase", letterSpacing: "0.05em", marginTop: 2 }}
             >
-              Total Games
+              {t("tierList.totalGames")}
             </Text>
           </Box>
         </Group>

@@ -11,6 +11,7 @@ import { IconChevronDown, IconUserCircle, IconSettings, IconLogout, IconShield }
 import { Box, Group, Menu, Text, UnstyledButton, Burger, Drawer, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import styles from "./TopBar.module.css";
+import { useTranslation } from "react-i18next";
 
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -18,6 +19,7 @@ import { SafeImage } from "@/components/ui/SafeImage";
 function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.Element {
   const currentUserId = useCurrentUserId();
   const { data: userDetails } = useGetUserDetails(currentUserId || undefined);
+  const { t } = useTranslation();
 
   const handleClick = () => {
     logout();
@@ -38,7 +40,7 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
             </Text>
             <SafeImage
               src={userDetails?.gravatar_url || undefined}
-              alt="User avatar"
+              alt={t("userAvatarAlt")}
               style={{
                 width: "36px",
                 height: "36px",
@@ -57,22 +59,22 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
             params={profileParams}
             leftSection={<IconUserCircle size={16} />}
           >
-            Profile
+            {t("nav.profile")}
           </Menu.Item>
           <Menu.Item component={Link} to="/settings" leftSection={<IconSettings size={16} />}>
-            Account settings
+            {t("nav.accountSettings")}
           </Menu.Item>
           {userDetails?.is_staff && (
             <>
               <Menu.Divider />
               <Menu.Item component={Link} to="/admin" leftSection={<IconShield size={16} />}>
-                Admin Panel
+                {t("nav.adminPanel")}
               </Menu.Item>
             </>
           )}
           <Menu.Divider />
           <Menu.Item color="red" onClick={handleClick} leftSection={<IconLogout size={16} />}>
-            Logout
+            {t("nav.logout")}
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -81,15 +83,16 @@ function LoggedInView({ logout }: Readonly<{ logout: () => void }>): React.JSX.E
 }
 
 function NotLoggedInView(): React.JSX.Element {
+  const { t } = useTranslation();
   return (
     <Group gap={12}>
       <Link to="/register">
         <Button variant="ghost" size="sm">
-          Register
+          {t("nav.register")}
         </Button>
       </Link>
       <Link to="/login">
-        <Button size="sm">Login</Button>
+        <Button size="sm">{t("nav.login")}</Button>
       </Link>
     </Group>
   );
@@ -101,6 +104,7 @@ function TopBar(): React.JSX.Element {
   const { data: userDetails } = useGetUserDetails(currentUserId || undefined);
   const userSlug = userDetails?.slug || currentUserId?.toString() || "";
   const [opened, { toggle, close }] = useDisclosure();
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -118,19 +122,19 @@ function TopBar(): React.JSX.Element {
       <Group justify="space-between" align="center" maw={1280} mx="auto" p={12}>
         <Group gap={32}>
           <Burger opened={opened} onClick={toggle} hiddenFrom="lg" size="sm" color="var(--color-primary-100)" />
-          <Link to="/home" className={styles.logoLink} aria-label="Game List logo">
+          <Link to="/home" className={styles.logoLink} aria-label={t("nav.gameListLogo")}>
             <AppLogo size="md" onDark />
           </Link>
 
           <Group component="ul" gap={32} visibleFrom="lg">
             <Box component="li" className={styles.navItem}>
               <Link to="/search" className={styles.navLink}>
-                Search Engine
+                {t("nav.searchEngine")}
               </Link>
             </Box>
             <Box component="li" className={styles.navItem}>
               <Link to="/release-calendar" className={styles.navLink}>
-                Release Calendar
+                {t("nav.releaseCalendar")}
               </Link>
             </Box>
 
@@ -142,7 +146,7 @@ function TopBar(): React.JSX.Element {
                     params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                     className={styles.navLink}
                   >
-                    Game List
+                    {t("nav.gameList")}
                   </Link>
                 </Box>
                 <Box component="li" className={styles.navItem}>
@@ -151,7 +155,7 @@ function TopBar(): React.JSX.Element {
                     params={{ id: currentUserId?.toString() || "", slug: userSlug }}
                     className={styles.navLink}
                   >
-                    Collections
+                    {t("nav.collections")}
                   </Link>
                 </Box>
               </>
@@ -173,7 +177,7 @@ function TopBar(): React.JSX.Element {
         padding="md"
         title={
           <Text fw={700} fz="lg" c="var(--color-text-900)">
-            Menu
+            {t("nav.menu")}
           </Text>
         }
         hiddenFrom="lg"
@@ -185,12 +189,12 @@ function TopBar(): React.JSX.Element {
           </Box>
           <Box component="li">
             <Link to="/search" className={styles.mobileNavLink} onClick={close}>
-              Search Engine
+              {t("nav.searchEngine")}
             </Link>
           </Box>
           <Box component="li">
             <Link to="/release-calendar" className={styles.mobileNavLink} onClick={close}>
-              Release Calendar
+              {t("nav.releaseCalendar")}
             </Link>
           </Box>
 
@@ -203,7 +207,7 @@ function TopBar(): React.JSX.Element {
                   className={styles.mobileNavLink}
                   onClick={close}
                 >
-                  Game List
+                  {t("nav.gameList")}
                 </Link>
               </Box>
               <Box component="li">
@@ -213,7 +217,7 @@ function TopBar(): React.JSX.Element {
                   className={styles.mobileNavLink}
                   onClick={close}
                 >
-                  Collections
+                  {t("nav.collections")}
                 </Link>
               </Box>
             </>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import GameSearchFilter, {
   ValidationSchema as GameSearchFilterValidationSchema,
@@ -40,8 +41,9 @@ function DisplaySearchResults({
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
 }>): React.JSX.Element {
+  const { t } = useTranslation("games");
   if (searchResults === undefined || searchResults.pages.length === 0) {
-    return <Text>No results</Text>;
+    return <Text>{t("search.noResults")}</Text>;
   }
 
   const allItems = searchResults.pages
@@ -114,6 +116,7 @@ function DisplaySearchResults({
 }
 
 export default function SearchEnginePage(): React.JSX.Element {
+  const { t } = useTranslation("games");
   const searchParams = Route.useSearch();
   const navigate = useNavigate({ from: Route.id });
 
@@ -199,10 +202,22 @@ export default function SearchEnginePage(): React.JSX.Element {
   };
 
   const categories = [
-    { id: "games", label: "Games" },
-    { id: "companies", label: "Companies" },
-    { id: "users", label: "Users" },
+    { id: "games", label: t("search.categoryGames") },
+    { id: "companies", label: t("search.categoryCompanies") },
+    { id: "users", label: t("search.categoryUsers") },
   ] as const;
+
+  const placeholderKeys = {
+    games: "search.placeholderGames",
+    companies: "search.placeholderCompanies",
+    users: "search.placeholderUsers",
+  } as const;
+
+  const descKeys = {
+    games: "search.readyToExploreDescGames",
+    companies: "search.readyToExploreDescCompanies",
+    users: "search.readyToExploreDescUsers",
+  } as const;
 
   const renderSearchContent = () => {
     if (!hasSearched) {
@@ -231,10 +246,10 @@ export default function SearchEnginePage(): React.JSX.Element {
           </Box>
           <Stack gap={8}>
             <Title order={3} fz={24} fw={700} c="var(--color-text-900)">
-              Ready to explore?
+              {t("search.readyToExplore")}
             </Title>
             <Text c="var(--color-text-500)" maw={384} mx="auto">
-              Adjust the filters above and click the button to search for your favorite {selectedCategory}.
+              {t(descKeys[selectedCategory])}
             </Text>
           </Stack>
         </Stack>
@@ -276,7 +291,7 @@ export default function SearchEnginePage(): React.JSX.Element {
     return (
       <Stack align="center" justify="center" c="var(--color-text-400)" style={{ paddingBlock: "80px" }}>
         <Text size="lg" fw={500}>
-          No results found for your search.
+          {t("search.noResultsFound")}
         </Text>
       </Stack>
     );
@@ -284,18 +299,18 @@ export default function SearchEnginePage(): React.JSX.Element {
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
-      <PageMeta title="Search Engine" />
+      <PageMeta title={t("search.title")} />
       <Stack gap={40} maw={1280} mx="auto" px={16}>
         <Stack align="center" gap={24}>
           <Title fz={36} fw={700} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
-            Search Engine
+            {t("search.title")}
           </Title>
 
           <Group gap={4} p={4} style={{ background: "var(--color-background-300)", borderRadius: "12px" }}>
             {categories.map(cat => (
               <UnstyledButton
                 key={cat.id}
-                onClick={() => handleCategoryChange(cat.id as SearchCategory)}
+                onClick={() => handleCategoryChange(cat.id)}
                 style={{
                   padding: "10px 32px",
                   fontSize: "14px",
@@ -323,7 +338,7 @@ export default function SearchEnginePage(): React.JSX.Element {
           >
             <TextInput
               size="lg"
-              placeholder={`Search ${selectedCategory}...`}
+              placeholder={t(placeholderKeys[selectedCategory])}
               value={searchInput}
               onChange={e => setSearchInput(e.currentTarget.value)}
               leftSection={<IconSearch size={20} color="var(--color-text-400)" />}
@@ -345,11 +360,11 @@ export default function SearchEnginePage(): React.JSX.Element {
                 style={{ borderRadius: "12px", padding: "0 24px", background: "white" }}
                 leftSection={<IconFilter size={20} />}
               >
-                Filters
+                {t("search.filtersButton")}
               </Button>
             )}
             <Button type="submit" size="lg" style={{ borderRadius: "12px", padding: "0 32px" }}>
-              Search
+              {t("search.searchButton")}
             </Button>
           </Box>
         </Stack>
@@ -361,7 +376,7 @@ export default function SearchEnginePage(): React.JSX.Element {
           size="md"
           title={
             <Text fw={700} fz="xl" c="var(--color-text-900)">
-              Filters
+              {t("search.filtersButton")}
             </Text>
           }
           padding="xl"
@@ -398,7 +413,7 @@ export default function SearchEnginePage(): React.JSX.Element {
               }}
             >
               <Text ta="center" fw={500} c="var(--color-error-600)">
-                Error: {errorFetchingData.message}
+                {t("search.fetchError", { message: errorFetchingData.message })}
               </Text>
             </Box>
           )}

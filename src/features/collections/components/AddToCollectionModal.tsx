@@ -3,15 +3,17 @@ import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 import { notifications } from "@mantine/notifications";
 import { Button } from "@/components/ui/Button";
-import { ActionIcon, Modal, Stack, Group, Box, Title, Text } from "@mantine/core";
+import { ActionIcon, Modal, Stack, Group, Box, Title } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { useCollectionsInfiniteQuery, useAddCollectionItem } from "../hooks/useCollectionQueries";
 import { useCurrentUserId } from "@/features/auth";
 import { Collection } from "@/client";
+import i18n from "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = z.object({
-  collections: z.array(z.string()).min(1, "Select at least one collection"),
+  collections: z.array(z.string()).min(1, i18n.t("validation:selectAtLeastOne")),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -23,6 +25,7 @@ interface AddToCollectionModalProps {
 
 export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddToCollectionModalProps>) {
   const currentUserId = useCurrentUserId();
+  const { t } = useTranslation("collections");
 
   const { mutateAsync: addCollectionItem, isPending } = useAddCollectionItem();
 
@@ -48,11 +51,11 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
           }),
         ),
       );
-      notifications.show({ title: "Success", message: "Added to collections successfully", color: "green" });
+      notifications.show({ title: t("addModal.successTitle"), message: t("addModal.addSuccess"), color: "green" });
       onClose();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to add to some collections";
-      notifications.show({ title: "Error", message: errorMessage, color: "red" });
+      const errorMessage = error instanceof Error ? error.message : t("addModal.addFailed");
+      notifications.show({ title: t("addModal.errorTitle"), message: errorMessage, color: "red" });
     }
   };
 
@@ -79,10 +82,7 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
           }}
         >
           <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
-            Add to{" "}
-            <Text span c="var(--color-primary-600)">
-              Collection
-            </Text>
+            {t("addModal.title")}
           </Title>
           <ActionIcon
             onClick={onClose}
@@ -100,8 +100,8 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
               <AsyncMultiSelectAutocomplete
                 id="collections"
                 name="collections"
-                label="Select Collections"
-                placeholder="Search your collections..."
+                label={t("addModal.selectLabel")}
+                placeholder={t("addModal.selectPlaceholder")}
                 useInfiniteQueryHook={useMyCollectionsSearch}
                 getOptionLabel={(collection: Collection) => collection.name}
                 getOptionValue={(collection: Collection) => collection.id}
@@ -111,7 +111,7 @@ export default function AddToCollectionModal({ onClose, gameId }: Readonly<AddTo
 
               <Group justify="flex-end" pt={16}>
                 <Button type="submit" disabled={isPending} style={{ width: "100%" }}>
-                  {isPending ? "Adding..." : "Add to Selected Collections"}
+                  {isPending ? t("addModal.adding") : t("addModal.addButton")}
                 </Button>
               </Group>
             </Stack>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, Text, UnstyledButton } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -12,6 +13,7 @@ interface DuelGameCardProps {
 }
 
 export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onClick }: Readonly<DuelGameCardProps>) {
+  const { t } = useTranslation("ranking");
   const cardClass = side === "left" ? styles.cardLeft : styles.cardRight;
   const accentColor = side === "left" ? "var(--color-primary-500)" : "var(--color-secondary-500)";
 
@@ -48,7 +50,7 @@ export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onCli
           {item.rating}
         </Text>
         <Text component="span" fz="xs" c="var(--color-text-400)">
-          {item.matchesPlayed} {item.matchesPlayed === 1 ? "match" : "matches"}
+          {item.matchesPlayed} {t("results.match", { count: item.matchesPlayed })}
         </Text>
       </Group>
     </UnstyledButton>

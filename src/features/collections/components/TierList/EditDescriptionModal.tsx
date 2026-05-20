@@ -4,9 +4,11 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Box, Group, Modal, Stack, Text, Title, Textarea, UnstyledButton } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
+import i18n from "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = z.object({
-  description: z.string().max(500, "Description must be 500 characters or less"),
+  description: z.string().max(500, i18n.t("validation:descriptionMax")),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -26,6 +28,7 @@ export const EditDescriptionModal = ({
   gameName,
   onSave,
 }: Readonly<EditDescriptionModalProps>) => {
+  const { t } = useTranslation("collections");
   const form = useForm<ValidationSchema>({
     initialValues: {
       description: initialDescription,
@@ -56,9 +59,13 @@ export const EditDescriptionModal = ({
           style={{ padding: 24, borderBottom: "1px solid var(--color-background-200)" }}
         >
           <Title order={2} fz="xl" fw={700} c="var(--color-text-900)">
-            Edit Description
+            {t("descriptionModal.tierTitle")}
           </Title>
-          <UnstyledButton onClick={onClose} style={{ padding: 8, borderRadius: "9999px" }} aria-label="Close">
+          <UnstyledButton
+            onClick={onClose}
+            style={{ padding: 8, borderRadius: "9999px" }}
+            aria-label={t("descriptionModal.closeAria")}
+          >
             <IconX style={{ width: 20, height: 20 }} />
           </UnstyledButton>
         </Group>
@@ -67,22 +74,22 @@ export const EditDescriptionModal = ({
         <Stack gap={16} p={24}>
           <Box>
             <Text fz="sm" fw={600} c="var(--color-text-700)" mb={8}>
-              Game: {gameName}
+              {t("descriptionModal.gameLabel", { name: gameName })}
             </Text>
             <Text size="xs" c="var(--color-text-500)" mb={16}>
-              Why is this game in this tier?
+              {t("descriptionModal.tierWhyPrompt")}
             </Text>
           </Box>
 
           <Textarea
-            placeholder="Explain your tier placement..."
+            placeholder={t("descriptionModal.tierPlaceholder")}
             rows={6}
             style={{ width: "100%" }}
             {...form.getInputProps("description")}
           />
 
           <Text ta="right" size="xs" c="var(--color-text-500)">
-            {form.values.description.length} / 500 characters
+            {form.values.description.length} / 500 {t("descriptionModal.characters")}
           </Text>
         </Stack>
 
@@ -97,9 +104,9 @@ export const EditDescriptionModal = ({
           }}
         >
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {t("descriptionModal.cancelButton")}
           </Button>
-          <Button type="submit">Save Description</Button>
+          <Button type="submit">{t("descriptionModal.saveTierButton")}</Button>
         </Group>
       </Box>
     </Modal>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Stack, Text, UnstyledButton } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
@@ -13,6 +14,7 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>): React.JSX.Element {
+  const { t } = useTranslation("games");
   const [search, setSearch] = React.useState<string>("");
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -63,7 +65,7 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
             fontSize: "14px",
           }}
         >
-          Searching...
+          {t("searchBar.searching")}
         </Box>
       );
     }
@@ -131,7 +133,7 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
           fontSize: "14px",
         }}
       >
-        No results found
+        {t("searchBar.noResults")}
       </Box>
     );
   };
@@ -142,7 +144,7 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
         <Box
           component="input"
           type="text"
-          placeholder="Search for a game..."
+          placeholder={t("searchBar.placeholder")}
           style={{
             width: "100%",
             background: variant === "dark" ? "rgba(255,255,255,0.1)" : "var(--color-background-200)",
@@ -229,7 +231,7 @@ export default function SearchBar({ variant = "dark" }: Readonly<SearchBarProps>
                   letterSpacing: "0.1em",
                 }}
               >
-                Advanced Search
+                {t("searchBar.advancedSearch")}
               </Link>
             </Box>
           </Box>

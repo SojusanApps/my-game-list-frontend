@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { Game, GameEngine, GameMode, Genre, Platform, PlayerPerspective } from "@/client";
@@ -65,6 +66,7 @@ function IgdbLink({ id, slug }: Readonly<{ id: string; slug: string }>) {
 }
 
 export default function GameInformation({ gameDetails }: Readonly<GameInformationProps>) {
+  const { t } = useTranslation("games");
   const externalGames = gameDetails?.external_games || [];
   return (
     <Box
@@ -84,20 +86,20 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         }}
       >
         <Text fw={600} c="var(--color-text-900)">
-          Information
+          {t("info.title")}
         </Text>
       </Box>
       <Stack gap={12} p="md">
-        <GameInfoRow label="IGDB ID:">
+        <GameInfoRow label={t("info.igdbId")}>
           <IgdbLink id={gameDetails?.id.toString() || ""} slug={gameDetails?.slug || ""} />
         </GameInfoRow>
         <GameInfoRow
-          label="Release date:"
+          label={t("info.releaseDate")}
           value={gameDetails?.release_date ? gameDetails.release_date.toString() : undefined}
         />
-        <GameInfoRow label="Game Status:" value={gameDetails?.game_status?.status || "Released"} />
-        <GameInfoRow label="Game Type:" value={gameDetails?.game_type?.type} />
-        <GameInfoRow label="Publisher:">
+        <GameInfoRow label={t("info.gameStatus")} value={gameDetails?.game_status?.status || t("info.released")} />
+        <GameInfoRow label={t("info.gameType")} value={gameDetails?.game_type?.type} />
+        <GameInfoRow label={t("info.publisher")}>
           {gameDetails?.publisher ? (
             <Link
               to={"/company/$id/$slug"}
@@ -108,7 +110,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
             </Link>
           ) : undefined}
         </GameInfoRow>
-        <GameInfoRow label="Developer:">
+        <GameInfoRow label={t("info.developer")}>
           {gameDetails?.developer ? (
             <Link
               to={"/company/$id/$slug"}
@@ -121,7 +123,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         </GameInfoRow>
 
         <GameTags
-          title="Genres:"
+          title={t("info.genres")}
           items={gameDetails?.genres}
           renderItem={(genre: Genre) => (
             <Text
@@ -142,7 +144,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           )}
         />
         <GameTags
-          title="Platforms:"
+          title={t("info.platforms")}
           items={gameDetails?.platforms}
           renderItem={(platform: Platform) => (
             <Tooltip key={platform.id} label={platform.name}>
@@ -164,7 +166,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           )}
         />
         <GameTags
-          title="Engines:"
+          title={t("info.engines")}
           items={gameDetails?.game_engines}
           renderItem={(engine: GameEngine) => (
             <Text
@@ -185,7 +187,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           )}
         />
         <GameTags
-          title="Game Modes:"
+          title={t("info.gameModes")}
           items={gameDetails?.game_modes}
           renderItem={(mode: GameMode) => (
             <Text
@@ -206,7 +208,7 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
           )}
         />
         <GameTags
-          title="Player Perspectives:"
+          title={t("info.playerPerspectives")}
           items={gameDetails?.player_perspectives}
           renderItem={(perspective: PlayerPerspective) => (
             <Text

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import type { CollectionItem } from "@/client";
 import { Button } from "@/components/ui/Button";
 import { IconX } from "@tabler/icons-react";
@@ -23,6 +24,7 @@ export default function PairwiseRankingModal({
   collectionItems,
   onClose,
 }: Readonly<PairwiseRankingModalProps>) {
+  const { t } = useTranslation("ranking");
   const [isApplying, setIsApplying] = React.useState(false);
   const [confirmConfig, setConfirmConfig] = React.useState<{
     isOpen: boolean;
@@ -65,11 +67,11 @@ export default function PairwiseRankingModal({
         collectionId,
         items: rankedItems.map((item, i) => ({ id: item.itemId, position: i })),
       });
-      notifications.show({ title: "Success", message: "Ranking applied to collection!", color: "green" });
+      notifications.show({ title: t("modal.successTitle"), message: t("modal.applySuccess"), color: "green" });
       onClose();
     } catch (error) {
       console.error("Failed to apply ranking:", error);
-      notifications.show({ title: "Error", message: "Failed to apply ranking order", color: "red" });
+      notifications.show({ title: t("modal.errorTitle"), message: t("modal.applyFailed"), color: "red" });
     } finally {
       setIsApplying(false);
     }
@@ -80,9 +82,9 @@ export default function PairwiseRankingModal({
     if (hasExistingProfile) {
       setConfirmConfig({
         isOpen: true,
-        title: "Start Fresh?",
-        message: "This will discard your previous ranking data. Continue?",
-        confirmLabel: "Discard & Start Fresh",
+        title: t("modal.confirmStartFreshTitle"),
+        message: t("modal.confirmStartFreshMessage"),
+        confirmLabel: t("modal.confirmStartFreshButton"),
         isDestructive: true,
         action: () => {
           startNew();
@@ -97,9 +99,9 @@ export default function PairwiseRankingModal({
   const handleReset = React.useCallback(() => {
     setConfirmConfig({
       isOpen: true,
-      title: "Reset Progress?",
-      message: "This will permanently delete all ranking data for this collection. Continue?",
-      confirmLabel: "Reset",
+      title: t("modal.confirmResetTitle"),
+      message: t("modal.confirmResetMessage"),
+      confirmLabel: t("modal.confirmResetButton"),
       isDestructive: true,
       action: () => {
         reset();
@@ -112,9 +114,9 @@ export default function PairwiseRankingModal({
     if (state === "dueling" && progress.duelsCompleted > 0) {
       setConfirmConfig({
         isOpen: true,
-        title: "Close Session?",
-        message: "Your progress is saved automatically. Are you sure you want to close the ranking session?",
-        confirmLabel: "Close Session",
+        title: t("modal.confirmCloseTitle"),
+        message: t("modal.confirmCloseMessage"),
+        confirmLabel: t("modal.confirmCloseButton"),
         action: () => {
           onClose();
           closeConfirm();
@@ -148,10 +150,10 @@ export default function PairwiseRankingModal({
             </Text>
           </Box>
           <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
-            Not enough items
+            {t("modal.notEnoughTitle")}
           </Title>
           <Text c="var(--color-text-500)" maw={320} mt={8}>
-            You need at least 2 games in this collection to start pairwise ranking.
+            {t("modal.notEnoughMessage")}
           </Text>
         </Stack>
       );
@@ -178,15 +180,15 @@ export default function PairwiseRankingModal({
               c="var(--color-text-900)"
               style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
             >
-              Rank by Head-to-Head Duels
+              {t("modal.rankTitle")}
             </Title>
             <Text c="var(--color-text-500)" maw={448} mt={8} style={{ lineHeight: 1.625 }}>
-              Compare games two at a time to build an accurate ranking using an Elo rating system. You can stop anytime
-              and resume later.
+              {t("modal.rankDescription")}
             </Text>
             <Text size="xs" c="var(--color-text-400)" mt={12}>
-              {collectionItems.length} games &middot; {getTotalRounds(collectionItems.length)} rounds &middot; ~
-              {getTotalDuels(collectionItems.length)} duels
+              {t("modal.gamesCount", { count: collectionItems.length })} &middot;{" "}
+              {t("modal.roundsCount", { count: getTotalRounds(collectionItems.length) })} &middot; ~
+              {t("modal.duelsCount", { count: getTotalDuels(collectionItems.length) })}
             </Text>
           </Box>
 
@@ -203,14 +205,14 @@ export default function PairwiseRankingModal({
                     boxShadow: "0 10px 15px -3px var(--color-primary-200), 0 4px 6px -4px var(--color-primary-200)",
                   }}
                 >
-                  Resume Session
+                  {t("modal.resumeSession")}
                 </Button>
                 <Button
                   onClick={handleStartFresh}
                   variant="outline"
                   style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: 24 }}
                 >
-                  Start Fresh
+                  {t("modal.startFreshButton")}
                 </Button>
               </>
             ) : (
@@ -224,7 +226,7 @@ export default function PairwiseRankingModal({
                   boxShadow: "0 10px 15px -3px var(--color-primary-200), 0 4px 6px -4px var(--color-primary-200)",
                 }}
               >
-                Start Ranking
+                {t("modal.startRanking")}
               </Button>
             )}
           </Group>
@@ -291,7 +293,7 @@ export default function PairwiseRankingModal({
                   c="var(--color-text-900)"
                   style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
                 >
-                  Pairwise Ranking
+                  {t("modal.title")}
                 </Title>
                 <UnstyledButton
                   hiddenFrom="sm"
@@ -319,7 +321,7 @@ export default function PairwiseRankingModal({
                   size="sm"
                   style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
                 >
-                  View Results
+                  {t("modal.viewResults")}
                 </Button>
               )}
               {state !== "idle" && (
@@ -329,7 +331,7 @@ export default function PairwiseRankingModal({
                   size="sm"
                   style={{ fontWeight: 500, color: "var(--color-error-500)" }}
                 >
-                  Reset
+                  {t("modal.resetButton")}
                 </Button>
               )}
               <UnstyledButton

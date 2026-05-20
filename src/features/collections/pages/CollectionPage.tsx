@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import {
@@ -58,27 +59,40 @@ export default function CollectionPage(): React.JSX.Element {
   const currentUserId = useCurrentUserId();
 
   const canEdit = React.useMemo(() => {
-    if (isOwner) return true;
-    if (!currentUserId || !collection) return false;
+    if (isOwner) {
+      return true;
+    }
+    if (!currentUserId || !collection) {
+      return false;
+    }
 
     return collection.mode === ModeEnum.C && collection.collaborators.some(c => Number(c.id) === currentUserId);
   }, [isOwner, currentUserId, collection]);
 
+  const { t } = useTranslation("collections");
+
   const handleDeleteItem = React.useCallback(
     (itemId: number, gameTitle: string) => {
-      if (!collectionId) return;
-      if (confirm(`Are you sure you want to remove ${gameTitle} from this collection?`)) {
+      if (!collectionId) {
+        return;
+      }
+      if (confirm(t("detail.removeConfirm", { title: gameTitle }))) {
         removeCollectionItem(
           { itemId, collectionId },
           {
             onSuccess: () =>
-              notifications.show({ title: "Success", message: "Game removed from collection", color: "green" }),
-            onError: () => notifications.show({ title: "Error", message: "Failed to remove game", color: "red" }),
+              notifications.show({
+                title: t("detail.successTitle"),
+                message: t("detail.removeSuccess"),
+                color: "green",
+              }),
+            onError: () =>
+              notifications.show({ title: t("detail.errorTitle"), message: t("detail.removeFailed"), color: "red" }),
           },
         );
       }
     },
-    [collectionId, removeCollectionItem],
+    [collectionId, removeCollectionItem, t],
   );
 
   const allItems = React.useMemo(
@@ -88,7 +102,9 @@ export default function CollectionPage(): React.JSX.Element {
   const totalCount = itemsResults?.pages[0]?.count ?? 0;
 
   const renderView = () => {
-    if (!collection) return null;
+    if (!collection) {
+      return null;
+    }
 
     switch (collection.type) {
       case TypeEnum.TIE:
@@ -143,7 +159,7 @@ export default function CollectionPage(): React.JSX.Element {
                     {totalCount}
                   </Text>
                   <Text size="xs" fw={600} c="var(--color-text-500)" tt="uppercase" style={{ letterSpacing: "0.05em" }}>
-                    Total Games
+                    {t("detail.totalGames")}
                   </Text>
                 </Stack>
               </Group>
@@ -188,7 +204,7 @@ export default function CollectionPage(): React.JSX.Element {
                         }}
                       >
                         <Text span style={{ opacity: 0.6 }}>
-                          BY
+                          {t("detail.addedByLabel")}
                         </Text>{" "}
                         {item.added_by.username}
                       </Text>
@@ -229,7 +245,7 @@ export default function CollectionPage(): React.JSX.Element {
       <Group justify="center" style={{ paddingBlock: "80px" }}>
         <Stack align="center" gap={8}>
           <Title order={1} fz={24} fw={700} c="var(--color-error-600)">
-            Error Loading Collection
+            {t("detail.loadError")}
           </Title>
           <Text c="var(--color-text-600)">{collectionError.message}</Text>
         </Stack>
@@ -239,7 +255,7 @@ export default function CollectionPage(): React.JSX.Element {
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
-      <PageMeta title={collection?.name ?? "Collection Details"} />
+      <PageMeta title={collection?.name ?? t("detail.pageTitle")} />
       <Stack gap={40} maw={1280} mx="auto" px={16}>
         {isCollectionLoading ? (
           <Stack gap={16}>
@@ -286,10 +302,10 @@ export default function CollectionPage(): React.JSX.Element {
                 </Text>
               </Box>
               <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
-                No games in this collection
+                {t("detail.noGames")}
               </Title>
               <Text c="var(--color-text-500)" maw={320}>
-                This collection is empty.
+                {t("detail.noGamesDesc")}
               </Text>
             </Stack>
           )}
@@ -305,7 +321,7 @@ export default function CollectionPage(): React.JSX.Element {
               }}
             >
               <Text c="var(--color-error-600)" ta="center" fw={500}>
-                Error loading games: {itemsError.message}
+                {t("detail.itemsLoadError", { message: itemsError.message })}
               </Text>
             </Box>
           )}

@@ -1,0 +1,63 @@
+{
+  "modal": {
+    "title": "Pairwise Ranking",
+    "notEnoughTitle": "Not enough items",
+    "notEnoughMessage": "You need at least 2 games in this collection to start pairwise ranking.",
+    "rankTitle": "Rank by Head-to-Head Duels",
+    "rankDescription": "Compare games two at a time to build an accurate ranking using an Elo rating system. You can stop anytime and resume later.",
+    "resumeSession": "Resume Session",
+    "startFreshButton": "Start Fresh",
+    "startRanking": "Start Ranking",
+    "viewResults": "View Results",
+    "resetButton": "Reset",
+    "confirmStartFreshTitle": "Start Fresh?",
+    "confirmStartFreshMessage": "This will discard your previous ranking data. Continue?",
+    "confirmStartFreshButton": "Discard & Start Fresh",
+    "confirmResetTitle": "Reset Progress?",
+    "confirmResetMessage": "This will permanently delete all ranking data for this collection. Continue?",
+    "confirmResetButton": "Reset",
+    "confirmCloseTitle": "Close Session?",
+    "confirmCloseMessage": "Your progress is saved automatically. Are you sure you want to close the ranking session?",
+    "confirmCloseButton": "Close Session",
+    "applySuccess": "Ranking applied to collection!",
+    "applyFailed": "Failed to apply ranking order",
+    "successTitle": "Success",
+    "errorTitle": "Error",
+    "gamesCount_one": "{{count}} game",
+    "gamesCount_other": "{{count}} games",
+    "roundsCount_one": "{{count}} round",
+    "roundsCount_other": "{{count}} rounds",
+    "duelsCount_one": "{{count}} duel",
+    "duelsCount_other": "{{count}} duels"
+  },
+  "results": {
+    "title": "Ranking Results",
+    "continueDueling": "Continue Dueling",
+    "applyToCollection": "Apply to Collection",
+    "applying": "Applying\u2026",
+    "confidenceLabel": "Confidence:",
+    "lowConfidence": "Low confidence",
+    "mediumConfidence": "Medium confidence",
+    "highConfidence": "High confidence",
+    "match_one": "match",
+    "match_other": "matches"
+  },
+  "progress": {
+    "bonusRound": "Bonus round {{round}}",
+    "round": "Round {{current}} of {{total}}",
+    "duel": "· duel {{current}} of {{total}}"
+  },
+  "duel": {
+    "chooseTop": "Choose Top",
+    "chooseLeft": "Choose Left",
+    "tie": "Tie",
+    "chooseBottom": "Choose Bottom",
+    "chooseRight": "Choose Right",
+    "skipPair": "Skip this pair",
+    "useKeyboard": "Use keyboard:",
+    "left": "left",
+    "right": "right",
+    "skip": "skip"
+  }
+}
+

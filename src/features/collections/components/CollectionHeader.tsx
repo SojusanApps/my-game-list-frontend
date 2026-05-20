@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { CollectionDetail, ModeEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ interface CollectionHeaderProps {
 export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank }: CollectionHeaderProps) => {
   const isOwner = useIsOwner(collection.user.id);
   const currentUserId = useCurrentUserId();
+  const { t } = useTranslation("collections");
 
   const canEdit = React.useMemo(() => {
     if (isOwner) return true;
@@ -37,7 +39,8 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
               params={{ id: collection.user.id.toString(), slug: collection.user.slug || "" }}
               className="hover:text-primary-600 transition-colors"
             >
-              {collection.user.username}&apos;s Collections
+              {collection.user.username}
+              {t("header.collectionsLink")}
             </Link>
             <Text span>•</Text>
             <Text span>{new Date(collection.created_at).toLocaleDateString()}</Text>
@@ -69,7 +72,7 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
               variant="outline"
               style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: "24px" }}
             >
-              ⚔️ Pairwise Rank
+              {t("header.pairwiseRank")}
             </Button>
           )}
           {canEdit && (
@@ -83,7 +86,7 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
                 boxShadow: "0 10px 15px -3px rgba(99,102,241,0.2)",
               }}
             >
-              Add Game
+              {t("header.addGame")}
             </Button>
           )}
           {isOwner && (
@@ -92,7 +95,7 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
               variant="outline"
               style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", paddingInline: "24px" }}
             >
-              Edit Collection
+              {t("header.editCollection")}
             </Button>
           )}
         </Group>

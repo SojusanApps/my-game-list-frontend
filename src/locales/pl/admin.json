@@ -1,0 +1,10 @@
+{
+  "page": {
+    "title": "Panel administratora",
+    "subtitle": "Informacje o systemie i narzędzia administracyjne."
+  },
+  "versions": "Wersje",
+  "apiVersion": "Wersja API",
+  "uiVersion": "Wersja UI"
+}
+

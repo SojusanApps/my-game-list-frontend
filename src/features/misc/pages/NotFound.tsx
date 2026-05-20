@@ -1,13 +1,16 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Box, Center, Paper, Stack, Text, Title } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Button } from "@/components/ui/Button";
 
 export default function NotFound(): React.JSX.Element {
+  const { t } = useTranslation();
+
   return (
     <Center style={{ minHeight: "70vh" }}>
-      <PageMeta title="404 - Not Found" />
+      <PageMeta title={t("notFound.title")} />
 
       <Paper p="xl" radius="md" style={{ textAlign: "center", maxWidth: 500 }} w="100%">
         <Stack align="center" gap="md">
@@ -15,14 +18,14 @@ export default function NotFound(): React.JSX.Element {
             404
           </Text>
           <Title order={1} c="var(--color-text-900)">
-            Oops! Page Not Found
+            {t("notFound.heading")}
           </Title>
           <Text size="lg" c="var(--color-text-600)">
-            Lost in the adventure? No worries! Let&apos;s head back home together and continue your quest.
+            {t("notFound.description")}
           </Text>
           <Box mt="md">
             <Link to="/home">
-              <Button size="lg">Go Back Home</Button>
+              <Button size="lg">{t("notFound.goHome")}</Button>
             </Link>
           </Box>
         </Stack>

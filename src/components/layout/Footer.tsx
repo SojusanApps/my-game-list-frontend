@@ -1,11 +1,21 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
-import { Box, Text } from "@mantine/core";
+import { Box, Text, SegmentedControl } from "@mantine/core";
 import AppLogo from "@/components/ui/AppLogo";
+import { getStoredLanguage, setStoredLanguage, type Language } from "@/utils/languageUtils";
 import styles from "./Footer.module.css";
+import { useTranslation } from "react-i18next";
 
 const Footer = (): React.JSX.Element => {
   const currentYear = new Date().getFullYear();
+  const [language, setLanguage] = React.useState<Language>(() => getStoredLanguage());
+  const { t } = useTranslation();
+
+  const handleLanguageChange = (value: string) => {
+    setStoredLanguage(value as Language);
+    setLanguage(value as Language);
+    globalThis.location.reload();
+  };
 
   return (
     <Box
@@ -23,32 +33,43 @@ const Footer = (): React.JSX.Element => {
             <AppLogo size="md" />
           </Link>
           <Text size="xs" c="var(--color-text-400)">
-            © {currentYear} Sojusan GameList • Data provided by{" "}
+            {t("footer.copyright", { year: currentYear })}{" "}
             <a href="https://www.igdb.com/" target="_blank" rel="noopener noreferrer" className={styles.footerExtLink}>
               IGDB
             </a>
           </Text>
         </div>
 
-        <nav>
-          <ul className={styles.navGroup}>
-            <li>
-              <Link to="/home" className={styles.footerLink}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/search" className={styles.footerLink}>
-                Search
-              </Link>
-            </li>
-            <li>
-              <Link to="/home" className={styles.footerLink}>
-                Privacy
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        <div className={styles.rightSection}>
+          <nav>
+            <ul className={styles.navGroup}>
+              <li>
+                <Link to="/home" className={styles.footerLink}>
+                  {t("footer.home")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/search" className={styles.footerLink}>
+                  {t("footer.search")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/home" className={styles.footerLink}>
+                  {t("footer.privacy")}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <SegmentedControl
+            value={language}
+            onChange={handleLanguageChange}
+            size="xs"
+            data={[
+              { label: "EN", value: "en" },
+              { label: "PL", value: "pl" },
+            ]}
+          />
+        </div>
       </div>
     </Box>
   );

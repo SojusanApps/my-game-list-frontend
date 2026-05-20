@@ -9,9 +9,11 @@ import { SafeImage } from "@/components/ui/SafeImage";
 import { TextInput, Select, Checkbox, ActionIcon, Modal, Stack, Group, Box, Title, Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
+import i18n from "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
+  name: z.string().min(1, i18n.t("validation:nameRequired")).max(100),
   description: z.string().max(500).optional(),
   is_favorite: z.boolean(),
   visibility: z.enum(VisibilityEnum),
@@ -33,6 +35,7 @@ export default function CreateCollectionModal({
   initialData,
   mode = "create",
 }: Readonly<CreateCollectionModalProps>) {
+  const { t } = useTranslation("collections");
   const { mutate: createCollection, isPending: isCreatePending } = useCreateCollection();
   const { mutate: updateCollection, isPending: isUpdatePending } = useUpdateCollection();
 
@@ -108,13 +111,17 @@ export default function CreateCollectionModal({
         { id: initialData.id, body: payload },
         {
           onSuccess: () => {
-            notifications.show({ title: "Success", message: "Collection updated successfully", color: "green" });
+            notifications.show({
+              title: t("createModal.successTitle"),
+              message: t("createModal.updateSuccess"),
+              color: "green",
+            });
             onClose();
           },
           onError: error => {
             notifications.show({
-              title: "Error",
-              message: error.message || "Failed to update collection",
+              title: t("createModal.errorTitle"),
+              message: error.message || t("createModal.updateFailed"),
               color: "red",
             });
           },
@@ -123,11 +130,19 @@ export default function CreateCollectionModal({
     } else {
       createCollection(payload, {
         onSuccess: () => {
-          notifications.show({ title: "Success", message: "Collection created successfully", color: "green" });
+          notifications.show({
+            title: t("createModal.successTitle"),
+            message: t("createModal.createSuccess"),
+            color: "green",
+          });
           onClose();
         },
         onError: error => {
-          notifications.show({ title: "Error", message: error.message || "Failed to create collection", color: "red" });
+          notifications.show({
+            title: t("createModal.errorTitle"),
+            message: error.message || t("createModal.createFailed"),
+            color: "red",
+          });
         },
       });
     }
@@ -154,9 +169,9 @@ export default function CreateCollectionModal({
           }}
         >
           <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
-            {mode === "create" ? "Create" : "Edit"}{" "}
+            {mode === "create" ? t("createModal.createTitle") : t("createModal.editTitle")}{" "}
             <Text span c="var(--color-primary-600)">
-              Collection
+              {t("createModal.collection")}
             </Text>
           </Title>
           <ActionIcon
@@ -175,46 +190,46 @@ export default function CreateCollectionModal({
             <Stack gap="lg">
               <TextInput
                 id="name-input"
-                label="Collection Name"
+                label={t("createModal.nameLabel")}
                 name="name"
-                placeholder="My Awesome Collection"
+                placeholder={t("createModal.namePlaceholder")}
                 required
                 {...form.getInputProps("name")}
               />
 
               <TextInput
                 id="description-input"
-                label="Description"
+                label={t("createModal.descriptionLabel")}
                 name="description"
-                placeholder="What is this collection about?"
+                placeholder={t("createModal.descriptionPlaceholder")}
                 {...form.getInputProps("description")}
               />
 
               <Box style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <Select
                   id="visibility-select"
-                  label="Visibility"
+                  label={t("createModal.visibilityLabel")}
                   name="visibility"
-                  placeholder="Select visibility"
+                  placeholder={t("createModal.visibilityPlaceholder")}
                   searchable
                   clearable
                   data={[
-                    { value: VisibilityEnum.PUB, label: "Public" },
-                    { value: VisibilityEnum.FRI, label: "Friends Only" },
-                    { value: VisibilityEnum.PRI, label: "Private" },
+                    { value: VisibilityEnum.PUB, label: t("visibility.public") },
+                    { value: VisibilityEnum.FRI, label: t("visibility.friendsOnly") },
+                    { value: VisibilityEnum.PRI, label: t("visibility.private") },
                   ]}
                   {...form.getInputProps("visibility")}
                 />
                 <Select
                   id="mode-select"
-                  label="Mode"
+                  label={t("createModal.modeLabel")}
                   name="mode"
-                  placeholder="Select mode"
+                  placeholder={t("createModal.modePlaceholder")}
                   searchable
                   clearable
                   data={[
-                    { value: ModeEnum.S, label: "Solo" },
-                    { value: ModeEnum.C, label: "Collaborative" },
+                    { value: ModeEnum.S, label: t("mode.solo") },
+                    { value: ModeEnum.C, label: t("mode.collaborative") },
                   ]}
                   {...form.getInputProps("mode")}
                 />
@@ -222,15 +237,15 @@ export default function CreateCollectionModal({
 
               <Select
                 id="type-select"
-                label="Collection Type"
+                label={t("createModal.typeLabel")}
                 name="type"
-                placeholder="Select type"
+                placeholder={t("createModal.typePlaceholder")}
                 searchable
                 clearable
                 data={[
-                  { value: TypeEnum.NOR, label: "Normal" },
-                  { value: TypeEnum.RNK, label: "Ranking" },
-                  { value: TypeEnum.TIE, label: "Tier List" },
+                  { value: TypeEnum.NOR, label: t("type.normal") },
+                  { value: TypeEnum.RNK, label: t("type.ranking") },
+                  { value: TypeEnum.TIE, label: t("type.tierList") },
                 ]}
                 {...form.getInputProps("type")}
               />
@@ -240,8 +255,8 @@ export default function CreateCollectionModal({
                   <AsyncMultiSelectAutocomplete<Friendship>
                     id="collaborators"
                     name="collaborators"
-                    label="Collaborators"
-                    placeholder="Search friends..."
+                    label={t("createModal.collaboratorsLabel")}
+                    placeholder={t("createModal.collaboratorsPlaceholder")}
                     useInfiniteQueryHook={useFriendSearch}
                     getOptionLabel={item => item.friend.username}
                     getOptionValue={item => item.friend.id}
@@ -280,7 +295,7 @@ export default function CreateCollectionModal({
                         c="var(--color-text-400)"
                         style={{ textTransform: "uppercase", letterSpacing: "0.1em", paddingInline: 4 }}
                       >
-                        Selected Collaborators
+                        {t("createModal.selectedCollaborators")}
                       </Text>
                       <Group wrap="wrap" gap={8}>
                         {selectedCollaboratorObjects.map(f => (
@@ -330,7 +345,7 @@ export default function CreateCollectionModal({
 
               <Checkbox
                 id="is_favorite_checkbox"
-                label="Mark as Favorite"
+                label={t("createModal.favoriteLabel")}
                 name="is_favorite"
                 {...form.getInputProps("is_favorite", { type: "checkbox" })}
               />
@@ -354,7 +369,7 @@ export default function CreateCollectionModal({
             onClick={onClose}
             style={{ fontWeight: 700, paddingBlock: 12 }}
           >
-            Cancel
+            {t("createModal.cancelButton")}
           </Button>
           <Button
             form="create-collection-form"
@@ -363,7 +378,7 @@ export default function CreateCollectionModal({
             isLoading={isPending}
             style={{ fontWeight: 900, paddingBlock: 12 }}
           >
-            {mode === "create" ? "Create" : "Save Changes"}
+            {mode === "create" ? t("createModal.createButton") : t("createModal.saveButton")}
           </Button>
         </Group>
       </Stack>

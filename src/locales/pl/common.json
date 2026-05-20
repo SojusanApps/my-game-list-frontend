@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "gameListLogo": "Logo Game List",
+    "searchEngine": "Wyszukiwarka",
+    "releaseCalendar": "Kalendarz premier",
+    "gameList": "Lista gier",
+    "collections": "Kolekcje",
+    "profile": "Profil",
+    "accountSettings": "Ustawienia konta",
+    "adminPanel": "Panel administratora",
+    "logout": "Wyloguj się",
+    "register": "Zarejestruj się",
+    "login": "Zaloguj się",
+    "menu": "Menu"
+  },
+  "footer": {
+    "copyright": "© {{year}} Sojusan GameList • Dane dostarczone przez",
+    "home": "Strona główna",
+    "search": "Szukaj",
+    "privacy": "Prywatność"
+  },
+  "notFound": {
+    "title": "404 - Nie znaleziono",
+    "heading": "Ups! Strona nie istnieje",
+    "description": "Zgubiłeś się podczas przygody? Nie martw się! Wróćmy razem do domu i kontynuujmy wyprawę.",
+    "goHome": "Wróć do strony głównej"
+  },
+  "timeAgo": {
+    "justNow": "właśnie teraz",
+    "year_one": "{{count}} rok temu",
+    "year_few": "{{count}} lata temu",
+    "year_many": "{{count}} lat temu",
+    "year_other": "{{count}} lat temu",
+    "month_one": "{{count}} miesiąc temu",
+    "month_few": "{{count}} miesiące temu",
+    "month_many": "{{count}} miesięcy temu",
+    "month_other": "{{count}} miesięcy temu",
+    "day_one": "{{count}} dzień temu",
+    "day_few": "{{count}} dni temu",
+    "day_many": "{{count}} dni temu",
+    "day_other": "{{count}} dni temu",
+    "hour_one": "{{count}} godzinę temu",
+    "hour_few": "{{count}} godziny temu",
+    "hour_many": "{{count}} godzin temu",
+    "hour_other": "{{count}} godzin temu",
+    "minute_one": "{{count}} minutę temu",
+    "minute_few": "{{count}} minuty temu",
+    "minute_many": "{{count}} minut temu",
+    "minute_other": "{{count}} minut temu"
+  },
+  "viewMore": "Zobacz więcej",
+  "confirm": "Potwierdź",
+  "cancel": "Anuluj",
+  "closeModal": "Zamknij okno",
+  "userAvatarAlt": "Awatar użytkownika"
+}

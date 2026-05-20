@@ -16,6 +16,8 @@ export function parseDate(dateStr?: string | null, format = "YYYY-MM-DD"): Date 
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+import i18n from "@/lib/i18n";
+
 /**
  * Formats a Date object using simple format tokens.
  * Supports: YYYY, MM, DD
@@ -35,14 +37,6 @@ export function formatDate(date?: Date | null, format = "YYYY-MM-DD"): string | 
   return result;
 }
 
-const TIME_INTERVALS = [
-  { seconds: 31536000, label: "year" },
-  { seconds: 2592000, label: "month" },
-  { seconds: 86400, label: "day" },
-  { seconds: 3600, label: "hour" },
-  { seconds: 60, label: "minute" },
-];
-
 /**
  * Returns a relative time string (e.g., "5 minutes ago", "just now").
  */
@@ -53,14 +47,20 @@ export function timeAgo(dateInput?: Date | string | number | null): string | nul
 
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
 
-  if (seconds < 60) return "just now";
+  if (seconds < 60) return i18n.t("timeAgo.justNow");
 
-  for (const { seconds: intervalSeconds, label } of TIME_INTERVALS) {
-    const count = Math.floor(seconds / intervalSeconds);
-    if (count >= 1) {
-      return `${count} ${label}${count === 1 ? "" : "s"} ago`;
-    }
+  const intervals: Array<[number, (n: number) => string]> = [
+    [31536000, n => i18n.t("timeAgo.year", { count: n })],
+    [2592000, n => i18n.t("timeAgo.month", { count: n })],
+    [86400, n => i18n.t("timeAgo.day", { count: n })],
+    [3600, n => i18n.t("timeAgo.hour", { count: n })],
+    [60, n => i18n.t("timeAgo.minute", { count: n })],
+  ];
+
+  for (const [threshold, format] of intervals) {
+    const count = Math.floor(seconds / threshold);
+    if (count >= 1) return format(count);
   }
 
-  return "just now";
+  return i18n.t("timeAgo.justNow");
 }

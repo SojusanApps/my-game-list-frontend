@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { UserDetail, StatusEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +10,7 @@ interface UserStatisticsProps {
 }
 
 export default function UserStatistics({ userDetails }: Readonly<UserStatisticsProps>) {
+  const { t } = useTranslation("users");
   return (
     <Stack gap={32}>
       <SimpleGrid cols={{ base: 1, md: 4 }} spacing={16}>
@@ -24,11 +26,19 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
         >
           <Stack gap={14}>
             {[
-              { key: StatusEnum.P, label: "Currently Playing", count: userDetails?.game_list_statistics.playing },
-              { key: StatusEnum.OH, label: "On Hold", count: userDetails?.game_list_statistics.on_hold },
-              { key: StatusEnum.D, label: "Dropped", count: userDetails?.game_list_statistics.dropped },
-              { key: StatusEnum.C, label: "Completed", count: userDetails?.game_list_statistics.completed },
-              { key: StatusEnum.PTP, label: "Plan To Play", count: userDetails?.game_list_statistics.plan_to_play },
+              {
+                key: StatusEnum.P,
+                label: t("stats.currentlyPlaying"),
+                count: userDetails?.game_list_statistics.playing,
+              },
+              { key: StatusEnum.OH, label: t("stats.onHold"), count: userDetails?.game_list_statistics.on_hold },
+              { key: StatusEnum.D, label: t("stats.dropped"), count: userDetails?.game_list_statistics.dropped },
+              { key: StatusEnum.C, label: t("stats.completed"), count: userDetails?.game_list_statistics.completed },
+              {
+                key: StatusEnum.PTP,
+                label: t("stats.planToPlay"),
+                count: userDetails?.game_list_statistics.plan_to_play,
+              },
             ].map(({ key, label, count }) => {
               const config = getStatusConfig(key);
               return (
@@ -71,7 +81,7 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
               marginBottom: 8,
             }}
           >
-            Total Entries
+            {t("stats.totalEntries")}
           </Text>
           <Text fz={36} fw={900} c="var(--mantine-color-green-9)">
             {userDetails?.game_list_statistics.total}
@@ -99,7 +109,7 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
               marginBottom: 8,
             }}
           >
-            Mean Score
+            {t("stats.meanScore")}
           </Text>
           <Text fz={36} fw={900} c="var(--mantine-color-primary-9)">
             {userDetails?.game_list_statistics.mean_score?.toFixed(2) || "0.00"}
@@ -108,7 +118,7 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
       </SimpleGrid>
 
       <Button variant="ghost" size="sm" style={{ margin: "0 auto", color: "var(--color-text-400)" }}>
-        More statistics
+        {t("stats.moreStatistics")}
       </Button>
     </Stack>
   );

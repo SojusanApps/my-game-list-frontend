@@ -1,0 +1,46 @@
+{
+  "nav": {
+    "gameListLogo": "Game List logo",
+    "searchEngine": "Search Engine",
+    "releaseCalendar": "Release Calendar",
+    "gameList": "Game List",
+    "collections": "Collections",
+    "profile": "Profile",
+    "accountSettings": "Account settings",
+    "adminPanel": "Admin Panel",
+    "logout": "Logout",
+    "register": "Register",
+    "login": "Login",
+    "menu": "Menu"
+  },
+  "footer": {
+    "copyright": "© {{year}} Sojusan GameList • Data provided by",
+    "home": "Home",
+    "search": "Search",
+    "privacy": "Privacy"
+  },
+  "notFound": {
+    "title": "404 - Not Found",
+    "heading": "Oops! Page Not Found",
+    "description": "Lost in the adventure? No worries! Let's head back home together and continue your quest.",
+    "goHome": "Go Back Home"
+  },
+  "timeAgo": {
+    "justNow": "just now",
+    "year_one": "{{count}} year ago",
+    "year_other": "{{count}} years ago",
+    "month_one": "{{count}} month ago",
+    "month_other": "{{count}} months ago",
+    "day_one": "{{count}} day ago",
+    "day_other": "{{count}} days ago",
+    "hour_one": "{{count}} hour ago",
+    "hour_other": "{{count}} hours ago",
+    "minute_one": "{{count}} minute ago",
+    "minute_other": "{{count}} minutes ago"
+  },
+  "viewMore": "View More",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "closeModal": "Close modal",
+  "userAvatarAlt": "User avatar"
+}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Box, Group, Text, Tooltip } from "@mantine/core";
 import { UserDetail } from "@/client";
@@ -9,6 +10,7 @@ interface UserFriendsListProps {
 }
 
 export default function UserFriendsList({ userDetails }: Readonly<UserFriendsListProps>) {
+  const { t } = useTranslation("users");
   return (
     <Box
       style={{
@@ -29,14 +31,14 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
         }}
       >
         <Text fw={600} c="var(--color-text-900)">
-          Friends
+          {t("friends.title")}
         </Text>
         <Link
           to={"/profile/$id/$slug/friends"}
           params={{ id: userDetails?.id?.toString() || "", slug: userDetails?.slug || "" }}
           style={{ fontSize: 12, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
         >
-          View All
+          {t("friends.viewAll")}
         </Link>
       </Group>
       <Box p={16}>
@@ -66,7 +68,7 @@ export default function UserFriendsList({ userDetails }: Readonly<UserFriendsLis
           </Group>
         ) : (
           <Text size="sm" fs="italic" c="var(--color-text-500)">
-            No friends yet.
+            {t("friends.noFriendsYet")}
           </Text>
         )}
       </Box>

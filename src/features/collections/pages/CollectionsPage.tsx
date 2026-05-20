@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import { Collection, CollectionCollectionsListData } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
@@ -24,6 +25,7 @@ export default function CollectionsPage(): React.JSX.Element {
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
 
   const isOwner = useIsOwner(userId);
+  const { t } = useTranslation("collections");
 
   const skeletonIds = React.useMemo(() => Array.from({ length: 8 }).map((_, i) => `skeleton-${i}`), []);
 
@@ -31,13 +33,22 @@ export default function CollectionsPage(): React.JSX.Element {
   const [visibilityFilter, setVisibilityFilter] = React.useState<string | null>(null);
   const [modeFilter, setModeFilter] = React.useState<string | null>(null);
   const [typeFilter, setTypeFilter] = React.useState<string | null>(null);
+  const [useMember, setUseMember] = React.useState(false);
 
   const queryFilters = React.useMemo(() => {
     const filters: Required<CollectionCollectionsListData>["query"] = {};
-    if (isFavoriteFilter !== null) filters.is_favorite = isFavoriteFilter;
-    if (visibilityFilter !== null) filters.visibility = [visibilityFilter as "FRI" | "PRI" | "PUB"];
-    if (modeFilter !== null) filters.mode = [modeFilter as "C" | "S"];
-    if (typeFilter !== null) filters.type = [typeFilter as "NOR" | "RNK" | "TIE"];
+    if (isFavoriteFilter !== null) {
+      filters.is_favorite = isFavoriteFilter;
+    }
+    if (visibilityFilter !== null) {
+      filters.visibility = [visibilityFilter as "FRI" | "PRI" | "PUB"];
+    }
+    if (modeFilter !== null) {
+      filters.mode = [modeFilter as "C" | "S"];
+    }
+    if (typeFilter !== null) {
+      filters.type = [typeFilter as "NOR" | "RNK" | "TIE"];
+    }
     return filters;
   }, [isFavoriteFilter, visibilityFilter, modeFilter, typeFilter]);
 
@@ -48,15 +59,22 @@ export default function CollectionsPage(): React.JSX.Element {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useCollectionsInfiniteQuery(userId, queryFilters);
+  } = useCollectionsInfiniteQuery(userId, queryFilters, useMember);
 
-  const pageTitle = isUserLoading ? "Loading Collections..." : `${userDetails?.username}'s Collections`;
+  const pageTitle = isUserLoading
+    ? t("list.loading")
+    : t("list.collectionsPageTitle", { username: userDetails?.username });
 
   const allItems = collectionsResults?.pages.flatMap(page => page.results) || [];
 
   const favoriteFilters = [
-    { id: null, label: "All", emoji: "📂" },
-    { id: true, label: "Favorites", emoji: "❤️" },
+    { id: null, label: t("list.filterAll"), emoji: "📂" },
+    { id: true, label: t("list.filterFavorites"), emoji: "❤️" },
+  ];
+
+  const scopeFilters = [
+    { id: false, label: t("list.filterMyOnly") },
+    { id: true, label: t("list.filterIncludeShared") },
   ];
 
   return (
@@ -73,8 +91,12 @@ export default function CollectionsPage(): React.JSX.Element {
               ta="center"
               style={{ letterSpacing: "-0.025em" }}
             >
-              <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
-              {"'s Collections"}
+              <Trans
+                i18nKey="list.collectionsTitle"
+                ns="collections"
+                values={{ username: userDetails?.username }}
+                components={[<span style={{ color: "var(--mantine-color-primary-6)" }} key="username" />]}
+              />
             </Title>
             {isOwner && (
               <Text
@@ -92,13 +114,13 @@ export default function CollectionsPage(): React.JSX.Element {
                   border: "1px solid var(--mantine-color-primary-1)",
                 }}
               >
-                Owner View
+                {t("list.ownerView")}
               </Text>
             )}
           </Stack>
 
           <Stack w="100%" gap={16}>
-            <CollapsibleSection title="Filters">
+            <CollapsibleSection title={t("list.filters")}>
               <Box
                 style={{
                   display: "grid",
@@ -120,7 +142,7 @@ export default function CollectionsPage(): React.JSX.Element {
                       marginLeft: "4px",
                     }}
                   >
-                    Type
+                    {t("list.filterType")}
                   </Text>
                   <Group wrap="wrap" gap={8}>
                     {favoriteFilters.map(filter => (
@@ -159,47 +181,96 @@ export default function CollectionsPage(): React.JSX.Element {
                   </Group>
                 </Stack>
 
+                {/* Scope Filter */}
+                <Stack gap={12}>
+                  <Text
+                    span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 900,
+                      color: "var(--color-text-400)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                      marginLeft: "4px",
+                    }}
+                  >
+                    {t("list.filterScope")}
+                  </Text>
+                  <Group wrap="wrap" gap={8}>
+                    {scopeFilters.map(filter => (
+                      <UnstyledButton
+                        key={String(filter.id)}
+                        onClick={() => setUseMember(filter.id)}
+                        style={{
+                          padding: "8px 20px",
+                          fontSize: "12px",
+                          fontWeight: 900,
+                          borderRadius: "12px",
+                          border: "1px solid",
+                          transition: "all 300ms",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                          ...(useMember === filter.id
+                            ? {
+                                background: "var(--mantine-color-primary-6)",
+                                color: "white",
+                                borderColor: "var(--mantine-color-primary-6)",
+                                boxShadow: "0 4px 6px -1px rgba(99,102,241,0.3)",
+                              }
+                            : {
+                                background: "white",
+                                color: "var(--color-text-500)",
+                                borderColor: "var(--color-background-200)",
+                              }),
+                        }}
+                      >
+                        {filter.label}
+                      </UnstyledButton>
+                    ))}
+                  </Group>
+                </Stack>
+
                 {/* Visibility Filter */}
                 <Select
                   id="visibility-filter"
-                  label="Visibility"
+                  label={t("list.filterVisibility")}
                   value={visibilityFilter}
                   onChange={setVisibilityFilter}
                   clearable
-                  placeholder="Any Visibility"
+                  placeholder={t("list.anyVisibility")}
                   data={[
-                    { value: "PUB", label: "Public" },
-                    { value: "FRI", label: "Friends" },
-                    { value: "PRI", label: "Private" },
+                    { value: "PUB", label: t("visibility.public") },
+                    { value: "FRI", label: t("visibility.friends") },
+                    { value: "PRI", label: t("visibility.private") },
                   ]}
                 />
 
                 {/* Mode Filter */}
                 <Select
                   id="mode-filter"
-                  label="Mode"
+                  label={t("list.filterMode")}
                   value={modeFilter}
                   onChange={setModeFilter}
                   clearable
-                  placeholder="Any Mode"
+                  placeholder={t("list.anyMode")}
                   data={[
-                    { value: "S", label: "Solo" },
-                    { value: "C", label: "Collaborative" },
+                    { value: "S", label: t("mode.solo") },
+                    { value: "C", label: t("mode.collaborative") },
                   ]}
                 />
 
                 {/* Type Filter */}
                 <Select
                   id="type-filter"
-                  label="Type"
+                  label={t("list.filterType")}
                   value={typeFilter}
                   onChange={setTypeFilter}
                   clearable
-                  placeholder="Any Type"
+                  placeholder={t("list.anyType")}
                   data={[
-                    { value: "NOR", label: "Normal" },
-                    { value: "RNK", label: "Ranking" },
-                    { value: "TIE", label: "Tier List" },
+                    { value: "NOR", label: t("type.normal") },
+                    { value: "RNK", label: t("type.ranking") },
+                    { value: "TIE", label: t("type.tierList") },
                   ]}
                 />
               </Box>
@@ -216,7 +287,7 @@ export default function CollectionsPage(): React.JSX.Element {
                     borderRadius: 12,
                   }}
                 >
-                  + Create New Collection
+                  {t("list.createNew")}
                 </Button>
               </Group>
             )}
@@ -283,10 +354,10 @@ export default function CollectionsPage(): React.JSX.Element {
                 </Text>
               </Box>
               <Title order={3} fz="lg" fw={700} c="var(--color-text-900)">
-                No collections found
+                {t("list.noCollections")}
               </Title>
               <Text c="var(--color-text-500)" maw={320}>
-                This user hasn&apos;t created any collections yet.
+                {t("list.noCollectionsDesc")}
               </Text>
               {isOwner && (
                 <Button
@@ -294,7 +365,7 @@ export default function CollectionsPage(): React.JSX.Element {
                   onClick={() => setIsModalOpen(true)}
                   style={{ marginTop: 24, fontWeight: 700 }}
                 >
-                  Create your first collection
+                  {t("list.createFirst")}
                 </Button>
               )}
             </Stack>

@@ -1,0 +1,18 @@
+{
+  "emailInvalid": "Please enter a valid email address",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "passwordMin": "Password must be more than 8 characters",
+  "passwordMax": "Password must be less than 32 characters",
+  "usernameRequired": "Username is required",
+  "confirmPasswordRequired": "Confirm Password is required",
+  "passwordsNoMatch": "The passwords don't match",
+  "scoreMin": "The minimum score is 1",
+  "scoreMax": "The maximum score is 10",
+  "noteMax": "Maximum 200 characters",
+  "playtimeMin": "Playtime cannot be negative",
+  "dateRangeInvalid": "The before date cannot be earlier than the after date.",
+  "nameRequired": "Name is required",
+  "selectAtLeastOne": "Select at least one collection",
+  "descriptionMax": "Description must be 500 characters or less"
+}

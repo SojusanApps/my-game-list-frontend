@@ -1,5 +1,7 @@
 import * as React from "react";
-import { Center, Loader, Text, Group, TextInput, Stack } from "@mantine/core";
+import { useTranslation } from "react-i18next";
+import { Center, Loader, Text, Group, Stack } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
 import { useGetGamesInfinite } from "../../hooks/gameQueries";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import ItemOverlay from "@/components/ui/ItemOverlay";
@@ -8,14 +10,15 @@ import { formatISODate, getEndOfMonth } from "../../utils/calendarUtils";
 import type { GameSimpleList } from "@/client/types.gen";
 
 export default function ListView(): React.JSX.Element {
-  const [dateAfter, setDateAfter] = React.useState(() => formatISODate(new Date()));
-  const [dateBefore, setDateBefore] = React.useState(() => formatISODate(getEndOfMonth(new Date())));
+  const { t } = useTranslation("games");
+  const [dateAfter, setDateAfter] = React.useState<string | null>(() => formatISODate(new Date()));
+  const [dateBefore, setDateBefore] = React.useState<string | null>(() => formatISODate(getEndOfMonth(new Date())));
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError } = useGetGamesInfinite({
     // @ts-expect-error generated type doesn't support comma-separated sort values, but API requires them
     ordering: ["release_date,-popularity"],
-    release_date_after: dateAfter || undefined,
-    release_date_before: dateBefore || undefined,
+    release_date_after: dateAfter ?? undefined,
+    release_date_before: dateBefore ?? undefined,
   });
 
   const games = React.useMemo(() => data?.pages.flatMap(page => page.results) ?? [], [data]);
@@ -32,7 +35,7 @@ export default function ListView(): React.JSX.Element {
     if (isError) {
       return (
         <Center py="xl">
-          <Text c="red">Failed to load games list.</Text>
+          <Text c="red">{t("calendar.listLoadError")}</Text>
         </Center>
       );
     }
@@ -73,19 +76,23 @@ export default function ListView(): React.JSX.Element {
   return (
     <Stack gap={48}>
       <Group>
-        <TextInput
-          type="date"
-          label="From date"
-          description="Earliest release"
+        <DateInput
+          label={t("calendar.fromDate")}
+          description={t("calendar.fromDateDesc")}
+          placeholder={t("calendar.pickDate")}
           value={dateAfter}
-          onChange={e => setDateAfter(e.target.value)}
+          onChange={setDateAfter}
+          clearable
+          valueFormat="YYYY-MM-DD"
         />
-        <TextInput
-          type="date"
-          label="To date"
-          description="Latest release"
+        <DateInput
+          label={t("calendar.toDate")}
+          description={t("calendar.toDateDesc")}
+          placeholder={t("calendar.pickDate")}
           value={dateBefore}
-          onChange={e => setDateBefore(e.target.value)}
+          onChange={setDateBefore}
+          clearable
+          valueFormat="YYYY-MM-DD"
         />
       </Group>
       {renderContent()}

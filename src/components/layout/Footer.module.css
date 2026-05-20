@@ -15,6 +15,12 @@
   gap: 24px;
 }
 
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 .navGroup {
   display: flex;
   align-items: center;

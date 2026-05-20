@@ -1,0 +1,57 @@
+{
+  "profile": {
+    "loading": "Loading Profile...",
+    "userAvatarAlt": "User avatar",
+    "pageTitle": "{{username}}'s Profile",
+    "statistics": "Statistics",
+    "lastUpdates": "Last game updates",
+    "score": "Score",
+    "viewHistory": "View History",
+    "gameListButton": "Game List",
+    "collectionsButton": "Collections"
+  },
+  "friends": {
+    "loading": "Loading Friends...",
+    "pageTitle": "{{username}}'s Friends",
+    "friendsTitle": "<0>{{username}}</0>'s Friends",
+    "since": "Friends since {{date}}",
+    "noFriendsFound": "No friends found.",
+    "friendCount_one": "{{count}} Friend",
+    "friendCount_other": "{{count}} Friends",
+    "noFriendsYet": "No friends yet.",
+    "viewAll": "View All",
+    "title": "Friends"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "info": {
+    "title": "Information",
+    "joined": "Joined:",
+    "gender": "Gender:",
+    "private": "Private",
+    "lastActive": "Last active:",
+    "never": "Never"
+  },
+  "stats": {
+    "currentlyPlaying": "Currently Playing",
+    "onHold": "On Hold",
+    "dropped": "Dropped",
+    "completed": "Completed",
+    "planToPlay": "Plan To Play",
+    "totalEntries": "Total Entries",
+    "meanScore": "Mean Score",
+    "moreStatistics": "More statistics"
+  },
+  "friendship": {
+    "unfriend": "Unfriend",
+    "unfriendConfirm": "Are you sure you want to remove this friend?",
+    "accept": "Accept",
+    "rejected": "Rejected",
+    "reject": "Reject",
+    "requestRejected": "Request Rejected",
+    "requestSent": "Request Sent",
+    "addFriend": "Add Friend"
+  }
+}
+

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import { useGetCompanyDetail } from "../hooks/gameQueries";
 import { Box, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
@@ -12,6 +13,7 @@ import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 const routeApi = getRouteApi("/company/$id/$slug");
 
 export default function CompanyDetailPage(): React.JSX.Element {
+  const { t } = useTranslation("games");
   const { id } = routeApi.useParams();
   const companyId = Number(id);
   const { data: companyDetails, isLoading: isCompanyLoading } = useGetCompanyDetail(companyId);
@@ -22,7 +24,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
   const developedCount = developedGamesList.length;
   const publishedCount = publishedGamesList.length;
 
-  const pageTitle = isCompanyLoading ? "Loading Company..." : companyDetails?.name;
+  const pageTitle = isCompanyLoading ? t("company.loading") : companyDetails?.name;
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
@@ -104,7 +106,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
                           borderRadius: 6,
                         }}
                       >
-                        Company
+                        {t("company.badge")}
                       </Text>
                     </Group>
                     <Title
@@ -121,7 +123,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
               </Box>
             </Box>
 
-            <CollapsibleSection title="Games Developed" count={developedCount} defaultOpen={false}>
+            <CollapsibleSection title={t("company.gamesDeveloped")} count={developedCount} defaultOpen={false}>
               {developedGamesList.length > 0 ? (
                 <VirtualGridList
                   items={developedGamesList}
@@ -143,12 +145,12 @@ export default function CompanyDetailPage(): React.JSX.Element {
                 />
               ) : (
                 <Text fs="italic" c="var(--color-text-500)">
-                  No games developed found.
+                  {t("company.noGamesDeveloped")}
                 </Text>
               )}
             </CollapsibleSection>
 
-            <CollapsibleSection title="Games Published" count={publishedCount} defaultOpen={false}>
+            <CollapsibleSection title={t("company.gamesPublished")} count={publishedCount} defaultOpen={false}>
               {publishedGamesList.length > 0 ? (
                 <VirtualGridList
                   items={publishedGamesList}
@@ -170,7 +172,7 @@ export default function CompanyDetailPage(): React.JSX.Element {
                 />
               ) : (
                 <Text fs="italic" c="var(--color-text-500)">
-                  No games published found.
+                  {t("company.noGamesPublished")}
                 </Text>
               )}
             </CollapsibleSection>

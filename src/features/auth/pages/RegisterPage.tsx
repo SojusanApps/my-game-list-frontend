@@ -4,8 +4,10 @@ import AppLogo from "@/components/ui/AppLogo";
 import RegisterForm from "../components/RegisterForm";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Box, Flex, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterPage(): React.JSX.Element {
+  const { t } = useTranslation("auth");
   return (
     <Flex
       style={{ minHeight: "calc(100vh - 64px)", overflow: "hidden" }}
@@ -13,7 +15,7 @@ export default function RegisterPage(): React.JSX.Element {
       justify="center"
       pos="relative"
     >
-      <PageMeta title="Register" />
+      <PageMeta title={t("register.pageTitle")} />
       <Box
         style={{
           width: "100%",
@@ -30,7 +32,7 @@ export default function RegisterPage(): React.JSX.Element {
         <Stack gap={8} mb="lg">
           <AppLogo size="lg" />
           <Text ta="center" c="var(--color-text-500)">
-            Join our community and start tracking your games.
+            {t("register.subtitle")}
           </Text>
         </Stack>
         <RegisterForm />

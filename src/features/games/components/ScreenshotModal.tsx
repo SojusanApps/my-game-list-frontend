@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { IconX, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { Box, Loader, Modal, UnstyledButton } from "@mantine/core";
@@ -10,6 +11,7 @@ interface ScreenshotModalProps {
 }
 
 export default function ScreenshotModal({ initialScreenshot, screenshots, onClose }: Readonly<ScreenshotModalProps>) {
+  const { t } = useTranslation("games");
   const [currentIndex, setCurrentIndex] = React.useState(() => {
     const idx = screenshots.indexOf(initialScreenshot);
     return idx === -1 ? 0 : idx;
@@ -67,7 +69,7 @@ export default function ScreenshotModal({ initialScreenshot, screenshots, onClos
       {/* Close button — fixed to viewport top-right, perfect circle */}
       <UnstyledButton
         onClick={onClose}
-        aria-label="Close screenshot"
+        aria-label={t("screenshot.closeAria")}
         style={{
           position: "fixed",
           top: 16,
@@ -104,7 +106,7 @@ export default function ScreenshotModal({ initialScreenshot, screenshots, onClos
         {screenshots.length > 1 && (
           <UnstyledButton
             onClick={handlePrevious}
-            aria-label="Previous screenshot"
+            aria-label={t("screenshot.previousAria")}
             style={{
               position: "fixed",
               left: 16,
@@ -159,7 +161,7 @@ export default function ScreenshotModal({ initialScreenshot, screenshots, onClos
 
           <img
             src={getIGDBImageURL(currentScreenshot, IGDBImageSize.SCREENSHOT_HUGE_1280_720)}
-            alt="Enlarged screenshot"
+            alt={t("screenshot.enlargedAlt")}
             onLoad={() => setIsLoaded(true)}
             style={{
               display: isLoaded ? "block" : "none",
@@ -175,7 +177,7 @@ export default function ScreenshotModal({ initialScreenshot, screenshots, onClos
         {screenshots.length > 1 && (
           <UnstyledButton
             onClick={handleNext}
-            aria-label="Next screenshot"
+            aria-label={t("screenshot.nextAria")}
             style={{
               position: "fixed",
               right: 16,

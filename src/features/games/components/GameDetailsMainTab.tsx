@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import GameStatistics from "../components/GameStatistics";
 import GameReview from "../components/GameReview";
@@ -16,6 +17,7 @@ export default function GameDetailsMainTab({
   gameReviewItems,
   isGameReviewsLoading,
 }: Readonly<GameDetailsMainTabProps>) {
+  const { t } = useTranslation("games");
   return (
     <Stack gap={24} style={{ animation: "fadeIn 300ms ease" }}>
       <Box
@@ -29,7 +31,7 @@ export default function GameDetailsMainTab({
         }}
       >
         <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={16}>
-          Statistics
+          {t("mainTab.statistics")}
         </Title>
         <GameStatistics gameDetails={gameDetails} />
       </Box>
@@ -45,7 +47,7 @@ export default function GameDetailsMainTab({
         }}
       >
         <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={8}>
-          Summary
+          {t("mainTab.summary")}
         </Title>
         <Box c="var(--color-text-700)">
           <ReactMarkdown>{gameDetails?.summary || ""}</ReactMarkdown>
@@ -63,7 +65,7 @@ export default function GameDetailsMainTab({
         }}
       >
         <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={16}>
-          Reviews
+          {t("mainTab.reviews")}
         </Title>
         <Stack gap={16}>
           {isGameReviewsLoading && <Skeleton h={96} radius="xl" />}
@@ -71,7 +73,7 @@ export default function GameDetailsMainTab({
             gameReviewItems.results.map(gameReview => <GameReview key={gameReview.id} gameReview={gameReview} />)
           ) : (
             <Text c="dimmed" fs="italic">
-              No reviews yet.
+              {t("review.noReviews")}
             </Text>
           )}
         </Stack>

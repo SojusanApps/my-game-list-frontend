@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, Stack, Text } from "@mantine/core";
 import { UserDetail } from "@/client";
 import { timeAgo } from "@/utils/dateUtils";
@@ -8,6 +9,7 @@ interface UserProfileInformationProps {
 }
 
 export default function UserProfileInformation({ userDetails }: Readonly<UserProfileInformationProps>) {
+  const { t } = useTranslation("users");
   return (
     <Box
       style={{
@@ -26,13 +28,13 @@ export default function UserProfileInformation({ userDetails }: Readonly<UserPro
         }}
       >
         <Text fw={600} c="var(--color-text-900)">
-          Information
+          {t("info.title")}
         </Text>
       </Box>
       <Stack gap={12} p={16}>
         <Group justify="space-between" fz="sm">
           <Text fw={500} c="var(--color-text-600)">
-            Joined:
+            {t("info.joined")}
           </Text>
           <Text c="var(--color-text-900)">
             {new Date(userDetails?.date_joined ? userDetails.date_joined : "").toLocaleDateString()}
@@ -40,15 +42,15 @@ export default function UserProfileInformation({ userDetails }: Readonly<UserPro
         </Group>
         <Group justify="space-between" fz="sm">
           <Text fw={500} c="var(--color-text-600)">
-            Gender:
+            {t("info.gender")}
           </Text>
-          <Text c="var(--color-text-900)">Private</Text>
+          <Text c="var(--color-text-900)">{t("info.private")}</Text>
         </Group>
         <Group justify="space-between" fz="sm">
           <Text fw={500} c="var(--color-text-600)">
-            Last active:
+            {t("info.lastActive")}
           </Text>
-          <Text c="var(--color-text-900)">{timeAgo(userDetails?.last_active) || "Never"}</Text>
+          <Text c="var(--color-text-900)">{timeAgo(userDetails?.last_active) || t("info.never")}</Text>
         </Group>
       </Stack>
     </Box>
