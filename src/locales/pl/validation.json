@@ -1,0 +1,18 @@
+{
+  "emailInvalid": "Podaj prawidłowy adres e-mail",
+  "emailRequired": "Adres e-mail jest wymagany",
+  "passwordRequired": "Hasło jest wymagane",
+  "passwordMin": "Hasło musi mieć więcej niż 8 znaków",
+  "passwordMax": "Hasło musi mieć mniej niż 32 znaki",
+  "usernameRequired": "Nazwa użytkownika jest wymagana",
+  "confirmPasswordRequired": "Potwierdzenie hasła jest wymagane",
+  "passwordsNoMatch": "Hasła nie pasują do siebie",
+  "scoreMin": "Minimalna ocena to 1",
+  "scoreMax": "Maksymalna ocena to 10",
+  "noteMax": "Maksymalnie 200 znaków",
+  "playtimeMin": "Czas gry nie może być ujemny",
+  "dateRangeInvalid": "Data graniczna nie może być wcześniejsza niż data początkowa.",
+  "nameRequired": "Nazwa jest wymagana",
+  "selectAtLeastOne": "Wybierz co najmniej jedną kolekcję",
+  "descriptionMax": "Opis musi mieć 500 znaków lub mniej"
+}

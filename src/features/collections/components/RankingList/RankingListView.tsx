@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { CollectionItem } from "@/client";
 import { SortableRankingRow } from "./SortableRankingRow";
 import { VirtualList } from "@/components/ui/VirtualList";
@@ -23,6 +24,7 @@ export const RankingListView = React.memo(function RankingListView({
   isOwner,
   onRemove,
 }: Readonly<RankingListViewProps>) {
+  const { t } = useTranslation("collections");
   const virtualListRef = React.useRef<HTMLDivElement>(null);
   const [editingItem, setEditingItem] = React.useState<{ id: number; title: string; description?: string } | null>(
     null,
@@ -121,14 +123,18 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.failedToReorder"),
+          color: "red",
+        });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
         console.error(error);
       }
     },
-    [isOwner, isReordering, items, collectionId, reorderItem],
+    [isOwner, isReordering, items, collectionId, reorderItem, t],
   );
 
   const handleMoveUp = React.useCallback(
@@ -160,14 +166,18 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to move item up", color: "red" });
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.failedToMoveUp"),
+          color: "red",
+        });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
         console.error(error);
       }
     },
-    [isOwner, isReordering, items, collectionId, reorderItem],
+    [isOwner, isReordering, items, collectionId, reorderItem, t],
   );
 
   const handleMoveDown = React.useCallback(
@@ -199,14 +209,18 @@ export const RankingListView = React.memo(function RankingListView({
         // Allow query refetch to update the state
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to move item down", color: "red" });
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.failedToMoveDown"),
+          color: "red",
+        });
         // Revert on error
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
         console.error(error);
       }
     },
-    [isOwner, isReordering, items, collectionId, reorderItem],
+    [isOwner, isReordering, items, collectionId, reorderItem, t],
   );
 
   // Helper: Fetch additional pages if needed
@@ -220,8 +234,8 @@ export const RankingListView = React.memo(function RankingListView({
       const loadingId = "loading-items";
       notifications.show({
         id: loadingId,
-        title: "Loading",
-        message: "Loading more items...",
+        title: t("rankingList.loadingTitle"),
+        message: t("rankingList.loadingMessage"),
         loading: true,
         autoClose: false,
         withCloseButton: false,
@@ -242,8 +256,8 @@ export const RankingListView = React.memo(function RankingListView({
 
         notifications.update({
           id: loadingId,
-          title: "Success",
-          message: "Items loaded",
+          title: t("rankingList.successTitle"),
+          message: t("rankingList.itemsLoaded"),
           color: "green",
           loading: false,
           autoClose: 3000,
@@ -252,8 +266,8 @@ export const RankingListView = React.memo(function RankingListView({
       } catch (error) {
         notifications.update({
           id: loadingId,
-          title: "Error",
-          message: "Failed to load items",
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.failedToLoad"),
           color: "red",
           loading: false,
           autoClose: 3000,
@@ -261,33 +275,40 @@ export const RankingListView = React.memo(function RankingListView({
         throw error;
       }
     },
-    [allItems.length, hasNextPage, itemsResults, fetchNextPage],
+    [allItems.length, hasNextPage, itemsResults, fetchNextPage, t],
   );
 
   // Helper: Validate and prepare reorder operation
-  const validateReorder = React.useCallback((sortedItems: CollectionItem[], itemId: number, targetPosition: number) => {
-    const currentIndex = sortedItems.findIndex(i => i.id === itemId);
-    if (currentIndex === -1) {
-      notifications.show({ title: "Error", message: "Item not found", color: "red" });
-      return null;
-    }
+  const validateReorder = React.useCallback(
+    (sortedItems: CollectionItem[], itemId: number, targetPosition: number) => {
+      const currentIndex = sortedItems.findIndex(i => i.id === itemId);
+      if (currentIndex === -1) {
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.itemNotFound"),
+          color: "red",
+        });
+        return null;
+      }
 
-    const targetIndex = targetPosition - 1; // Convert 1-based to 0-based
-    if (targetIndex === currentIndex) {
-      return null;
-    }
+      const targetIndex = targetPosition - 1; // Convert 1-based to 0-based
+      if (targetIndex === currentIndex) {
+        return null;
+      }
 
-    if (targetIndex >= sortedItems.length) {
-      notifications.show({
-        title: "Error",
-        message: `Cannot move to position ${targetPosition}. Only ${sortedItems.length} items available.`,
-        color: "red",
-      });
-      return null;
-    }
+      if (targetIndex >= sortedItems.length) {
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.cannotMoveToPosition", { position: targetPosition, count: sortedItems.length }),
+          color: "red",
+        });
+        return null;
+      }
 
-    return { currentIndex, targetIndex };
-  }, []);
+      return { currentIndex, targetIndex };
+    },
+    [t],
+  );
 
   // Helper: Execute reorder with optimistic update
   const executeReorder = React.useCallback(
@@ -304,13 +325,17 @@ export const RankingListView = React.memo(function RankingListView({
         await reorderItem({ collectionId, itemId, position: targetIndex });
         isOptimisticUpdateRef.current = false;
       } catch (error) {
-        notifications.show({ title: "Error", message: "Failed to reorder item", color: "red" });
+        notifications.show({
+          title: t("rankingList.errorTitle"),
+          message: t("rankingList.failedToReorder"),
+          color: "red",
+        });
         isOptimisticUpdateRef.current = false;
         setItems(previousItems);
         console.error(error);
       }
     },
-    [items, collectionId, reorderItem],
+    [items, collectionId, reorderItem, t],
   );
 
   const handlePositionChange = React.useCallback(
@@ -391,10 +416,10 @@ export const RankingListView = React.memo(function RankingListView({
       >
         <Box>
           <Text fw={900} fz={28} c="var(--color-text-900)" style={{ letterSpacing: "-0.02em" }}>
-            Ranking
+            {t("rankingList.title")}
           </Text>
           <Text size="sm" c="var(--color-text-500)">
-            {totalCount} {totalCount === 1 ? "game" : "games"} in this list
+            {t("rankingList.gamesInList", { count: totalCount })}
           </Text>
         </Box>
       </Group>

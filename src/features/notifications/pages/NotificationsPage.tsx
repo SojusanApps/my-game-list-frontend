@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Notification } from "@/client";
-import { NotificationListDataQuery } from "../api/notification";
 import {
   useGetNotifications,
   useMarkNotificationAsRead,
@@ -30,6 +30,7 @@ import {
 import { Button } from "@/components/ui/Button";
 
 export default function NotificationsPage(): React.JSX.Element {
+  const { t } = useTranslation("notifications");
   const [page, setPage] = React.useState(1);
   const [unreadFilter, setUnreadFilter] = React.useState<string>("all");
   const [categoryFilter, setCategoryFilter] = React.useState<string | null>(null);
@@ -49,11 +50,7 @@ export default function NotificationsPage(): React.JSX.Element {
     queryParams.level = levelFilter;
   }
 
-  const {
-    data: notificationsData,
-    isLoading,
-    isFetching,
-  } = useGetNotifications(queryParams as NotificationListDataQuery);
+  const { data: notificationsData, isLoading, isFetching } = useGetNotifications(queryParams);
   const { mutate: markAsRead } = useMarkNotificationAsRead();
   const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
   const { mutate: deleteOne } = useDeleteNotification();
@@ -70,19 +67,19 @@ export default function NotificationsPage(): React.JSX.Element {
   };
 
   const handleMarkAllRead = () => {
-    if (globalThis.confirm("Are you sure you want to mark all notifications as read?")) {
+    if (globalThis.confirm(t("page.confirmMarkAll"))) {
       markAllAsRead();
     }
   };
 
   const handleDeleteOne = (id: number) => {
-    if (globalThis.confirm("Are you sure you want to delete this notification?")) {
+    if (globalThis.confirm(t("page.confirmDelete"))) {
       deleteOne({ id });
     }
   };
 
   const handleDeleteAllRead = () => {
-    if (globalThis.confirm("Are you sure you want to delete all read notifications?")) {
+    if (globalThis.confirm(t("page.confirmDeleteAll"))) {
       deleteAllRead();
     }
   };
@@ -99,14 +96,18 @@ export default function NotificationsPage(): React.JSX.Element {
   const hasRead = notifications.some((n: Notification) => !n.unread);
 
   const getLevelColor = (level?: string) => {
-    switch (level) {
+    switch (level?.toLowerCase()) {
       case "info":
+      case "informacja":
         return "blue";
       case "warning":
+      case "ostrzeżenie":
         return "yellow";
       case "success":
+      case "sukces":
         return "green";
       case "error":
+      case "błąd":
         return "red";
       default:
         return "gray";
@@ -114,12 +115,14 @@ export default function NotificationsPage(): React.JSX.Element {
   };
 
   const getCategoryColor = (category?: string) => {
-    switch (category) {
+    switch (category?.toLowerCase()) {
       case "system":
         return "gray";
       case "friendship":
+      case "znajomość":
         return "violet";
-      case "game_release":
+      case "game release":
+      case "premiera gry":
         return "orange";
       default:
         return "blue";
@@ -127,7 +130,9 @@ export default function NotificationsPage(): React.JSX.Element {
   };
 
   const formatText = (text?: string) => {
-    if (!text) return "Unknown";
+    if (!text) {
+      return t("page.unknown");
+    }
     return text
       .split("_")
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -136,11 +141,11 @@ export default function NotificationsPage(): React.JSX.Element {
 
   return (
     <Box maw={1024} mx="auto" p={16}>
-      <PageMeta title="Notifications" />
+      <PageMeta title={t("page.title")} />
       <Group justify="space-between" align="center" mb={24} gap={16} wrap="wrap">
         <Group gap={8}>
           <Title order={1} fz={24} fw={700}>
-            All Notifications
+            {t("page.title")}
           </Title>
           {isFetching && <Loader size="sm" />}
         </Group>
@@ -148,13 +153,13 @@ export default function NotificationsPage(): React.JSX.Element {
           {hasUnread && (
             <Button onClick={handleMarkAllRead} size="sm">
               <IconCheck style={{ width: 16, height: 16, marginRight: 4 }} />
-              Mark all as read
+              {t("page.markAllRead")}
             </Button>
           )}
           {hasRead && (
             <Button onClick={handleDeleteAllRead} variant="destructive" size="sm">
               <IconTrash style={{ width: 16, height: 16, marginRight: 4 }} />
-              Delete all read
+              {t("page.deleteAllRead")}
             </Button>
           )}
         </Group>
@@ -168,38 +173,38 @@ export default function NotificationsPage(): React.JSX.Element {
             setPage(1);
           }}
           data={[
-            { label: "All", value: "all" },
-            { label: "Unread", value: "unread" },
-            { label: "Read", value: "read" },
+            { label: t("page.filterAll"), value: "all" },
+            { label: t("page.filterUnread"), value: "unread" },
+            { label: t("page.filterRead"), value: "read" },
           ]}
         />
         <Select
-          placeholder="Filter by category"
+          placeholder={t("page.filterCategory")}
           value={categoryFilter}
           onChange={val => {
             setCategoryFilter(val);
             setPage(1);
           }}
           data={[
-            { label: "System", value: "system" },
-            { label: "Friendship", value: "friendship" },
-            { label: "Game Release", value: "game_release" },
+            { label: t("page.categorySystem"), value: "system" },
+            { label: t("page.categoryFriendship"), value: "friendship" },
+            { label: t("page.categoryGameRelease"), value: "game_release" },
           ]}
           clearable
           style={{ width: 200 }}
         />
         <Select
-          placeholder="Filter by level"
+          placeholder={t("page.filterLevel")}
           value={levelFilter}
           onChange={val => {
             setLevelFilter(val);
             setPage(1);
           }}
           data={[
-            { label: "Info", value: "info" },
-            { label: "Success", value: "success" },
-            { label: "Warning", value: "warning" },
-            { label: "Error", value: "error" },
+            { label: t("page.levelInfo"), value: "info" },
+            { label: t("page.levelSuccess"), value: "success" },
+            { label: t("page.levelWarning"), value: "warning" },
+            { label: t("page.levelError"), value: "error" },
           ]}
           clearable
           style={{ width: 200 }}
@@ -214,7 +219,7 @@ export default function NotificationsPage(): React.JSX.Element {
               setPage(1);
             }}
           >
-            Clear filters
+            {t("page.clearFilters")}
           </Button>
         )}
       </Group>
@@ -225,13 +230,13 @@ export default function NotificationsPage(): React.JSX.Element {
         <Table highlightOnHover>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Status</Table.Th>
-              <Table.Th>User</Table.Th>
-              <Table.Th>Action</Table.Th>
-              <Table.Th>Category</Table.Th>
-              <Table.Th>Level</Table.Th>
-              <Table.Th>Date</Table.Th>
-              <Table.Th>Actions</Table.Th>
+              <Table.Th>{t("page.tableStatus")}</Table.Th>
+              <Table.Th>{t("page.tableUser")}</Table.Th>
+              <Table.Th>{t("page.tableAction")}</Table.Th>
+              <Table.Th>{t("page.tableCategory")}</Table.Th>
+              <Table.Th>{t("page.tableLevel")}</Table.Th>
+              <Table.Th>{t("page.tableDate")}</Table.Th>
+              <Table.Th>{t("page.tableActions")}</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -241,7 +246,7 @@ export default function NotificationsPage(): React.JSX.Element {
                   colSpan={7}
                   style={{ textAlign: "center", paddingBlock: "32px", color: "var(--color-text-400)" }}
                 >
-                  No notifications found.
+                  {t("page.noNotifications")}
                 </Table.Td>
               </Table.Tr>
             ) : (
@@ -264,11 +269,11 @@ export default function NotificationsPage(): React.JSX.Element {
                     <Table.Td>
                       {notification.unread ? (
                         <Badge size="sm" color="blue">
-                          New
+                          {t("page.badgeNew")}
                         </Badge>
                       ) : (
                         <Badge size="sm" variant="light" color="gray" style={{ opacity: 0.5 }}>
-                          Read
+                          {t("page.badgeRead")}
                         </Badge>
                       )}
                     </Table.Td>
@@ -277,7 +282,7 @@ export default function NotificationsPage(): React.JSX.Element {
                         <Box style={{ width: "40px", height: "40px", borderRadius: "9999px", overflow: "hidden" }}>
                           <SafeImage
                             src={displayEntity?.gravatar_url || undefined}
-                            alt="User avatar"
+                            alt={t("page.userAvatarAlt")}
                             containerStyle={{ width: "40px", height: "40px" }}
                           />
                         </Box>
@@ -314,7 +319,7 @@ export default function NotificationsPage(): React.JSX.Element {
                     <Table.Td>
                       <Group gap="xs">
                         {notification.unread && (
-                          <Tooltip label="Mark as read">
+                          <Tooltip label={t("page.tooltipMarkRead")}>
                             <ActionIcon
                               variant="subtle"
                               color="blue"
@@ -326,7 +331,7 @@ export default function NotificationsPage(): React.JSX.Element {
                           </Tooltip>
                         )}
                         {!notification.unread && (
-                          <Tooltip label="Delete">
+                          <Tooltip label={t("page.tooltipDelete")}>
                             <ActionIcon
                               variant="subtle"
                               color="red"

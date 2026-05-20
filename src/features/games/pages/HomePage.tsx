@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Carousel } from "@mantine/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
@@ -11,6 +12,7 @@ import ItemOverlay from "@/components/ui/ItemOverlay";
 import styles from "./HomePage.module.css";
 
 export default function HomePage(): React.JSX.Element {
+  const { t } = useTranslation("games");
   const { data: highestRatedGames, isLoading: isHighestRatedLoading } = useGetGamesList(
     { ordering: ["rank_position"] },
     { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
@@ -74,11 +76,11 @@ export default function HomePage(): React.JSX.Element {
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
-      <PageMeta title="Home" />
+      <PageMeta title={t("home.title")} />
       <Stack gap={64} maw={1280} mx="auto" px={16}>
         <Box component="section">
           <SectionHeader
-            title="Highest Rated Games"
+            title={t("home.highestRated")}
             viewMoreHref={{ to: "/search", search: { ordering: "rank_position", category: "games" } }}
           />
           {renderGameCarousel(highestRatedGames?.results, isHighestRatedLoading)}
@@ -86,7 +88,7 @@ export default function HomePage(): React.JSX.Element {
 
         <Box component="section">
           <SectionHeader
-            title="Most Popular Games"
+            title={t("home.mostPopular")}
             viewMoreHref={{ to: "/search", search: { ordering: "popularity", category: "games" } }}
           />
           {renderGameCarousel(mostPopularGames?.results, isMostPopularLoading)}
@@ -94,7 +96,7 @@ export default function HomePage(): React.JSX.Element {
 
         <Box component="section">
           <SectionHeader
-            title="Recently Added Games"
+            title={t("home.recentlyAdded")}
             viewMoreHref={{ to: "/search", search: { ordering: "-created_at", category: "games" } }}
           />
           {renderGameCarousel(recentlyAddedGames?.results, isRecentlyAddedLoading)}

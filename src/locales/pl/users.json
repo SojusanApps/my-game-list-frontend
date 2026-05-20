@@ -1,0 +1,59 @@
+{
+  "profile": {
+    "loading": "Wczytywanie profilu...",
+    "userAvatarAlt": "Awatar użytkownika",
+    "pageTitle": "Profil {{username}}",
+    "statistics": "Statystyki",
+    "lastUpdates": "Ostatnie aktualizacje gier",
+    "score": "Ocena",
+    "viewHistory": "Historia",
+    "gameListButton": "Lista gier",
+    "collectionsButton": "Kolekcje"
+  },
+  "friends": {
+    "loading": "Wczytywanie znajomych...",
+    "pageTitle": "Znajomi {{username}}",
+    "friendsTitle": "Znajomi <0>{{username}}</0>",
+    "since": "Znajomi od {{date}}",
+    "noFriendsFound": "Nie znaleziono znajomych.",
+    "friendCount_one": "{{count}} Znajomy",
+    "friendCount_few": "{{count}} Znajomych",
+    "friendCount_many": "{{count}} Znajomych",
+    "friendCount_other": "{{count}} Znajomych",
+    "noFriendsYet": "Brak znajomych.",
+    "viewAll": "Zobacz wszystkich",
+    "title": "Znajomi"
+  },
+  "settings": {
+    "title": "Ustawienia"
+  },
+  "info": {
+    "title": "Informacje",
+    "joined": "Dołączył:",
+    "gender": "Płeć:",
+    "private": "Prywatne",
+    "lastActive": "Ostatnio aktywny:",
+    "never": "Nigdy"
+  },
+  "stats": {
+    "currentlyPlaying": "Gram",
+    "onHold": "Wstrzymane",
+    "dropped": "Porzucone",
+    "completed": "Ukończone",
+    "planToPlay": "Planuję zagrać",
+    "totalEntries": "Łącznie wpisów",
+    "meanScore": "Średnia ocena",
+    "moreStatistics": "Więcej statystyk"
+  },
+  "friendship": {
+    "unfriend": "Usuń ze znajomych",
+    "unfriendConfirm": "Czy na pewno chcesz usunąć tego znajomego?",
+    "accept": "Akceptuj",
+    "rejected": "Odrzucono",
+    "reject": "Odrzuć",
+    "requestRejected": "Zaproszenie odrzucone",
+    "requestSent": "Zaproszenie wysłane",
+    "addFriend": "Dodaj do znajomych"
+  }
+}
+

@@ -1,0 +1,10 @@
+{
+  "page": {
+    "title": "Admin Panel",
+    "subtitle": "System information and administration tools."
+  },
+  "versions": "Versions",
+  "apiVersion": "API Version",
+  "uiVersion": "UI Version"
+}
+

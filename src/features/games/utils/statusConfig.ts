@@ -1,5 +1,6 @@
 import type React from "react";
 import { StatusEnum } from "@/client";
+import i18n from "@/lib/i18n";
 
 export interface StatusConfig {
   label: string;
@@ -9,7 +10,7 @@ export interface StatusConfig {
 
 export const STATUS_CONFIG: Record<StatusEnum, StatusConfig> = {
   [StatusEnum.P]: {
-    label: "Playing",
+    label: i18n.t("games:status.playing"),
     emoji: "🎮",
     badgeStyle: {
       background: "var(--color-success-200)",
@@ -18,7 +19,7 @@ export const STATUS_CONFIG: Record<StatusEnum, StatusConfig> = {
     },
   },
   [StatusEnum.C]: {
-    label: "Completed",
+    label: i18n.t("games:status.completed"),
     emoji: "🏆",
     badgeStyle: {
       background: "var(--color-primary-200)",
@@ -27,7 +28,7 @@ export const STATUS_CONFIG: Record<StatusEnum, StatusConfig> = {
     },
   },
   [StatusEnum.PTP]: {
-    label: "Plan to Play",
+    label: i18n.t("games:status.planToPlay"),
     emoji: "🗓️",
     badgeStyle: {
       background: "var(--color-background-400)",
@@ -36,7 +37,7 @@ export const STATUS_CONFIG: Record<StatusEnum, StatusConfig> = {
     },
   },
   [StatusEnum.OH]: {
-    label: "On Hold",
+    label: i18n.t("games:status.onHold"),
     emoji: "⏸️",
     badgeStyle: {
       background: "var(--color-secondary-200)",
@@ -45,7 +46,7 @@ export const STATUS_CONFIG: Record<StatusEnum, StatusConfig> = {
     },
   },
   [StatusEnum.D]: {
-    label: "Dropped",
+    label: i18n.t("games:status.dropped"),
     emoji: "🗑️",
     badgeStyle: {
       background: "var(--color-error-200)",

@@ -1,0 +1,45 @@
+{
+  "page": {
+    "title": "Wszystkie powiadomienia",
+    "markAllRead": "Oznacz wszystkie jako przeczytane",
+    "deleteAllRead": "Usuń wszystkie przeczytane",
+    "confirmMarkAll": "Czy na pewno chcesz oznaczyć wszystkie powiadomienia jako przeczytane?",
+    "confirmDelete": "Czy na pewno chcesz usunąć to powiadomienie?",
+    "confirmDeleteAll": "Czy na pewno chcesz usunąć wszystkie przeczytane powiadomienia?",
+    "noNotifications": "Nie znaleziono powiadomień.",
+    "tableStatus": "Status",
+    "tableUser": "Użytkownik",
+    "tableAction": "Akcja",
+    "tableCategory": "Kategoria",
+    "tableLevel": "Poziom",
+    "tableDate": "Data",
+    "tableActions": "Działania",
+    "badgeNew": "Nowe",
+    "badgeRead": "Przeczytane",
+    "tooltipMarkRead": "Oznacz jako przeczytane",
+    "tooltipDelete": "Usuń",
+    "filterAll": "Wszystkie",
+    "filterUnread": "Nieprzeczytane",
+    "filterRead": "Przeczytane",
+    "filterCategory": "Filtruj po kategorii",
+    "filterLevel": "Filtruj po poziomie",
+    "clearFilters": "Wyczyść filtry",
+    "categorySystem": "System",
+    "categoryFriendship": "Znajomości",
+    "categoryGameRelease": "Premiera gry",
+    "levelInfo": "Informacja",
+    "levelSuccess": "Sukces",
+    "levelWarning": "Ostrzeżenie",
+    "levelError": "Błąd",
+    "userAvatarAlt": "Awatar użytkownika",
+    "unknown": "Nieznany"
+  },
+  "bell": {
+    "title": "Powiadomienia",
+    "actorAvatarAlt": "Awatar aktora",
+    "empty": "Brak nieprzeczytanych powiadomień",
+    "viewAll": "Zobacz wszystkie powiadomienia",
+    "new": "Nowe"
+  }
+}
+

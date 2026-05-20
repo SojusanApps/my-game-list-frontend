@@ -8,21 +8,25 @@ import { Button } from "@/components/ui/Button";
 import { TextInput, PasswordInput, Stack, Text } from "@mantine/core";
 import authStyles from "./auth.module.css";
 import { useCreateUser } from "@/features/users/hooks/userQueries";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 
 const validationSchema = z
   .object({
-    username: z.string().min(1, { message: "Username is required" }),
-    email: z.email({ message: "Please enter a valid email address" }).min(1, { message: "Email is required" }),
+    username: z.string().min(1, { message: i18n.t("validation:usernameRequired") }),
+    email: z
+      .email({ message: i18n.t("validation:emailInvalid") })
+      .min(1, { message: i18n.t("validation:emailRequired") }),
     password: z
       .string()
-      .min(1, "Password is required")
-      .min(8, "Password must be more than 8 characters")
-      .max(32, "Password must be less than 32 characters"),
-    confirmPassword: z.string().min(1, { message: "Confirm Password is required" }),
+      .min(1, i18n.t("validation:passwordRequired"))
+      .min(8, i18n.t("validation:passwordMin"))
+      .max(32, i18n.t("validation:passwordMax")),
+    confirmPassword: z.string().min(1, { message: i18n.t("validation:confirmPasswordRequired") }),
   })
   .refine(data => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
-    message: "The passwords don't match",
+    message: i18n.t("validation:passwordsNoMatch"),
   });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -31,6 +35,7 @@ function RegisterForm() {
   const navigate = useNavigate();
   const search: { redirect?: string } = useSearch({ strict: false });
   const { mutate: createUser } = useCreateUser();
+  const { t } = useTranslation("auth");
 
   const form = useForm<ValidationSchema>({
     initialValues: {
@@ -51,7 +56,11 @@ function RegisterForm() {
       },
       {
         onSuccess: () => {
-          notifications.show({ title: "Success", message: "User created successfully", color: "green" });
+          notifications.show({
+            title: t("register.successTitle"),
+            message: t("register.successMessage"),
+            color: "green",
+          });
           navigate({
             to: "/login",
             replace: true,
@@ -60,8 +69,8 @@ function RegisterForm() {
         },
         onError: error => {
           notifications.show({
-            title: "Error",
-            message: error.message || "Failed to create user",
+            title: t("register.errorTitle"),
+            message: error.message || t("register.errorMessage"),
             color: "red",
           });
         },
@@ -76,18 +85,18 @@ function RegisterForm() {
   return (
     <form onSubmit={form.onSubmit(onSubmitHandler)} noValidate>
       <TextInput
-        placeholder="Please enter your username"
+        placeholder={t("register.usernamePlaceholder")}
         required
         id="username"
-        label="Username"
+        label={t("register.usernameLabel")}
         name="username"
         {...form.getInputProps("username")}
       />
       <TextInput
-        placeholder="Please enter your email address"
+        placeholder={t("register.emailPlaceholder")}
         required
         id="email"
-        label="Email Address"
+        label={t("register.emailLabel")}
         name="email"
         {...form.getInputProps("email")}
       />
@@ -95,34 +104,34 @@ function RegisterForm() {
         required
         id="password"
         name="password"
-        label="Password"
-        placeholder="Please enter your password"
+        label={t("register.passwordLabel")}
+        placeholder={t("register.passwordPlaceholder")}
         {...form.getInputProps("password")}
       />
       <PasswordInput
         required
         id="confirmPassword"
         name="confirmPassword"
-        label="Confirm password"
-        placeholder="Confirm the password"
+        label={t("register.confirmPasswordLabel")}
+        placeholder={t("register.confirmPasswordPlaceholder")}
         {...form.getInputProps("confirmPassword")}
       />
       <Stack gap={12} mt="xl">
         <Button type="submit" fullWidth uppercase>
-          REGISTER
+          {t("register.button")}
         </Button>
         <Button type="button" onClick={onCancelHandler} variant="ghost" fullWidth uppercase>
-          CANCEL
+          {t("register.cancel")}
         </Button>
       </Stack>
       <Text ta="center" size="sm" mt="md" c="var(--color-text-600)">
-        Already have an account?&nbsp;
+        {t("register.alreadyHaveAccount")}&nbsp;
         <Link
           to="/login"
           search={search.redirect ? { redirect: search.redirect } : undefined}
           className={authStyles.authLink}
         >
-          Login
+          {t("register.loginLink")}
         </Link>
       </Text>
     </form>

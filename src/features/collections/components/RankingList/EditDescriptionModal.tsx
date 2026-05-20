@@ -5,9 +5,11 @@ import { notifications } from "@mantine/notifications";
 import { Button } from "@/components/ui/Button";
 import { Box, Group, Loader, Modal, Stack, Text, Title, Textarea, UnstyledButton } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
+import i18n from "@/lib/i18n";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = z.object({
-  description: z.string().max(500, "Description must be 500 characters or less").optional(),
+  description: z.string().max(500, i18n.t("validation:descriptionMax")).optional(),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -25,6 +27,7 @@ export default function EditDescriptionModal({
   onClose,
   onSave,
 }: Readonly<EditDescriptionModalProps>) {
+  const { t } = useTranslation("collections");
   const [isSaving, setIsSaving] = React.useState(false);
 
   const form = useForm<ValidationSchema>({
@@ -38,10 +41,18 @@ export default function EditDescriptionModal({
     setIsSaving(true);
     try {
       await onSave(data.description ?? "");
-      notifications.show({ title: "Success", message: "Description updated successfully", color: "green" });
+      notifications.show({
+        title: t("descriptionModal.successTitle"),
+        message: t("descriptionModal.updateSuccess"),
+        color: "green",
+      });
       onClose();
     } catch (error) {
-      notifications.show({ title: "Error", message: "Failed to update description", color: "red" });
+      notifications.show({
+        title: t("descriptionModal.errorTitle"),
+        message: t("descriptionModal.updateFailed"),
+        color: "red",
+      });
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -66,13 +77,17 @@ export default function EditDescriptionModal({
         >
           <Box>
             <Title order={2} fz="xl" fw={900} c="var(--color-text-900)">
-              Edit Note
+              {t("descriptionModal.rankingTitle")}
             </Title>
             <Text size="sm" c="var(--color-text-500)" mt={4}>
               {gameTitle}
             </Text>
           </Box>
-          <UnstyledButton onClick={onClose} style={{ padding: 8, borderRadius: 12 }} aria-label="Close modal">
+          <UnstyledButton
+            onClick={onClose}
+            style={{ padding: 8, borderRadius: 12 }}
+            aria-label={t("descriptionModal.closeAria")}
+          >
             <IconX style={{ width: 20, height: 20 }} />
           </UnstyledButton>
         </Group>
@@ -80,8 +95,8 @@ export default function EditDescriptionModal({
         <Box component="form" onSubmit={form.onSubmit(onSubmit)} p={24}>
           <Stack gap={16}>
             <Textarea
-              label="Why is this game in this position?"
-              placeholder="Add your thoughts about this game's ranking..."
+              label={t("descriptionModal.rankingTextarea")}
+              placeholder={t("descriptionModal.rankingPlaceholder")}
               rows={8}
               style={{ width: "100%" }}
               {...form.getInputProps("description")}
@@ -100,15 +115,15 @@ export default function EditDescriptionModal({
               disabled={isSaving}
               style={{ paddingInline: 24 }}
             >
-              Cancel
+              {t("descriptionModal.cancelButton")}
             </Button>
             <Button type="submit" variant="default" disabled={isSaving} style={{ paddingInline: 24 }}>
               {isSaving ? (
                 <>
-                  <Loader size="xs" style={{ marginRight: 8 }} /> Saving...
+                  <Loader size="xs" style={{ marginRight: 8 }} /> {t("descriptionModal.savingButton")}
                 </>
               ) : (
-                "Save"
+                t("descriptionModal.saveButton")
               )}
             </Button>
           </Group>

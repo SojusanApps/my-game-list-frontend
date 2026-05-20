@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { SimpleGrid, Stack, Text } from "@mantine/core";
 import { Game } from "@/client";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +9,7 @@ interface GameStatisticsProps {
 }
 
 export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsProps>) {
+  const { t } = useTranslation("games");
   return (
     <Stack gap={32}>
       <SimpleGrid cols={{ base: 2, md: 4 }} spacing={{ base: 16, md: 24 }}>
@@ -31,13 +33,13 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
             tt="uppercase"
             style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
           >
-            Score
+            {t("stats.score")}
           </Text>
           <Text fz={36} fw={900} c="var(--color-secondary-900)">
             {gameDetails?.average_score || "N/A"}
           </Text>
           <Text fz={10} c="var(--color-secondary-600)" fw={600} mt={4}>
-            {gameDetails?.scores_count} ratings
+            {gameDetails?.scores_count} {t("stats.ratings")}
           </Text>
         </Stack>
 
@@ -61,7 +63,7 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
             tt="uppercase"
             style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
           >
-            Ranked
+            {t("stats.ranked")}
           </Text>
           <Text fz={36} fw={900} c="var(--color-success-900)">
             #{gameDetails?.rank_position || "-"}
@@ -88,7 +90,7 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
             tt="uppercase"
             style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
           >
-            Popularity
+            {t("stats.popularity")}
           </Text>
           <Text fz={36} fw={900} c="var(--color-primary-900)">
             #{gameDetails?.popularity || "-"}
@@ -115,7 +117,7 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
             tt="uppercase"
             style={{ letterSpacing: "0.1em", marginBottom: "8px" }}
           >
-            Members
+            {t("stats.members")}
           </Text>
           <Text fz={36} fw={900} c="var(--color-text-900)">
             {gameDetails?.members_count || "0"}
@@ -124,7 +126,7 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
       </SimpleGrid>
 
       <Button variant="ghost" size="sm" style={{ margin: "0 auto", color: "var(--color-text-400)" }}>
-        More statistics
+        {t("stats.moreStatistics")}
       </Button>
     </Stack>
   );

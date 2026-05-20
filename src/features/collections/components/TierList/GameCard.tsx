@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { IconPencil, IconX, IconQuestionMark, IconInfoCircle, IconDotsVertical } from "@tabler/icons-react";
@@ -38,6 +39,7 @@ export const GameCard = (props: GameCardProps) => {
     currentTier,
   } = props;
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { t } = useTranslation("collections");
 
   const handleSaveDescription = (newDescription: string) => {
     onDescriptionChange?.(newDescription);
@@ -117,7 +119,7 @@ export const GameCard = (props: GameCardProps) => {
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item leftSection={<IconInfoCircle size={14} />} component={Link} to={`/game/${gameId}/${gameSlug}`}>
-                View Details
+                {t("tierList.viewDetails")}
               </Menu.Item>
 
               {isOwner && onDescriptionChange && (
@@ -129,21 +131,21 @@ export const GameCard = (props: GameCardProps) => {
                     setIsModalOpen(true);
                   }}
                 >
-                  Edit Description
+                  {t("tierList.editDescription")}
                 </Menu.Item>
               )}
 
               {isOwner && onMoveToTier && (
                 <>
                   <Menu.Divider />
-                  <Menu.Label>Move to Tier</Menu.Label>
-                  {TIERS.filter(t => t.id !== (currentTier || "UNRANKED")).map(t => (
+                  <Menu.Label>{t("tierList.moveToTier")}</Menu.Label>
+                  {TIERS.filter(tier => tier.id !== (currentTier || "UNRANKED")).map(tier => (
                     <Menu.Item
-                      key={t.id}
+                      key={tier.id}
                       onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
-                        onMoveToTier(t.id);
+                        onMoveToTier(tier.id);
                       }}
                     >
                       <Group gap={8}>
@@ -152,11 +154,11 @@ export const GameCard = (props: GameCardProps) => {
                             width: 12,
                             height: 12,
                             borderRadius: "50%",
-                            background: t.color,
+                            background: tier.color,
                             border: "1px solid var(--color-background-200)",
                           }}
                         />
-                        <Text size="sm">Tier {t.label}</Text>
+                        <Text size="sm">{t("tierList.tierLabel", { label: tier.label })}</Text>
                       </Group>
                     </Menu.Item>
                   ))}
@@ -175,7 +177,7 @@ export const GameCard = (props: GameCardProps) => {
                       onRemove();
                     }}
                   >
-                    Remove
+                    {t("tierList.remove")}
                   </Menu.Item>
                 </>
               )}

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Box, Group, Stack, Text, ActionIcon } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { CollectionItem, TierEnum } from "@/client";
 import { GridList } from "@/components/ui/GridList";
 import { SortableGameCard } from "./SortableGameCard";
@@ -37,6 +38,7 @@ export const TierSection = React.memo(function TierSection({
   onDescriptionChange,
   onCountLoad,
 }: Readonly<TierSectionProps>) {
+  const { t } = useTranslation("collections");
   const [page, setPage] = React.useState(1);
   const { data, isLoading, isFetching } = useCollectionItemsByTierQuery(collectionId, tier.id, page);
 
@@ -104,7 +106,7 @@ export const TierSection = React.memo(function TierSection({
           </Box>
           <Group gap={8}>
             <Text fw={800} size="lg" c="var(--color-text-800)">
-              {tier.label} Tier
+              {t("tierList.tierName", { label: tier.label })}
             </Text>
             <Box
               style={{
@@ -116,7 +118,7 @@ export const TierSection = React.memo(function TierSection({
                 color: "var(--color-text-600)",
               }}
             >
-              {totalCount} item{totalCount !== 1 && "s"}
+              {t("tierList.itemCount", { count: totalCount })}
             </Box>
           </Group>
           <Box
@@ -147,7 +149,7 @@ export const TierSection = React.memo(function TierSection({
             if (items.length === 0) {
               return (
                 <Group justify="center" align="center" style={{ height: 128 }} c="var(--color-text-400)" fz="sm">
-                  Drag and drop games here
+                  {t("tierList.dragHint")}
                 </Group>
               );
             }

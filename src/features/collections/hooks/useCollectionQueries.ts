@@ -21,18 +21,16 @@ import { useCurrentUserId } from "@/features/auth";
 import { BlankEnum, TierEnum } from "@/client";
 
 const fetchCollections = async ({ pageParam = 1, queryKey }: { pageParam?: number; queryKey: readonly unknown[] }) => {
-  const [, , userId, filters] = queryKey as [string, string, number, object];
-  const query = {
-    page: pageParam,
-    user: userId,
-    ...filters,
-  };
+  const [, , userId, filters, useMember] = queryKey as [string, string, number, object, boolean];
+  const query = useMember
+    ? { page: pageParam, member: userId, ...filters }
+    : { page: pageParam, user: userId, ...filters };
   return await getCollectionsList(query);
 };
 
-export const useCollectionsInfiniteQuery = (userId?: number, filters: object = {}) => {
+export const useCollectionsInfiniteQuery = (userId?: number, filters: object = {}, useMember = false) => {
   return useInfiniteQuery({
-    queryKey: collectionKeys.infinite(userId ?? -1, filters),
+    queryKey: collectionKeys.infinite(userId ?? -1, filters, useMember),
     queryFn: fetchCollections,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {

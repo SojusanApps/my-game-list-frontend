@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Box, Group, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import type { RankingProgress } from "../types";
 
 interface ProgressBarProps {
@@ -13,6 +14,7 @@ function getRoundDotColor(isDone: boolean, isActive: boolean): string {
 }
 
 export const ProgressBar = React.memo(function ProgressBar({ progress }: Readonly<ProgressBarProps>) {
+  const { t } = useTranslation("ranking");
   const { duelsCompleted, totalDuels, completionPercent, currentRound, totalRounds, duelInRound, duelsInRound } =
     progress;
 
@@ -25,9 +27,11 @@ export const ProgressBar = React.memo(function ProgressBar({ progress }: Readonl
       {/* Round label */}
       <Group justify="space-between" align="center" fz="xs" wrap="nowrap">
         <Text component="span" fw={600} c="var(--color-text-600)" style={{ whiteSpace: "nowrap" }}>
-          {isBonus ? `Bonus round ${currentRound - totalRounds}` : `Round ${currentRound} of ${totalRounds}`}
+          {isBonus
+            ? t("progress.bonusRound", { round: currentRound - totalRounds })
+            : t("progress.round", { current: currentRound, total: totalRounds })}
           <Text component="span" c="var(--color-text-400)" fw={400} style={{ marginLeft: "6px" }}>
-            · duel {duelInRound + 1} of {duelsInRound}
+            {t("progress.duel", { current: duelInRound + 1, total: duelsInRound })}
           </Text>
         </Text>
         <Text

@@ -34,6 +34,10 @@ Instructions for AI coding agents working on the **My Game List Frontend**.
 - **DO NOT** edit `src/client/` (auto-generated).
 - Always use `handleApiError()` from `src/utils/apiUtils.ts` to parse Django REST Framework responses.
 
+## Localization (i18n)
+
+Every user-visible string **must** be localized — no hardcoded UI text is allowed. See `docs/localization.md` for full details (setup, usage patterns, pluralization, Trans component, checklist).
+
 ## Agent skills
 
 ### Issue tracker

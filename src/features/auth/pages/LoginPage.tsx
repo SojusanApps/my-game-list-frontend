@@ -4,8 +4,10 @@ import AppLogo from "@/components/ui/AppLogo";
 import LoginForm from "../components/LoginForm";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { Box, Flex, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage(): React.JSX.Element {
+  const { t } = useTranslation("auth");
   return (
     <Flex
       style={{ minHeight: "calc(100vh - 64px)", overflow: "hidden" }}
@@ -13,7 +15,7 @@ export default function LoginPage(): React.JSX.Element {
       justify="center"
       pos="relative"
     >
-      <PageMeta title="Login" />
+      <PageMeta title={t("login.pageTitle")} />
       <Box
         style={{
           width: "100%",
@@ -30,7 +32,7 @@ export default function LoginPage(): React.JSX.Element {
         <Stack gap={8} mb="lg">
           <AppLogo size="lg" />
           <Text ta="center" c="var(--color-text-500)">
-            Welcome back! Please login to your account.
+            {t("login.subtitle")}
           </Text>
         </Stack>
         <LoginForm />

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { IconBell } from "@tabler/icons-react";
 import { Notification } from "@/client";
 import {
@@ -12,6 +13,7 @@ import bellStyles from "./NotificationBell.module.css";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 export default function NotificationBell(): React.JSX.Element {
+  const { t } = useTranslation("notifications");
   const { data: unreadData } = useGetUnreadNotificationCount();
   const { data: notificationsData } = useGetNotifications();
   const { mutate: markAsRead } = useMarkNotificationAsRead();
@@ -67,7 +69,7 @@ export default function NotificationBell(): React.JSX.Element {
           style={{ borderBottom: "1px solid var(--color-background-100)", background: "rgba(248,250,252,0.5)" }}
         >
           <Text fw={700} c="var(--color-text-900)">
-            Notifications
+            {t("bell.title")}
           </Text>
           {unreadCount > 0 && (
             <Text
@@ -83,7 +85,7 @@ export default function NotificationBell(): React.JSX.Element {
                 letterSpacing: "0.05em",
               }}
             >
-              {unreadCount} New
+              {unreadCount} {t("bell.new")}
             </Text>
           )}
         </Group>
@@ -109,7 +111,7 @@ export default function NotificationBell(): React.JSX.Element {
             >
               <IconBell style={{ width: 40, height: 40, color: "var(--color-background-300)", marginBottom: 8 }} />
               <Text size="sm" c="var(--color-text-500)" fw={500}>
-                No unread notifications
+                {t("bell.empty")}
               </Text>
             </Stack>
           ) : (
@@ -136,7 +138,7 @@ export default function NotificationBell(): React.JSX.Element {
                       <SafeImage
                         containerStyle={{ width: "40px", height: "40px", borderRadius: "9999px" }}
                         src={displayEntity?.gravatar_url || undefined}
-                        alt="Actor avatar"
+                        alt={t("bell.actorAvatarAlt")}
                       />
                     </Box>
 
@@ -195,7 +197,7 @@ export default function NotificationBell(): React.JSX.Element {
           }}
         >
           <Link to="/notifications" className={bellStyles.notificationsAllLink}>
-            View all notifications
+            {t("bell.viewAll")}
           </Link>
         </Box>
       </Popover.Dropdown>

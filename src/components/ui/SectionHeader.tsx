@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link, LinkComponentProps } from "@tanstack/react-router";
 import { Box, Group, Text, Title } from "@mantine/core";
 import styles from "./SectionHeader.module.css";
@@ -10,6 +11,7 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ title, viewMoreHref, className }: Readonly<SectionHeaderProps>) {
+  const { t } = useTranslation();
   const isObj = typeof viewMoreHref === "object" && viewMoreHref !== null;
   const linkProps = isObj ? viewMoreHref : { to: viewMoreHref };
 
@@ -41,7 +43,7 @@ export function SectionHeader({ title, viewMoreHref, className }: Readonly<Secti
           search={"search" in linkProps ? linkProps.search : undefined}
           className={styles.viewMoreLink}
         >
-          View More{" "}
+          {t("viewMore")}{" "}
           <Text component="span" fz="lg">
             →
           </Text>

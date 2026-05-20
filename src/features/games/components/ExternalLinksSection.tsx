@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Group, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import {
   IconBrandAndroid,
   IconBrandApple,
@@ -64,6 +65,7 @@ const getBrandDetails = (source: string) => {
 };
 
 export function ExternalLinksSection({ externalGames }: Readonly<{ externalGames: ExternalGame[] }>) {
+  const { t } = useTranslation("games");
   const [showAllExternalLinks, setShowAllExternalLinks] = React.useState(false);
   const displayedExternalGames = showAllExternalLinks ? externalGames : externalGames.slice(0, 4);
   const hasMoreExternalGames = externalGames.length > 4;
@@ -71,7 +73,7 @@ export function ExternalLinksSection({ externalGames }: Readonly<{ externalGames
   return (
     <Stack gap={4}>
       <Text size="sm" fw={500} c="var(--color-text-600)">
-        External Links:
+        {t("externalLinks.header")}
       </Text>
       <Group gap={8} wrap="wrap">
         {externalGames.length > 0 ? (
@@ -137,7 +139,9 @@ export function ExternalLinksSection({ externalGames }: Readonly<{ externalGames
                   outline: "none",
                 }}
               >
-                {showAllExternalLinks ? "Show less" : `+${externalGames.length - 4} more`}
+                {showAllExternalLinks
+                  ? t("externalLinks.showLess")
+                  : t("externalLinks.more", { count: externalGames.length - 4 })}
               </Text>
             )}
           </>

@@ -13,14 +13,18 @@ import { TextInput, PasswordInput, Checkbox, Divider, Group, Text } from "@manti
 import StatusCode from "@/utils/StatusCode";
 import { TokenService } from "@/client";
 import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/i18n";
 
 const validationSchema = z.object({
-  email: z.email({ message: "Please enter a valid email address" }).min(1, { message: "Email is required" }),
+  email: z
+    .email({ message: i18n.t("validation:emailInvalid") })
+    .min(1, { message: i18n.t("validation:emailRequired") }),
   password: z
     .string()
-    .min(1, "Password is required")
-    .min(8, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
+    .min(1, i18n.t("validation:passwordRequired"))
+    .min(8, i18n.t("validation:passwordMin"))
+    .max(32, i18n.t("validation:passwordMax")),
   remember: z.boolean(),
 });
 
@@ -31,6 +35,7 @@ function LoginForm() {
   const searchParams = useSearch({ from: "/login" }) as { redirect?: string };
   const from = searchParams.redirect || "/";
   const { login } = useAuth();
+  const { t } = useTranslation("auth");
 
   const form = useForm<ValidationSchema>({
     initialValues: {
@@ -47,20 +52,20 @@ function LoginForm() {
         body: { email: data.email, password: data.password, access: "", refresh: "" },
       });
       if (response?.status !== StatusCode.OK) {
-        notifications.show({ title: "Error", message: "Error logging in", color: "red" });
+        notifications.show({ title: t("login.errorTitle"), message: t("login.errorMessage"), color: "red" });
         return;
       }
       const token = tokenInfo?.access;
       const refreshToken = tokenInfo?.refresh;
       if (token && refreshToken) {
         login({ email: data.email, token, refreshToken });
-        notifications.show({ title: "Success", message: "Logged in successfully", color: "green" });
+        notifications.show({ title: t("login.successTitle"), message: t("login.successMessage"), color: "green" });
       }
       navigate({ to: from, replace: true });
     } catch (error) {
       notifications.show({
-        title: "Error",
-        message: error instanceof Error ? error.message : "An error occurred",
+        title: t("login.errorTitle"),
+        message: error instanceof Error ? error.message : t("login.errorMessage"),
         color: "red",
       });
     }
@@ -70,40 +75,40 @@ function LoginForm() {
     <>
       <form onSubmit={form.onSubmit(onSubmitHandler)} noValidate>
         <TextInput
-          placeholder="Please enter your email"
+          placeholder={t("login.emailPlaceholder")}
           required
           id="email"
-          label="Email"
+          label={t("login.emailLabel")}
           name="email"
           {...form.getInputProps("email")}
         />
         <PasswordInput
-          placeholder="Please enter your password"
+          placeholder={t("login.passwordPlaceholder")}
           required
           id="password"
-          label="Password"
+          label={t("login.passwordLabel")}
           name="password"
           {...form.getInputProps("password")}
         />
         <Checkbox
           name="remember"
           id="remember"
-          label="Remember me"
+          label={t("login.rememberMe")}
           {...form.getInputProps("remember", { type: "checkbox" })}
         />
         <Text ta="center" size="sm" mt="md" c="var(--color-text-600)">
-          Don&apos;t have an account?&nbsp;
+          {t("login.noAccount")}&nbsp;
           <Link to="/register" className={authStyles.authLink}>
-            Sign up
+            {t("login.signUp")}
           </Link>
         </Text>
         <Button type="submit" fullWidth uppercase style={{ marginTop: 24 }}>
-          LOGIN
+          {t("login.button")}
         </Button>
       </form>
 
       <Divider
-        label="Or continue with"
+        label={t("login.orContinueWith")}
         labelPosition="center"
         my="lg"
         classNames={{ label: "text-text-400 uppercase text-xs" }}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
@@ -79,6 +80,7 @@ export default function GameListPage(): React.JSX.Element {
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
+  const { t } = useTranslation("games");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
 
   const {
@@ -107,12 +109,14 @@ export default function GameListPage(): React.JSX.Element {
     }
   };
 
-  const pageTitle = isUserLoading ? "Loading Game List..." : `${userDetails?.username}'s Game List`;
+  const pageTitle = isUserLoading
+    ? t("gameList.loading")
+    : t("gameList.pageTitle", { username: userDetails?.username });
 
   const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
   const statuses: { id: StatusEnum | null; label: string; emoji: string; color: string }[] = [
-    { id: null, label: "ALL", emoji: "♾️", color: "gray" },
+    { id: null, label: t("gameList.all"), emoji: "♾️", color: "gray" },
     {
       id: StatusEnum.P,
       label: STATUS_CONFIG[StatusEnum.P].label,
@@ -222,8 +226,12 @@ export default function GameListPage(): React.JSX.Element {
             ta="center"
             style={{ letterSpacing: "-0.025em" }}
           >
-            <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
-            {"'s Game List"}
+            <Trans
+              i18nKey="gameList.title"
+              ns="games"
+              values={{ username: userDetails?.username }}
+              components={[<span style={{ color: "var(--mantine-color-primary-6)" }} key="username" />]}
+            />
           </Title>
 
           <Box
@@ -305,7 +313,7 @@ export default function GameListPage(): React.JSX.Element {
             }}
           >
             <Text fw={600} fz="lg" c="var(--color-text-900)" ta="center">
-              Don&apos;t know what to play next? Pick a random game from your Plan to play list!
+              {t("gameList.randomPtp")}
             </Text>
             <Button
               onClick={handlePickRandomPtp}
@@ -314,7 +322,7 @@ export default function GameListPage(): React.JSX.Element {
               color="indigo"
               size="md"
             >
-              Pick Random Game
+              {t("gameList.pickRandom")}
             </Button>
             {shouldFetchRandomPtp && randomPtpGame && (
               <Box style={{ width: "264px", marginTop: "16px" }}>
@@ -329,7 +337,7 @@ export default function GameListPage(): React.JSX.Element {
             )}
             {shouldFetchRandomPtp && !isRandomPtpLoading && !randomPtpGame && (
               <Text c="red" fw={500} ta="center">
-                You must add games to your Plan to play list first.
+                {t("gameList.noRandomPtp")}
               </Text>
             )}
           </Box>
@@ -357,7 +365,7 @@ export default function GameListPage(): React.JSX.Element {
               }}
             >
               <Text ta="center" fw={500} c="var(--color-error-600)">
-                Error: {errorFetchingData.message}
+                {t("gameList.fetchError", { message: errorFetchingData.message })}
               </Text>
             </Box>
           )}

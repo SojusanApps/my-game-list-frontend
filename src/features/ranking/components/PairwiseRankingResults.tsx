@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, Stack, Text, Title } from "@mantine/core";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
@@ -20,18 +21,13 @@ const CONFIDENCE_COLORS: Record<string, string> = {
   high: "var(--color-success-400)",
 };
 
-const CONFIDENCE_LABELS: Record<string, string> = {
-  low: "Low confidence",
-  medium: "Medium confidence",
-  high: "High confidence",
-};
-
 export const PairwiseRankingResults = React.memo(function PairwiseRankingResults({
   items,
   onContinueDueling,
   onApplyToCollection,
   isApplying,
 }: Readonly<PairwiseRankingResultsProps>) {
+  const { t } = useTranslation("ranking");
   const totalItems = items.length;
 
   return (
@@ -45,7 +41,7 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
           c="var(--color-text-900)"
           style={{ textTransform: "uppercase", letterSpacing: "-0.025em" }}
         >
-          Ranking Results
+          {t("results.title")}
         </Title>
         <Group gap={8}>
           <Button
@@ -54,7 +50,7 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
             size="sm"
             style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
           >
-            Continue Dueling
+            {t("results.continueDueling")}
           </Button>
           <Button
             onClick={onApplyToCollection}
@@ -62,7 +58,7 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
             style={{ fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}
             disabled={isApplying}
           >
-            {isApplying ? "Applying…" : "Apply to Collection"}
+            {isApplying ? t("results.applying") : t("results.applyToCollection")}
           </Button>
         </Group>
       </Group>
@@ -70,12 +66,12 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
       {/* Confidence legend */}
       <Group gap={16} fz="xs" c="var(--color-text-500)">
         <Text component="span" fw={600}>
-          Confidence:
+          {t("results.confidenceLabel")}
         </Text>
         {(["high", "medium", "low"] as const).map(level => (
           <Group key={level} gap={4}>
             <Box w={8} h={8} bg={CONFIDENCE_COLORS[level]} style={{ borderRadius: "9999px" }} />
-            {CONFIDENCE_LABELS[level]}
+            {t(`results.${level}Confidence`)}
           </Group>
         ))}
       </Group>
@@ -95,7 +91,7 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
                 h={10}
                 bg={CONFIDENCE_COLORS[confidence]}
                 style={{ borderRadius: "9999px", flexShrink: 0 }}
-                title={CONFIDENCE_LABELS[confidence]}
+                title={t(`results.${confidence}Confidence`)}
               />
 
               {/* Cover */}
@@ -129,7 +125,7 @@ export const PairwiseRankingResults = React.memo(function PairwiseRankingResults
                   {item.wins}W / {item.losses}L / {item.draws}D
                 </Text>
                 <Text component="span" c="var(--color-text-300)">
-                  {item.matchesPlayed} {item.matchesPlayed === 1 ? "match" : "matches"}
+                  {t("results.match", { count: item.matchesPlayed })}
                 </Text>
               </Group>
             </Group>

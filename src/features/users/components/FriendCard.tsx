@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Box, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { Friendship } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import styles from "./FriendCard.module.css";
@@ -10,6 +11,7 @@ interface FriendCardProps {
 
 export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
   const { friend, created_at } = friendship;
+  const { t } = useTranslation("users");
 
   return (
     <Box className={styles.card}>
@@ -37,7 +39,7 @@ export default function FriendCard({ friendship }: Readonly<FriendCardProps>) {
             {friend.username}
           </Link>
           <Text size="xs" c="var(--color-text-500)">
-            Friends since {new Date(created_at).toLocaleDateString()}
+            {t("friends.since", { date: new Date(created_at).toLocaleDateString() })}
           </Text>
         </Box>
       </Stack>

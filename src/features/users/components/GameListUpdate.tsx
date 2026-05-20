@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Group, Stack, Text } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { GameList, StatusEnum } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -12,6 +13,7 @@ interface GameListUpdateProps {
 export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameListUpdateProps>) {
   const statusKey = latestGameListUpdate.status_code as StatusEnum;
   const config = getStatusConfig(statusKey);
+  const { t } = useTranslation("users");
 
   return (
     <Group
@@ -90,7 +92,7 @@ export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameLi
                   opacity: 0.6,
                 }}
               >
-                Score
+                {t("profile.score")}
               </Text>
               <Text component="span" size="xs" fw={900}>
                 {latestGameListUpdate.score}

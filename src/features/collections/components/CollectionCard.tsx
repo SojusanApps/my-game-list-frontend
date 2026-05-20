@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 import { Collection, TypeEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -26,6 +27,7 @@ const HeartIcon = ({ filled }: { filled?: boolean }) => (
 );
 
 export default function CollectionCard({ collection }: Readonly<CollectionCardProps>) {
+  const { t } = useTranslation("collections");
   const { hovered, ref } = useHover<HTMLDivElement>();
   const images = collection.items_cover_image_ids || [];
   const deckLimit = 5;
@@ -75,14 +77,14 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
   const typeDisplay = React.useMemo(() => {
     switch (collection.type) {
       case TypeEnum.RNK:
-        return "Ranking";
+        return t("type.ranking");
       case TypeEnum.TIE:
-        return "Tier List";
+        return t("type.tierList");
       case TypeEnum.NOR:
       default:
-        return "Normal";
+        return t("type.normal");
     }
-  }, [collection.type]);
+  }, [collection.type, t]);
 
   const badgeStyle: React.CSSProperties = {
     padding: "2px 10px",
@@ -245,7 +247,7 @@ export default function CollectionCard({ collection }: Readonly<CollectionCardPr
                 {typeDisplay}
               </Text>
               <Text span fz="xs" fw={900} c="var(--color-text-700)">
-                {collection.items_count} {collection.items_count === 1 ? "Game" : "Games"}
+                {collection.items_count} {collection.items_count === 1 ? t("card.game") : t("card.games")}
               </Text>
             </Group>
           </Stack>

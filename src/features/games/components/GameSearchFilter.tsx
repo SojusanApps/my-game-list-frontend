@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 
@@ -7,6 +8,7 @@ import { YearPickerInput } from "@mantine/dates";
 import { Button } from "@/components/ui/Button";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import AsyncAutocomplete from "@/components/ui/Form/AsyncAutocomplete";
+import i18n from "@/lib/i18n";
 import {
   useGetGenresInfiniteQuery,
   useGetPlatformsInfiniteQuery,
@@ -62,7 +64,7 @@ const validationSchema = z
       return data.release_date_before > data.release_date_after;
     },
     {
-      message: "The before date cannot be earlier than the after date.",
+      message: i18n.t("validation:dateRangeInvalid"),
       path: ["release_date_before"],
     },
   );
@@ -74,6 +76,7 @@ function GameSearchFilter({
   onSubmitHandlerCallback,
   initialFilters,
 }: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void; initialFilters?: Record<string, unknown> }>) {
+  const { t } = useTranslation("games");
   const form = useForm<ValidationInput>({
     initialValues: {
       release_date_after: initialFilters?.release_date_after
@@ -115,19 +118,19 @@ function GameSearchFilter({
         {/* Group 1: Core Search & Ordering */}
         <Stack gap={16}>
           <Select
-            placeholder="Select ordering ..."
+            placeholder={t("filter.sortPlaceholder")}
             id="ordering"
-            label="Sort Results By"
+            label={t("filter.sortBy")}
             name="ordering"
             searchable
             clearable
             data={[
-              { value: "created_at", label: "Created at" },
-              { value: "-created_at", label: "Created at (Descending)" },
-              { value: "rank_position", label: "Rank position" },
-              { value: "-rank_position", label: "Rank position (Descending)" },
-              { value: "popularity", label: "Popularity" },
-              { value: "-popularity", label: "Popularity (Descending)" },
+              { value: "created_at", label: t("filter.createdAt") },
+              { value: "-created_at", label: t("filter.createdAtDesc") },
+              { value: "rank_position", label: t("filter.rankPosition") },
+              { value: "-rank_position", label: t("filter.rankPositionDesc") },
+              { value: "popularity", label: t("filter.popularity") },
+              { value: "-popularity", label: t("filter.popularityDesc") },
             ]}
             comboboxProps={{
               withinPortal: false,
@@ -140,8 +143,8 @@ function GameSearchFilter({
             <YearPickerInput
               id="release_date_after"
               name="release_date_after"
-              label="Release After"
-              placeholder="Year..."
+              label={t("filter.releaseAfter")}
+              placeholder={t("filter.yearPlaceholder")}
               clearable
               valueFormat="YYYY"
               popoverProps={{
@@ -154,8 +157,8 @@ function GameSearchFilter({
             <YearPickerInput
               id="release_date_before"
               name="release_date_before"
-              label="Release Before"
-              placeholder="Year..."
+              label={t("filter.releaseBefore")}
+              placeholder={t("filter.yearPlaceholder")}
               clearable
               valueFormat="YYYY"
               popoverProps={{
@@ -173,8 +176,8 @@ function GameSearchFilter({
           <AsyncAutocomplete
             id="developer"
             name="developer"
-            label="Developer"
-            placeholder="Search developer..."
+            label={t("filter.developer")}
+            placeholder={t("filter.developerPlaceholder")}
             useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
             getOptionLabel={(company: Company) => company.name}
             getOptionValue={(company: Company) => company.name}
@@ -184,8 +187,8 @@ function GameSearchFilter({
           <AsyncAutocomplete
             id="publisher"
             name="publisher"
-            label="Publisher"
-            placeholder="Search publisher..."
+            label={t("filter.publisher")}
+            placeholder={t("filter.publisherPlaceholder")}
             useInfiniteQueryHook={useGetCompaniesInfiniteQuery}
             getOptionLabel={(company: Company) => company.name}
             getOptionValue={(company: Company) => company.name}
@@ -193,9 +196,9 @@ function GameSearchFilter({
           />
 
           <AsyncMultiSelectAutocomplete
-            placeholder="Search genres..."
+            placeholder={t("filter.genresPlaceholder")}
             id="genres"
-            label="Genres"
+            label={t("filter.genres")}
             name="genres"
             useInfiniteQueryHook={useGetGenresInfiniteQuery}
             getOptionLabel={(genre: Genre) => genre.name}
@@ -204,9 +207,9 @@ function GameSearchFilter({
           />
 
           <AsyncMultiSelectAutocomplete
-            placeholder="Search platforms..."
+            placeholder={t("filter.platformsPlaceholder")}
             id="platforms"
-            label="Platforms"
+            label={t("filter.platforms")}
             name="platforms"
             useInfiniteQueryHook={useGetPlatformsInfiniteQuery}
             getOptionLabel={(platform: Platform) => platform.name}
@@ -218,9 +221,9 @@ function GameSearchFilter({
         {/* Group 3: Game Properties */}
         <Stack gap={16}>
           <AsyncMultiSelectAutocomplete
-            placeholder="Search game types..."
+            placeholder={t("filter.gameTypesPlaceholder")}
             id="game_type"
-            label="Game Types"
+            label={t("filter.gameTypes")}
             name="game_type"
             useInfiniteQueryHook={useGetGameTypesInfiniteQuery}
             getOptionLabel={(type: GameType) => type.type}
@@ -228,9 +231,9 @@ function GameSearchFilter({
             {...form.getInputProps("game_type")}
           />
           <AsyncMultiSelectAutocomplete
-            placeholder="Search game statuses..."
+            placeholder={t("filter.gameStatusesPlaceholder")}
             id="game_status"
-            label="Game Statuses"
+            label={t("filter.gameStatuses")}
             name="game_status"
             useInfiniteQueryHook={useGetGameStatusesInfiniteQuery}
             getOptionLabel={(status: GameStatus) => status.status}
@@ -238,9 +241,9 @@ function GameSearchFilter({
             {...form.getInputProps("game_status")}
           />
           <AsyncMultiSelectAutocomplete
-            placeholder="Search engines..."
+            placeholder={t("filter.enginesPlaceholder")}
             id="game_engines"
-            label="Game Engines"
+            label={t("filter.engines")}
             name="game_engines"
             useInfiniteQueryHook={useGetGameEnginesInfiniteQuery}
             getOptionLabel={(engine: GameEngine) => engine.name}
@@ -248,9 +251,9 @@ function GameSearchFilter({
             {...form.getInputProps("game_engines")}
           />
           <AsyncMultiSelectAutocomplete
-            placeholder="Search modes..."
+            placeholder={t("filter.modesPlaceholder")}
             id="game_modes"
-            label="Game Modes"
+            label={t("filter.modes")}
             name="game_modes"
             useInfiniteQueryHook={useGetGameModesInfiniteQuery}
             getOptionLabel={(mode: GameMode) => mode.name}
@@ -258,9 +261,9 @@ function GameSearchFilter({
             {...form.getInputProps("game_modes")}
           />
           <AsyncMultiSelectAutocomplete
-            placeholder="Search perspectives..."
+            placeholder={t("filter.perspectivesPlaceholder")}
             id="player_perspectives"
-            label="Player Perspectives"
+            label={t("filter.perspectives")}
             name="player_perspectives"
             useInfiniteQueryHook={useGetPlayerPerspectivesInfiniteQuery}
             getOptionLabel={(perspective: PlayerPerspective) => perspective.name}
@@ -276,7 +279,7 @@ function GameSearchFilter({
           size="lg"
           style={{ width: "100%", maxWidth: "256px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
         >
-          Apply Filters
+          {t("filter.applyFilters")}
         </Button>
       </Group>
     </Box>

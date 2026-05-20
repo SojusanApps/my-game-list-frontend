@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Box, SimpleGrid, UnstyledButton } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { Game } from "@/client";
@@ -13,6 +14,7 @@ export default function GameDetailsScreenshotsTab({
   gameDetails,
   onScreenshotClick,
 }: Readonly<GameDetailsScreenshotsTabProps>) {
+  const { t } = useTranslation("games");
   return (
     <Box className="bg-white rounded-xl shadow-sm border border-background-200 p-6 animate-in fade-in duration-300">
       {gameDetails?.screenshots && gameDetails.screenshots.length > 0 ? (
@@ -32,7 +34,7 @@ export default function GameDetailsScreenshotsTab({
           ))}
         </SimpleGrid>
       ) : (
-        <Box className="text-center text-text-500 italic py-8">No screenshots available.</Box>
+        <Box className="text-center text-text-500 italic py-8">{t("screenshot.noScreenshots")}</Box>
       )}
     </Box>
   );

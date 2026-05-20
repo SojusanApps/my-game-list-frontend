@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Modal, Text, Group, Box, Title, UnstyledButton } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
 
 export interface ConfirmModalProps {
@@ -20,14 +21,15 @@ export function ConfirmModal({
   opened,
   title,
   message,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   confirmColor = "var(--color-primary-600)",
   isDestructive = false,
   isLoading = false,
   onConfirm,
   onClose,
 }: Readonly<ConfirmModalProps>) {
+  const { t } = useTranslation();
   const handleConfirm = () => {
     onConfirm();
   };
@@ -52,7 +54,7 @@ export function ConfirmModal({
           <Title order={3} fz="lg" fw={800} c="var(--color-text-900)">
             {title}
           </Title>
-          <UnstyledButton onClick={onClose} style={{ padding: 6, borderRadius: 8 }} aria-label="Close modal">
+          <UnstyledButton onClick={onClose} style={{ padding: 6, borderRadius: 8 }} aria-label={t("closeModal")}>
             <IconX style={{ width: 18, height: 18, color: "var(--color-text-500)" }} />
           </UnstyledButton>
         </Group>
@@ -68,7 +70,7 @@ export function ConfirmModal({
 
           <Group justify="flex-end" gap={12} mt={28}>
             <Button variant="secondary" onClick={onClose} disabled={isLoading}>
-              {cancelLabel}
+              {cancelLabel ?? t("cancel")}
             </Button>
             <Button
               onClick={handleConfirm}
@@ -77,7 +79,7 @@ export function ConfirmModal({
                 backgroundColor: isDestructive ? "var(--color-error-500)" : confirmColor,
               }}
             >
-              {confirmLabel}
+              {confirmLabel ?? t("confirm")}
             </Button>
           </Group>
         </Box>

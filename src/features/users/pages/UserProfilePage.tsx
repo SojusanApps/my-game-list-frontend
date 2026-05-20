@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { getRouteApi, Link } from "@tanstack/react-router";
 
 import { useGetUserDetails } from "../hooks/userQueries";
@@ -21,8 +22,11 @@ export default function UserProfilePage(): React.JSX.Element {
 
   const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(validUserId);
   const currentUserId = useCurrentUserId();
+  const { t } = useTranslation("users");
 
-  const pageTitle = isUserDetailsLoading ? "Loading Profile..." : `${userDetails?.username}'s Profile`;
+  const pageTitle = isUserDetailsLoading
+    ? t("profile.loading")
+    : t("profile.pageTitle", { username: userDetails?.username });
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
@@ -62,7 +66,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   <SafeImage
                     style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", display: "block" }}
                     src={userDetails?.gravatar_url || undefined}
-                    alt="User avatar"
+                    alt={t("profile.userAvatarAlt")}
                   />
                 </Box>
 
@@ -74,7 +78,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   style={{ width: "100%", textDecoration: "none" }}
                 >
                   <Button fullWidth variant="default">
-                    Game List
+                    {t("profile.gameListButton")}
                   </Button>
                 </Link>
 
@@ -84,7 +88,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   style={{ width: "100%", textDecoration: "none" }}
                 >
                   <Button fullWidth variant="outline">
-                    Collections
+                    {t("profile.collectionsButton")}
                   </Button>
                 </Link>
 
@@ -110,7 +114,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   }}
                 >
                   <Title order={2} fz={18} fw={700} c="var(--color-text-900)" mb={16}>
-                    Statistics
+                    {t("profile.statistics")}
                   </Title>
                   <UserStatistics userDetails={userDetails} />
                 </Box>
@@ -133,14 +137,14 @@ export default function UserProfilePage(): React.JSX.Element {
                     style={{ borderBottom: "1px solid var(--color-background-200)" }}
                   >
                     <Title order={2} fz={18} fw={700} c="var(--color-text-900)">
-                      Last game updates
+                      {t("profile.lastUpdates")}
                     </Title>
                     <Link
                       to={"/game-list/$id/$slug"}
                       params={{ id, slug }}
                       style={{ fontSize: 13, fontWeight: 500, color: "var(--mantine-color-primary-6)" }}
                     >
-                      View History
+                      {t("profile.viewHistory")}
                     </Link>
                   </Group>
 

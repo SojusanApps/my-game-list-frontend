@@ -1,16 +1,18 @@
 import * as React from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Stack, SegmentedControl, Title, Container } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 import CalendarView from "../components/ReleaseCalendar/CalendarView";
 import ListView from "../components/ReleaseCalendar/ListView";
 
 export default function ReleaseCalendarPage(): React.JSX.Element {
+  const { t } = useTranslation("games");
   const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
 
   return (
     <>
-      <PageMeta title="Release Calendar" />
+      <PageMeta title={t("calendar.title")} />
       <Container size="xl" py="xl">
         <Stack gap={24}>
           <Box
@@ -22,13 +24,13 @@ export default function ReleaseCalendarPage(): React.JSX.Element {
               gap: "16px",
             }}
           >
-            <Title order={1}>Release Calendar</Title>
+            <Title order={1}>{t("calendar.title")}</Title>
             <SegmentedControl
               value={viewMode}
-              onChange={val => setViewMode(val as "calendar" | "list")}
+              onChange={val => setViewMode(val)}
               data={[
-                { label: "Calendar", value: "calendar" },
-                { label: "List", value: "list" },
+                { label: t("calendar.calendarTab"), value: "calendar" },
+                { label: t("calendar.listTab"), value: "list" },
               ]}
               w={{ base: "100%", sm: "auto" }}
             />

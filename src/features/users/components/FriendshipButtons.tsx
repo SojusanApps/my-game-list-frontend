@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Group } from "@mantine/core";
 import { Button } from "@/components/ui/Button";
 import { Friendship, FriendshipRequest } from "@/client";
@@ -17,6 +18,7 @@ interface FriendshipButtonsProps {
 }
 
 export default function FriendshipButtons({ currentUserId, userId }: Readonly<FriendshipButtonsProps>) {
+  const { t } = useTranslation("users");
   const { mutate: sendRequest } = useSendFriendRequest();
   const { mutate: acceptRequest } = useAcceptFriendRequest();
   const { mutate: rejectRequest } = useRejectFriendRequest();
@@ -73,7 +75,7 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   };
 
   const handleUnfriend = () => {
-    if (friendship && globalThis.confirm("Are you sure you want to remove this friend?")) {
+    if (friendship && globalThis.confirm(t("friendship.unfriendConfirm"))) {
       deleteFriendship({ id: friendship.id });
     }
   };
@@ -85,7 +87,7 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   if (isFriend) {
     return (
       <Button type="button" onClick={handleUnfriend} variant="destructive" className="w-full">
-        Unfriend
+        {t("friendship.unfriend")}
       </Button>
     );
   }
@@ -94,7 +96,7 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
     return (
       <Group gap={8} className="w-full">
         <Button type="button" onClick={handleAccept} className="flex-1 bg-green-600 hover:bg-green-700">
-          Accept
+          {t("friendship.accept")}
         </Button>
         <Button
           type="button"
@@ -103,7 +105,7 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
           variant="destructive"
           className="flex-1"
         >
-          {isIncomingRejected ? "Rejected" : "Reject"}
+          {isIncomingRejected ? t("friendship.rejected") : t("friendship.reject")}
         </Button>
       </Group>
     );
@@ -112,14 +114,14 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   if (isRequestSent) {
     return (
       <Button type="button" disabled variant="secondary" className="w-full cursor-default">
-        {isOutgoingRejected ? "Request Rejected" : "Request Sent"}
+        {isOutgoingRejected ? t("friendship.requestRejected") : t("friendship.requestSent")}
       </Button>
     );
   }
 
   return (
     <Button type="button" onClick={handleAddFriend} className="w-full">
-      Add Friend
+      {t("friendship.addFriend")}
     </Button>
   );
 }

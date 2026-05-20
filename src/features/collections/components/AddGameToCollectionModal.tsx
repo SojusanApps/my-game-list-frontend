@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { useGetGamesList } from "@/features/games/hooks/gameQueries";
 import { GameSimpleList } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -18,6 +19,7 @@ export default function AddGameToCollectionModal({
   onClose,
   collectionId,
 }: Readonly<AddGameToCollectionModalProps>): React.JSX.Element {
+  const { t } = useTranslation("collections");
   const [search, setSearch] = React.useState<string>("");
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
@@ -40,11 +42,19 @@ export default function AddGameToCollectionModal({
       },
       {
         onSuccess: () => {
-          notifications.show({ title: "Success", message: `Added ${game.title} to collection`, color: "green" });
+          notifications.show({
+            title: t("addGame.successTitle"),
+            message: t("addGame.successMessage", { title: game.title }),
+            color: "green",
+          });
           // Kept open for multiple adds as per user request
         },
         onError: error => {
-          notifications.show({ title: "Error", message: error.message || "Failed to add game", color: "red" });
+          notifications.show({
+            title: t("addGame.errorTitle"),
+            message: error.message || t("addGame.errorMessage"),
+            color: "red",
+          });
         },
       },
     );
@@ -60,7 +70,7 @@ export default function AddGameToCollectionModal({
           fw={500}
           style={{ animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite" }}
         >
-          Searching our library...
+          {t("addGame.searching")}
         </Text>
       );
     }
@@ -69,7 +79,7 @@ export default function AddGameToCollectionModal({
       if (gamesDetails.results.length === 0) {
         return (
           <Text py={48} ta="center" c="var(--color-text-400)" fw={500}>
-            No games found matching &quot;{search}&quot;
+            {t("addGame.noResults", { search })}
           </Text>
         );
       }
@@ -133,7 +143,7 @@ export default function AddGameToCollectionModal({
                   borderRadius: "9999px",
                 }}
               >
-                Add
+                {t("addGame.addButton")}
               </Box>
             </UnstyledButton>
           ))}
@@ -144,7 +154,7 @@ export default function AddGameToCollectionModal({
     return (
       <Stack align="center" justify="center" gap={16} py={48} c="var(--color-text-400)">
         <IconSearch style={{ width: 48, height: 48, opacity: 0.2 }} />
-        <Text fw={500}>Type to search for games</Text>
+        <Text fw={500}>{t("addGame.typeToSearch")}</Text>
       </Stack>
     );
   };
@@ -170,9 +180,9 @@ export default function AddGameToCollectionModal({
           }}
         >
           <Title order={2} fz={24} fw={900} c="var(--color-text-900)" style={{ letterSpacing: "-0.025em" }}>
-            Add{" "}
+            {t("addGame.titlePrefix")}{" "}
             <Text span c="var(--color-primary-600)">
-              Game
+              {t("addGame.titleHighlight")}
             </Text>
           </Title>
           <ActionIcon
@@ -188,7 +198,7 @@ export default function AddGameToCollectionModal({
         {/* Search Input Area */}
         <Box p={32} pb={16}>
           <TextInput
-            placeholder="Search for a game to add..."
+            placeholder={t("addGame.searchPlaceholder")}
             leftSection={<IconSearch style={{ width: 24, height: 24, color: "var(--color-text-400)" }} />}
             autoComplete="off"
             size="lg"

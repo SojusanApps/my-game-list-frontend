@@ -90,6 +90,10 @@
   color: var(--color-primary-400);
 }
 
+.weekend {
+  color: var(--mantine-color-red-5) !important;
+}
+
 .gameList {
   display: flex;
   flex-direction: column;

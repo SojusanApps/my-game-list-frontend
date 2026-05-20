@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useForm, schemaResolver } from "@mantine/form";
 import { z } from "zod";
 
@@ -21,19 +22,20 @@ import {
 import { useCurrentUserId } from "@/features/auth";
 import { parseDate, formatDate } from "@/utils/dateUtils";
 import { getRatingColor } from "@/utils/ratingUtils";
+import i18n from "@/lib/i18n";
 
 const validationSchema = z.object({
   status: z.enum(StatusEnum),
   score: z.coerce
     .number()
-    .min(1, { message: "The minimum score is 1" })
-    .max(10, { message: "The maximum score is 10" })
+    .min(1, { message: i18n.t("validation:scoreMin") })
+    .max(10, { message: i18n.t("validation:scoreMax") })
     .nullish(),
   owned_on: z.array(z.string()).optional(),
-  description: z.string().max(200, "Maximum 200 characters").nullish(),
+  description: z.string().max(200, i18n.t("validation:noteMax")).nullish(),
   started_at: z.date().nullish(),
   completed_at: z.date().nullish(),
-  playtime: z.coerce.number().min(0, "Playtime cannot be negative").nullish(),
+  playtime: z.coerce.number().min(0, i18n.t("validation:playtimeMin")).nullish(),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
@@ -45,6 +47,7 @@ interface GameListModalProps {
 }
 
 export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModalProps>) {
+  const { t } = useTranslation("games");
   const currentUserId = useCurrentUserId();
   const parsedGameIdResult = idSchema.safeParse(gameId);
   const parsedGameId = parsedGameIdResult.success ? parsedGameIdResult.data : undefined;
@@ -107,7 +110,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
 
   const onSubmitHandler = async (data: ValidationSchema) => {
     if (!parsedGameId || !currentUserId) {
-      notifications.show({ title: "Error", message: "Invalid context", color: "red" });
+      notifications.show({ title: t("modal.errorTitle"), message: t("modal.invalidContext"), color: "red" });
       return;
     }
 
@@ -127,20 +130,20 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
           id: gameListDetails.id,
           body: payload,
         });
-        notifications.show({ title: "Success", message: "Updated list successfully", color: "green" });
+        notifications.show({ title: t("modal.successTitle"), message: t("modal.updateSuccess"), color: "green" });
       } else {
         await createGameListItem({
           ...payload,
           game: parsedGameId,
           user: currentUserId,
         });
-        notifications.show({ title: "Success", message: "Added to list successfully", color: "green" });
+        notifications.show({ title: t("modal.successTitle"), message: t("modal.addSuccess"), color: "green" });
       }
       onClose();
     } catch (error: unknown) {
       notifications.show({
-        title: "Error",
-        message: error instanceof Error ? error.message : "An error occurred",
+        title: t("modal.errorTitle"),
+        message: error instanceof Error ? error.message : t("modal.errorMessage"),
         color: "red",
       });
     }
@@ -150,12 +153,12 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
     if (gameListDetails?.id) {
       try {
         await deleteGameListItem(gameListDetails.id);
-        notifications.show({ title: "Success", message: "Removed from list successfully", color: "green" });
+        notifications.show({ title: t("modal.successTitle"), message: t("modal.removeSuccess"), color: "green" });
         onClose();
       } catch (error: unknown) {
         notifications.show({
-          title: "Error",
-          message: error instanceof Error ? error.message : "Failed to remove",
+          title: t("modal.errorTitle"),
+          message: error instanceof Error ? error.message : t("modal.removeFailed"),
           color: "red",
         });
       }
@@ -166,7 +169,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
     <Modal
       opened={opened}
       onClose={onClose}
-      title={gameListDetails?.id ? "Edit List Entry" : "Add to My List"}
+      title={gameListDetails?.id ? t("modal.editTitle") : t("modal.addTitle")}
       size="lg"
       overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
     >
@@ -176,7 +179,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
             <Select
               required
               id="status"
-              label="Status"
+              label={t("modal.statusLabel")}
               name="status"
               searchable
               data={code_to_value_mapping().map(item => ({
@@ -187,7 +190,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
             />
             <Select
               id="score"
-              label="Your Score"
+              label={t("modal.scoreLabel")}
               name="score"
               searchable
               clearable
@@ -230,9 +233,9 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
           </Group>
 
           <AsyncMultiSelectAutocomplete
-            placeholder="Search platforms / media..."
+            placeholder={t("modal.ownedOnPlaceholder")}
             id="owned_on"
-            label="Owned On"
+            label={t("modal.ownedOnLabel")}
             name="owned_on"
             useInfiniteQueryHook={useGetGameMediasInfiniteQuery}
             getOptionLabel={item => item.name}
@@ -242,21 +245,21 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
 
           <Group align="flex-start" grow>
             <DateInput
-              label="Started At"
-              placeholder="Pick date"
+              label={t("modal.startedAt")}
+              placeholder={t("modal.pickDate")}
               clearable
               valueFormat="YYYY-MM-DD"
               {...form.getInputProps("started_at")}
             />
             <DateInput
-              label="Completed At"
-              placeholder="Pick date"
+              label={t("modal.completedAt")}
+              placeholder={t("modal.pickDate")}
               clearable
               valueFormat="YYYY-MM-DD"
               {...form.getInputProps("completed_at")}
             />
             <NumberInput
-              label="Playtime (hours)"
+              label={t("modal.playtime")}
               placeholder="0"
               min={0}
               allowNegative={false}
@@ -265,8 +268,8 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
           </Group>
 
           <Textarea
-            label="Note"
-            placeholder="What do you think about the game?"
+            label={t("modal.noteLabel")}
+            placeholder={t("modal.notePlaceholder")}
             maxLength={200}
             rows={3}
             {...form.getInputProps("description")}
@@ -275,15 +278,15 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
           <Group justify={gameListDetails?.id ? "space-between" : "flex-end"} mt="md">
             {gameListDetails?.id && (
               <Button type="button" onClick={handleRemove} variant="destructive" isLoading={isDeleting}>
-                Remove
+                {t("modal.removeButton")}
               </Button>
             )}
             <Group>
               <Button type="button" onClick={onClose} variant="outline" disabled={isSubmitting}>
-                Cancel
+                {t("modal.cancelButton")}
               </Button>
               <Button type="submit" isLoading={isSubmitting}>
-                {gameListDetails?.id ? "Save Changes" : "Add to List"}
+                {gameListDetails?.id ? t("modal.saveButton") : t("modal.addButton")}
               </Button>
             </Group>
           </Group>

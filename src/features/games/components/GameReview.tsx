@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { GameReview as GameReviewType } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import ReactMarkdown from "react-markdown";
@@ -10,6 +11,7 @@ type GameReviewProps = {
 };
 
 function GameReview({ gameReview }: Readonly<GameReviewProps>): React.JSX.Element {
+  const { t } = useTranslation("games");
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [shouldTruncate, setShouldTruncate] = React.useState(false);
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -122,7 +124,7 @@ function GameReview({ gameReview }: Readonly<GameReviewProps>): React.JSX.Elemen
                 color: getScoreLabelColor(gameReview.score),
               }}
             >
-              Score
+              {t("review.score")}
             </Text>
             <Text component="span" fz="xl" fw={900} style={{ lineHeight: 1 }}>
               {gameReview.score}
@@ -186,7 +188,7 @@ function GameReview({ gameReview }: Readonly<GameReviewProps>): React.JSX.Elemen
                 transition: "all 200ms",
               }}
             >
-              <Text component="span">{isExpanded ? "Show Less" : "Read Full Review"}</Text>
+              <Text component="span">{isExpanded ? t("review.showLess") : t("review.readFull")}</Text>
               <IconChevronDown
                 style={{
                   width: 12,

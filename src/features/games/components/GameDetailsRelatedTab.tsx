@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Box, Stack } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import ItemOverlay from "@/components/ui/ItemOverlay";
@@ -11,6 +12,7 @@ interface GameDetailsRelatedTabProps {
 }
 
 export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDetailsRelatedTabProps>) {
+  const { t } = useTranslation("games");
   const renderRelatedGamesSection = (title: string, games: CompanyGame[] | undefined) => {
     if (!games || games.length === 0) return null;
     return (
@@ -38,7 +40,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
   return (
     <Stack gap={16}>
       {gameDetails?.parent_game && (
-        <CollapsibleSection title="Parent Game" defaultOpen={true}>
+        <CollapsibleSection title={t("related.parentGame")} defaultOpen={true}>
           <Box maw={200}>
             <ItemOverlay
               itemPageUrl={`/game/${gameDetails.parent_game.id}/${gameDetails.parent_game.slug}`}
@@ -52,13 +54,13 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
           </Box>
         </CollapsibleSection>
       )}
-      {renderRelatedGamesSection("DLCs", gameDetails?.dlcs)}
-      {renderRelatedGamesSection("Expansions", gameDetails?.expansions)}
-      {renderRelatedGamesSection("Standalone Expansions", gameDetails?.standalone_expansions)}
-      {renderRelatedGamesSection("Bundles", gameDetails?.bundles)}
-      {renderRelatedGamesSection("Expanded Games", gameDetails?.expanded_games)}
-      {renderRelatedGamesSection("Forks", gameDetails?.forks)}
-      {renderRelatedGamesSection("Ports", gameDetails?.ports)}
+      {renderRelatedGamesSection(t("related.dlcs"), gameDetails?.dlcs)}
+      {renderRelatedGamesSection(t("related.expansions"), gameDetails?.expansions)}
+      {renderRelatedGamesSection(t("related.standaloneExpansions"), gameDetails?.standalone_expansions)}
+      {renderRelatedGamesSection(t("related.bundles"), gameDetails?.bundles)}
+      {renderRelatedGamesSection(t("related.expandedGames"), gameDetails?.expanded_games)}
+      {renderRelatedGamesSection(t("related.forks"), gameDetails?.forks)}
+      {renderRelatedGamesSection(t("related.ports"), gameDetails?.ports)}
 
       {!gameDetails?.parent_game &&
         (!gameDetails?.dlcs || gameDetails.dlcs.length === 0) &&
@@ -80,7 +82,7 @@ export default function GameDetailsRelatedTab({ gameDetails }: Readonly<GameDeta
               fontStyle: "italic",
             }}
           >
-            No related games found.
+            {t("related.noRelatedGames")}
           </Box>
         )}
     </Stack>

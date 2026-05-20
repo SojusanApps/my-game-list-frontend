@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import { GameListModal } from "../components/GameListModal";
 import GameInformation from "../components/GameInformation";
@@ -27,6 +28,7 @@ import { IconBell, IconBellFilled } from "@tabler/icons-react";
 const routeApi = getRouteApi("/game/$id/$slug");
 
 function GameFollowButton({ gameId, userId }: Readonly<{ gameId: number; userId: number }>) {
+  const { t } = useTranslation("games");
   const { data: userGameFollows, isPending: isGameFollowsPending } = useGetGameFollowsList({
     game: gameId,
     user: userId,
@@ -47,7 +49,7 @@ function GameFollowButton({ gameId, userId }: Readonly<{ gameId: number; userId:
   };
 
   return (
-    <Tooltip label={isFollowing ? "Unfollow game" : "Follow game to get notifications"}>
+    <Tooltip label={isFollowing ? t("detail.unfollowGame") : t("detail.followGame")}>
       <ActionIcon
         size="xl"
         variant="subtle"
@@ -73,12 +75,13 @@ function UserGameActions({
   setIsListModalOpen: (val: boolean) => void;
   setIsCollectionModalOpen: (val: boolean) => void;
 }>) {
+  const { t } = useTranslation("games");
   const { data: userGameList, isPending: isUserGameListPending } = useGetGameListByFilters(
     { game: gameId, user: userId },
     { enabled: !!gameId && !!userId },
   );
 
-  const listButtonText = userGameList?.id ? "Edit List Entry" : "Add List Entry";
+  const listButtonText = userGameList?.id ? t("detail.editListEntry") : t("detail.addListEntry");
 
   return (
     <Stack gap={8}>
@@ -90,7 +93,7 @@ function UserGameActions({
         </Button>
       )}
       <Button onClick={() => setIsCollectionModalOpen(true)} variant="outline" fullWidth>
-        Add to Collection
+        {t("detail.addToCollection")}
       </Button>
     </Stack>
   );
@@ -133,8 +136,9 @@ export default function GameDetailPage(): React.JSX.Element {
   const [isListModalOpen, setIsListModalOpen] = React.useState(false);
   const { user } = useAuth();
   const currentUserId = useCurrentUserId();
+  const { t } = useTranslation("games");
 
-  const pageTitle = isGameDetailsLoading ? "Loading Game..." : gameDetails?.title;
+  const pageTitle = isGameDetailsLoading ? t("detail.loading") : gameDetails?.title;
 
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
@@ -203,9 +207,9 @@ export default function GameDetailPage(): React.JSX.Element {
                   keepMounted={false}
                 >
                   <Tabs.List>
-                    <Tabs.Tab value="main">Information</Tabs.Tab>
-                    <Tabs.Tab value="related">Related Games</Tabs.Tab>
-                    <Tabs.Tab value="screenshots">Screenshots</Tabs.Tab>
+                    <Tabs.Tab value="main">{t("detail.tabMain")}</Tabs.Tab>
+                    <Tabs.Tab value="related">{t("detail.tabRelated")}</Tabs.Tab>
+                    <Tabs.Tab value="screenshots">{t("detail.tabScreenshots")}</Tabs.Tab>
                   </Tabs.List>
                   <Tabs.Panel value="main" pt="md">
                     <GameDetailsMainTab

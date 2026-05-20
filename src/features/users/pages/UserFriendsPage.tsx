@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { getRouteApi } from "@tanstack/react-router";
 import { useGetUserDetails } from "../hooks/userQueries";
 import { useGetFriendshipsInfiniteQuery } from "../hooks/friendshipQueries";
@@ -25,10 +26,12 @@ export default function UserFriendsPage(): React.JSX.Element {
 
   const isFriendsLoading = isFriendsQueryLoading || isUserLoading;
 
+  const { t } = useTranslation("users");
+
   const allFriendships = data?.pages.flatMap(page => page.results) || [];
   const totalFriends = data?.pages[0]?.count ?? 0;
 
-  const pageTitle = isUserLoading ? "Loading Friends..." : `${userDetails?.username}'s Friends`;
+  const pageTitle = isUserLoading ? t("friends.loading") : t("friends.pageTitle", { username: userDetails?.username });
 
   const renderFriendsContent = () => {
     if (isFriendsLoading) {
@@ -53,7 +56,7 @@ export default function UserFriendsPage(): React.JSX.Element {
             border: "1px dashed var(--color-background-300)",
           }}
         >
-          <Text c="var(--color-text-500)">No friends found.</Text>
+          <Text c="var(--color-text-500)">{t("friends.noFriendsFound")}</Text>
         </Box>
       );
     }
@@ -87,10 +90,12 @@ export default function UserFriendsPage(): React.JSX.Element {
               {isUserLoading ? (
                 <Skeleton style={{ width: "256px", height: "40px" }} />
               ) : (
-                <>
-                  <span style={{ color: "var(--mantine-color-primary-6)" }}>{userDetails?.username}</span>
-                  {"'s Friends"}
-                </>
+                <Trans
+                  i18nKey="friends.friendsTitle"
+                  ns="users"
+                  values={{ username: userDetails?.username }}
+                  components={[<span style={{ color: "var(--mantine-color-primary-6)" }} key="username" />]}
+                />
               )}
             </Title>
             {!isFriendsLoading && (
@@ -108,7 +113,7 @@ export default function UserFriendsPage(): React.JSX.Element {
                   border: "1px solid var(--mantine-color-primary-1)",
                 }}
               >
-                {totalFriends} {totalFriends === 1 ? "Friend" : "Friends"}
+                {t("friends.friendCount", { count: totalFriends })}
               </Box>
             )}
           </Stack>

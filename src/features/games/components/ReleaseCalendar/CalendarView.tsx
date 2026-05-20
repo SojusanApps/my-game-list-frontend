@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Group, ActionIcon, Title, SegmentedControl, Text, Loader, Center, Stack, Button } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useGetReleaseCalendar } from "../../hooks/gameQueries";
@@ -20,6 +21,7 @@ import ItemOverlay from "@/components/ui/ItemOverlay";
 import { GameSimpleList } from "@/client";
 
 export default function CalendarView(): React.JSX.Element {
+  const { t } = useTranslation("games");
   const [viewMode, setViewMode] = useState<"week" | "month">("week");
   const [currentDate, setCurrentDate] = useState(() => new Date());
 
@@ -123,21 +125,37 @@ export default function CalendarView(): React.JSX.Element {
       return (
         <Center py="xl" style={{ minHeight: "400px" }}>
           <Text c="red" fw={500}>
-            Failed to load calendar data.
+            {t("calendar.loadError")}
           </Text>
         </Center>
       );
     }
 
     const isWeekView = viewMode === "week";
-    const maxVisible = isWeekView ? 3 : 2;
+    const maxVisible = 2;
 
     return (
       <Box className={styles.calendarGridWrapper}>
         <Box className={styles.calendarGridInner}>
           <Box className={styles.calendarGridHeader}>
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => (
-              <Text key={day} fw={700} ta="center" c="dimmed" size="sm" tt="uppercase">
+            {[
+              t("calendar.weekMon"),
+              t("calendar.weekTue"),
+              t("calendar.weekWed"),
+              t("calendar.weekThu"),
+              t("calendar.weekFri"),
+              t("calendar.weekSat"),
+              t("calendar.weekSun"),
+            ].map((day, idx) => (
+              <Text
+                key={day}
+                fw={700}
+                ta="center"
+                c="dimmed"
+                size="sm"
+                tt="uppercase"
+                className={idx >= 5 ? styles.weekend : undefined}
+              >
                 {day}
               </Text>
             ))}
@@ -159,7 +177,9 @@ export default function CalendarView(): React.JSX.Element {
                   )}
                 >
                   <Box className={styles.dayHeader}>
-                    <Text size="sm">{dayObj.getDate()}</Text>
+                    <Text size="sm" className={[0, 6].includes(dayObj.getDay()) ? styles.weekend : undefined}>
+                      {dayObj.getDate()}
+                    </Text>
                   </Box>
                   <Box className={styles.gameList} mt={8}>
                     {games.slice(0, maxVisible).map(game => (
@@ -180,7 +200,7 @@ export default function CalendarView(): React.JSX.Element {
                     ))}
                     {games.length > maxVisible && (
                       <Text size="xs" ta="center" c="dimmed" mt={4}>
-                        +{games.length - maxVisible} more
+                        {t("calendar.moreGames")}
                       </Text>
                     )}
                   </Box>
@@ -190,7 +210,7 @@ export default function CalendarView(): React.JSX.Element {
                       className={styles.seeAllButton}
                       onClick={() => setSelectedDayObj({ opened: true, dateStr: dStr })}
                     >
-                      See all
+                      {t("calendar.seeAll")}
                     </Button>
                   )}
                 </Box>
@@ -216,7 +236,7 @@ export default function CalendarView(): React.JSX.Element {
             <IconChevronRight size={20} />
           </ActionIcon>
           <Button variant="light" size="sm" radius="md" onClick={() => setCurrentDate(new Date())}>
-            Today
+            {t("calendar.today")}
           </Button>
         </Group>
 
@@ -226,8 +246,8 @@ export default function CalendarView(): React.JSX.Element {
           value={viewMode}
           onChange={val => setViewMode(val)}
           data={[
-            { label: "Month", value: "month" },
-            { label: "Week", value: "week" },
+            { label: t("calendar.month"), value: "month" },
+            { label: t("calendar.week"), value: "week" },
           ]}
         />
       </Group>

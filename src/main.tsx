@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { MantineProvider } from "@mantine/core";
+import { DatesProvider } from "@mantine/dates";
 import { Notifications } from "@mantine/notifications";
 import { theme } from "./theme/theme";
 import App, { router } from "./App";
@@ -10,6 +11,9 @@ import "@mantine/carousel/styles.css";
 import "@mantine/dates/styles.css";
 import "./index.css";
 import clientSetup from "./clientSetup";
+import "./lib/i18n";
+import "dayjs/locale/pl";
+import { getStoredLanguage } from "./utils/languageUtils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -43,23 +47,25 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <MantineProvider theme={theme} defaultColorScheme="light">
-      <Notifications position="bottom-right" autoClose={4000} />
-      <QueryClientProvider client={queryClient}>
-        <App />
-        <TanStackDevtools
-          config={{ position: "bottom-right" }}
-          plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-            },
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel router={router} />,
-            },
-          ]}
-        />
-      </QueryClientProvider>
+      <DatesProvider settings={{ locale: getStoredLanguage() }}>
+        <Notifications position="bottom-right" autoClose={4000} />
+        <QueryClientProvider client={queryClient}>
+          <App />
+          <TanStackDevtools
+            config={{ position: "bottom-right" }}
+            plugins={[
+              {
+                name: "TanStack Query",
+                render: <ReactQueryDevtoolsPanel />,
+              },
+              {
+                name: "TanStack Router",
+                render: <TanStackRouterDevtoolsPanel router={router} />,
+              },
+            ]}
+          />
+        </QueryClientProvider>
+      </DatesProvider>
     </MantineProvider>
   </React.StrictMode>,
 );
