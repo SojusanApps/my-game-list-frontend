@@ -22,7 +22,7 @@ export default function UserFriendsPage(): React.JSX.Element {
     hasNextPage,
     isFetchingNextPage,
     isLoading: isFriendsQueryLoading,
-  } = useGetFriendshipsInfiniteQuery({ user: userId });
+  } = useGetFriendshipsInfiniteQuery({ user: userId.toString() });
 
   const isFriendsLoading = isFriendsQueryLoading || isUserLoading;
 

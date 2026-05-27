@@ -30,8 +30,8 @@ const routeApi = getRouteApi("/game/$id/$slug");
 function GameFollowButton({ gameId, userId }: Readonly<{ gameId: number; userId: number }>) {
   const { t } = useTranslation("games");
   const { data: userGameFollows, isPending: isGameFollowsPending } = useGetGameFollowsList({
-    game: gameId,
-    user: userId,
+    game: String(gameId),
+    user: String(userId),
   });
 
   const isFollowing = userGameFollows?.count !== undefined && userGameFollows.count > 0;
@@ -77,7 +77,7 @@ function UserGameActions({
 }>) {
   const { t } = useTranslation("games");
   const { data: userGameList, isPending: isUserGameListPending } = useGetGameListByFilters(
-    { game: gameId, user: userId },
+    { game: String(gameId), user: String(userId) },
     { enabled: !!gameId && !!userId },
   );
 
@@ -126,7 +126,7 @@ export default function GameDetailPage(): React.JSX.Element {
 
   const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(gameId);
   const { data: gameReviewItems, isLoading: isGameReviewsLoading } = useGetGameReviewsList(
-    { game: gameId },
+    { game: String(gameId) },
     { enabled: !!gameId },
   );
 

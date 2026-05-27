@@ -13,8 +13,8 @@ const fetchGameListItems = async ({
   const [, , userId, status] = queryKey as [string, string, number, StatusEnum | null];
   const query = {
     page: pageParam,
-    user: userId,
-    status: status ? [status] : undefined,
+    user: String(userId),
+    status: status ?? undefined,
   };
   return await getGameListsList(query);
 };

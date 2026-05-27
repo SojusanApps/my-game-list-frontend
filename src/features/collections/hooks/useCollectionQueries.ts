@@ -23,8 +23,8 @@ import { BlankEnum, TierEnum } from "@/client";
 const fetchCollections = async ({ pageParam = 1, queryKey }: { pageParam?: number; queryKey: readonly unknown[] }) => {
   const [, , userId, filters, useMember] = queryKey as [string, string, number, object, boolean];
   const query = useMember
-    ? { page: pageParam, member: userId, ...filters }
-    : { page: pageParam, user: userId, ...filters };
+    ? { page: pageParam, member: String(userId), ...filters }
+    : { page: pageParam, user: String(userId), ...filters };
   return await getCollectionsList(query);
 };
 
@@ -94,7 +94,7 @@ const fetchCollectionItems = async ({
   const [, , collectionId, filters] = queryKey as [string, string, number, object];
   const query = {
     page: pageParam,
-    collection: collectionId,
+    collection: String(collectionId),
     ...filters,
   };
   return await getCollectionItems(query);
@@ -255,7 +255,7 @@ export const useFriendSearch = (searchTerm: string) => {
   // Use a query object that always includes user to trigger initial load
   const query = React.useMemo(
     () => ({
-      user: currentUserId || undefined,
+      user: currentUserId ? String(currentUserId) : undefined,
       friend_username: searchTerm || undefined, // Keep as friend_username if that's what the user expected, or try friend__username
       search: searchTerm || undefined, // Also try standard search parameter
     }),

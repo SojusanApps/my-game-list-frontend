@@ -28,6 +28,8 @@ export default function UserProfilePage(): React.JSX.Element {
     ? t("profile.loading")
     : t("profile.pageTitle", { username: userDetails?.username });
 
+  const isOwnProfile = Number(currentUserId) === Number(validUserId);
+
   return (
     <Box py={48} style={{ minHeight: "100vh" }}>
       <Grid gap={24} maw={1152} mx="auto" px={16}>
@@ -70,7 +72,7 @@ export default function UserProfilePage(): React.JSX.Element {
                   />
                 </Box>
 
-                <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />
+                {!isOwnProfile && <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />}
 
                 <Link
                   to={"/game-list/$id/$slug"}

@@ -53,7 +53,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
   const parsedGameId = parsedGameIdResult.success ? parsedGameIdResult.data : undefined;
 
   const { data: gameListDetails } = useGetGameListByFilters(
-    parsedGameId && currentUserId ? { game: parsedGameId, user: currentUserId } : undefined,
+    parsedGameId && currentUserId ? { game: String(parsedGameId), user: String(currentUserId) } : undefined,
     { enabled: !!parsedGameId && !!currentUserId && opened },
   );
 

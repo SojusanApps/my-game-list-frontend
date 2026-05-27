@@ -14,15 +14,15 @@ import styles from "./HomePage.module.css";
 export default function HomePage(): React.JSX.Element {
   const { t } = useTranslation("games");
   const { data: highestRatedGames, isLoading: isHighestRatedLoading } = useGetGamesList(
-    { ordering: ["rank_position"] },
+    { ordering: "rank_position" },
     { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
   );
   const { data: mostPopularGames, isLoading: isMostPopularLoading } = useGetGamesList(
-    { ordering: ["popularity"] },
+    { ordering: "popularity" },
     { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
   );
   const { data: recentlyAddedGames, isLoading: isRecentlyAddedLoading } = useGetGamesList(
-    { ordering: ["-created_at"] },
+    { ordering: "-created_at" },
     { staleTime: 1000 * 60 * 60 * 24, gcTime: 1000 * 60 * 60 * 24 },
   );
 
