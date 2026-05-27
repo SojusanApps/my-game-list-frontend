@@ -38,16 +38,16 @@ export default function CollectionsPage(): React.JSX.Element {
   const queryFilters = React.useMemo(() => {
     const filters: Required<CollectionCollectionsListData>["query"] = {};
     if (isFavoriteFilter !== null) {
-      filters.is_favorite = isFavoriteFilter;
+      filters.is_favorite = String(isFavoriteFilter);
     }
     if (visibilityFilter !== null) {
-      filters.visibility = [visibilityFilter as "FRI" | "PRI" | "PUB"];
+      filters.visibility = visibilityFilter;
     }
     if (modeFilter !== null) {
-      filters.mode = [modeFilter as "C" | "S"];
+      filters.mode = modeFilter;
     }
     if (typeFilter !== null) {
-      filters.type = [typeFilter as "NOR" | "RNK" | "TIE"];
+      filters.type = typeFilter;
     }
     return filters;
   }, [isFavoriteFilter, visibilityFilter, modeFilter, typeFilter]);

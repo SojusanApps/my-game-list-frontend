@@ -75,7 +75,7 @@ export default function PairwiseRankingModal({
     } finally {
       setIsApplying(false);
     }
-  }, [rankedItems, collectionId, bulkReorderItems, onClose]);
+  }, [rankedItems, collectionId, bulkReorderItems, onClose, t]);
 
   // Handle "Start Fresh" with confirmation if existing profile
   const handleStartFresh = React.useCallback(() => {
@@ -94,7 +94,7 @@ export default function PairwiseRankingModal({
     } else {
       startNew();
     }
-  }, [hasExistingProfile, startNew]);
+  }, [hasExistingProfile, startNew, t]);
 
   const handleReset = React.useCallback(() => {
     setConfirmConfig({
@@ -108,7 +108,7 @@ export default function PairwiseRankingModal({
         closeConfirm();
       },
     });
-  }, [reset]);
+  }, [reset, t]);
 
   const handleClose = React.useCallback(() => {
     if (state === "dueling" && progress.duelsCompleted > 0) {
@@ -125,7 +125,7 @@ export default function PairwiseRankingModal({
     } else {
       onClose();
     }
-  }, [state, progress.duelsCompleted, onClose]);
+  }, [state, progress.duelsCompleted, onClose, t]);
 
   const tooFewItems = collectionItems.length < 2;
 

@@ -17,6 +17,7 @@ export function SafeImage({
   loader,
   objectFit = "cover",
   containerStyle,
+  style,
   ...props
 }: Readonly<SafeImageProps>) {
   const [isLoading, setIsLoading] = useState(!!src);
@@ -50,7 +51,7 @@ export function SafeImage({
   const showFallback = isError || !src;
 
   return (
-    <Box pos="relative" style={{ overflow: "hidden", ...containerStyle }} className={className}>
+    <Box pos="relative" style={{ overflow: "hidden", ...style, ...containerStyle }} className={className}>
       {isLoading &&
         (loader || <Skeleton style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 10 }} />)}
 

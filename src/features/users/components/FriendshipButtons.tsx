@@ -24,10 +24,10 @@ export default function FriendshipButtons({ currentUserId, userId }: Readonly<Fr
   const { mutate: rejectRequest } = useRejectFriendRequest();
   const { mutate: deleteFriendship } = useDeleteFriendship();
 
-  const { data: friendshipsData } = useGetFriendships(currentUserId ? { user: currentUserId } : undefined);
-  const { data: sentRequestsData } = useGetFriendshipRequests({ receiver: userId });
+  const { data: friendshipsData } = useGetFriendships(currentUserId ? { user: String(currentUserId) } : undefined);
+  const { data: sentRequestsData } = useGetFriendshipRequests({ receiver: String(userId) });
   // Fetch requests sent BY this user. We will check if any are sent TO us.
-  const { data: incomingRequestsData } = useGetFriendshipRequests({ sender: userId });
+  const { data: incomingRequestsData } = useGetFriendshipRequests({ sender: String(userId) });
 
   const isOwnProfile = Number(currentUserId) === Number(userId);
 
