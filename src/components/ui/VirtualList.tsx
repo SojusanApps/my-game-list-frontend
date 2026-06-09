@@ -20,7 +20,7 @@ interface VirtualListProps<T> {
  * A virtualized list component for high-performance rendering of large vertical lists.
  * Handles infinite loading automatically.
  */
-export const VirtualList = React.forwardRef(function VirtualList<T>(
+export const VirtualList = React.forwardRef(function VirtualListComponent<T>(
   {
     items,
     renderItem,

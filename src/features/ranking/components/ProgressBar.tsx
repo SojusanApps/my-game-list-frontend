@@ -13,7 +13,7 @@ function getRoundDotColor(isDone: boolean, isActive: boolean): string {
   return "var(--color-background-200)";
 }
 
-export const ProgressBar = React.memo(function ProgressBar({ progress }: Readonly<ProgressBarProps>) {
+export const ProgressBar = React.memo(function ({ progress }: Readonly<ProgressBarProps>) {
   const { t } = useTranslation("ranking");
   const { duelsCompleted, totalDuels, completionPercent, currentRound, totalRounds, duelInRound, duelsInRound } =
     progress;

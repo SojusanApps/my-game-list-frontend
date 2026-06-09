@@ -21,7 +21,7 @@ const CONFIDENCE_COLORS: Record<string, string> = {
   high: "var(--color-success-400)",
 };
 
-export const PairwiseRankingResults = React.memo(function PairwiseRankingResults({
+export const PairwiseRankingResults = React.memo(function ({
   items,
   onContinueDueling,
   onApplyToCollection,

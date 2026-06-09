@@ -19,7 +19,7 @@ interface RankingListViewProps {
   onRemove?: (itemId: number, gameTitle: string) => void;
 }
 
-export const RankingListView = React.memo(function RankingListView({
+export const RankingListView = React.memo(function RankingListViewInner({
   collectionId,
   isOwner,
   onRemove,

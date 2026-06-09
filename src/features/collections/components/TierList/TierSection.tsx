@@ -28,7 +28,7 @@ interface TierSectionProps {
   onCountLoad: (tierId: TierEnum | "UNRANKED", count: number) => void;
 }
 
-export const TierSection = React.memo(function TierSection({
+export const TierSection = React.memo(function TierSectionInner({
   collectionId,
   tier,
   isOwner,
