@@ -6,16 +6,19 @@ import styles from "./Footer.module.css";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
 import { useLanguageStore, type Language } from "@/lib/languageStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Footer = (): React.JSX.Element => {
   const currentYear = new Date().getFullYear();
   const { language, setLanguage } = useLanguageStore();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const handleLanguageChange = (value: string) => {
     const lang = value as Language;
     setLanguage(lang);
     void i18n.changeLanguage(lang);
+    queryClient.invalidateQueries().catch(() => undefined);
   };
 
   return (

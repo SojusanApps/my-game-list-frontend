@@ -7,6 +7,7 @@ import { getStatusConfig } from "@/features/games/utils/statusConfig";
 import { getRatingColor } from "@/utils/ratingUtils";
 import { cn } from "@/utils/cn";
 import styles from "./ItemOverlay.module.css";
+import { useTranslation } from "react-i18next";
 
 type ItemOverlayProps = {
   className?: string;
@@ -37,6 +38,7 @@ function ItemOverlay({
   showFullReleaseDate = false,
   actionSlot,
 }: Readonly<ItemOverlayProps>): React.JSX.Element {
+  useTranslation(); // subscribe to language changes so status ribbon label re-renders
   const isLogo = variant === "logo";
   const { hovered, ref } = useHover<HTMLDivElement>();
 

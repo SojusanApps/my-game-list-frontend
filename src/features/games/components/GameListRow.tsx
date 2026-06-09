@@ -8,6 +8,7 @@ import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBInteg
 import { STATUS_CONFIG } from "@/features/games/utils/statusConfig";
 import { getRatingColor } from "@/utils/ratingUtils";
 import styles from "./GameListRow.module.css";
+import { useTranslation } from "react-i18next";
 
 interface GameListRowProps {
   gameListItem: GameList;
@@ -16,6 +17,7 @@ interface GameListRowProps {
 }
 
 export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameListRowProps) => {
+  useTranslation(); // subscribe to language changes so status labels re-render
   const coverUrl = getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_SMALL_90_128);
   const statusConfig = gameListItem.status_code ? STATUS_CONFIG[gameListItem.status_code as StatusEnum] : undefined;
 
