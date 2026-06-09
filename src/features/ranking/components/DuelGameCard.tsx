@@ -12,7 +12,7 @@ interface DuelGameCardProps {
   onClick: () => void;
 }
 
-export const DuelGameCard = React.memo(function DuelGameCard({ item, side, onClick }: Readonly<DuelGameCardProps>) {
+export const DuelGameCard = React.memo(function ({ item, side, onClick }: Readonly<DuelGameCardProps>) {
   const { t } = useTranslation("ranking");
   const cardClass = side === "left" ? styles.cardLeft : styles.cardRight;
   const accentColor = side === "left" ? "var(--color-primary-500)" : "var(--color-secondary-500)";

@@ -19,9 +19,11 @@ import styles from "./CalendarView.module.css";
 import { cn } from "@/utils/cn";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import { GameSimpleList } from "@/client";
+import { useLanguageStore } from "@/lib/languageStore";
 
 export default function CalendarView(): React.JSX.Element {
   const { t } = useTranslation("games");
+  const { language } = useLanguageStore();
   const [viewMode, setViewMode] = useState<"week" | "month">("week");
   const [currentDate, setCurrentDate] = useState(() => new Date());
 
@@ -98,7 +100,7 @@ export default function CalendarView(): React.JSX.Element {
     }
   };
 
-  const currentMonthName = currentDate.toLocaleString("default", { month: "long" });
+  const currentMonthName = currentDate.toLocaleString(language, { month: "long" });
   const currentYear = currentDate.getFullYear();
 
   const getHeaderTitle = () => {
@@ -110,7 +112,7 @@ export default function CalendarView(): React.JSX.Element {
     if (!startObj || !endObj) {
       return "";
     }
-    return `${startObj.toLocaleString("default", { month: "short" })} ${startObj.getDate()} - ${endObj.toLocaleString("default", { month: "short" })} ${endObj.getDate()}, ${currentYear}`;
+    return `${startObj.toLocaleString(language, { month: "short" })} ${startObj.getDate()} - ${endObj.toLocaleString(language, { month: "short" })} ${endObj.getDate()}, ${currentYear}`;
   };
 
   const renderContent = () => {

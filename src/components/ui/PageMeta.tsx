@@ -16,7 +16,7 @@ export function PageMeta({ title, description, image, url }: Readonly<PageMetaPr
   const imageUrl = image || "/app-logo.svg";
 
   return (
-    <Helmet>
+    <Helmet prioritizeSeoTags>
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
 

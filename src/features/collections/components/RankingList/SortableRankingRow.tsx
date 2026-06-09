@@ -31,7 +31,7 @@ interface SortableRankingRowProps {
   onPositionChange?: (newPosition: number) => void;
 }
 
-export const SortableRankingRow = React.memo(function SortableRankingRow({
+export const SortableRankingRow = React.memo(function SortableRankingRowInner({
   id,
   gameId,
   rank,

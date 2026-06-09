@@ -36,7 +36,7 @@ interface SortableGameCardProps {
   onMoveToTier?: (targetTierId: string) => void;
 }
 
-export const SortableGameCard = React.memo(function SortableGameCard(props: SortableGameCardProps) {
+export const SortableGameCard = React.memo(function SortableGameCardInner(props: SortableGameCardProps) {
   const {
     id,
     gameId,

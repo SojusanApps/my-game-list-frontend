@@ -2,10 +2,12 @@ import React from "react";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { HelmetProvider } from "@dr.pogodin/react-helmet";
 import { useQueryClient } from "@tanstack/react-query";
+import { DatesProvider } from "@mantine/dates";
 
 import "./index.css";
-import { AuthProvider, useAuth } from "./features/auth";
+import { useAuth } from "./features/auth";
 import { PageMeta } from "./components/ui/PageMeta";
+import { useLanguageStore } from "./lib/languageStore";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -35,12 +37,13 @@ function InnerApp() {
 }
 
 function App(): React.JSX.Element {
+  const { language } = useLanguageStore();
   return (
     <HelmetProvider>
-      <PageMeta />
-      <AuthProvider>
+      <DatesProvider settings={{ locale: language }}>
+        <PageMeta />
         <InnerApp />
-      </AuthProvider>
+      </DatesProvider>
     </HelmetProvider>
   );
 }

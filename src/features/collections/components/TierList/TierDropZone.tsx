@@ -11,7 +11,7 @@ interface TierDropZoneProps {
   onItemMove?: (itemId: string, sourceTierId: string, targetTierId: string) => void;
 }
 
-export const TierDropZone = React.memo(function TierDropZone({
+export const TierDropZone = React.memo(function TierDropZoneInner({
   tierId,
   isEmpty,
   isOwner,

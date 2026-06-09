@@ -23,7 +23,7 @@ export const TIERS: { id: TierEnum | "UNRANKED"; label: string; color: string }[
   { id: "UNRANKED", label: "?", color: "#737373" },
 ];
 
-export const TierListView = React.memo(function TierListView({
+export const TierListView = React.memo(function TierListViewInner({
   collectionId,
   isOwner,
   onRemove,

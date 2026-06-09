@@ -2,6 +2,7 @@ import { client } from "./client/client.gen";
 import StatusCode from "./utils/StatusCode";
 import { getStoredUser, refreshToken, clearStoredUser } from "./features/auth/utils/authUtils";
 import { env } from "./config/env";
+import { useLanguageStore } from "./lib/languageStore";
 
 let refreshPromise: Promise<string | undefined> | null = null;
 
@@ -12,7 +13,7 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   if (user?.token && !request.url.includes("token/refresh")) {
     request.headers.set("Authorization", `Bearer ${user.token}`);
   }
-  request.headers.set("Accept-Language", localStorage.getItem("language") ?? "en");
+  request.headers.set("Accept-Language", useLanguageStore.getState().language);
 
   // Clone the request before fetching so we can retry it if needed
   // (fetch consumes the body)

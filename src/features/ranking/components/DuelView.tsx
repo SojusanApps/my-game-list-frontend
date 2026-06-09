@@ -11,7 +11,7 @@ interface DuelViewProps {
   onSkip: () => void;
 }
 
-export const DuelView = React.memo(function DuelView({ duel, onChoice, onSkip }: Readonly<DuelViewProps>) {
+export const DuelView = React.memo(function ({ duel, onChoice, onSkip }: Readonly<DuelViewProps>) {
   const { t } = useTranslation("ranking");
   // Keyboard shortcuts
   React.useEffect(() => {
