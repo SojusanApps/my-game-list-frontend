@@ -1,12 +1,11 @@
-const LANGUAGE_KEY = "language";
+import { useLanguageStore, type Language } from "@/lib/languageStore";
 
-export type Language = "en" | "pl";
+export type { Language };
 
 export function getStoredLanguage(): Language {
-  const stored = localStorage.getItem(LANGUAGE_KEY);
-  return stored === "pl" ? "pl" : "en";
+  return useLanguageStore.getState().language;
 }
 
 export function setStoredLanguage(language: Language): void {
-  localStorage.setItem(LANGUAGE_KEY, language);
+  useLanguageStore.getState().setLanguage(language);
 }
