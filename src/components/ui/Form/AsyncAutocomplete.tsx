@@ -2,6 +2,7 @@ import * as React from "react";
 import { Select, Loader, ComboboxProps } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { InfiniteData } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 type PaginatedResponse<T> = {
   results: T[];
@@ -48,6 +49,7 @@ export default function AsyncAutocomplete<T>({
 }: Readonly<AsyncAutocompleteProps<T>>) {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [debouncedSearch] = useDebouncedValue(searchTerm, 300);
+  const { t } = useTranslation("common");
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQueryHook(debouncedSearch);
 
@@ -55,7 +57,7 @@ export default function AsyncAutocomplete<T>({
 
   const selectData = React.useMemo(() => {
     const seen = new Set<string>();
-    return allOptions
+    const options = allOptions
       .map(item => ({
         value: getOptionValue(item).toString(),
         label: getOptionLabel(item),
@@ -67,7 +69,15 @@ export default function AsyncAutocomplete<T>({
         seen.add(option.value);
         return true;
       });
-  }, [allOptions, getOptionLabel, getOptionValue]);
+    if (!hasNextPage && !isLoading && options.length > 0) {
+      options.push({
+        value: "__all_results_loaded__",
+        label: t("allResultsLoaded"),
+        disabled: true,
+      } as (typeof options)[number]);
+    }
+    return options;
+  }, [allOptions, getOptionLabel, getOptionValue, hasNextPage, isLoading, t]);
 
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -101,7 +111,7 @@ export default function AsyncAutocomplete<T>({
       onSearchChange={setSearchTerm}
       scrollAreaProps={{ viewportRef: dropdownRef, onScrollPositionChange: handleDropdownScroll }}
       rightSection={isLoading || isFetchingNextPage ? <Loader size="xs" /> : undefined}
-      nothingFoundMessage={isLoading ? "Searching..." : "No results found"}
+      nothingFoundMessage={isLoading ? t("searching") : t("noResults")}
       comboboxProps={{
         withinPortal: false,
         position: "bottom",
