@@ -4,7 +4,7 @@ import { HelmetProvider } from "@dr.pogodin/react-helmet";
 import { useQueryClient } from "@tanstack/react-query";
 
 import "./index.css";
-import { AuthProvider, useAuth } from "./features/auth";
+import { useAuth } from "./features/auth";
 import { PageMeta } from "./components/ui/PageMeta";
 
 // Import the generated route tree
@@ -38,9 +38,7 @@ function App(): React.JSX.Element {
   return (
     <HelmetProvider>
       <PageMeta />
-      <AuthProvider>
-        <InnerApp />
-      </AuthProvider>
+      <InnerApp />
     </HelmetProvider>
   );
 }
