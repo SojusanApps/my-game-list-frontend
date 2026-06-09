@@ -42,5 +42,10 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "closeModal": "Close modal",
-  "userAvatarAlt": "User avatar"
+  "userAvatarAlt": "User avatar",
+  "endOfResults": "You've reached the end",
+  "allResultsLoaded": "All results loaded",
+  "noResults": "No results found",
+  "noResultsDescription": "Try adjusting your search or filters",
+  "searching": "Searching..."
 }

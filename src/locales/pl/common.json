@@ -52,5 +52,10 @@
   "confirm": "Potwierdź",
   "cancel": "Anuluj",
   "closeModal": "Zamknij okno",
-  "userAvatarAlt": "Awatar użytkownika"
+  "userAvatarAlt": "Awatar użytkownika",
+  "endOfResults": "Dotarłeś do końca",
+  "allResultsLoaded": "Załadowano wszystkie wyniki",
+  "noResults": "Brak wyników",
+  "noResultsDescription": "Spróbuj zmienić wyszukiwanie lub filtry",
+  "searching": "Wyszukiwanie..."
 }
