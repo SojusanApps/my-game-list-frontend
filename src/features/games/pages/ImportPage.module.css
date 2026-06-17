@@ -1,0 +1,126 @@
+.stepperWrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-background-200);
+  padding: 32px;
+}
+
+.statsBox {
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.statNumber {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--mantine-color-primary-6);
+  line-height: 1;
+}
+
+.matchedRow {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-background-200);
+}
+
+.matchedRow:last-child {
+  border-bottom: none;
+}
+
+.matchedRowMain {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.coverThumb {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--color-background-300);
+}
+
+.coverThumbPlaceholder {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: var(--color-background-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gameTitle {
+  flex: 1;
+  font-weight: 600;
+  color: var(--color-text-900);
+  font-size: 0.95rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fieldGroup {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.notFoundItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-background-100);
+}
+
+.successCard {
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.successIcon {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.noticeBox {
+  background: var(--color-secondary-50);
+  border: 1px solid var(--color-secondary-200);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.scrollList {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.expandedFields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0 4px 64px;
+}

@@ -14,5 +14,6 @@
   "dateRangeInvalid": "The before date cannot be earlier than the after date.",
   "nameRequired": "Name is required",
   "selectAtLeastOne": "Select at least one collection",
-  "descriptionMax": "Description must be 500 characters or less"
+  "descriptionMax": "Description must be 500 characters or less",
+  "steamProfileIdRequired": "Steam Profile ID is required"
 }

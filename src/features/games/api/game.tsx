@@ -19,6 +19,7 @@ import {
   GameGamesReleaseCalendarListData,
   GameGameFollowsListData,
   GameGameFollowsCreateData,
+  GameListCreateWritable,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
@@ -234,4 +235,22 @@ export const deleteGameFollow = async (id: number) => {
     return await handleApiError(response, "Error unfollowing game");
   }
   return true;
+};
+
+export const steamImportGameList = async (steamProfileId: string) => {
+  const { data, response } = await GameService.gameGameListsSteamImportRetrieve({
+    query: { steam_profile_id: steamProfileId },
+  });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error performing Steam library import");
+  }
+  return data;
+};
+
+export const bulkCreateGameList = async (body: Array<GameListCreateWritable>) => {
+  const { data, response } = await GameService.gameGameListsBulkCreateCreate({ body });
+  if (response?.status !== StatusCode.OK && response?.status !== StatusCode.CREATED) {
+    return await handleApiError(response, "Error creating bulk game list entries");
+  }
+  return data;
 };

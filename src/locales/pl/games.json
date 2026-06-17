@@ -218,6 +218,34 @@
     "searching": "Wyszukiwanie...",
     "noResults": "Brak wyników",
     "advancedSearch": "Zaawansowane wyszukiwanie"
+  },
+  "import": {
+    "title": "Importuj gry",
+    "selectSource": "Wybierz źródło importu",
+    "steamIdLabel": "Identyfikator profilu Steam",
+    "steamIdPlaceholder": "np. 76561198000000000",
+    "steamNotice": "Uwaga: Twój profil Steam oraz lista gier muszą być ustawione jako publiczne, aby import się powiódł.",
+    "fetchButton": "Pobierz gry ze Steam",
+    "totalImported": "Liczba gier znalezionych na Steam: {{count}}",
+    "matchedTitle": "Dopasowane gry",
+    "matchedDescription": "Te gry znajdują się w naszym katalogu i zostaną dodane do Twojej listy.",
+    "notFoundTitle": "Nieznalezione / niedopasowane gry",
+    "notFoundDescription": "System nie mógł dopasować tych gier ze Steam do naszego katalogu. Możesz je wyszukać i dodać ręcznie.",
+    "importButton": "Importuj {{count}} gier",
+    "successTitle": "Import zakończony pomyślnie!",
+    "successMessage": "Pomyślnie zaimportowano {{count}} gier do Twojej listy.",
+    "backButton": "Powrót do listy gier",
+    "gameTitle": "Gra",
+    "status": "Status",
+    "score": "Ocena",
+    "moreDetails": "Więcej",
+    "expandRow": "Rozwiń szczegóły wiersza",
+    "collapseRow": "Zwiń szczegóły wiersza",
+    "stepConnect": "Połącz",
+    "stepConfigure": "Konfiguruj",
+    "stepDone": "Gotowe",
+    "noMatched": "Nie znaleziono dopasowanych gier do zaimportowania.",
+    "noNotFound": "Brak niedopasowanych gier."
   }
 }
 

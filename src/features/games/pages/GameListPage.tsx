@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, Link } from "@tanstack/react-router";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { STATUS_CONFIG } from "../utils/statusConfig";
@@ -9,8 +9,8 @@ import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameListQueries";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
-import { Box, Button, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
-import { IconEdit, IconGridDots, IconList } from "@tabler/icons-react";
+import { Box, Button, Divider, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
+import { IconEdit, IconGridDots, IconList, IconDownload } from "@tabler/icons-react";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { VirtualList } from "@/components/ui/VirtualList";
 import { useIsOwner } from "@/features/auth";
@@ -276,6 +276,16 @@ export default function GameListPage(): React.JSX.Element {
                   }
                 }
               `}</style>
+              {isOwner && (
+                <>
+                  <Link to="/import">
+                    <ActionIcon variant="light" color="gray" size="lg" radius="md" title={t("import.title")}>
+                      <IconDownload size={20} />
+                    </ActionIcon>
+                  </Link>
+                  <Divider orientation="vertical" />
+                </>
+              )}
               <ActionIcon
                 variant={viewMode === "grid" ? "filled" : "light"}
                 color={viewMode === "grid" ? "indigo" : "gray"}

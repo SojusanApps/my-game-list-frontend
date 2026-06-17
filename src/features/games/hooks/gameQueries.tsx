@@ -30,6 +30,8 @@ import {
   getGameFollowsList,
   createGameFollow,
   deleteGameFollow,
+  steamImportGameList,
+  bulkCreateGameList,
 } from "../api/game";
 import {
   useInfiniteQuery,
@@ -39,7 +41,7 @@ import {
   UseInfiniteQueryOptions,
   InfiniteData,
 } from "@tanstack/react-query";
-import { GameList, PaginatedGameSimpleListList, PaginatedGameListList } from "@/client";
+import { GameList, PaginatedGameSimpleListList, PaginatedGameListList, GameListCreateWritable } from "@/client";
 import { gameKeys, gameListKeys, gameReviewKeys, userKeys, gameFollowKeys } from "@/lib/queryKeys";
 
 export const useGetPlatformsInfiniteQuery = (name?: string) => {
@@ -152,6 +154,14 @@ export const useGetGameMediasInfiniteQuery = (name?: string) => {
       }
       return undefined;
     },
+  });
+};
+
+export const useGetGameMediasByName = (name: string, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: [...gameKeys.medias, name],
+    queryFn: () => getGameMediaList({ name }),
+    enabled: options?.enabled ?? true,
   });
 };
 
@@ -358,6 +368,29 @@ export const useDeleteGameFollow = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: gameFollowKeys.all,
+      });
+    },
+  });
+};
+
+export const useSteamImport = () => {
+  return useAppMutation({
+    mutationFn: (steamProfileId: string) => steamImportGameList(steamProfileId),
+  });
+};
+
+export const useBulkCreateGameList = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (body: Array<GameListCreateWritable>) => bulkCreateGameList(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: gameListKeys.all,
+      });
+      // Also invalidate user details to update statistics
+      queryClient.invalidateQueries({
+        queryKey: userKeys.details(),
       });
     },
   });

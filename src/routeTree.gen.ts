@@ -15,6 +15,7 @@ import { Route as ReleaseCalendarRouteImport } from './routes/release-calendar'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ImportRouteImport } from './routes/import'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
@@ -55,6 +56,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImportRoute = ImportRouteImport.update({
+  id: '/import',
+  path: '/import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
+  '/import': typeof ImportRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
+  '/import': typeof ImportRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/admin': typeof AdminRoute
   '/home': typeof HomeRoute
+  '/import': typeof ImportRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/home'
+    | '/import'
     | '/login'
     | '/notifications'
     | '/register'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/home'
+    | '/import'
     | '/login'
     | '/notifications'
     | '/register'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/admin'
     | '/home'
+    | '/import'
     | '/login'
     | '/notifications'
     | '/register'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AdminRoute: typeof AdminRoute
   HomeRoute: typeof HomeRoute
+  ImportRoute: typeof ImportRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
@@ -294,6 +307,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/import': {
+      id: '/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof ImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AdminRoute: AdminRoute,
   HomeRoute: HomeRoute,
+  ImportRoute: ImportRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
