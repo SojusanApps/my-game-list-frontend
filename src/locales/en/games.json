@@ -218,6 +218,34 @@
     "searching": "Searching...",
     "noResults": "No results found",
     "advancedSearch": "Advanced Search"
+  },
+  "import": {
+    "title": "Import Games",
+    "selectSource": "Select Import Source",
+    "steamIdLabel": "Steam Profile ID",
+    "steamIdPlaceholder": "e.g., 76561198000000000",
+    "steamNotice": "Note: Your Steam profile and game library must be set to public for the import to succeed.",
+    "fetchButton": "Fetch Steam Games",
+    "totalImported": "Total games found on Steam: {{count}}",
+    "matchedTitle": "Matched Games",
+    "matchedDescription": "These games are in our catalogue and can be added to your list.",
+    "notFoundTitle": "Not Found / Unmapped Games",
+    "notFoundDescription": "The system could not map these Steam games to our catalogue. You can search and add them manually.",
+    "importButton": "Import {{count}} Games",
+    "successTitle": "Import Successful!",
+    "successMessage": "Successfully imported {{count}} games to your list.",
+    "backButton": "Back to Game List",
+    "gameTitle": "Game",
+    "status": "Status",
+    "score": "Score",
+    "moreDetails": "More",
+    "expandRow": "Expand row details",
+    "collapseRow": "Collapse row details",
+    "stepConnect": "Connect",
+    "stepConfigure": "Configure",
+    "stepDone": "Complete",
+    "noMatched": "No matched games found to import.",
+    "noNotFound": "No unmapped games."
   }
 }
 
