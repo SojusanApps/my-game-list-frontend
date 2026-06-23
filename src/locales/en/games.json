@@ -246,6 +246,9 @@
     "stepDone": "Complete",
     "noMatched": "No matched games found to import.",
     "noNotFound": "No unmapped games."
+  },
+  "export": {
+    "title": "Export Game List"
   }
 }
 

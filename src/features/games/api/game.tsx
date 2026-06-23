@@ -176,6 +176,14 @@ export const partialUpdateGameList = async (id: number, body: GameListPartialUpd
   return data;
 };
 
+export const exportGameList = async () => {
+  const { data, response } = await GameService.gameGameListsExportList();
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error exporting game list");
+  }
+  return data;
+};
+
 export const getRandomPtpGame = async () => {
   const { data, response } = await GameService.gameGameListsRandomPtpRetrieve();
   if (response?.status === StatusCode.NOT_FOUND) {

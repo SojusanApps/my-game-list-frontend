@@ -20,3 +20,4 @@ src/client/*
 .serena/*
 env/.env
 .scratch
+.claude
