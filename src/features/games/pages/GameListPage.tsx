@@ -10,7 +10,8 @@ import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameList
 import { PageMeta } from "@/components/ui/PageMeta";
 import { GridList } from "@/components/ui/GridList";
 import { Box, Button, Divider, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
-import { IconEdit, IconGridDots, IconList, IconDownload } from "@tabler/icons-react";
+import { IconEdit, IconGridDots, IconList, IconDownload, IconUpload } from "@tabler/icons-react";
+import { exportGameList } from "../api/game";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { VirtualList } from "@/components/ui/VirtualList";
 import { useIsOwner } from "@/features/auth";
@@ -239,6 +240,7 @@ export default function GameListPage(): React.JSX.Element {
             pos="relative"
             display={{ base: "flex", sm: "block" }}
             style={{ flexDirection: "column", alignItems: "center" }}
+            pr={{ sm: isOwner ? 210 : 90 }}
           >
             <Group justify="center" wrap="wrap" gap={8}>
               {statuses.map(status => (
@@ -278,9 +280,24 @@ export default function GameListPage(): React.JSX.Element {
               `}</style>
               {isOwner && (
                 <>
+                  <ActionIcon
+                    variant="light"
+                    color="gray"
+                    size="lg"
+                    radius="md"
+                    title={t("export.title")}
+                    onClick={async () => {
+                      const data = await exportGameList();
+                      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                      const url = URL.createObjectURL(blob);
+                      window.open(url, "_blank");
+                    }}
+                  >
+                    <IconDownload size={20} />
+                  </ActionIcon>
                   <Link to="/import">
                     <ActionIcon variant="light" color="gray" size="lg" radius="md" title={t("import.title")}>
-                      <IconDownload size={20} />
+                      <IconUpload size={20} />
                     </ActionIcon>
                   </Link>
                   <Divider orientation="vertical" />

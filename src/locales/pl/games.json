@@ -246,6 +246,9 @@
     "stepDone": "Gotowe",
     "noMatched": "Nie znaleziono dopasowanych gier do zaimportowania.",
     "noNotFound": "Brak niedopasowanych gier."
+  },
+  "export": {
+    "title": "Eksportuj listę gier"
   }
 }
 
