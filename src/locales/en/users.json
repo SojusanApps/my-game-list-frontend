@@ -23,7 +23,12 @@
     "title": "Friends"
   },
   "settings": {
-    "title": "Settings"
+    "title": "Settings",
+    "avatar": {
+      "sectionTitle": "Avatar",
+      "changeButton": "Change avatar on Gravatar",
+      "description": "Your avatar is powered by Gravatar. Click the button below to change it."
+    }
   },
   "info": {
     "title": "Information",
