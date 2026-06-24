@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { Game, GameEngine, GameMode, Genre, Platform, PlayerPerspective } from "@/client";
 import { ExternalLinksSection } from "./ExternalLinksSection";
+import { useLanguageStore } from "@/lib/languageStore";
 
 interface GameInformationProps {
   gameDetails?: Game;
@@ -67,6 +68,7 @@ function IgdbLink({ id, slug }: Readonly<{ id: string; slug: string }>) {
 
 export default function GameInformation({ gameDetails }: Readonly<GameInformationProps>) {
   const { t } = useTranslation("games");
+  const language = useLanguageStore(state => state.language);
   const externalGames = gameDetails?.external_games || [];
   return (
     <Box
@@ -93,6 +95,9 @@ export default function GameInformation({ gameDetails }: Readonly<GameInformatio
         <GameInfoRow label={t("info.igdbId")}>
           <IgdbLink id={gameDetails?.id.toString() || ""} slug={gameDetails?.slug || ""} />
         </GameInfoRow>
+        {language === "pl" && gameDetails?.title_en && (
+          <GameInfoRow label={t("info.titleEn")} value={gameDetails.title_en} />
+        )}
         <GameInfoRow
           label={t("info.releaseDate")}
           value={gameDetails?.release_date ? gameDetails.release_date.toString() : undefined}

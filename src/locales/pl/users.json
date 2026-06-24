@@ -25,7 +25,12 @@
     "title": "Znajomi"
   },
   "settings": {
-    "title": "Ustawienia"
+    "title": "Ustawienia",
+    "avatar": {
+      "sectionTitle": "Avatar",
+      "changeButton": "Zmień avatar na Gravatar",
+      "description": "Twój avatar pochodzi z serwisu Gravatar. Kliknij przycisk poniżej, aby go zmienić."
+    }
   },
   "info": {
     "title": "Informacje",
