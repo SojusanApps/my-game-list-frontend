@@ -8,10 +8,15 @@ interface LanguageState {
   setLanguage: (language: Language) => void;
 }
 
+function detectBrowserLanguage(): Language {
+  const lang = navigator.language ?? navigator.languages?.[0] ?? "en";
+  return lang.startsWith("pl") ? "pl" : "en";
+}
+
 export const useLanguageStore = create<LanguageState>()(
   persist(
     set => ({
-      language: "en",
+      language: detectBrowserLanguage(),
       setLanguage: language => set({ language }),
     }),
     {
