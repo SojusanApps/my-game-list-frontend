@@ -19,6 +19,7 @@
   },
   "info": {
     "title": "Informacje",
+    "titleEn": "Tytuł angielski:",
     "igdbId": "ID IGDB:",
     "releaseDate": "Data wydania:",
     "gameStatus": "Status gry:",
