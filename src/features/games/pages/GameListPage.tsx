@@ -6,11 +6,33 @@ import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { STATUS_CONFIG } from "../utils/statusConfig";
 import { GameList, StatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
-import { useGameListInfiniteQuery, useRandomPtpGame } from "../hooks/useGameListQueries";
+import { useGameListInfiniteQuery, useRandomPtpGame, GameListGameFilters } from "../hooks/useGameListQueries";
 import { PageMeta } from "@/components/ui/PageMeta";
+import GameSearchFilter, { ValidationSchema as GameSearchFilterSchema } from "../components/GameSearchFilter";
 import { GridList } from "@/components/ui/GridList";
-import { Box, Button, Divider, Group, Skeleton, Stack, Text, Title, ActionIcon } from "@mantine/core";
-import { IconEdit, IconGridDots, IconList, IconDownload, IconUpload } from "@tabler/icons-react";
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  Group,
+  Indicator,
+  Skeleton,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  ActionIcon,
+} from "@mantine/core";
+import {
+  IconEdit,
+  IconFilter,
+  IconGridDots,
+  IconList,
+  IconDownload,
+  IconSearch,
+  IconUpload,
+} from "@tabler/icons-react";
 import { exportGameList } from "../api/game";
 import { VirtualGridList } from "@/components/ui/VirtualGridList";
 import { VirtualList } from "@/components/ui/VirtualList";
@@ -83,6 +105,9 @@ export default function GameListPage(): React.JSX.Element {
   const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
   const { t } = useTranslation("games");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
+  const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
+  const [gameFilters, setGameFilters] = React.useState<GameListGameFilters>({});
+  const [titleInput, setTitleInput] = React.useState("");
 
   const {
     data: gameListResults,
@@ -91,7 +116,26 @@ export default function GameListPage(): React.JSX.Element {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGameListInfiniteQuery(userId, selectedGameStatus);
+  } = useGameListInfiniteQuery(userId, selectedGameStatus, gameFilters);
+
+  const activeFilterCount = Object.values(gameFilters).filter(v =>
+    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== "",
+  ).length;
+
+  const handleApplyFilters = (data: GameSearchFilterSchema) => {
+    const filters: GameListGameFilters = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (key === "ordering") {
+        continue;
+      }
+      if (value === "" || value === undefined || value === null || (Array.isArray(value) && value.length === 0)) {
+        continue;
+      }
+      (filters as Record<string, unknown>)[key] = value instanceof Date ? value.toISOString().split("T")[0] : value;
+    }
+    setGameFilters(filters);
+    setFilterDrawerOpen(false);
+  };
 
   const [shouldFetchRandomPtp, setShouldFetchRandomPtp] = React.useState(false);
   const [editingGameId, setEditingGameId] = React.useState<number | null>(null);
@@ -236,6 +280,31 @@ export default function GameListPage(): React.JSX.Element {
           </Title>
 
           <Box
+            component="form"
+            w="100%"
+            maw={480}
+            onSubmit={e => {
+              e.preventDefault();
+              setGameFilters(prev => ({ ...prev, title: titleInput.trim() || undefined }));
+            }}
+          >
+            <TextInput
+              placeholder={t("filter.titlePlaceholder")}
+              value={titleInput}
+              onChange={e => setTitleInput(e.currentTarget.value)}
+              onBlur={() => setGameFilters(prev => ({ ...prev, title: titleInput.trim() || undefined }))}
+              leftSection={<IconSearch size={18} color="var(--color-text-400)" />}
+              styles={{
+                input: {
+                  background: "white",
+                  border: "1px solid var(--color-background-300)",
+                  borderRadius: "12px",
+                },
+              }}
+            />
+          </Box>
+
+          <Box
             w="100%"
             pos="relative"
             display={{ base: "flex", sm: "block" }}
@@ -303,6 +372,24 @@ export default function GameListPage(): React.JSX.Element {
                   <Divider orientation="vertical" />
                 </>
               )}
+              <Indicator
+                label={activeFilterCount}
+                size={16}
+                disabled={activeFilterCount === 0}
+                color="var(--mantine-color-primary-6)"
+              >
+                <ActionIcon
+                  variant={activeFilterCount > 0 ? "filled" : "light"}
+                  color={activeFilterCount > 0 ? "indigo" : "gray"}
+                  size="lg"
+                  radius="md"
+                  title={t("search.filtersButton")}
+                  onClick={() => setFilterDrawerOpen(true)}
+                >
+                  <IconFilter size={20} />
+                </ActionIcon>
+              </Indicator>
+              <Divider orientation="vertical" />
               <ActionIcon
                 variant={viewMode === "grid" ? "filled" : "light"}
                 color={viewMode === "grid" ? "indigo" : "gray"}
@@ -398,6 +485,27 @@ export default function GameListPage(): React.JSX.Element {
           )}
         </Box>
       </Stack>
+
+      <Drawer
+        opened={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        position="right"
+        size="md"
+        title={
+          <Text fw={700} fz="xl" c="var(--color-text-900)">
+            {t("search.filtersButton")}
+          </Text>
+        }
+        padding="xl"
+        styles={{ body: { paddingBottom: "120px" } }}
+      >
+        <GameSearchFilter
+          showOrdering={false}
+          datePickerWithinPortal
+          initialFilters={gameFilters as Record<string, unknown>}
+          onSubmitHandlerCallback={handleApplyFilters}
+        />
+      </Drawer>
 
       {editingGameId && <GameListModal gameId={editingGameId} opened={true} onClose={() => setEditingGameId(null)} />}
     </Box>

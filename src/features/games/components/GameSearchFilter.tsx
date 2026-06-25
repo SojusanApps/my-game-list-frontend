@@ -75,7 +75,14 @@ export type ValidationInput = z.input<typeof validationSchema>;
 function GameSearchFilter({
   onSubmitHandlerCallback,
   initialFilters,
-}: Readonly<{ onSubmitHandlerCallback: (data: ValidationSchema) => void; initialFilters?: Record<string, unknown> }>) {
+  showOrdering = true,
+  datePickerWithinPortal = false,
+}: Readonly<{
+  onSubmitHandlerCallback: (data: ValidationSchema) => void;
+  initialFilters?: Record<string, unknown>;
+  showOrdering?: boolean;
+  datePickerWithinPortal?: boolean;
+}>) {
   const { t } = useTranslation("games");
   const form = useForm<ValidationInput>({
     initialValues: {
@@ -117,28 +124,30 @@ function GameSearchFilter({
       <Box style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px 32px" }}>
         {/* Group 1: Core Search & Ordering */}
         <Stack gap={16}>
-          <Select
-            placeholder={t("filter.sortPlaceholder")}
-            id="ordering"
-            label={t("filter.sortBy")}
-            name="ordering"
-            searchable
-            clearable
-            data={[
-              { value: "created_at", label: t("filter.createdAt") },
-              { value: "-created_at", label: t("filter.createdAtDesc") },
-              { value: "rank_position", label: t("filter.rankPosition") },
-              { value: "-rank_position", label: t("filter.rankPositionDesc") },
-              { value: "popularity", label: t("filter.popularity") },
-              { value: "-popularity", label: t("filter.popularityDesc") },
-            ]}
-            comboboxProps={{
-              withinPortal: false,
-              position: "bottom",
-              middlewares: { flip: false, shift: false },
-            }}
-            {...form.getInputProps("ordering")}
-          />
+          {showOrdering && (
+            <Select
+              placeholder={t("filter.sortPlaceholder")}
+              id="ordering"
+              label={t("filter.sortBy")}
+              name="ordering"
+              searchable
+              clearable
+              data={[
+                { value: "created_at", label: t("filter.createdAt") },
+                { value: "-created_at", label: t("filter.createdAtDesc") },
+                { value: "rank_position", label: t("filter.rankPosition") },
+                { value: "-rank_position", label: t("filter.rankPositionDesc") },
+                { value: "popularity", label: t("filter.popularity") },
+                { value: "-popularity", label: t("filter.popularityDesc") },
+              ]}
+              comboboxProps={{
+                withinPortal: false,
+                position: "bottom",
+                middlewares: { flip: false, shift: false },
+              }}
+              {...form.getInputProps("ordering")}
+            />
+          )}
           <Box style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
             <YearPickerInput
               id="release_date_after"
@@ -148,7 +157,7 @@ function GameSearchFilter({
               clearable
               valueFormat="YYYY"
               popoverProps={{
-                withinPortal: false,
+                withinPortal: datePickerWithinPortal,
                 position: "bottom",
                 middlewares: { flip: false, shift: false },
               }}
@@ -162,7 +171,7 @@ function GameSearchFilter({
               clearable
               valueFormat="YYYY"
               popoverProps={{
-                withinPortal: false,
+                withinPortal: datePickerWithinPortal,
                 position: "bottom",
                 middlewares: { flip: false, shift: false },
               }}
