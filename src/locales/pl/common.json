@@ -57,5 +57,6 @@
   "allResultsLoaded": "Załadowano wszystkie wyniki",
   "noResults": "Brak wyników",
   "noResultsDescription": "Spróbuj zmienić wyszukiwanie lub filtry",
-  "searching": "Wyszukiwanie..."
+  "searching": "Wyszukiwanie...",
+  "scrollToTop": "Przewiń na górę strony"
 }

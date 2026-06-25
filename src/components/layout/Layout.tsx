@@ -3,6 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import { Box } from "@mantine/core";
 import TopBar from "@/components/layout/TopBar";
 import Footer from "@/components/layout/Footer";
+import ScrollToTopButton from "@/components/ui/ScrollToTopButton";
 
 const Layout = (): React.JSX.Element => {
   return (
@@ -12,6 +13,7 @@ const Layout = (): React.JSX.Element => {
         <Outlet />
       </Box>
       <Footer />
+      <ScrollToTopButton />
     </Box>
   );
 };

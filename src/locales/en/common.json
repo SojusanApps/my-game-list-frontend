@@ -47,5 +47,6 @@
   "allResultsLoaded": "All results loaded",
   "noResults": "No results found",
   "noResultsDescription": "Try adjusting your search or filters",
-  "searching": "Searching..."
+  "searching": "Searching...",
+  "scrollToTop": "Scroll to top"
 }
