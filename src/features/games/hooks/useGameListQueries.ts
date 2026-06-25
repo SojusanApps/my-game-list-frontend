@@ -3,6 +3,20 @@ import { getGameListsList, getRandomPtpGame } from "../api/game";
 import { gameListKeys } from "@/lib/queryKeys";
 import { StatusEnum } from "@/client";
 
+export type GameListGameFilters = {
+  developer?: string;
+  publisher?: string;
+  platforms?: string[];
+  genres?: string[];
+  game_engines?: string[];
+  game_modes?: string[];
+  game_status?: string[];
+  game_type?: string[];
+  player_perspectives?: string[];
+  release_date_after?: string;
+  release_date_before?: string;
+};
+
 const fetchGameListItems = async ({
   pageParam = 1,
   queryKey,
@@ -10,18 +24,29 @@ const fetchGameListItems = async ({
   pageParam?: number;
   queryKey: readonly unknown[];
 }) => {
-  const [, , userId, status] = queryKey as [string, string, number, StatusEnum | null];
+  const [, , userId, status, filters] = queryKey as [
+    string,
+    string,
+    number,
+    StatusEnum | null,
+    GameListGameFilters | undefined,
+  ];
   const query = {
     page: pageParam,
     user: String(userId),
     status: status ?? undefined,
+    ...filters,
   };
   return await getGameListsList(query);
 };
 
-export const useGameListInfiniteQuery = (userId?: number, status?: StatusEnum | null) => {
+export const useGameListInfiniteQuery = (
+  userId?: number,
+  status?: StatusEnum | null,
+  filters?: GameListGameFilters,
+) => {
   return useInfiniteQuery({
-    queryKey: gameListKeys.infinite(userId ?? -1, status ?? null),
+    queryKey: gameListKeys.infinite(userId ?? -1, status ?? null, filters),
     queryFn: fetchGameListItems,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {

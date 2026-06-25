@@ -118,6 +118,8 @@
     "playerPerspectivesPlaceholder": "Szukaj perspektyw...",
     "perspectives": "Perspektywy gracza",
     "perspectivesPlaceholder": "Szukaj perspektyw...",
+    "title": "Tytuł",
+    "titlePlaceholder": "Szukaj po tytule...",
     "applyFilters": "Zastosuj filtry"
   },
   "home": {
