@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Group, Stack, Text } from "@mantine/core";
+import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { GameList, StatusEnum } from "@/client";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
@@ -26,15 +27,21 @@ export default function GameListUpdate({ latestGameListUpdate }: Readonly<GameLi
         background: "var(--color-background-50)",
       }}
     >
-      <SafeImage
-        style={{ width: 48, height: 72, borderRadius: 8, flexShrink: 0, objectFit: "cover", display: "block" }}
-        src={
-          latestGameListUpdate.game_cover_image
-            ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
-            : undefined
-        }
-        alt={`game cover ${latestGameListUpdate.id}`}
-      />
+      <Link
+        to="/game/$id/$slug"
+        params={{ id: String(latestGameListUpdate.game_id), slug: latestGameListUpdate.game_slug }}
+        style={{ flexShrink: 0, display: "block", borderRadius: 8, overflow: "hidden" }}
+      >
+        <SafeImage
+          style={{ width: 48, height: 72, objectFit: "cover", display: "block" }}
+          src={
+            latestGameListUpdate.game_cover_image
+              ? `${getIGDBImageURL(latestGameListUpdate.game_cover_image, IGDBImageSize.THUMB_90_90)}`
+              : undefined
+          }
+          alt={`game cover ${latestGameListUpdate.id}`}
+        />
+      </Link>
 
       <Stack gap={0} style={{ flex: 1, minWidth: 0 }}>
         <Group justify="space-between" align="flex-start" gap={8}>
