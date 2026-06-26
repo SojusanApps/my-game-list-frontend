@@ -50,7 +50,30 @@
   "mainTab": {
     "statistics": "Statystyki",
     "summary": "Opis",
-    "reviews": "Recenzje"
+    "reviews": "Recenzje",
+    "viewMoreReviews": "Zobacz wszystkie recenzje"
+  },
+  "reviewModal": {
+    "addTitle": "Dodaj recenzję",
+    "editTitle": "Edytuj recenzję",
+    "reviewPlaceholder": "Napisz swoją recenzję tutaj...",
+    "cancelButton": "Anuluj",
+    "submitButton": "Wyślij recenzję",
+    "saveButton": "Zapisz zmiany",
+    "successTitle": "Sukces",
+    "createSuccess": "Recenzja została dodana",
+    "updateSuccess": "Recenzja została zaktualizowana",
+    "deleteSuccess": "Recenzja została usunięta",
+    "removeButton": "Usuń recenzję",
+    "errorTitle": "Błąd",
+    "errorMessage": "Wystąpił błąd",
+    "validationRequired": "Treść recenzji jest wymagana",
+    "validationMaxLength": "Recenzja może mieć maksymalnie {{max}} znaków"
+  },
+  "reviewsPage": {
+    "title": "Recenzje",
+    "pageTitle": "Recenzje — {{game}}",
+    "backToGame": "Wróć do gry"
   },
   "modal": {
     "editTitle": "Edytuj wpis",

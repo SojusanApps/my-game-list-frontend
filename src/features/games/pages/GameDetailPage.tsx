@@ -121,7 +121,7 @@ function GameDetailSkeleton() {
 }
 
 export default function GameDetailPage(): React.JSX.Element {
-  const { id } = routeApi.useParams();
+  const { id, slug } = routeApi.useParams();
   const gameId = Number(id);
 
   const { data: gameDetails, isLoading: isGameDetailsLoading } = useGetGamesDetails(gameId);
@@ -136,6 +136,12 @@ export default function GameDetailPage(): React.JSX.Element {
   const [isListModalOpen, setIsListModalOpen] = React.useState(false);
   const { user } = useAuth();
   const currentUserId = useCurrentUserId();
+
+  const { data: userReviewData } = useGetGameReviewsList(
+    { game: String(gameId), user: String(currentUserId) },
+    { enabled: !!gameId && !!currentUserId },
+  );
+  const userReview = userReviewData?.results?.[0];
   const { t } = useTranslation("games");
 
   const pageTitle = isGameDetailsLoading ? t("detail.loading") : gameDetails?.title;
@@ -216,6 +222,9 @@ export default function GameDetailPage(): React.JSX.Element {
                       gameDetails={gameDetails}
                       gameReviewItems={gameReviewItems}
                       isGameReviewsLoading={isGameReviewsLoading}
+                      isLoggedIn={!!user}
+                      userReview={userReview}
+                      gameSlug={slug}
                     />
                   </Tabs.Panel>
                   <Tabs.Panel value="related" pt="md">
