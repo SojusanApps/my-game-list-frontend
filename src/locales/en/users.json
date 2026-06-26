@@ -8,7 +8,8 @@
     "score": "Score",
     "viewHistory": "View History",
     "gameListButton": "Game List",
-    "collectionsButton": "Collections"
+    "collectionsButton": "Collections",
+    "noLastUpdates": "No game updates yet."
   },
   "friends": {
     "loading": "Loading Friends...",

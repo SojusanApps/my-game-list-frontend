@@ -32,6 +32,11 @@ import {
   deleteGameFollow,
   steamImportGameList,
   bulkCreateGameList,
+  createGameReview,
+  updateGameReview,
+  deleteGameReview,
+  GameReviewCreateDataBody,
+  GameReviewPartialUpdateDataBody,
 } from "../api/game";
 import {
   useInfiniteQuery,
@@ -392,6 +397,39 @@ export const useBulkCreateGameList = () => {
       queryClient.invalidateQueries({
         queryKey: userKeys.details(),
       });
+    },
+  });
+};
+
+export const useCreateGameReview = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (body: GameReviewCreateDataBody) => createGameReview(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: gameReviewKeys.all });
+    },
+  });
+};
+
+export const useUpdateGameReview = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: ({ id, body }: { id: number; body: GameReviewPartialUpdateDataBody }) => updateGameReview(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: gameReviewKeys.all });
+    },
+  });
+};
+
+export const useDeleteGameReview = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (id: number) => deleteGameReview(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: gameReviewKeys.all });
     },
   });
 };

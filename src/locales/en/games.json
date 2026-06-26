@@ -50,7 +50,30 @@
   "mainTab": {
     "statistics": "Statistics",
     "summary": "Summary",
-    "reviews": "Reviews"
+    "reviews": "Reviews",
+    "viewMoreReviews": "View all reviews"
+  },
+  "reviewModal": {
+    "addTitle": "Add Review",
+    "editTitle": "Edit Review",
+    "reviewPlaceholder": "Write your review here...",
+    "cancelButton": "Cancel",
+    "submitButton": "Submit Review",
+    "saveButton": "Save Changes",
+    "successTitle": "Success",
+    "createSuccess": "Review submitted successfully",
+    "updateSuccess": "Review updated successfully",
+    "deleteSuccess": "Review removed successfully",
+    "removeButton": "Remove Review",
+    "errorTitle": "Error",
+    "errorMessage": "An error occurred",
+    "validationRequired": "Review text is required",
+    "validationMaxLength": "Review must be at most {{max}} characters"
+  },
+  "reviewsPage": {
+    "title": "Reviews",
+    "pageTitle": "Reviews — {{game}}",
+    "backToGame": "Back to game"
   },
   "modal": {
     "editTitle": "Edit List Entry",

@@ -27,6 +27,7 @@ import { Route as CompanyIdSlugRouteImport } from './routes/company.$id.$slug'
 import { Route as CollectionIdSlugRouteImport } from './routes/collection.$id.$slug'
 import { Route as ProfileIdSlugFriendsRouteImport } from './routes/profile_.$id.$slug.friends'
 import { Route as ProfileIdSlugCollectionsRouteImport } from './routes/profile_.$id.$slug.collections'
+import { Route as GameIdSlugReviewsRouteImport } from './routes/game_.$id.$slug.reviews'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -119,6 +120,11 @@ const ProfileIdSlugCollectionsRoute =
     path: '/profile/$id/$slug/collections',
     getParentRoute: () => rootRouteImport,
   } as any)
+const GameIdSlugReviewsRoute = GameIdSlugReviewsRouteImport.update({
+  id: '/game_/$id/$slug/reviews',
+  path: '/game/$id/$slug/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
   '/game/$id/$slug': typeof GameIdSlugRoute
   '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/game/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
   '/game/$id/$slug': typeof GameIdSlugRoute
   '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/game/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
   '/game/$id/$slug': typeof GameIdSlugRoute
   '/profile/$id/$slug': typeof ProfileIdSlugRoute
+  '/game_/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile_/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile_/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
 }
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/game-list/$id/$slug'
     | '/game/$id/$slug'
     | '/profile/$id/$slug'
+    | '/game/$id/$slug/reviews'
     | '/profile/$id/$slug/collections'
     | '/profile/$id/$slug/friends'
   fileRoutesByTo: FileRoutesByTo
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/game-list/$id/$slug'
     | '/game/$id/$slug'
     | '/profile/$id/$slug'
+    | '/game/$id/$slug/reviews'
     | '/profile/$id/$slug/collections'
     | '/profile/$id/$slug/friends'
   id:
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/game-list/$id/$slug'
     | '/game/$id/$slug'
     | '/profile/$id/$slug'
+    | '/game_/$id/$slug/reviews'
     | '/profile_/$id/$slug/collections'
     | '/profile_/$id/$slug/friends'
   fileRoutesById: FileRoutesById
@@ -261,6 +273,7 @@ export interface RootRouteChildren {
   GameListIdSlugRoute: typeof GameListIdSlugRoute
   GameIdSlugRoute: typeof GameIdSlugRoute
   ProfileIdSlugRoute: typeof ProfileIdSlugRoute
+  GameIdSlugReviewsRoute: typeof GameIdSlugReviewsRoute
   ProfileIdSlugCollectionsRoute: typeof ProfileIdSlugCollectionsRoute
   ProfileIdSlugFriendsRoute: typeof ProfileIdSlugFriendsRoute
 }
@@ -393,6 +406,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileIdSlugCollectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/game_/$id/$slug/reviews': {
+      id: '/game_/$id/$slug/reviews'
+      path: '/game/$id/$slug/reviews'
+      fullPath: '/game/$id/$slug/reviews'
+      preLoaderRoute: typeof GameIdSlugReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -413,6 +433,7 @@ const rootRouteChildren: RootRouteChildren = {
   GameListIdSlugRoute: GameListIdSlugRoute,
   GameIdSlugRoute: GameIdSlugRoute,
   ProfileIdSlugRoute: ProfileIdSlugRoute,
+  GameIdSlugReviewsRoute: GameIdSlugReviewsRoute,
   ProfileIdSlugCollectionsRoute: ProfileIdSlugCollectionsRoute,
   ProfileIdSlugFriendsRoute: ProfileIdSlugFriendsRoute,
 }

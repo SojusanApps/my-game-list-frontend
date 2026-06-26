@@ -20,6 +20,8 @@ import {
   GameGameFollowsListData,
   GameGameFollowsCreateData,
   GameListCreateWritable,
+  GameGameReviewsCreateData,
+  GameGameReviewsPartialUpdateData,
 } from "@/client";
 
 export type GameCompaniesListDataQuery = GameCompaniesListData["query"];
@@ -209,6 +211,31 @@ export const getGameReviewsDetail = async (id: number) => {
     return await handleApiError(response, "Error fetching game review details");
   }
   return data;
+};
+
+export type GameReviewCreateDataBody = GameGameReviewsCreateData["body"];
+export const createGameReview = async (body: GameReviewCreateDataBody) => {
+  const { data, response } = await GameService.gameGameReviewsCreate({ body });
+  if (response?.status !== StatusCode.CREATED || !data) {
+    return await handleApiError(response, "Error creating game review");
+  }
+  return data;
+};
+
+export type GameReviewPartialUpdateDataBody = GameGameReviewsPartialUpdateData["body"];
+export const updateGameReview = async (id: number, body: GameReviewPartialUpdateDataBody) => {
+  const { data, response } = await GameService.gameGameReviewsPartialUpdate({ path: { id }, body });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error updating game review");
+  }
+  return data;
+};
+
+export const deleteGameReview = async (id: number) => {
+  const { response } = await GameService.gameGameReviewsDestroy({ path: { id } });
+  if (response?.status !== StatusCode.NO_CONTENT) {
+    return await handleApiError(response, "Error deleting game review");
+  }
 };
 
 export type GameGameMediasListDataQuery = GameGameMediasListData["query"];

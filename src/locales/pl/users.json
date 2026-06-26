@@ -8,7 +8,8 @@
     "score": "Ocena",
     "viewHistory": "Historia",
     "gameListButton": "Lista gier",
-    "collectionsButton": "Kolekcje"
+    "collectionsButton": "Kolekcje",
+    "noLastUpdates": "Brak aktualizacji gier."
   },
   "friends": {
     "loading": "Wczytywanie znajomych...",

@@ -9,7 +9,7 @@ import UserProfileInformation from "../components/UserProfileInformation";
 import UserFriendsList from "../components/UserFriendsList";
 import UserStatistics from "../components/UserStatistics";
 import GameListUpdate from "../components/GameListUpdate";
-import { Box, Grid, Group, Skeleton, Stack, Title } from "@mantine/core";
+import { Box, Grid, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
@@ -151,9 +151,15 @@ export default function UserProfilePage(): React.JSX.Element {
                   </Group>
 
                   <Stack gap={12}>
-                    {userDetails?.latest_game_list_updates.map(latestGameListUpdate => (
-                      <GameListUpdate key={latestGameListUpdate.id} latestGameListUpdate={latestGameListUpdate} />
-                    ))}
+                    {userDetails?.latest_game_list_updates.length === 0 ? (
+                      <Text size="sm" fs="italic" c="var(--color-text-500)">
+                        {t("profile.noLastUpdates")}
+                      </Text>
+                    ) : (
+                      userDetails?.latest_game_list_updates.map(latestGameListUpdate => (
+                        <GameListUpdate key={latestGameListUpdate.id} latestGameListUpdate={latestGameListUpdate} />
+                      ))
+                    )}
                   </Stack>
                 </Box>
               </Stack>

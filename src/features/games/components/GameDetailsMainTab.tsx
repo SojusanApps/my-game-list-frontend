@@ -3,21 +3,43 @@ import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import GameStatistics from "../components/GameStatistics";
 import GameReview from "../components/GameReview";
-import { Box, Skeleton, Stack, Text, Title } from "@mantine/core";
-import { Game, PaginatedGameReviewList } from "@/client";
+import { GameReviewModal } from "../components/GameReviewModal";
+import { Box, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
+import { Game, GameReview as GameReviewType, PaginatedGameReviewList } from "@/client";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/Button";
+
+const REVIEWS_PREVIEW_COUNT = 3;
 
 interface GameDetailsMainTabProps {
   gameDetails?: Game;
   gameReviewItems?: PaginatedGameReviewList;
   isGameReviewsLoading: boolean;
+  isLoggedIn: boolean;
+  userReview?: GameReviewType;
+  gameSlug?: string;
 }
 
 export default function GameDetailsMainTab({
   gameDetails,
   gameReviewItems,
   isGameReviewsLoading,
+  isLoggedIn,
+  userReview,
+  gameSlug,
 }: Readonly<GameDetailsMainTabProps>) {
   const { t } = useTranslation("games");
+  const [isReviewModalOpen, setIsReviewModalOpen] = React.useState(false);
+
+  const otherReviews = React.useMemo(
+    () => (gameReviewItems?.results ?? []).filter(r => r.id !== userReview?.id),
+    [gameReviewItems?.results, userReview?.id],
+  );
+
+  const slotsForOthers = userReview ? REVIEWS_PREVIEW_COUNT - 1 : REVIEWS_PREVIEW_COUNT;
+  const previewReviews = [...(userReview ? [userReview] : []), ...otherReviews.slice(0, slotsForOthers)];
+  const hasMore = (gameReviewItems?.count ?? 0) > REVIEWS_PREVIEW_COUNT;
+
   return (
     <Stack gap={24} style={{ animation: "fadeIn 300ms ease" }}>
       <Box
@@ -64,20 +86,59 @@ export default function GameDetailsMainTab({
           padding: "24px",
         }}
       >
-        <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={16}>
-          {t("mainTab.reviews")}
-        </Title>
+        <Group justify="space-between" align="center" mb={16}>
+          <Title order={2} fz="xl" fw={700} c="var(--color-text-900)">
+            {t("mainTab.reviews")}
+          </Title>
+          {isLoggedIn && gameDetails?.id && (
+            <Button size="sm" onClick={() => setIsReviewModalOpen(true)}>
+              {userReview ? t("reviewModal.editTitle") : t("reviewModal.addTitle")}
+            </Button>
+          )}
+        </Group>
         <Stack gap={16}>
           {isGameReviewsLoading && <Skeleton h={96} radius="xl" />}
-          {gameReviewItems?.results && gameReviewItems.results.length > 0 ? (
-            gameReviewItems.results.map(gameReview => <GameReview key={gameReview.id} gameReview={gameReview} />)
+          {previewReviews.length > 0 ? (
+            <>
+              {previewReviews.map(gameReview => (
+                <GameReview key={gameReview.id} gameReview={gameReview} />
+              ))}
+              {hasMore && gameDetails?.id && gameSlug && (
+                <Group justify="center" mt={8}>
+                  <Link
+                    to="/game/$id/$slug/reviews"
+                    params={{ id: String(gameDetails.id), slug: gameSlug }}
+                    style={{
+                      color: "var(--color-primary-600)",
+                      fontWeight: 600,
+                      fontSize: 14,
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {t("mainTab.viewMoreReviews")}
+                  </Link>
+                </Group>
+              )}
+            </>
           ) : (
-            <Text c="dimmed" fs="italic">
-              {t("review.noReviews")}
-            </Text>
+            !isGameReviewsLoading && (
+              <Text c="dimmed" fs="italic">
+                {t("review.noReviews")}
+              </Text>
+            )
           )}
         </Stack>
       </Box>
+
+      {gameDetails?.id && (
+        <GameReviewModal
+          gameId={gameDetails.id}
+          existingReviewId={userReview?.id}
+          existingReviewText={userReview?.review}
+          opened={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+        />
+      )}
     </Stack>
   );
 }
