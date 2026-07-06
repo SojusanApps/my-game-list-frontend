@@ -31,7 +31,9 @@ import {
   createGameFollow,
   deleteGameFollow,
   steamImportGameList,
+  titleImportGameList,
   bulkCreateGameList,
+  exportGameList,
   createGameReview,
   updateGameReview,
   deleteGameReview,
@@ -381,6 +383,20 @@ export const useDeleteGameFollow = () => {
 export const useSteamImport = () => {
   return useAppMutation({
     mutationFn: (steamProfileId: string) => steamImportGameList(steamProfileId),
+  });
+};
+
+export const useTitleImport = () => {
+  return useAppMutation({
+    mutationFn: (titles: Array<string>) => titleImportGameList(titles),
+  });
+};
+
+export const useGetExportedGameList = (options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: gameListKeys.export(),
+    queryFn: () => exportGameList(),
+    enabled: options?.enabled ?? true,
   });
 };
 

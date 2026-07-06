@@ -25,3 +25,35 @@ A TanStack Router `beforeLoad` callback that checks `context.auth.user` and thro
 ### Client Setup
 
 The `clientSetup.tsx` module that configures the generated API client (`@hey-api/openapi-ts`) with the base URL, auth header injection, and the token-refresh / retry interceptor logic. It reads from and writes to the Auth Store via the utility functions in `authUtils.ts`.
+
+### Import Source
+
+The origin of a game import on the Import page: currently Steam (fetch a Steam profile's library) or Title (paste a list of game titles). Each source has its own flow, but both end by submitting the chosen games to bulk create.
+
+### Title Import
+
+Importing games by pasting free-text game titles, one per line. Titles are matched against the catalogue in Batches; the user resolves each title to a game (or not) before the import is created.
+
+### Batch (Title Import)
+
+A group of at most 10 titles matched in a single title-import request. The user resolves one Batch fully before the next is fetched, and may revisit earlier Batches to change picks until the import is submitted.
+
+### Match Candidate
+
+One of up to three catalogue games proposed for an imported title, ranked best first. A candidate already on the user's game list is shown but not selectable.
+
+### Resolved Title
+
+An imported title that has a decision: bound to a chosen game, declared "none of these", or auto-marked unmatched because no candidates were found. Every title on a Batch must be resolved before moving on.
+
+### Unmatched Title
+
+A title with no accepted Match Candidate ("none of these" or zero candidates). Unmatched Titles go to manual resolution, where the user searches the full catalogue; titles left unresolved there are skipped from the import.
+
+### Active Title
+
+During manual resolution, the single Unmatched Title currently being worked on. Selecting it pre-fills the catalogue search with its text; picking a search result binds that game to it.
+
+### Duplicate Merge
+
+When the same game ends up chosen for multiple titles, the user confirms — before configuring the import — that the game will be imported once. Informational only; no re-picking happens.

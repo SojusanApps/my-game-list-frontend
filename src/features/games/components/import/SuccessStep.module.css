@@ -1,0 +1,18 @@
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-background-200);
+  padding: 32px;
+}
+
+.successCard {
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.successIcon {
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 16px;
+}

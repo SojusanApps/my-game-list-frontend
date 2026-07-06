@@ -271,10 +271,39 @@
     "stepConfigure": "Konfiguruj",
     "stepDone": "Gotowe",
     "noMatched": "Nie znaleziono dopasowanych gier do zaimportowania.",
-    "noNotFound": "Brak niedopasowanych gier."
+    "noNotFound": "Brak niedopasowanych gier.",
+    "sourceTitleOption": "Tytuły gier",
+    "titlesLabel": "Tytuły gier (jeden w wierszu)",
+    "titlesPlaceholder": "The Witcher 3: Wild Hunt\nHades\nHollow Knight",
+    "titlesNotice": "Wklej tytuły gier, po jednym w wierszu. Zostaną dopasowane do naszego katalogu w partiach po 10, a Ty wybierzesz właściwą grę dla każdego tytułu.",
+    "matchButton": "Dopasuj tytuły",
+    "stepTitles": "Tytuły",
+    "stepMatch": "Dopasowanie",
+    "stepResolve": "Uzupełnienie",
+    "stepDuplicates": "Duplikaty",
+    "batchProgress": "Partia {{current}} z {{total}}",
+    "batchError": "Nie udało się dopasować tej partii tytułów.",
+    "retryButton": "Ponów",
+    "nextButton": "Dalej",
+    "continueButton": "Kontynuuj",
+    "backStepButton": "Wstecz",
+    "noneOfThese": "Żaden z tych",
+    "noMatchesFound": "Nie znaleziono dopasowań w katalogu.",
+    "alreadyInList": "Na Twojej liście",
+    "resolveTitle": "Uzupełnij niedopasowane tytuły",
+    "resolveDescription": "Wybierz tytuł, a następnie wyszukaj właściwą grę w katalogu. Nieuzupełnione tytuły zostaną pominięte.",
+    "resolveSearchPlaceholder": "Szukaj w katalogu...",
+    "resolveSelectTitleFirst": "Wybierz tytuł po lewej stronie, aby wyszukać",
+    "resolveSkipped": "Zostanie pominięty",
+    "resolveSkippedCount": "Pominiętych: {{count}}",
+    "removePick": "Usuń wybraną grę",
+    "duplicatesTitle": "Zduplikowane wybory",
+    "duplicatesDescription": "Te tytuły zostały dopasowane do tej samej gry. Każda gra zostanie zaimportowana tylko raz.",
+    "duplicatesChosenFor": "Wybrano dla: {{titles}}",
+    "matchIntroTitle": "Twoje tytuły i ich dopasowania",
+    "matchIntroDescription": "Dla każdego tytułu poniżej kliknij grę, która do niego pasuje, lub wybierz „Żaden z tych”, jeśli żadna nie jest właściwa. Zanim przejdziesz do następnej strony, musisz wybrać opcję dla każdego tytułu."
   },
   "export": {
     "title": "Eksportuj listę gier"
   }
 }
-

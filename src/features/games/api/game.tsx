@@ -282,6 +282,14 @@ export const steamImportGameList = async (steamProfileId: string) => {
   return data;
 };
 
+export const titleImportGameList = async (titles: Array<string>) => {
+  const { data, response } = await GameService.gameGameListsTitleImportCreate({ body: { titles } });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error matching game titles");
+  }
+  return data;
+};
+
 export const bulkCreateGameList = async (body: Array<GameListCreateWritable>) => {
   const { data, response } = await GameService.gameGameListsBulkCreateCreate({ body });
   if (response?.status !== StatusCode.OK && response?.status !== StatusCode.CREATED) {
