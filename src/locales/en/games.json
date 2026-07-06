@@ -271,10 +271,39 @@
     "stepConfigure": "Configure",
     "stepDone": "Complete",
     "noMatched": "No matched games found to import.",
-    "noNotFound": "No unmapped games."
+    "noNotFound": "No unmapped games.",
+    "sourceTitleOption": "Game Titles",
+    "titlesLabel": "Game titles (one per line)",
+    "titlesPlaceholder": "The Witcher 3: Wild Hunt\nHades\nHollow Knight",
+    "titlesNotice": "Paste your game titles, one per line. They will be matched against our catalogue in batches of 10 and you will pick the right game for each title.",
+    "matchButton": "Match Titles",
+    "stepTitles": "Titles",
+    "stepMatch": "Match",
+    "stepResolve": "Resolve",
+    "stepDuplicates": "Duplicates",
+    "batchProgress": "Batch {{current}} of {{total}}",
+    "batchError": "Failed to match this batch of titles.",
+    "retryButton": "Retry",
+    "nextButton": "Next",
+    "continueButton": "Continue",
+    "backStepButton": "Back",
+    "noneOfThese": "None of these",
+    "noMatchesFound": "No matches found in the catalogue.",
+    "alreadyInList": "In your list",
+    "resolveTitle": "Resolve Unmatched Titles",
+    "resolveDescription": "Select a title, then search the catalogue to find the right game. Titles left unresolved will be skipped.",
+    "resolveSearchPlaceholder": "Search the catalogue...",
+    "resolveSelectTitleFirst": "Select a title on the left to search",
+    "resolveSkipped": "Will be skipped",
+    "resolveSkippedCount": "{{count}} will be skipped",
+    "removePick": "Remove selected game",
+    "duplicatesTitle": "Duplicate Picks",
+    "duplicatesDescription": "These titles resolved to the same game. Each game will be imported only once.",
+    "duplicatesChosenFor": "Chosen for: {{titles}}",
+    "matchIntroTitle": "Your Titles and Their Matches",
+    "matchIntroDescription": "For each title below, click the game that matches it, or choose \"None of these\" if none of them is right. You need to pick an option for every title before continuing to the next page."
   },
   "export": {
     "title": "Export Game List"
   }
 }
-

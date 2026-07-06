@@ -38,6 +38,7 @@ export const gameListKeys = {
   infinite: (userId: number, status: string | null, filters?: object) =>
     [...gameListKeys.all, "infinite", userId, status, filters] as const,
   randomPtp: (userId: number) => [...gameListKeys.all, "random-ptp", userId] as const,
+  export: () => [...gameListKeys.all, "export"] as const,
 };
 
 export const gameFollowKeys = {

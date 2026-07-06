@@ -1,0 +1,37 @@
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--color-background-200);
+  padding: 32px;
+}
+
+.duplicateGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-background-200);
+  border-radius: 10px;
+  background: var(--color-background-100);
+}
+
+.coverThumb {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--color-background-300);
+}
+
+.coverThumbPlaceholder {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: var(--color-background-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
