@@ -4,7 +4,7 @@ import { getRouteApi, Link } from "@tanstack/react-router";
 import ItemOverlay from "@/components/ui/ItemOverlay";
 import IGDBImageSize, { getIGDBImageURL } from "../utils/IGDBIntegration";
 import { STATUS_CONFIG } from "../utils/statusConfig";
-import { GameList, StatusEnum } from "@/client";
+import { GameList, GameListStatusEnum } from "@/client";
 import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { useGameListInfiniteQuery, useRandomPtpGame, GameListGameFilters } from "../hooks/useGameListQueries";
 import { PageMeta } from "@/components/ui/PageMeta";
@@ -102,7 +102,7 @@ export default function GameListPage(): React.JSX.Element {
   const isOwner = useIsOwner(userId);
 
   const { data: userDetails, isLoading: isUserLoading } = useGetUserDetails(userId);
-  const [selectedGameStatus, setSelectedGameStatus] = React.useState<StatusEnum | null>(null);
+  const [selectedGameStatus, setSelectedGameStatus] = React.useState<GameListStatusEnum | null>(null);
   const { t } = useTranslation("games");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
   const [filterDrawerOpen, setFilterDrawerOpen] = React.useState(false);
@@ -160,36 +160,36 @@ export default function GameListPage(): React.JSX.Element {
 
   const allItems = gameListResults?.pages.flatMap(page => page.results) || [];
 
-  const statuses: { id: StatusEnum | null; label: string; emoji: string; color: string }[] = [
+  const statuses: { id: GameListStatusEnum | null; label: string; emoji: string; color: string }[] = [
     { id: null, label: t("gameList.all"), emoji: "♾️", color: "gray" },
     {
-      id: StatusEnum.P,
-      label: STATUS_CONFIG[StatusEnum.P].label,
-      emoji: STATUS_CONFIG[StatusEnum.P].emoji,
+      id: GameListStatusEnum.P,
+      label: STATUS_CONFIG[GameListStatusEnum.P].label,
+      emoji: STATUS_CONFIG[GameListStatusEnum.P].emoji,
       color: "teal",
     },
     {
-      id: StatusEnum.C,
-      label: STATUS_CONFIG[StatusEnum.C].label,
-      emoji: STATUS_CONFIG[StatusEnum.C].emoji,
+      id: GameListStatusEnum.C,
+      label: STATUS_CONFIG[GameListStatusEnum.C].label,
+      emoji: STATUS_CONFIG[GameListStatusEnum.C].emoji,
       color: "indigo",
     },
     {
-      id: StatusEnum.PTP,
-      label: STATUS_CONFIG[StatusEnum.PTP].label,
-      emoji: STATUS_CONFIG[StatusEnum.PTP].emoji,
+      id: GameListStatusEnum.PTP,
+      label: STATUS_CONFIG[GameListStatusEnum.PTP].label,
+      emoji: STATUS_CONFIG[GameListStatusEnum.PTP].emoji,
       color: "gray",
     },
     {
-      id: StatusEnum.OH,
-      label: STATUS_CONFIG[StatusEnum.OH].label,
-      emoji: STATUS_CONFIG[StatusEnum.OH].emoji,
+      id: GameListStatusEnum.OH,
+      label: STATUS_CONFIG[GameListStatusEnum.OH].label,
+      emoji: STATUS_CONFIG[GameListStatusEnum.OH].emoji,
       color: "orange",
     },
     {
-      id: StatusEnum.D,
-      label: STATUS_CONFIG[StatusEnum.D].label,
-      emoji: STATUS_CONFIG[StatusEnum.D].emoji,
+      id: GameListStatusEnum.D,
+      label: STATUS_CONFIG[GameListStatusEnum.D].label,
+      emoji: STATUS_CONFIG[GameListStatusEnum.D].emoji,
       color: "red",
     },
   ];
@@ -412,7 +412,7 @@ export default function GameListPage(): React.JSX.Element {
           </Box>
         </Stack>
 
-        {isOwner && selectedGameStatus === StatusEnum.PTP && (
+        {isOwner && selectedGameStatus === GameListStatusEnum.PTP && (
           <Box
             style={{
               background: "var(--color-primary-50)",

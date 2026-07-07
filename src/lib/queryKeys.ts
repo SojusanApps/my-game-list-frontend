@@ -86,3 +86,9 @@ export const searchKeys = {
 export const versionKeys = {
   apiVersion: ["version", "api"] as const,
 };
+
+export const translationSuggestionKeys = {
+  all: ["translation-suggestions"] as const,
+  lists: () => [...translationSuggestionKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...translationSuggestionKeys.lists(), query] as const,
+};

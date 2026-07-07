@@ -6,7 +6,7 @@ import { IconSearch, IconChevronDown, IconChevronUp } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/Button";
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 import { useGetGameMediasInfiniteQuery } from "../../hooks/gameQueries";
 import code_to_value_mapping from "../../utils/GameListStatuses";
 import IGDBImageSize, { getIGDBImageURL } from "../../utils/IGDBIntegration";
@@ -17,7 +17,7 @@ import styles from "./GameRowItem.module.css";
 interface GameRowItemProps {
   row: GameRow;
   index: number;
-  onStatusChange: (index: number, value: StatusEnum) => void;
+  onStatusChange: (index: number, value: GameListStatusEnum) => void;
   onScoreChange: (index: number, value: number | null) => void;
   onFieldChange: (index: number, field: keyof GameRow, value: unknown) => void;
 }
@@ -46,7 +46,7 @@ export const GameRowItem = ({ row, index, onStatusChange, onScoreChange, onField
             w={160}
             data={code_to_value_mapping().map(item => ({ value: item.code, label: item.value }))}
             value={row.status}
-            onChange={val => onStatusChange(index, (val as StatusEnum) ?? StatusEnum.PTP)}
+            onChange={val => onStatusChange(index, (val as GameListStatusEnum) ?? GameListStatusEnum.PTP)}
             aria-label={t("import.status")}
           />
           <Select

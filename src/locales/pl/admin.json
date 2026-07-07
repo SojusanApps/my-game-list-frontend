@@ -3,8 +3,33 @@
     "title": "Panel administratora",
     "subtitle": "Informacje o systemie i narzędzia administracyjne."
   },
+  "actions": {
+    "title": "Akcje administratora",
+    "translationSuggestions": {
+      "label": "Propozycje tłumaczeń",
+      "description": "Przeglądaj oczekujące propozycje tłumaczeń dla wszystkich gier."
+    }
+  },
+  "translationSuggestions": {
+    "title": "Propozycje tłumaczeń",
+    "subtitle": "Przeglądaj i moderuj propozycje tłumaczeń zgłoszone w całym katalogu.",
+    "statusFilterLabel": "Status",
+    "statusAll": "Wszystkie",
+    "status": {
+      "pending": "Oczekująca",
+      "accepted": "Zaakceptowana",
+      "rejected": "Odrzucona",
+      "withdrawn": "Wycofana"
+    },
+    "gameFilterLabel": "ID gry",
+    "submittedByFilterLabel": "ID użytkownika zgłaszającego",
+    "clearFilters": "Wyczyść filtry",
+    "loading": "Ładowanie...",
+    "empty": "Żadna propozycja tłumaczenia nie pasuje do tych filtrów.",
+    "fieldTitle": "Tytuł",
+    "fieldSummary": "Opis"
+  },
   "versions": "Wersje",
   "apiVersion": "Wersja API",
   "uiVersion": "Wersja UI"
 }
-

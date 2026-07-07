@@ -3,8 +3,33 @@
     "title": "Admin Panel",
     "subtitle": "System information and administration tools."
   },
+  "actions": {
+    "title": "Admin actions",
+    "translationSuggestions": {
+      "label": "Translation Suggestions",
+      "description": "Review pending translation suggestions across all games."
+    }
+  },
+  "translationSuggestions": {
+    "title": "Translation Suggestions",
+    "subtitle": "Review and moderate translation suggestions submitted across the catalogue.",
+    "statusFilterLabel": "Status",
+    "statusAll": "All",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn"
+    },
+    "gameFilterLabel": "Game ID",
+    "submittedByFilterLabel": "Submitted by user ID",
+    "clearFilters": "Clear filters",
+    "loading": "Loading...",
+    "empty": "No translation suggestions match these filters.",
+    "fieldTitle": "Title",
+    "fieldSummary": "Summary"
+  },
   "versions": "Versions",
   "apiVersion": "API Version",
   "uiVersion": "UI Version"
 }
-

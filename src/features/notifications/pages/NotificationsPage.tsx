@@ -124,6 +124,9 @@ export default function NotificationsPage(): React.JSX.Element {
       case "game release":
       case "premiera gry":
         return "orange";
+      case "translation":
+      case "tłumaczenie":
+        return "grape";
       default:
         return "blue";
     }
@@ -189,6 +192,7 @@ export default function NotificationsPage(): React.JSX.Element {
             { label: t("page.categorySystem"), value: "system" },
             { label: t("page.categoryFriendship"), value: "friendship" },
             { label: t("page.categoryGameRelease"), value: "game_release" },
+            { label: t("page.categoryTranslation"), value: "translation" },
           ]}
           clearable
           style={{ width: 200 }}
