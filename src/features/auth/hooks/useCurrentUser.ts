@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useGetUserDetails } from "@/features/users/hooks/userQueries";
 import { TokenInfoType } from "@/types";
 
 export const useCurrentUserId = () => {
@@ -24,4 +25,11 @@ export const useIsOwner = (ownerId?: number | string | null) => {
     if (currentUserId === null || (!ownerId && ownerId !== 0)) return false;
     return currentUserId === Number(ownerId);
   }, [currentUserId, ownerId]);
+};
+
+export const useIsStaff = () => {
+  const currentUserId = useCurrentUserId();
+  const { data: userDetails } = useGetUserDetails(currentUserId ?? undefined);
+
+  return !!userDetails?.is_staff;
 };

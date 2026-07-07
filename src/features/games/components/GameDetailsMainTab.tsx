@@ -8,6 +8,7 @@ import { Box, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { Game, GameReview as GameReviewType, PaginatedGameReviewList } from "@/client";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/Button";
+import { TranslationSuggestionModal } from "@/features/translationSuggestions/components/TranslationSuggestionModal";
 
 const REVIEWS_PREVIEW_COUNT = 3;
 
@@ -30,6 +31,7 @@ export default function GameDetailsMainTab({
 }: Readonly<GameDetailsMainTabProps>) {
   const { t } = useTranslation("games");
   const [isReviewModalOpen, setIsReviewModalOpen] = React.useState(false);
+  const [isSuggestionModalOpen, setIsSuggestionModalOpen] = React.useState(false);
 
   const otherReviews = React.useMemo(
     () => (gameReviewItems?.results ?? []).filter(r => r.id !== userReview?.id),
@@ -68,9 +70,16 @@ export default function GameDetailsMainTab({
           padding: "24px",
         }}
       >
-        <Title order={2} fz="xl" fw={700} c="var(--color-text-900)" mb={8}>
-          {t("mainTab.summary")}
-        </Title>
+        <Group justify="space-between" align="center" mb={8}>
+          <Title order={2} fz="xl" fw={700} c="var(--color-text-900)">
+            {t("mainTab.summary")}
+          </Title>
+          {isLoggedIn && gameDetails?.id && (
+            <Button size="sm" onClick={() => setIsSuggestionModalOpen(true)}>
+              {t("translationSuggestionModal.buttonLabel")}
+            </Button>
+          )}
+        </Group>
         <Box c="var(--color-text-700)">
           <ReactMarkdown>{gameDetails?.summary || ""}</ReactMarkdown>
         </Box>
@@ -137,6 +146,16 @@ export default function GameDetailsMainTab({
           existingReviewText={userReview?.review}
           opened={isReviewModalOpen}
           onClose={() => setIsReviewModalOpen(false)}
+        />
+      )}
+
+      {gameDetails?.id && (
+        <TranslationSuggestionModal
+          gameId={gameDetails.id}
+          currentTitle={gameDetails.title}
+          currentSummary={gameDetails.summary ?? ""}
+          opened={isSuggestionModalOpen}
+          onClose={() => setIsSuggestionModalOpen(false)}
         />
       )}
     </Stack>

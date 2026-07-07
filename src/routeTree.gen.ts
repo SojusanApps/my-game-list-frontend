@@ -20,6 +20,7 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminTranslationSuggestionsRouteImport } from './routes/admin_.translation-suggestions'
 import { Route as ProfileIdSlugRouteImport } from './routes/profile.$id.$slug'
 import { Route as GameIdSlugRouteImport } from './routes/game.$id.$slug'
 import { Route as GameListIdSlugRouteImport } from './routes/game-list.$id.$slug'
@@ -84,6 +85,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTranslationSuggestionsRoute =
+  AdminTranslationSuggestionsRouteImport.update({
+    id: '/admin_/translation-suggestions',
+    path: '/admin/translation-suggestions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProfileIdSlugRoute = ProfileIdSlugRouteImport.update({
   id: '/profile/$id/$slug',
   path: '/profile/$id/$slug',
@@ -138,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
@@ -159,6 +167,7 @@ export interface FileRoutesByTo {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
@@ -181,6 +190,7 @@ export interface FileRoutesById {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin_/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
   '/game-list/$id/$slug': typeof GameListIdSlugRoute
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
     | '/game-list/$id/$slug'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
     | '/game-list/$id/$slug'
@@ -246,6 +258,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin_/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
     | '/game-list/$id/$slug'
@@ -268,6 +281,7 @@ export interface RootRouteChildren {
   ReleaseCalendarRoute: typeof ReleaseCalendarRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  AdminTranslationSuggestionsRoute: typeof AdminTranslationSuggestionsRoute
   CollectionIdSlugRoute: typeof CollectionIdSlugRoute
   CompanyIdSlugRoute: typeof CompanyIdSlugRoute
   GameListIdSlugRoute: typeof GameListIdSlugRoute
@@ -357,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/translation-suggestions': {
+      id: '/admin_/translation-suggestions'
+      path: '/admin/translation-suggestions'
+      fullPath: '/admin/translation-suggestions'
+      preLoaderRoute: typeof AdminTranslationSuggestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile/$id/$slug': {
       id: '/profile/$id/$slug'
       path: '/profile/$id/$slug'
@@ -428,6 +449,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReleaseCalendarRoute: ReleaseCalendarRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  AdminTranslationSuggestionsRoute: AdminTranslationSuggestionsRoute,
   CollectionIdSlugRoute: CollectionIdSlugRoute,
   CompanyIdSlugRoute: CompanyIdSlugRoute,
   GameListIdSlugRoute: GameListIdSlugRoute,

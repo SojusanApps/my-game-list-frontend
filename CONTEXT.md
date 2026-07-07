@@ -57,3 +57,12 @@ During manual resolution, the single Unmatched Title currently being worked on. 
 ### Duplicate Merge
 
 When the same game ends up chosen for multiple titles, the user confirms — before configuring the import — that the game will be imported once. Informational only; no re-picking happens.
+
+### Translation Suggestion
+
+A proposal from any logged-in user to correct a game's `title` or `summary` field, covering both minor typo fixes and full retranslations via the same mechanism. Carries a lifecycle `status` (`pending` → `accepted`/`rejected` by an admin, or `withdrawn` by its own submitter) and is visible in full — regardless of status or submitter — to every logged-in user. A user may hold at most one *pending* Translation Suggestion per game+field at a time; different users may each hold their own competing pending suggestion for the same game+field simultaneously.
+*Avoid*: translation request, correction, translation proposal
+
+### Suggestion History
+
+The list of all Translation Suggestions for one game and one field (title or summary), shown regardless of status. Title and summary each have their own independent Suggestion History — they are never mixed in one list.
