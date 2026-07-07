@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { UserDetail, StatusEnum } from "@/client";
+import { UserDetail, GameListStatusEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
@@ -27,15 +27,27 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
           <Stack gap={14}>
             {[
               {
-                key: StatusEnum.P,
+                key: GameListStatusEnum.P,
                 label: t("stats.currentlyPlaying"),
                 count: userDetails?.game_list_statistics.playing,
               },
-              { key: StatusEnum.OH, label: t("stats.onHold"), count: userDetails?.game_list_statistics.on_hold },
-              { key: StatusEnum.D, label: t("stats.dropped"), count: userDetails?.game_list_statistics.dropped },
-              { key: StatusEnum.C, label: t("stats.completed"), count: userDetails?.game_list_statistics.completed },
               {
-                key: StatusEnum.PTP,
+                key: GameListStatusEnum.OH,
+                label: t("stats.onHold"),
+                count: userDetails?.game_list_statistics.on_hold,
+              },
+              {
+                key: GameListStatusEnum.D,
+                label: t("stats.dropped"),
+                count: userDetails?.game_list_statistics.dropped,
+              },
+              {
+                key: GameListStatusEnum.C,
+                label: t("stats.completed"),
+                count: userDetails?.game_list_statistics.completed,
+              },
+              {
+                key: GameListStatusEnum.PTP,
                 label: t("stats.planToPlay"),
                 count: userDetails?.game_list_statistics.plan_to_play,
               },

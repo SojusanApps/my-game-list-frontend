@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 import { GameRow } from "./types";
 
 /** Owns the list of configurable game rows shared by both import flows. */
 export function useGameRows() {
   const [rows, setRows] = React.useState<GameRow[]>([]);
 
-  const onStatusChange = React.useCallback((index: number, value: StatusEnum) => {
+  const onStatusChange = React.useCallback((index: number, value: GameListStatusEnum) => {
     setRows(prev => {
       const next = [...prev];
       next[index] = { ...next[index], status: value };

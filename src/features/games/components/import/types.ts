@@ -1,4 +1,4 @@
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 
 /**
  * The minimal game shape both import flows work with. Satisfied by
@@ -13,7 +13,7 @@ export interface ImportedGame {
 
 export interface GameRow {
   game: ImportedGame;
-  status: StatusEnum;
+  status: GameListStatusEnum;
   score: number | null;
   owned_on: string[];
   started_at: Date | null;
@@ -31,7 +31,7 @@ export type MatchDecision = { kind: "game"; game: ImportedGame } | { kind: "none
 export function createGameRow(game: ImportedGame, ownedOn: string[] = []): GameRow {
   return {
     game,
-    status: StatusEnum.PTP,
+    status: GameListStatusEnum.PTP,
     score: null,
     owned_on: ownedOn,
     started_at: null,

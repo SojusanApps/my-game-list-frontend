@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "@tanstack/react-router";
 import { Box, Group, Text, Badge, ActionIcon, Stack } from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
-import { GameList, StatusEnum } from "@/client";
+import { GameList, GameListStatusEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { STATUS_CONFIG } from "@/features/games/utils/statusConfig";
@@ -19,7 +19,9 @@ interface GameListRowProps {
 export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameListRowProps) => {
   useTranslation(); // subscribe to language changes so status labels re-render
   const coverUrl = getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_SMALL_90_128);
-  const statusConfig = gameListItem.status_code ? STATUS_CONFIG[gameListItem.status_code as StatusEnum] : undefined;
+  const statusConfig = gameListItem.status_code
+    ? STATUS_CONFIG[gameListItem.status_code as GameListStatusEnum]
+    : undefined;
 
   return (
     <Box className={styles.rowWrapper}>

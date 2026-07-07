@@ -1,8 +1,8 @@
 import { getStatusConfig } from "./statusConfig";
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 
 export default function code_to_value_mapping() {
-  return Object.values(StatusEnum).map(code => {
+  return Object.values(GameListStatusEnum).map(code => {
     const config = getStatusConfig(code);
     return {
       code,

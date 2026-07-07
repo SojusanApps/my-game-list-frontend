@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getGameListsList, getRandomPtpGame } from "../api/game";
 import { gameListKeys } from "@/lib/queryKeys";
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 
 export type GameListGameFilters = {
   developer?: string;
@@ -28,7 +28,7 @@ const fetchGameListItems = async ({
     string,
     string,
     number,
-    StatusEnum | null,
+    GameListStatusEnum | null,
     GameListGameFilters | undefined,
   ];
   const query = {
@@ -42,7 +42,7 @@ const fetchGameListItems = async ({
 
 export const useGameListInfiniteQuery = (
   userId?: number,
-  status?: StatusEnum | null,
+  status?: GameListStatusEnum | null,
   filters?: GameListGameFilters,
 ) => {
   return useInfiniteQuery({

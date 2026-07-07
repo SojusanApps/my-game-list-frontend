@@ -9,7 +9,7 @@ import { DateInput } from "@mantine/dates";
 
 import AsyncMultiSelectAutocomplete from "@/components/ui/Form/AsyncMultiSelectAutocomplete";
 import { Button } from "@/components/ui/Button";
-import { StatusEnum } from "@/client";
+import { GameListStatusEnum } from "@/client";
 import code_to_value_mapping from "../utils/GameListStatuses";
 import { idSchema } from "@/lib/validation";
 import {
@@ -25,7 +25,7 @@ import { getRatingColor } from "@/utils/ratingUtils";
 import i18n from "@/lib/i18n";
 
 const validationSchema = z.object({
-  status: z.enum(StatusEnum),
+  status: z.enum(GameListStatusEnum),
   score: z.coerce
     .number()
     .min(1, { message: i18n.t("validation:scoreMin") })
@@ -65,7 +65,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
 
   const form = useForm<ValidationSchema>({
     initialValues: {
-      status: StatusEnum.PTP,
+      status: GameListStatusEnum.PTP,
       score: null,
       owned_on: [],
       description: "",
@@ -81,7 +81,7 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
     if (opened) {
       if (gameListDetails?.id) {
         form.setValues({
-          status: gameListDetails.status_code as StatusEnum,
+          status: gameListDetails.status_code as GameListStatusEnum,
           score: gameListDetails.score ?? null,
           owned_on: gameListDetails.owned_on.map(media => media.id.toString()),
           description: gameListDetails.description ?? "",
@@ -99,9 +99,9 @@ export function GameListModal({ gameId, opened, onClose }: Readonly<GameListModa
   // Autopopulate dates when status changes
   React.useEffect(() => {
     if (form.isDirty("status")) {
-      if (form.values.status === StatusEnum.P && !form.values.started_at) {
+      if (form.values.status === GameListStatusEnum.P && !form.values.started_at) {
         form.setFieldValue("started_at", new Date());
-      } else if (form.values.status === StatusEnum.C && !form.values.completed_at) {
+      } else if (form.values.status === GameListStatusEnum.C && !form.values.completed_at) {
         form.setFieldValue("completed_at", new Date());
       }
     }
