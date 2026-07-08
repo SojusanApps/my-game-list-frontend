@@ -2,7 +2,6 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { SimpleGrid, Stack, Text } from "@mantine/core";
 import { Game } from "@/client";
-import { Button } from "@/components/ui/Button";
 
 interface GameStatisticsProps {
   gameDetails?: Game;
@@ -124,10 +123,6 @@ export default function GameStatistics({ gameDetails }: Readonly<GameStatisticsP
           </Text>
         </Stack>
       </SimpleGrid>
-
-      <Button variant="ghost" size="sm" style={{ margin: "0 auto", color: "var(--color-text-400)" }}>
-        {t("stats.moreStatistics")}
-      </Button>
     </Stack>
   );
 }

@@ -2,7 +2,6 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { UserDetail, GameListStatusEnum } from "@/client";
-import { Button } from "@/components/ui/Button";
 import { getStatusConfig } from "@/features/games/utils/statusConfig";
 
 interface UserStatisticsProps {
@@ -128,10 +127,6 @@ export default function UserStatistics({ userDetails }: Readonly<UserStatisticsP
           </Text>
         </Stack>
       </SimpleGrid>
-
-      <Button variant="ghost" size="sm" style={{ margin: "0 auto", color: "var(--color-text-400)" }}>
-        {t("stats.moreStatistics")}
-      </Button>
     </Stack>
   );
 }

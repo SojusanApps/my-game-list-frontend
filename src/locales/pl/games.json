@@ -38,8 +38,7 @@
     "ratings": "ocen",
     "ranked": "Ranking",
     "popularity": "Popularność",
-    "members": "Gracze",
-    "moreStatistics": "Więcej statystyk"
+    "members": "Gracze"
   },
   "review": {
     "score": "Ocena",
@@ -283,6 +282,7 @@
     "previousAria": "Poprzedni zrzut ekranu",
     "nextAria": "Następny zrzut ekranu",
     "noScreenshots": "Brak dostępnych zrzutów ekranu.",
+    "noScreenshotsDescription": "Ta gra nie ma jeszcze żadnych zrzutów ekranu.",
     "enlargedAlt": "Powiększony zrzut ekranu"
   },
   "searchBar": {

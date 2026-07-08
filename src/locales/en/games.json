@@ -38,8 +38,7 @@
     "ratings": "ratings",
     "ranked": "Ranked",
     "popularity": "Popularity",
-    "members": "Members",
-    "moreStatistics": "More statistics"
+    "members": "Members"
   },
   "review": {
     "score": "Score",
@@ -283,6 +282,7 @@
     "previousAria": "Previous screenshot",
     "nextAria": "Next screenshot",
     "noScreenshots": "No screenshots available.",
+    "noScreenshotsDescription": "This game doesn't have any screenshots yet.",
     "enlargedAlt": "Enlarged screenshot"
   },
   "searchBar": {
