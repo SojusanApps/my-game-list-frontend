@@ -9,15 +9,21 @@ import {
   IconNoteOff,
   IconExternalLink,
   IconDotsVertical,
+  IconFlag,
 } from "@tabler/icons-react";
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
+import type { User } from "@/client";
+import { TargetTypeEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import rowStyles from "./RankingRow.module.css";
 
 interface RankingRowProps {
   rank: number;
+  itemId: number;
+  addedBy: User;
   gameId: number;
   gameSlug: string;
   totalItems: number;
@@ -87,6 +93,8 @@ function RankControls({
 }
 
 function ActionButtons({
+  itemId,
+  addedBy,
   gameId,
   gameSlug,
   isOwner,
@@ -94,6 +102,8 @@ function ActionButtons({
   onDescriptionClick,
   onRemove,
 }: Readonly<{
+  itemId: number;
+  addedBy: User;
   gameId: number;
   gameSlug: string;
   isOwner: boolean;
@@ -102,6 +112,7 @@ function ActionButtons({
   onRemove?: () => void;
 }>) {
   const { t } = useTranslation("collections");
+  const { t: tModeration } = useTranslation("moderation");
   return (
     <>
       <Group gap={8} className={rowStyles.rankingRowActionsDesktop} wrap="nowrap" visibleFrom="sm">
@@ -151,6 +162,15 @@ function ActionButtons({
             </ActionIcon>
           </Tooltip>
         )}
+
+        {!isOwner && (
+          <ReportButton
+            targetType={TargetTypeEnum.COLLECTION_ITEM_NOTE}
+            targetId={itemId}
+            ownerId={addedBy.id}
+            ownerUsername={addedBy.username}
+          />
+        )}
       </Group>
 
       <Box hiddenFrom="sm" className={rowStyles.rankingRowActionsMobile}>
@@ -188,6 +208,20 @@ function ActionButtons({
                 {t("rankingRow.removeGame")}
               </Menu.Item>
             )}
+
+            {!isOwner && (
+              <ReportButton
+                targetType={TargetTypeEnum.COLLECTION_ITEM_NOTE}
+                targetId={itemId}
+                ownerId={addedBy.id}
+                ownerUsername={addedBy.username}
+                renderTrigger={({ onClick }) => (
+                  <Menu.Item leftSection={<IconFlag size={16} />} onClick={onClick}>
+                    {tModeration("reportButton.ariaLabel")}
+                  </Menu.Item>
+                )}
+              />
+            )}
           </Menu.Dropdown>
         </Menu>
       </Box>
@@ -198,6 +232,8 @@ function ActionButtons({
 export const RankingRow = React.memo(
   ({
     rank,
+    itemId,
+    addedBy,
     gameId,
     gameSlug,
     totalItems,
@@ -385,6 +421,8 @@ export const RankingRow = React.memo(
 
           {/* Actions */}
           <ActionButtons
+            itemId={itemId}
+            addedBy={addedBy}
             gameId={gameId}
             gameSlug={gameSlug}
             isOwner={isOwner}

@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
-import { CollectionDetail, ModeEnum } from "@/client";
+import { CollectionDetail, ModeEnum, TargetTypeEnum } from "@/client";
 import { Button } from "@/components/ui/Button";
 import { useCurrentUserId, useIsOwner } from "@/features/auth";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 import { Stack, Group, Title, Text, Flex } from "@mantine/core";
 
 interface CollectionHeaderProps {
@@ -49,15 +50,23 @@ export const CollectionHeader = ({ collection, onEdit, onAddGame, onPairwiseRank
               {collection.visibility_display}
             </Text>
           </Group>
-          <Title
-            order={1}
-            fz={{ base: 30, md: 48 }}
-            fw={900}
-            c="var(--color-text-900)"
-            style={{ letterSpacing: "-0.025em" }}
-          >
-            {collection.name}
-          </Title>
+          <Group gap={8} align="center">
+            <Title
+              order={1}
+              fz={{ base: 30, md: 48 }}
+              fw={900}
+              c="var(--color-text-900)"
+              style={{ letterSpacing: "-0.025em" }}
+            >
+              {collection.name}
+            </Title>
+            <ReportButton
+              targetType={TargetTypeEnum.COLLECTION}
+              targetId={collection.id}
+              ownerId={collection.user.id}
+              ownerUsername={collection.user.username}
+            />
+          </Group>
           {collection.description && (
             <Text c="var(--color-text-600)" maw={672} fz="lg" style={{ lineHeight: 1.6 }}>
               {collection.description}

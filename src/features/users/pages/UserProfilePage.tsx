@@ -13,6 +13,8 @@ import { Box, Grid, Group, Skeleton, Stack, Text, Title } from "@mantine/core";
 import { PageMeta } from "@/components/ui/PageMeta";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Button } from "@/components/ui/Button";
+import { TargetTypeEnum } from "@/client";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 
 const routeApi = getRouteApi("/profile/$id/$slug");
 
@@ -59,6 +61,7 @@ export default function UserProfilePage(): React.JSX.Element {
               <Stack gap={16}>
                 <Box
                   style={{
+                    position: "relative",
                     borderRadius: 12,
                     overflow: "hidden",
                     boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
@@ -70,6 +73,14 @@ export default function UserProfilePage(): React.JSX.Element {
                     src={userDetails?.gravatar_url || undefined}
                     alt={t("profile.userAvatarAlt")}
                   />
+                  <Box style={{ position: "absolute", top: 8, right: 8 }}>
+                    <ReportButton
+                      targetType={TargetTypeEnum.AVATAR}
+                      targetId={validUserId}
+                      ownerId={validUserId}
+                      ownerUsername={userDetails?.username ?? ""}
+                    />
+                  </Box>
                 </Box>
 
                 {!isOwnProfile && <FriendshipButtons currentUserId={currentUserId} userId={validUserId} />}
@@ -101,9 +112,17 @@ export default function UserProfilePage(): React.JSX.Element {
 
             <Grid.Col span={{ base: 12, md: 9 }}>
               <Stack gap={24}>
-                <Title order={1} fz={30} fw={700} c="var(--color-text-900)">
-                  {userDetails?.username}
-                </Title>
+                <Group gap={8} align="center">
+                  <Title order={1} fz={30} fw={700} c="var(--color-text-900)">
+                    {userDetails?.username}
+                  </Title>
+                  <ReportButton
+                    targetType={TargetTypeEnum.USERNAME}
+                    targetId={validUserId}
+                    ownerId={validUserId}
+                    ownerUsername={userDetails?.username ?? ""}
+                  />
+                </Group>
 
                 <Box
                   component="section"

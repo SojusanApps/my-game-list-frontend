@@ -2,8 +2,11 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
-import { IconPencil, IconX, IconQuestionMark, IconInfoCircle, IconDotsVertical } from "@tabler/icons-react";
+import { IconPencil, IconX, IconQuestionMark, IconInfoCircle, IconDotsVertical, IconFlag } from "@tabler/icons-react";
 import { Box, Text, Tooltip, Menu, ActionIcon, Group } from "@mantine/core";
+import type { User } from "@/client";
+import { TargetTypeEnum } from "@/client";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 import { EditDescriptionModal } from "./EditDescriptionModal";
 import { cn } from "@/utils/cn";
 import { Link } from "@tanstack/react-router";
@@ -11,6 +14,8 @@ import cardStyles from "./GameCard.module.css";
 import { TIERS } from "./TierListView";
 
 interface GameCardProps {
+  collectionItemId: number;
+  addedBy: User;
   gameId: number;
   gameSlug: string;
   title: string;
@@ -26,6 +31,8 @@ interface GameCardProps {
 
 export const GameCard = (props: GameCardProps) => {
   const {
+    collectionItemId,
+    addedBy,
     gameId,
     gameSlug,
     title,
@@ -38,6 +45,7 @@ export const GameCard = (props: GameCardProps) => {
     onMoveToTier,
     currentTier,
   } = props;
+  const { t: tModeration } = useTranslation("moderation");
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const { t } = useTranslation("collections");
 
@@ -180,6 +188,20 @@ export const GameCard = (props: GameCardProps) => {
                     {t("tierList.remove")}
                   </Menu.Item>
                 </>
+              )}
+
+              {!isOwner && (
+                <ReportButton
+                  targetType={TargetTypeEnum.COLLECTION_ITEM_NOTE}
+                  targetId={collectionItemId}
+                  ownerId={addedBy.id}
+                  ownerUsername={addedBy.username}
+                  renderTrigger={({ onClick }) => (
+                    <Menu.Item leftSection={<IconFlag size={14} />} onClick={onClick}>
+                      {tModeration("reportButton.ariaLabel")}
+                    </Menu.Item>
+                  )}
+                />
               )}
             </Menu.Dropdown>
           </Menu>

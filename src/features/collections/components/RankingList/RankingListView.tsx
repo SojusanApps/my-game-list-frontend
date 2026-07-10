@@ -367,6 +367,8 @@ export const RankingListView = React.memo(function RankingListViewInner({
       <SortableRankingRow
         key={item.id}
         id={String(item.id)}
+        itemId={item.id}
+        addedBy={item.added_by}
         gameId={item.game.id}
         gameSlug={item.game.slug || ""}
         rank={index + 1}

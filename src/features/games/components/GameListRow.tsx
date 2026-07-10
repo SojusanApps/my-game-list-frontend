@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
-import { Box, Group, Text, Badge, ActionIcon, Stack } from "@mantine/core";
-import { IconEdit } from "@tabler/icons-react";
-import { GameList, GameListStatusEnum } from "@/client";
+import { Box, Group, Text, Badge, ActionIcon, Stack, Tooltip } from "@mantine/core";
+import { IconEdit, IconNote } from "@tabler/icons-react";
+import { GameList, GameListStatusEnum, TargetTypeEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import IGDBImageSize, { getIGDBImageURL } from "@/features/games/utils/IGDBIntegration";
 import { STATUS_CONFIG } from "@/features/games/utils/statusConfig";
 import { getRatingColor } from "@/utils/ratingUtils";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 import styles from "./GameListRow.module.css";
 import { useTranslation } from "react-i18next";
 
@@ -14,14 +15,16 @@ interface GameListRowProps {
   gameListItem: GameList;
   isOwner: boolean;
   onEdit: (gameId: number) => void;
+  ownerUsername: string;
 }
 
-export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameListRowProps) => {
+export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit, ownerUsername }: GameListRowProps) => {
   useTranslation(); // subscribe to language changes so status labels re-render
   const coverUrl = getIGDBImageURL(gameListItem.game_cover_image, IGDBImageSize.COVER_SMALL_90_128);
   const statusConfig = gameListItem.status_code
     ? STATUS_CONFIG[gameListItem.status_code as GameListStatusEnum]
     : undefined;
+  const hasNote = gameListItem.description && gameListItem.description.trim().length > 0;
 
   return (
     <Box className={styles.rowWrapper}>
@@ -58,6 +61,11 @@ export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameLi
                     {statusConfig.emoji} {statusConfig.label}
                   </Badge>
                 )}
+                {hasNote && (
+                  <Tooltip label={gameListItem.description} multiline w={250} withArrow>
+                    <IconNote size={16} stroke={1.5} style={{ color: "var(--color-text-500)" }} />
+                  </Tooltip>
+                )}
               </Group>
             </Stack>
 
@@ -82,6 +90,15 @@ export const GameListRow = React.memo(({ gameListItem, isOwner, onEdit }: GameLi
                 >
                   <IconEdit size={20} />
                 </ActionIcon>
+              )}
+
+              {!isOwner && (
+                <ReportButton
+                  targetType={TargetTypeEnum.GAME_LIST_NOTE}
+                  targetId={gameListItem.id}
+                  ownerId={gameListItem.user}
+                  ownerUsername={ownerUsername}
+                />
               )}
             </Group>
           </Group>

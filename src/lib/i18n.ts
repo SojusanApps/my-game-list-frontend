@@ -20,6 +20,8 @@ import enNotifications from "@/locales/en/notifications.json";
 import plNotifications from "@/locales/pl/notifications.json";
 import enRanking from "@/locales/en/ranking.json";
 import plRanking from "@/locales/pl/ranking.json";
+import enModeration from "@/locales/en/moderation.json";
+import plModeration from "@/locales/pl/moderation.json";
 
 // eslint-disable-next-line import/no-named-as-default-member
 i18n.use(initReactI18next).init({
@@ -40,6 +42,7 @@ i18n.use(initReactI18next).init({
       users: enUsers,
       notifications: enNotifications,
       ranking: enRanking,
+      moderation: enModeration,
     },
     pl: {
       common: plCommon,
@@ -51,6 +54,7 @@ i18n.use(initReactI18next).init({
       users: plUsers,
       notifications: plNotifications,
       ranking: plRanking,
+      moderation: plModeration,
     },
   },
 });

@@ -1,8 +1,11 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { Box, Group, Stack, Text } from "@mantine/core";
+import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { UserDetail } from "@/client";
 import { timeAgo } from "@/utils/dateUtils";
+
+const WARNING_LIMIT = 3;
 
 interface UserProfileInformationProps {
   userDetails?: UserDetail;
@@ -52,6 +55,21 @@ export default function UserProfileInformation({ userDetails }: Readonly<UserPro
           </Text>
           <Text c="var(--color-text-900)">{timeAgo(userDetails?.last_active) || t("info.never")}</Text>
         </Group>
+        {userDetails?.warning_count !== null && userDetails?.warning_count !== undefined && (
+          <Group justify="space-between" fz="sm">
+            <Group gap={4} align="center">
+              <Text fw={500} c="var(--color-text-600)">
+                {t("info.warnings")}
+              </Text>
+              <Tooltip label={t("info.warningsExplanation", { max: WARNING_LIMIT })} multiline w={280} withArrow>
+                <IconInfoCircle size={14} style={{ color: "var(--color-text-400)", cursor: "help" }} />
+              </Tooltip>
+            </Group>
+            <Text c="var(--color-text-900)">
+              {t("info.warningsCount", { count: userDetails.warning_count, max: WARNING_LIMIT })}
+            </Text>
+          </Group>
+        )}
       </Stack>
     </Box>
   );

@@ -8,7 +8,48 @@
     "translationSuggestions": {
       "label": "Translation Suggestions",
       "description": "Review pending translation suggestions across all games."
+    },
+    "reports": {
+      "label": "Reports",
+      "description": "Review pending reports filed against user content and profile fields."
     }
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Review and moderate reports filed against user content and profile fields.",
+    "statusFilterLabel": "Status",
+    "statusAll": "All",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "targetTypeFilterLabel": "Target type",
+    "targetTypeAll": "All",
+    "reportedUserFilterLabel": "Reported user ID",
+    "clearFilters": "Clear filters",
+    "reportedByLabel": "Reported by",
+    "reportedUserLabel": "Reported user",
+    "reasonLabel": "Reason",
+    "snapshotLabel": "Reported content",
+    "noSnapshot": "No text snapshot for this report type.",
+    "submittedAtLabel": "Submitted {{date}}",
+    "reviewedByLabel": "Reviewed by",
+    "reviewedAtLabel": "on {{date}}",
+    "acceptButton": "Accept",
+    "rejectButton": "Reject",
+    "confirmAcceptButton": "Confirm Accept",
+    "confirmRejectButton": "Confirm Reject",
+    "acceptConfirmText": "Accept this report? This will mask the content and issue a warning to the reported user.",
+    "rejectReasonPlaceholder": "Optional reason for rejecting",
+    "cancelButton": "Cancel",
+    "successTitle": "Success",
+    "acceptSuccess": "Report accepted.",
+    "rejectSuccess": "Report rejected.",
+    "errorTitle": "Error",
+    "errorMessage": "Something went wrong. Please try again.",
+    "loading": "Loading...",
+    "empty": "No reports to review."
   },
   "translationSuggestions": {
     "title": "Translation Suggestions",
