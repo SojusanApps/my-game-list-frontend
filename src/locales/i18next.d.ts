@@ -7,6 +7,7 @@ import type enCollections from "./en/collections.json";
 import type enUsers from "./en/users.json";
 import type enNotifications from "./en/notifications.json";
 import type enRanking from "./en/ranking.json";
+import type enModeration from "./en/moderation.json";
 
 declare module "i18next" {
   interface CustomTypeOptions {
@@ -21,6 +22,7 @@ declare module "i18next" {
       users: typeof enUsers;
       notifications: typeof enNotifications;
       ranking: typeof enRanking;
+      moderation: typeof enModeration;
     };
   }
 }

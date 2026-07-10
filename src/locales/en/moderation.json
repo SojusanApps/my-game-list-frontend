@@ -1,0 +1,23 @@
+{
+  "reportButton.ariaLabel": "Report",
+  "reportModal.title": "Report {{targetType}}",
+  "reportModal.disclaimer": "Reporting is a serious action reviewed by staff. Please only report content that genuinely violates our community guidelines — unjustified or repeated misuse of reporting can lead to restrictions on your own account.",
+  "reportModal.context": "You are reporting {{username}}'s {{targetType}}.",
+  "reportModal.reasonLabel": "Reason",
+  "reportModal.reasonPlaceholder": "Explain what's wrong with this content or profile field",
+  "reportModal.reasonRequired": "Please explain what's wrong",
+  "reportModal.reasonTooShort": "Please provide a bit more detail (at least 10 characters)",
+  "reportModal.cancelButton": "Cancel",
+  "reportModal.submitButton": "Submit Report",
+  "reportModal.successTitle": "Report Submitted",
+  "reportModal.successMessage": "Thank you, staff will review your report.",
+  "reportModal.errorTitle": "Report Failed",
+  "reportModal.errorMessage": "Something went wrong while submitting your report. Please try again.",
+  "targetType.avatar": "avatar",
+  "targetType.username": "username",
+  "targetType.review": "review",
+  "targetType.translation_suggestion": "translation suggestion",
+  "targetType.game_list_note": "game list note",
+  "targetType.collection": "collection",
+  "targetType.collection_item_note": "collection item note"
+}

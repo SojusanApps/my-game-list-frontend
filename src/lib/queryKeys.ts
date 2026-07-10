@@ -92,3 +92,9 @@ export const translationSuggestionKeys = {
   lists: () => [...translationSuggestionKeys.all, "list"] as const,
   list: (query: object | undefined) => [...translationSuggestionKeys.lists(), query] as const,
 };
+
+export const reportKeys = {
+  all: ["reports"] as const,
+  lists: () => [...reportKeys.all, "list"] as const,
+  list: (query: object | undefined) => [...reportKeys.lists(), query] as const,
+};

@@ -10,10 +10,13 @@ import {
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
+import type { User } from "@/client";
 import { RankingRow } from "./RankingRow";
 
 interface SortableRankingRowProps {
   id: string;
+  itemId: number;
+  addedBy: User;
   gameId: number;
   gameSlug: string;
   rank: number;
@@ -33,6 +36,8 @@ interface SortableRankingRowProps {
 
 export const SortableRankingRow = React.memo(function SortableRankingRowInner({
   id,
+  itemId,
+  addedBy,
   gameId,
   rank,
   totalItems,
@@ -151,6 +156,8 @@ export const SortableRankingRow = React.memo(function SortableRankingRowInner({
     >
       <RankingRow
         isDragging={isDragging}
+        itemId={itemId}
+        addedBy={addedBy}
         gameId={gameId}
         gameSlug={gameSlug}
         rank={rank}

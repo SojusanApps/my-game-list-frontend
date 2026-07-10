@@ -1,0 +1,23 @@
+{
+  "reportButton.ariaLabel": "Zgłoś",
+  "reportModal.title": "Zgłoś {{targetType}}",
+  "reportModal.disclaimer": "Zgłaszanie to poważna czynność weryfikowana przez moderatorów. Zgłaszaj wyłącznie treści, które faktycznie naruszają zasady społeczności — nieuzasadnione lub powtarzające się nadużywanie zgłoszeń może skutkować ograniczeniami na Twoim koncie.",
+  "reportModal.context": "Zgłaszasz {{targetType}} użytkownika {{username}}.",
+  "reportModal.reasonLabel": "Powód",
+  "reportModal.reasonPlaceholder": "Wyjaśnij, co jest nie tak z tą treścią lub polem profilu",
+  "reportModal.reasonRequired": "Wyjaśnij, co jest nie tak",
+  "reportModal.reasonTooShort": "Podaj nieco więcej szczegółów (co najmniej 10 znaków)",
+  "reportModal.cancelButton": "Anuluj",
+  "reportModal.submitButton": "Wyślij zgłoszenie",
+  "reportModal.successTitle": "Zgłoszenie wysłane",
+  "reportModal.successMessage": "Dziękujemy, moderatorzy przeanalizują Twoje zgłoszenie.",
+  "reportModal.errorTitle": "Zgłoszenie nie powiodło się",
+  "reportModal.errorMessage": "Coś poszło nie tak podczas wysyłania zgłoszenia. Spróbuj ponownie.",
+  "targetType.avatar": "awatar",
+  "targetType.username": "nazwę użytkownika",
+  "targetType.review": "recenzję",
+  "targetType.translation_suggestion": "propozycję tłumaczenia",
+  "targetType.game_list_note": "notatkę na liście gier",
+  "targetType.collection": "kolekcję",
+  "targetType.collection_item_note": "notatkę elementu kolekcji"
+}

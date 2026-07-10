@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { GameReview as GameReviewType } from "@/client";
+import { GameReview as GameReviewType, TargetTypeEnum } from "@/client";
 import { SafeImage } from "@/components/ui/SafeImage";
 import ReactMarkdown from "react-markdown";
 import { Box, Group, Stack, Text, UnstyledButton } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 
 type GameReviewProps = {
   gameReview: GameReviewType;
@@ -100,37 +101,46 @@ function GameReview({ gameReview }: Readonly<GameReviewProps>): React.JSX.Elemen
           </Stack>
         </Group>
 
-        {gameReview?.score && (
-          <Stack
-            align="center"
-            justify="center"
-            style={{
-              padding: "4px 16px",
-              borderRadius: "12px",
-              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-              transition: "colors 300ms",
-              ...getScoreStyles(gameReview.score),
-            }}
-          >
-            <Text
-              component="span"
-              fz={10}
-              fw={700}
-              tt="uppercase"
+        <Group gap={8} align="center">
+          {gameReview?.score && (
+            <Stack
+              align="center"
+              justify="center"
               style={{
-                letterSpacing: "0.1em",
-                lineHeight: 1,
-                marginBottom: "2px",
-                color: getScoreLabelColor(gameReview.score),
+                padding: "4px 16px",
+                borderRadius: "12px",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                transition: "colors 300ms",
+                ...getScoreStyles(gameReview.score),
               }}
             >
-              {t("review.score")}
-            </Text>
-            <Text component="span" fz="xl" fw={900} style={{ lineHeight: 1 }}>
-              {gameReview.score}
-            </Text>
-          </Stack>
-        )}
+              <Text
+                component="span"
+                fz={10}
+                fw={700}
+                tt="uppercase"
+                style={{
+                  letterSpacing: "0.1em",
+                  lineHeight: 1,
+                  marginBottom: "2px",
+                  color: getScoreLabelColor(gameReview.score),
+                }}
+              >
+                {t("review.score")}
+              </Text>
+              <Text component="span" fz="xl" fw={900} style={{ lineHeight: 1 }}>
+                {gameReview.score}
+              </Text>
+            </Stack>
+          )}
+
+          <ReportButton
+            targetType={TargetTypeEnum.REVIEW}
+            targetId={gameReview.id}
+            ownerId={gameReview.user.id}
+            ownerUsername={gameReview.user.username}
+          />
+        </Group>
       </Group>
 
       <Box style={{ position: "relative", width: "100%" }}>

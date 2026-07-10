@@ -66,3 +66,25 @@ A proposal from any logged-in user to correct a game's `title` or `summary` fiel
 ### Suggestion History
 
 The list of all Translation Suggestions for one game and one field (title or summary), shown regardless of status. Title and summary each have their own independent Suggestion History — they are never mixed in one list.
+
+### Report
+
+A user-filed complaint against another user's content (a review, translation suggestion, game list note, collection, or collection item note) or profile field (avatar or username). Carries a lifecycle `status` (`pending` → `accepted`/`rejected` by staff) and a `reported_value` snapshot of the offending text taken at submission time. A user may hold at most one pending Report per target at a time; different users may each file their own independently against the same target. The reported user is never shown reports filed against them — reporters are only visible to staff, to protect reporters from retaliation.
+*Avoid*: complaint, flag (as a noun)
+
+### Moderation (masking)
+
+The effect of an accepted Report: the flagged field is never deleted or edited, only masked. From then on, everyone except the content's owner and staff sees a fixed placeholder string in place of the real value; the owner and staff always see the real value. There is no boolean moderation flag exposed anywhere in the API — the frontend renders whatever string a field contains and never tries to detect or badge moderation state from it.
+*Avoid*: is_moderated, moderated flag
+
+### Warning
+
+The consequence issued to a user when staff accept a Report against them. Three Warnings, from any combination of report types, auto-bans the user.
+
+### Banned User
+
+A user with three accumulated Warnings. Being banned only changes what *other people* see when viewing that user's content — every one of their moderation-eligible fields across every content type is masked for other viewers, even items that were never individually reported. The owner and staff still see everything real (except a flagged avatar — see below). Banned users keep full write access everywhere; there is no write-time restriction tied to being banned.
+
+### Avatar moderation exception
+
+The one case where masking has no owner/staff exemption: once an avatar Report is accepted, `gravatar_url` returns empty for literally everyone, including the flagged user viewing their own profile and staff.

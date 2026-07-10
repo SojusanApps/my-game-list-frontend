@@ -252,7 +252,13 @@ export default function GameListPage(): React.JSX.Element {
           paddingRight: "8px",
         }}
         renderItem={(gameListItem: GameList) => (
-          <GameListRow key={gameListItem.id} gameListItem={gameListItem} isOwner={isOwner} onEdit={setEditingGameId} />
+          <GameListRow
+            key={gameListItem.id}
+            gameListItem={gameListItem}
+            isOwner={isOwner}
+            onEdit={setEditingGameId}
+            ownerUsername={userDetails?.username ?? ""}
+          />
         )}
       />
     );

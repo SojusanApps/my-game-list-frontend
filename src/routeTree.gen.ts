@@ -21,6 +21,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminTranslationSuggestionsRouteImport } from './routes/admin_.translation-suggestions'
+import { Route as AdminReportsRouteImport } from './routes/admin_.reports'
 import { Route as ProfileIdSlugRouteImport } from './routes/profile.$id.$slug'
 import { Route as GameIdSlugRouteImport } from './routes/game.$id.$slug'
 import { Route as GameListIdSlugRouteImport } from './routes/game-list.$id.$slug'
@@ -91,6 +92,11 @@ const AdminTranslationSuggestionsRoute =
     path: '/admin/translation-suggestions',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/admin_/reports',
+  path: '/admin/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileIdSlugRoute = ProfileIdSlugRouteImport.update({
   id: '/profile/$id/$slug',
   path: '/profile/$id/$slug',
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin/reports': typeof AdminReportsRoute
   '/admin/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/release-calendar': typeof ReleaseCalendarRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/admin_/reports': typeof AdminReportsRoute
   '/admin_/translation-suggestions': typeof AdminTranslationSuggestionsRoute
   '/collection/$id/$slug': typeof CollectionIdSlugRoute
   '/company/$id/$slug': typeof CompanyIdSlugRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin/reports'
     | '/admin/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin/reports'
     | '/admin/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/release-calendar'
     | '/search'
     | '/settings'
+    | '/admin_/reports'
     | '/admin_/translation-suggestions'
     | '/collection/$id/$slug'
     | '/company/$id/$slug'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   ReleaseCalendarRoute: typeof ReleaseCalendarRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  AdminReportsRoute: typeof AdminReportsRoute
   AdminTranslationSuggestionsRoute: typeof AdminTranslationSuggestionsRoute
   CollectionIdSlugRoute: typeof CollectionIdSlugRoute
   CompanyIdSlugRoute: typeof CompanyIdSlugRoute
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTranslationSuggestionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/reports': {
+      id: '/admin_/reports'
+      path: '/admin/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile/$id/$slug': {
       id: '/profile/$id/$slug'
       path: '/profile/$id/$slug'
@@ -449,6 +469,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReleaseCalendarRoute: ReleaseCalendarRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  AdminReportsRoute: AdminReportsRoute,
   AdminTranslationSuggestionsRoute: AdminTranslationSuggestionsRoute,
   CollectionIdSlugRoute: CollectionIdSlugRoute,
   CompanyIdSlugRoute: CompanyIdSlugRoute,

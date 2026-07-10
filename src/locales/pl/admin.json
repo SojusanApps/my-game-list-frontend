@@ -8,7 +8,48 @@
     "translationSuggestions": {
       "label": "Propozycje tłumaczeń",
       "description": "Przeglądaj oczekujące propozycje tłumaczeń dla wszystkich gier."
+    },
+    "reports": {
+      "label": "Zgłoszenia",
+      "description": "Przeglądaj oczekujące zgłoszenia dotyczące treści użytkowników i pól profilu."
     }
+  },
+  "reports": {
+    "title": "Zgłoszenia",
+    "subtitle": "Przeglądaj i moderuj zgłoszenia dotyczące treści użytkowników i pól profilu.",
+    "statusFilterLabel": "Status",
+    "statusAll": "Wszystkie",
+    "status": {
+      "pending": "Oczekujące",
+      "accepted": "Zaakceptowane",
+      "rejected": "Odrzucone"
+    },
+    "targetTypeFilterLabel": "Typ zgłoszenia",
+    "targetTypeAll": "Wszystkie",
+    "reportedUserFilterLabel": "ID zgłoszonego użytkownika",
+    "clearFilters": "Wyczyść filtry",
+    "reportedByLabel": "Zgłoszone przez",
+    "reportedUserLabel": "Zgłoszony użytkownik",
+    "reasonLabel": "Powód",
+    "snapshotLabel": "Zgłoszona treść",
+    "noSnapshot": "Brak zrzutu tekstu dla tego typu zgłoszenia.",
+    "submittedAtLabel": "Zgłoszono {{date}}",
+    "reviewedByLabel": "Zweryfikowane przez",
+    "reviewedAtLabel": "dnia {{date}}",
+    "acceptButton": "Akceptuj",
+    "rejectButton": "Odrzuć",
+    "confirmAcceptButton": "Potwierdź akceptację",
+    "confirmRejectButton": "Potwierdź odrzucenie",
+    "acceptConfirmText": "Zaakceptować to zgłoszenie? Spowoduje to ukrycie treści i wystawienie ostrzeżenia zgłoszonemu użytkownikowi.",
+    "rejectReasonPlaceholder": "Opcjonalny powód odrzucenia",
+    "cancelButton": "Anuluj",
+    "successTitle": "Sukces",
+    "acceptSuccess": "Zgłoszenie zaakceptowane.",
+    "rejectSuccess": "Zgłoszenie odrzucone.",
+    "errorTitle": "Błąd",
+    "errorMessage": "Coś poszło nie tak. Spróbuj ponownie.",
+    "loading": "Ładowanie...",
+    "empty": "Brak zgłoszeń do przejrzenia."
   },
   "translationSuggestions": {
     "title": "Propozycje tłumaczeń",

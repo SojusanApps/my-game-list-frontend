@@ -39,7 +39,10 @@
     "gender": "Płeć:",
     "private": "Prywatne",
     "lastActive": "Ostatnio aktywny:",
-    "never": "Nigdy"
+    "never": "Nigdy",
+    "warnings": "Ostrzeżenia:",
+    "warningsCount": "{{count}}/{{max}}",
+    "warningsExplanation": "Ostrzeżenie jest wystawiane, gdy moderatorzy zaakceptują zgłoszenie dotyczące treści lub profilu tego użytkownika. Osiągnięcie {{max}} ostrzeżeń powoduje zbanowanie konta: od tej pory treści tego użytkownika są wyświetlane jako zastępcze dla wszystkich oprócz niego samego i moderatorów, jednak zachowuje on pełny dostęp do zapisu i korzystania ze wszystkich funkcji."
   },
   "stats": {
     "currentlyPlaying": "Gram",

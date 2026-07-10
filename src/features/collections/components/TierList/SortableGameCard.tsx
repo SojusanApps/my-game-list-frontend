@@ -10,10 +10,13 @@ import {
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
+import type { User } from "@/client";
 import { GameCard } from "./GameCard";
 
 interface SortableGameCardProps {
   id: string;
+  collectionItemId: number;
+  addedBy: User;
   gameId: number;
   gameSlug: string;
   tierId: string;
@@ -39,6 +42,8 @@ interface SortableGameCardProps {
 export const SortableGameCard = React.memo(function SortableGameCardInner(props: SortableGameCardProps) {
   const {
     id,
+    collectionItemId,
+    addedBy,
     gameId,
     gameSlug,
     tierId,
@@ -170,6 +175,8 @@ export const SortableGameCard = React.memo(function SortableGameCardInner(props:
       }}
     >
       <GameCard
+        collectionItemId={collectionItemId}
+        addedBy={addedBy}
         gameId={gameId}
         gameSlug={gameSlug}
         title={title}

@@ -6,7 +6,8 @@ import { Badge, Box, Group, Popover, Stack, Tabs, Text, Textarea } from "@mantin
 import { notifications } from "@mantine/notifications";
 import { Button } from "@/components/ui/Button";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { TranslationSuggestion, TranslationSuggestionStatusEnum, type UserSimple } from "@/client";
+import { TargetTypeEnum, TranslationSuggestion, TranslationSuggestionStatusEnum, type UserSimple } from "@/client";
+import { ReportButton } from "@/features/moderation/components/ReportButton";
 import { useCurrentUserId, useIsStaff } from "@/features/auth";
 import {
   useAcceptTranslationSuggestion,
@@ -189,6 +190,12 @@ export function SuggestionRow({ suggestion }: Readonly<SuggestionRowProps>) {
             {t("translationSuggestionModal.submittedByLabel")}
           </Text>
           <UserChip user={suggestion.submitted_by} />
+          <ReportButton
+            targetType={TargetTypeEnum.TRANSLATION_SUGGESTION}
+            targetId={suggestion.id}
+            ownerId={suggestion.submitted_by.id}
+            ownerUsername={suggestion.submitted_by.username}
+          />
         </Group>
       </Group>
       <ValueTabs current={suggestion.current_value} proposed={suggestion.proposed_value} />

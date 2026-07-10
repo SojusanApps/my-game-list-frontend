@@ -61,6 +61,8 @@ export const TierSection = React.memo(function TierSectionInner({
         <SortableGameCard
           key={item.id}
           id={String(item.id)}
+          collectionItemId={item.id}
+          addedBy={item.added_by}
           gameId={item.game.id}
           gameSlug={item.game.slug || ""}
           tierId={tier.id}

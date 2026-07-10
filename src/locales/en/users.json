@@ -37,7 +37,10 @@
     "gender": "Gender:",
     "private": "Private",
     "lastActive": "Last active:",
-    "never": "Never"
+    "never": "Never",
+    "warnings": "Warnings:",
+    "warningsCount": "{{count}}/{{max}}",
+    "warningsExplanation": "A Warning is issued when staff accept a report filed against this user's content or profile. Reaching {{max}} Warnings bans the account: from then on, this user's content is shown as a placeholder to everyone except themselves and staff, though they keep full access to write and use every feature."
   },
   "stats": {
     "currentlyPlaying": "Currently Playing",
