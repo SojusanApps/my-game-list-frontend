@@ -16,5 +16,12 @@
   "selectAtLeastOne": "Select at least one collection",
   "descriptionMax": "Description must be 500 characters or less",
   "steamProfileIdRequired": "Steam Profile ID is required",
-  "titlesRequired": "At least one game title is required"
+  "titlesRequired": "At least one game title is required",
+  "usernameFormat": "Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.",
+  "usernameSameAsCurrent": "The new username must be different from the current one.",
+  "currentPasswordRequired": "Current password is required",
+  "newPasswordRequired": "New password is required",
+  "newPasswordMin": "New password must be more than 8 characters",
+  "newPasswordMax": "New password must be less than 32 characters",
+  "newPasswordConfirmRequired": "Confirm new password is required"
 }

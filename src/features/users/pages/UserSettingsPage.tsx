@@ -9,6 +9,8 @@ import { useGetUserDetails } from "../hooks/userQueries";
 import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
 import { useQueryClient } from "@tanstack/react-query";
 import { userKeys } from "@/lib/queryKeys";
+import ChangeUsernameForm from "../components/ChangeUsernameForm";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 
 export default function UserSettingsPage(): React.JSX.Element {
   const { t, i18n } = useTranslation("users");
@@ -97,6 +99,13 @@ export default function UserSettingsPage(): React.JSX.Element {
             </Button>
           </Stack>
         </Box>
+
+        {userDetails && currentUserId && (
+          <>
+            <ChangeUsernameForm userId={currentUserId} currentUsername={userDetails.username} />
+            <ChangePasswordForm />
+          </>
+        )}
       </Box>
     </Box>
   );
