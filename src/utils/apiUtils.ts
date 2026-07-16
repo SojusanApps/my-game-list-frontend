@@ -1,12 +1,19 @@
 export class ApiError extends Error {
   status: number;
   response: Response;
+  /**
+   * DRF-style per-field validation errors ({ "field": ["msg", ...] }), when the
+   * error body was shaped that way. Undefined for {detail: ...}, plain-string,
+   * or non-JSON bodies — callers that want inline field errors must check for it.
+   */
+  fieldErrors?: Record<string, string[]>;
 
-  constructor(message: string, status: number, response: Response) {
+  constructor(message: string, status: number, response: Response, fieldErrors?: Record<string, string[]>) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.response = response;
+    this.fieldErrors = fieldErrors;
   }
 }
 
@@ -20,6 +27,7 @@ export async function handleApiError(response: Response | undefined, defaultMess
     throw new Error(defaultMessage || "Network error or no response received");
   }
   let errorMessage = defaultMessage;
+  let fieldErrors: Record<string, string[]> | undefined;
 
   try {
     const data = await response.json();
@@ -31,10 +39,10 @@ export async function handleApiError(response: Response | undefined, defaultMess
         errorMessage = data.detail;
       } else if (typeof data === "object") {
         // Handle DRF validation errors: { "field": ["error"] }
-        const messages = Object.entries(data).map(([key, value]) => {
-          const val = Array.isArray(value) ? value.join(", ") : value;
-          return `${key}: ${val}`;
-        });
+        fieldErrors = Object.fromEntries(
+          Object.entries(data).map(([key, value]) => [key, Array.isArray(value) ? value.map(String) : [String(value)]]),
+        );
+        const messages = Object.entries(fieldErrors).map(([key, value]) => `${key}: ${value.join(", ")}`);
         if (messages.length > 0) {
           errorMessage = messages.join(" | ");
         }
@@ -45,5 +53,5 @@ export async function handleApiError(response: Response | undefined, defaultMess
     errorMessage = response.statusText || defaultMessage;
   }
 
-  throw new ApiError(errorMessage, response.status, response);
+  throw new ApiError(errorMessage, response.status, response, fieldErrors);
 }
