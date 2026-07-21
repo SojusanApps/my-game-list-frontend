@@ -88,3 +88,7 @@ A user with three accumulated Warnings. Being banned only changes what *other pe
 ### Avatar moderation exception
 
 The one case where masking has no owner/staff exemption: once an avatar Report is accepted, `gravatar_url` returns empty for literally everyone, including the flagged user viewing their own profile and staff.
+
+### Game List Comparison
+
+A side-by-side view of two users' game lists, keyed by `first_user_id`/`second_user_id` (backend: `GET /game-lists/{first_user_id}/compare/{second_user_id}/`). Games are matched by Game identity, independent of each user's status — a Completed entry for one user and a Plan to Play entry for the other still count as the same game. The comparison splits into three sections, always in this order: **Both Have** (the game appears on both lists — each user's own status/score shown independently), **Only {first_user}**, **Only {second_user}**. Comparison is permissionless like a game list itself — any logged-in user can compare any two other users, not just themselves; there is no friendship or ownership restriction. The primary entry point is a "Compare" button on another user's profile page (`UserProfilePage`, hidden on your own profile), which always opens the comparison with the current user as `first_user_id` and the viewed profile as `second_user_id` — but the URL itself does not enforce that pairing.

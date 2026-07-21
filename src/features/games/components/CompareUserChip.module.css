@@ -1,0 +1,25 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.avatarWrapper {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.username {
+  font-weight: 600;
+  color: var(--color-text-900);
+  transition: color 0.2s ease;
+}
+
+.chip:hover .username {
+  color: var(--mantine-color-primary-6);
+}

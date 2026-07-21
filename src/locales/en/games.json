@@ -351,5 +351,15 @@
   },
   "export": {
     "title": "Export Game List"
+  },
+  "compare": {
+    "pageTitle": "Compare {{firstUsername}} vs {{secondUsername}}",
+    "title": "Compare <0></0> vs <1></1>",
+    "loading": "Loading comparison...",
+    "gameColumn": "Game",
+    "bothHave": "Both Have",
+    "onlyFirstUser": "Only {{username}}",
+    "onlySecondUser": "Only {{username}}",
+    "emptySection": "No games in this section."
   }
 }

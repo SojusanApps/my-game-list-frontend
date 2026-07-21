@@ -351,5 +351,15 @@
   },
   "export": {
     "title": "Eksportuj listę gier"
+  },
+  "compare": {
+    "pageTitle": "Porównanie {{firstUsername}} vs {{secondUsername}}",
+    "title": "Porównanie <0></0> vs <1></1>",
+    "loading": "Wczytywanie porównania...",
+    "gameColumn": "Gra",
+    "bothHave": "Oboje mają",
+    "onlyFirstUser": "Tylko {{username}}",
+    "onlySecondUser": "Tylko {{username}}",
+    "emptySection": "Brak gier w tej sekcji."
   }
 }

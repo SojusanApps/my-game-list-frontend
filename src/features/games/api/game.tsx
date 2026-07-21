@@ -186,6 +186,16 @@ export const exportGameList = async () => {
   return data;
 };
 
+export const getGameListCompare = async (firstUserId: number, secondUserId: number) => {
+  const { data, response } = await GameService.gameGameListsCompareRetrieve({
+    path: { first_user_id: String(firstUserId), second_user_id: String(secondUserId) },
+  });
+  if (response?.status !== StatusCode.OK || !data) {
+    return await handleApiError(response, "Error comparing game lists");
+  }
+  return data;
+};
+
 export const getRandomPtpGame = async () => {
   const { data, response } = await GameService.gameGameListsRandomPtpRetrieve();
   if (response?.status === StatusCode.NOT_FOUND) {
