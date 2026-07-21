@@ -30,6 +30,7 @@ import { Route as CollectionIdSlugRouteImport } from './routes/collection.$id.$s
 import { Route as ProfileIdSlugFriendsRouteImport } from './routes/profile_.$id.$slug.friends'
 import { Route as ProfileIdSlugCollectionsRouteImport } from './routes/profile_.$id.$slug.collections'
 import { Route as GameIdSlugReviewsRouteImport } from './routes/game_.$id.$slug.reviews'
+import { Route as GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRouteImport } from './routes/game-list.compare.$firstUserId.$firstUserSlug.$secondUserId.$secondUserSlug'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -138,6 +139,14 @@ const GameIdSlugReviewsRoute = GameIdSlugReviewsRouteImport.update({
   path: '/game/$id/$slug/reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute =
+  GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRouteImport.update(
+    {
+      id: '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug',
+      path: '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug',
+      getParentRoute: () => rootRouteImport,
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -161,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/game/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
+  '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug': typeof GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -184,6 +194,7 @@ export interface FileRoutesByTo {
   '/game/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
+  '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug': typeof GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -208,6 +219,7 @@ export interface FileRoutesById {
   '/game_/$id/$slug/reviews': typeof GameIdSlugReviewsRoute
   '/profile_/$id/$slug/collections': typeof ProfileIdSlugCollectionsRoute
   '/profile_/$id/$slug/friends': typeof ProfileIdSlugFriendsRoute
+  '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug': typeof GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -233,6 +245,7 @@ export interface FileRouteTypes {
     | '/game/$id/$slug/reviews'
     | '/profile/$id/$slug/collections'
     | '/profile/$id/$slug/friends'
+    | '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -256,6 +269,7 @@ export interface FileRouteTypes {
     | '/game/$id/$slug/reviews'
     | '/profile/$id/$slug/collections'
     | '/profile/$id/$slug/friends'
+    | '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
   id:
     | '__root__'
     | '/'
@@ -279,6 +293,7 @@ export interface FileRouteTypes {
     | '/game_/$id/$slug/reviews'
     | '/profile_/$id/$slug/collections'
     | '/profile_/$id/$slug/friends'
+    | '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -303,6 +318,7 @@ export interface RootRouteChildren {
   GameIdSlugReviewsRoute: typeof GameIdSlugReviewsRoute
   ProfileIdSlugCollectionsRoute: typeof ProfileIdSlugCollectionsRoute
   ProfileIdSlugFriendsRoute: typeof ProfileIdSlugFriendsRoute
+  GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute: typeof GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -454,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GameIdSlugReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug': {
+      id: '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
+      path: '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
+      fullPath: '/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug'
+      preLoaderRoute: typeof GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -479,6 +502,8 @@ const rootRouteChildren: RootRouteChildren = {
   GameIdSlugReviewsRoute: GameIdSlugReviewsRoute,
   ProfileIdSlugCollectionsRoute: ProfileIdSlugCollectionsRoute,
   ProfileIdSlugFriendsRoute: ProfileIdSlugFriendsRoute,
+  GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute:
+    GameListCompareFirstUserIdFirstUserSlugSecondUserIdSecondUserSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

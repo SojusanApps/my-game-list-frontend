@@ -24,6 +24,7 @@ export default function UserProfilePage(): React.JSX.Element {
 
   const { data: userDetails, isLoading: isUserDetailsLoading } = useGetUserDetails(validUserId);
   const currentUserId = useCurrentUserId();
+  const { data: currentUserDetails } = useGetUserDetails(currentUserId ?? undefined);
   const { t } = useTranslation("users");
 
   const pageTitle = isUserDetailsLoading
@@ -104,6 +105,23 @@ export default function UserProfilePage(): React.JSX.Element {
                     {t("profile.collectionsButton")}
                   </Button>
                 </Link>
+
+                {!isOwnProfile && currentUserId && (
+                  <Link
+                    to={"/game-list/compare/$firstUserId/$firstUserSlug/$secondUserId/$secondUserSlug"}
+                    params={{
+                      firstUserId: String(currentUserId),
+                      firstUserSlug: currentUserDetails?.slug ?? "",
+                      secondUserId: id,
+                      secondUserSlug: slug,
+                    }}
+                    style={{ width: "100%", textDecoration: "none" }}
+                  >
+                    <Button fullWidth variant="outline">
+                      {t("profile.compareButton")}
+                    </Button>
+                  </Link>
+                )}
 
                 <UserProfileInformation userDetails={userDetails} />
                 <UserFriendsList userDetails={userDetails} />

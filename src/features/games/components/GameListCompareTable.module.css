@@ -1,0 +1,34 @@
+.coverWrapper {
+  width: 48px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--color-background-300);
+}
+
+.scoreBadge {
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scrollContainer {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+/* Sticky on each th, not thead/tr — thead/tr sticky support is inconsistent across browsers. */
+.stickyHeaderCell {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: white;
+}

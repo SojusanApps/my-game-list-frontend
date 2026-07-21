@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getGameListsList, getRandomPtpGame } from "../api/game";
+import { getGameListCompare, getGameListsList, getRandomPtpGame } from "../api/game";
 import { gameListKeys } from "@/lib/queryKeys";
 import { GameListStatusEnum } from "@/client";
 
@@ -65,5 +65,13 @@ export const useRandomPtpGame = (userId?: number, enabled?: boolean) => {
     queryFn: () => getRandomPtpGame(),
     enabled: !!userId && enabled !== false,
     retry: false, // Do not retry on 404
+  });
+};
+
+export const useGameListCompareQuery = (firstUserId?: number, secondUserId?: number) => {
+  return useQuery({
+    queryKey: gameListKeys.compare(firstUserId ?? -1, secondUserId ?? -1),
+    queryFn: () => getGameListCompare(firstUserId as number, secondUserId as number),
+    enabled: !!firstUserId && !!secondUserId,
   });
 };
